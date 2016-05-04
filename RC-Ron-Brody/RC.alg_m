@@ -86,10 +86,10 @@ define waitflag = bool . [47 : 1]#,  waiting = (bool)#,                 00030500
    executeecho = bool . [44 : 1]#,                                      00032000
    translating = bool . [43 : 1]#,   % initially on                     00032500
    xecho = bool . [42 : 1]#,                                            00033000
-   num1 = bool . [36 : 2]#,                                             00035500
-   num2 = bool . [34 : 2]#,                                             00036000
-   num3 = bool . [32 : 2]#,                                             00036500
-   num4 = bool . [30 : 2]#,                                             00037500
+   num1 = bool . [36 : 2]#,                                             00035000
+   num2 = bool . [34 : 2]#,                                             00035500
+   num3 = bool . [32 : 2]#,                                             00036000
+   num4 = bool . [30 : 2]#,                                             00036500
    empty1 = bool . [36 : 1]#,                                           00037500
    empty2 = bool . [34 : 1]#,                                           00038000
    empty3 = bool . [32 : 1]#,                                           00038500
@@ -260,7 +260,7 @@ define sequence =                                                       00121000
    end# ;                                                               00125000
 % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *           00126000
 procedure stationfix (station, i) ;                                     00126500
-value station, i ;                                                      00126500
+value station, i ;                                                      00126600
 real station ;                                                          00126700
 integer i ;                                                             00126800
 begin                                                                   00126900
@@ -539,7 +539,7 @@ label exit ;                                                            00176600
           ds := 8 lit "segment=" ;                                      00178600
           ds := 4 dec ;                                                 00178700
           jump out to exit) ;                                           00178900
-   f (n (ds := lit " ") ; jump out to exit) ;                           00178000
+   f (n (ds := lit " ") ; jump out to exit) ;                           00179000
    ds := lit ">" ;                                                      00179100
 exit:                                                                   00179200
    ds := lit "~" ;                                                      00179300
@@ -592,26 +592,26 @@ define xon = form (pretank, 0, 0, 0, 0, 0)#,                            00179500
        twx (if k=2 then seq else if k=5 then queform else               00184100
             if k=6 then segment else if k=7 then reladdr) ;             00184200
    end writealine ;                                                     00184300
-% * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *           00198900
-procedure writerow (row, q, f) ;                                        00190500
-value q,                                                                00191000
-  f ;                                                                   00191500
-boolean q ;                                                             00192000
-integer f ;                                                             00192500
-array row [0] ;                                                         00193000
-   begin                                                                00193500
-stream procedure move (s, d, skps, n) ;                                 00193600
-value skps, n ;                                                         00193700
-begin                                                                   00193800
-   si := s ;                                                            00193900
-   di := d ;                                                            00194000
-   si := si + skps ;                                                    00194100
-   ds := n chr ;                                                        00194200
-end move ;                                                              00194300
-stream procedure blankoutspecialcharacters (s, d, n, k) ;               00194400
-value n,                                                                00150500
-   k ;                                                                  00155600
-    begin                                                               00156000
+% * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *           00190500
+procedure writerow (row, q, f) ;                                        00191000
+value q,                                                                00191500
+  f ;                                                                   00192000
+boolean q ;                                                             00192500
+integer f ;                                                             00193000
+array row [0] ;                                                         00193500
+   begin                                                                00193600
+stream procedure move (s, d, skps, n) ;                                 00193700
+value skps, n ;                                                         00193800
+begin                                                                   00193900
+   si := s ;                                                            00194000
+   di := d ;                                                            00194100
+   si := si + skps ;                                                    00194200
+   ds := n chr ;                                                        00194300
+end move ;                                                              00194400
+stream procedure blankoutspecialcharacters (s, d, n, k) ;               00195000
+value n,                                                                00195500
+   k ;                                                                  00195600
+    begin                                                               00196000
       di := loc n ; ds := 6 lit "!><}{~" ;                              00197500
       di := d ;                                                         00198000
       ds := 8 lit "        " ;                                          00198500
@@ -642,7 +642,7 @@ value n,                                                                00150500
       end)) ;                                                           00211000
     end blankoutspecialcharacters ;                                     00219000
 % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *           00219500
-boolean stream procedure allblank (s, skp, n) ;                         00200000
+boolean stream procedure allblank (s, skp, n) ;                         00220000
 value skp,                                                              00220500
   n ;                                                                   00221000
    begin                                                                00221500
@@ -807,8 +807,8 @@ label next ;                                                            00237780
          end ;                                                          00238000
        end ;                                                            00238010
      end ;                                                              00238020
-   if false then                                                        00238040
-next:                                                                   00238050
+   if false then                                                        00238030
+next:                                                                   00238040
      filecheck := true ;                                                00238050
 end filecheck ;                                                         00238060
 define opencheck = if filecheck (true) then go to next#,                00238070
@@ -818,8 +818,8 @@ procedure state (s) ;                                                   00238100
 value s ;                                                               00238200
 boolean s ;                                                             00238300
    begin                                                                00238400
-stream procedure stuffstate (n, record, p0, c) ;                        00208500
-value n ;                                                               00208600
+stream procedure stuffstate (n, record, p0, c) ;                        00238500
+value n ;                                                               00238600
    begin                                                                00239000
 label exit ;                                                            00239100
      n (di := c ;                                                       00239200
@@ -1073,7 +1073,7 @@ next:                                                                   00319600
           go to exit ;                                                  00319860
         end ;                                                           00319870
         if xdex := xdex - 1 lss 0 then                                  00319880
-          go to next ;                                                  00318890
+          go to next ;                                                  00319890
         xsub := xdex | 13 ;                                             00319900
       end ;                                                             00319910
     if xfile (xprefix, xsuffix, 2) lss 2 then                           00319920
@@ -1086,7 +1086,7 @@ next:                                                                   00319600
     close (library) ;                                                   00319990
     chrs := (i := fulllength) -                                         00320000
             trailingblanks (image [i.[41:4]-1], i.[41:6]) ;             00320010
-    if xecho then                                                       00320000
+    if xecho then                                                       00320020
       writerow (image [*], false, xfiletype) ;                          00320030
 exit:                                                                   00320040
      more := true ;                                                     00320050
@@ -1169,7 +1169,7 @@ around:                                                                 00325800
                       ds := chr ;                                       00328600
                       si := s ;                                         00328700
                       jump out 2 to around ;                            00328900
-                    end ;                                               00328000
+                    end ;                                               00329000
                     si := si + 1 ;                                      00329100
                     di := di - 1) ;                                     00329200
                end) ;                                                   00329300
@@ -1201,7 +1201,7 @@ next:                                                                   00332580
        si := loc c ;                                                    00332700
        di := chrs ;                                                     00332800
        ds := wds ;                                                      00332900
-       lineedit := tally ;                                              00332100
+       lineedit := tally ;                                              00333100
 end lineedit ;                                                          00333200
 boolean procedure finalanalysis ;                                       00333210
 begin                                                                   00333220
@@ -1349,25 +1349,25 @@ exit:                                                                   00379070
      end more ;                                                         00379500
 integer stream procedure fix (im, tab, c, z, p, q) ;                    00380000
 value tab,                                                              00380500
-  c,                                                                    00381500
-  p,                                                                    00381000
-  q ;                                                                   00381100
-     begin                                                              00381200
-local t ;                                                               00381500
-       p (si := im ;                                                    00382000
-          if sc = "%" then                                              00382100
-          begin                                                         00382110
-             si := si + 1 ;                                             00382120
-             if sc = "*" then                                           00382130
-             begin                                                      00382140
-               si := c ;                                                00382150
-               si := si - 8 ;                                           00382180
-               c := si ;                                                00382190
-               tally := 1 ;                                             00382000
-               fix := tally ;                                           00382210
-             end ;                                                      00382220
-           end) ;                                                       00382230
-        si := z ;                                                       00382240
+  c,                                                                    00381000
+  p,                                                                    00381100
+  q ;                                                                   00381200
+     begin                                                              00381500
+local t ;                                                               00382000
+       p (si := im ;                                                    00382100
+          if sc = "%" then                                              00382110
+          begin                                                         00382120
+             si := si + 1 ;                                             00382130
+             if sc = "*" then                                           00382140
+             begin                                                      00382150
+               si := c ;                                                00382180
+               si := si - 8 ;                                           00382190
+               c := si ;                                                00382200
+               tally := 1 ;                                             00382210
+               fix := tally ;                                           00382220
+             end ;                                                      00382230
+           end) ;                                                       00382240
+        si := z ;                                                       00382500
         di := z ;                                                       00383000
         ds := 8 lit "        " ;                                        00383500
         ds := 9 wds ;                                                   00384000
@@ -1551,8 +1551,8 @@ fault:                                                                  00427910
         dirctry [i + 2] := 12                                           00433500
       else                                                              00434500
         while dirctry [i := i - 2] lss 0 do ;                           00435000
-old:                                                                    00436400
-      c := sloti := i / 2 ;                                             00437800
+old:                                                                    00436500
+      c := sloti := i / 2 ;                                             00437000
       dirctry [i] := - usercode ;                                       00437500
       dirctry [i + 1] := station ;                                      00438000
       write (r1 [45], 90, dirctry [*]) ;                                00438500
@@ -1578,16 +1578,16 @@ old:                                                                    00436400
       at := 0 ;                                                         00453500
       for i := 1 step 1 until d do                                      00454000
       begin                                                             00454100
-        if at neq ll [at := ll [at] . t] . f then                       00454500
-          i := d                                                        00454600
-        else if at = 1 then                                             00455000
-          error (next, 6, prefix, suffix) ;                             00455100
-      end ;                                                             00456500
-      error (mailcall, 7, "linklis", "t error") ;                       00458500
-new:                                                                    00459500
-      write (r2 [32 | c + 31], 1, image [*]) ;                          00460000
-      lock (r2) ;                                                       00468200
-      user32 := user | 32 ;                                             00460300
+        if at neq ll [at := ll [at] . t] . f then                       00454400
+          i := d                                                        00454500
+        else if at = 1 then                                             00454600
+          error (next, 6, prefix, suffix) ;                             00455000
+      end ;                                                             00455100
+      error (mailcall, 7, "linklis", "t error") ;                       00456500
+new:                                                                    00458500
+      write (r2 [32 | c + 31], 1, image [*]) ;                          00459000
+      lock (r2) ;                                                       00459500
+      user32 := user | 32 ;                                             00460000
       bool := initialbool ;                                             00461000
       inc := 100 ;                                                      00462500
       macrolibrary := "macro  " ;                                       00462900
@@ -1702,7 +1702,7 @@ escape:                                                                 00534500
 define rdisc (rdisc1, rdisc2) =                                         00547100
     if rdiscx (rdisc1, rdisc2) then go to next# ;                       00547200
 boolean procedure rdiscx (where, image) ;                               00547500
-value where ;                                                           00548800
+value where ;                                                           00548000
 integer where ;                                                         00548500
 array image [0] ;                                                       00549000
    begin                                                                00549500
@@ -1813,7 +1813,7 @@ label next ;                                                            00684500
          interrupt (1) ;                                                00696000
        end ;                                                            00696500
        read (disc [0]) ;                                                00697500
-       detach ;                                                         00690800
+       detach ;                                                         00698000
        close (disc, purge) ;                                            00698500
        lock (copy) ;                                                    00699500
        reattach ;                                                       00700000
@@ -1984,7 +1984,7 @@ deblank:                                                                00756050
          jump out to getrepeat ;                                        00756800
        if sc = "." then                                                 00756850
          jump out to getrepeat ;                                        00756900
-       if sc = "@" then                                                 00757950
+       if sc = "@" then                                                 00756950
          jump out to getrepeat ;                                        00757000
        if sc = "/" then                                                 00757050
          k := tally                                                     00757100
@@ -2045,7 +2045,7 @@ nalpha:                                                                 00759100
      di := di + 7 ;                                                     00759850
      si := si - 1) ;                                                    00759900
 getrepeat:                                                              00759910
-     e (if sc = ")" then jump out ;                                     00749950
+     e (if sc = ")" then jump out ;                                     00759950
         if sc = ";" then jump out ;                                     00760000
         if sc = "@" then jump out ;                                     00760050
         si := si + 1) ;                                                 00760100
@@ -2182,7 +2182,7 @@ error1:                                                                 00773510
        jump out 2 to here ;                                             00773700
      end ;                                                              00773800
      initial := tally ;                                                 00773900
-     tally := 0 ;                                                       00773000
+     tally := 0 ;                                                       00774000
      s := si ;                                                          00774100
      go to loop ;                                                       00774200
 idr:                                                                    00774300
@@ -2263,8 +2263,8 @@ xit:                                                                    00781200
    end inline ;                                                         00781400
 % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *           00781500
 label next,                                                             00786000
-  verbexit ;                                                            00786110
-define quick = false# ;                                                 00886100
+  verbexit ;                                                            00786100
+define quick = false# ;                                                 00786110
 next:                                                                   00806500
        readin ;                                                         00807000
        if boolean (abnormalend) or user = maxusers then                 00807500
@@ -2429,12 +2429,12 @@ label ok,                                                               00858700
   string,                                                               00858900
   jumpout,                                                              00858910
   no,                                                                   00859000
-  nextno ;                                                              00850100
+  nextno ;                                                              00859100
          tally := 63 ;                                                  00859200
          stopchr := tally ;                                             00859300
          di := loc quotes ;                                             00859400
          ds := 2 lit """ ;                                              00859500
-         ds := 6 lit "..()[]" ;                                         00859500
+         ds := 6 lit "..()[]" ;                                         00859600
          2 (si := s ;                                                   00859700
          63 (si := si + 1 ;                                             00859800
              if sc = alpha then                                         00859900
@@ -2711,8 +2711,8 @@ no:                                                                     00886500
                  d := di ;                                              00887000
                  si := sr ;                                             00887100
                  si := si - 8 ;                                         00887200
-                 sr := si ;                                             00887310
-                 tally := 1 ;                                           00887300
+                 sr := si ;                                             00887300
+                 tally := 1 ;                                           00887310
                  go to here ;                                           00887400
                end ;                                                    00887500
                id (ss := di ;                                           00887600
@@ -2766,7 +2766,7 @@ around:                                                                 00891000
                k := tally ;                                             00892300
                jump out)) ;                                             00892400
          tally := 2 ;                                                   00892500
-         k (changed := tally ;                                          00892700
+         k (changed := tally ;                                          00892600
             jump out to exit) ;                                         00892700
          si := loc sr ;                                                 00892800
          di := loc ss ;                                                 00892900
@@ -2803,7 +2803,7 @@ underflow:                                                              00893800
 xit:                                                                    00895700
        end changed ;                                                    00895800
 boolean stream procedure edits (f, s, d, n) ;                           00895900
-value n ;                                                               00895000
+value n ;                                                               00896000
        begin                                                            00896100
 label xit ;                                                             00896200
          di := d ;                                                      00896300
@@ -3037,7 +3037,7 @@ boolean verbisexecute ;                                                 00950900
       ylast := kount (parameter3, parameter4, -1) ;                     00956700
       i := savefactor ;                                                 00956710
       freefile (station) ;                                              00956800
-      thermofax (savefactor := 0, (ylast + 14) div 15 | 15) ;           00957900
+      thermofax (savefactor := 0, (ylast + 14) div 15 | 15) ;           00956900
       unfreefile (station) ;                                            00957000
       savefactor := i ;                                                 00957010
       yfiletype := fileinfo ;                                           00957100
@@ -3139,10 +3139,10 @@ define closefile = xverbs (0)#,                                         00975600
   print = xverbs (2)#,                                                  00975800
   delete = xverbs (3)#,                                                 00975900
   punch = xverbs (4)# ;                                                 00976000
-% * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *           00973100
-procedure mail ;                                                        01023000
-   begin                                                                01023500
-label next ;                                                            01024000
+% * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *           01023000
+procedure mail ;                                                        01023500
+   begin                                                                01024000
+label next ;                                                            01024100
 boolean stream procedure postfrom (sender, message, z) ;                01024500
      begin                                                              01025000
 label ok,                                                               01025500
@@ -3177,8 +3177,8 @@ exit:                                                                   01037000
      if empty1 then                                                     01040500
      begin                                                              01041000
        if i lss 7 then                                                  01041500
-         error (next, 0, "sorry, ", "no mail") ;                        01042500
-       parameter1 := "mail % " ;                                        01043500
+         error (next, 0, "sorry, ", "no mail") ;                        01042000
+       parameter1 := "mail % " ;                                        01042500
        num1 := false ;                                                  01043500
        parameter2 := usercode ;                                         01044000
        num2 := false ;                                                  01045000
@@ -3329,8 +3329,8 @@ label next ;                                                            01118500
        if fileopen then closefile ;                                     01119000
        tabamount := 0 ;                                                 01119500
        prewhere := -1 ;                                                 01121000
-       if fileinfo := filetype (parameter3) = 0 then                    01122100
-         error (next, 5, " type: ", parameter3) ;                       01126600
+       if fileinfo := filetype (parameter3) = 0 then                    01122000
+         error (next, 5, " type: ", parameter3) ;                       01126000
        i := xfile (12, 0, -1) ;                                         01126100
        fill disc with prefix := parameter1, suffix := parameter2 ;      01126200
        if parameter4 = "new    " then                                   01126500
@@ -3510,7 +3510,7 @@ label next ;                                                            01213000
        parameter1, parameter2.[6:6], parameter2, parameter3.[6:6],      01238500
        parameter3, prefix.[6:6], prefix, suffix.[6:6], suffix,          01239000
        usercode . [6 : 6], usercode) ;                                  01239500
-     zip with zippy [*] ;                                               01234000
+     zip with zippy [*] ;                                               01240000
 next:                                                                   01242000
   end compile ;                                                         01242500
 % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *           01243000
@@ -3720,7 +3720,7 @@ end readz ;                                                             01278300
      end until boolean (breaki) ;                                       01303000
 next:                                                                   01303200
      n := resetn ;                                                      01303400
-     if locked then                                                     01303600
+     if locked then                                                     01303500
        ylocked := false ;                                               01303600
    end listing ;                                                        01303800
 % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *           01345000
@@ -3736,7 +3736,7 @@ define quick = false# ;                                                 01345570
      readonlycheck ;                                                    01345700
      if num1 then                                                       01346000
      begin                                                              01346500
-       n := parameter1 ;                                                01347700
+       n := parameter1 ;                                                01347000
        if not itsold (n) then                                           01347500
          error (next, 0, "missing", octdex (n)) ;                       01348000
        if not moreinput then                                            01348500
@@ -3850,17 +3850,17 @@ label next ;                                                            01366500
        begin                                                            01371600
          if i := xfile (parameter1, parameter2:=macrolibrary, -1) lss 2 01371700
            and macrolibrary neq "macro  " then                          01371800
-           i := xfile (parameter1, parameter2:="macro  ", -1) ;         01371900
-         if i lss 2 then                                                01372000
-         begin                                                          01372020
-           show (parameter1, " invali") ;                               01372040
-           error (next, 0, "d: *   ", rwteach) ;                        01372050
-         end ;                                                          01372100
-         num2 := false ;                                                01372200
-         num3 := boolean (2) ;                                          01372300
-         listit (0) ;                                                   01372400
-         go to next ;                                                   01372450
-       end ;                                                            01372500
+           i := xfile (parameter1, parameter2:="macro  ", -1) ;         01371830
+         if i lss 2 then                                                01371900
+         begin                                                          01372000
+           show (parameter1, " invali") ;                               01372020
+           error (next, 0, "d: *   ", rwteach) ;                        01372040
+         end ;                                                          01372050
+         num2 := false ;                                                01372100
+         num3 := boolean (2) ;                                          01372200
+         listit (0) ;                                                   01372300
+         go to next ;                                                   01372400
+       end ;                                                            01372450
        parameter1 := "teacher" ;                                        01372500
        parameter2 := octdec (version) ;                                 01373000
        if xfile (parameter1, parameter2, 2) lss 2 then                  01373500
@@ -3886,8 +3886,8 @@ label next ;                                                            01366500
        end ;                                                            01386500
        write (image [*], teach3) ;                                      01387000
        writerow (image, false, cobol) ;                                 01387500
-     end ;                                                              01380500
-next:                                                                   01380600
+     end ;                                                              01390500
+next:                                                                   01390600
    end teach ;                                                          01390700
 % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *           01391500
 define percent =                                                        01392000
