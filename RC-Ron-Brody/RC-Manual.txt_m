@@ -1,0 +1,772 @@
+?EXECUTE XREF/JONES
+? FILE LINE  =   XREF/LISTING PRINT BACK UP DISK
+? DATA CARD
+$ CARD DOCUMENT FINAL DOCONLY SIX SINGLE
+COMMENT DOCUMENT
+* skip 10 center underline 3
+ r/c
+ reference
+ manual
+* skip 20 indent 50 double
+  by
+  ron brody
+ 12/22/71 version 94
+* single page no
+* define 1 = skip 2 paragraph 5,68 *
+* define 2 = skip 2 paragraph 10,68 *
+* define 3 = paragraph 7,68,4 *
+* define 4 = skip 2 paragraph 6,68 *
+* define 5 = skip 2 indent 15 *
+* define 6 = skip 2 indent 5 index only underline *
+* define 7 = page index center underline *
+* define 8 = skip 1 indent 15 *
+* 7
+introduction
+* 1
+r/c permits a user at a remote teletypewrite to create and
+maintain source or data files on the b5500 system disk. file
+types created and maintained with r/c are: algol, xalgol, cobol,
+fortran, basic, and data. these files represent normal (80
+character-per-card) punched card decks except that they are
+stored on the disk. each record can be thought of as one card.
+* 1
+r/c allows the user to:
+* skip 1 paragraph 7,68,4
+ * create a variety of files
+* 3
+ * resequence files
+* 3
+ * print or punch files
+* 3
+ * delete or insert records into a file
+* 3
+ * modify records within a file
+* 3
+ * scan a file for the occurrence of a string 
+* indent 12 
+ (optionally replacing it with another string)
+* 3
+ * remove files
+* 3
+ * compile files
+* 3
+ * perform many other functions
+* 1
+the teletypewriter (in conjunction with the program r/c) can be
+considered a keyboard extension which eliminates punched cards.
+it offers great flexibility in file handling.
+* 3
+r/c has two major restictions:
+* 2
+while the sequence number 99999999 is permitted for convenience,
+the maximum sequence number is 2097151 (2*21-1).
+* 2
+the maximum number of records permitted in a file is 8191.
+* 1
+in the discussion of certain r/c verbs, some of the elements of the
+syntax are given as <m>, <n>, <i>, or <j>. in each case, these 
+elements represent integer values which much be provided by the user.
+the value may be a record number for some verbs, the sequence number
+for others, or an increment amount. the bracked construct is only a 
+form of notation used to represent an integer parameter.
+* 7
+program operation and record sequencing
+* 1
+during creation and file maintenance, r/c automatically advances (by
+the current value of the "increment") the sequence number of each
+record that is input. the user my set this increment to any desired 
+value through use of the "*inc" verb (see below). the increment value
+is initialized to 100 when the user first runs r/c.
+* 1
+the initial sequence number is set to the increment when a new file is
+opened by a user. for example, if the current increment were 100, the
+first sequence number in the file would be "100:". this initial
+sequence number may be changed by the user through the use of the
+construct "*<n>", (see below).
+* 1
+after each record is typed into the file, the sequence number of the
+next record in the file is set to the last sequence number plus the
+increment. this sequence number is next typed on the teletypewriter.
+* 1
+if the file type is not "cobol", the sequence number is followed by
+a colon. if a record already exists with this sequence number, leading
+zeros are typed as a warning; otherwise leading zeros are suppressed.
+after the sequence number is typed out, the user may then enter the 
+desired contents for that sequence number of may enter a verb to 
+perform some other function.
+* 1
+alternatively, the user may set the sequence to some other value 
+through the use of the construction "*<n>", where <n> is the desired
+sequence number. note that leading zeros are accepted but not 
+necessary with this construct.
+* 1
+by use of the "*<n>" construct and the "*inc" verb to set the sequence
+number increment, the user may set up his own numbering sequence 
+throughout his file.
+* 1
+the examples illustrate the sequence number of the record typed on the
+left side of the page as it appears on the teletypewriter and the 
+manner in which these records are incremented. although algol, xalgol,
+basic and fortran files actually carry the sequence number in character
+positions 73-80 of the record, r/c types the number on the left margin
+of the teletypewriter.
+* 7
+program execution
+* 6
+initial remote terminal operations
+* 1
+for  logging-in to a teletypewriter, press the "orgi" button, wait for
+a dial tone from the speaker, and dial the computer number. the b5500
+responds with the message:
+* skip 2 underline center
+burroughs b-5500: <tt>/<bb>
+* 2
+(the station number is <tt>/<bb> where <tt> is the terminal number and
+<bb> is the buffer number.)
+* 4
+you may type:
+* skip 2 underline indent 11 
+* invalid 1
+q li: <usercode>/<authentication code>~
+* skip 2
+* 2
+* invalid 50
+this log-in message may have been preceded by a "qbo~" message which
+would have blacked out the line on which the log-in message was typed.
+* 2
+the b5500 validates the <usercode> and <authentication-code> and 
+responds by typing out the station number and the time of day of the
+log-in.
+* 1
+to connect a remote terminal to r/c, enter:
+* skip 2 center underline 
+* invalid 1,2
+qq run r/c;end.~
+* 1
+the b555 responds by either typing out a "boj" (beginning of job)
+message, a "scheduled" message, or a "running" message. a "boj"
+message indicates that r/c was not previously running but has now been
+entered into the mix and is ready for use. a "scheduled" message
+indicates that r/c was not previously running and is scheduled. in
+this case, r/c is not brought into the mix until other system users
+complete their work. the "running" message indicates r/c is already
+in the mix.
+* 1
+with r/c in the mix, it automatically searches out and locks onto
+remote terminals which have requested connection (by "run r/c"). as 
+soon as your terminal is locked, r/c types one of the following 
+message sequences, according to the manner in which r/c ended during
+your last r/c run (first-time users are considered to have caused 
+normal last entries):
+* 4
+initial message after normal termination of last run:
+* 5
+ <r/c version number>
+ hello <usercode.
+ :
+* 1
+initial message after "* end x" or abnormal last run termination:
+* 4
+if a file was open
+* skip indent 10
+ <r/c version number>
+ <file name of open file>
+ hello+<usercode>
+ <sequence number in the open file>:
+* 4
+or if no file is open
+* skip indent 10
+ <r/c> version number>
+ hello+<usercode>
+ :
+* 1
+if a message has been sent from another user to your usercode (see the
+mail verb), "mail %" is typed instead of "hello".
+* 4
+examples:
+* 5
+ version #
+ hello blum
+ :
+* 5
+this is the normal initial sequence from r/c.
+* 5
+ version #
+ hello+ wilner
+ :
+* 1
+this sequence indicates that r/c remembers the users state from 
+previous run. the state indicates the increment value, tab amount,
+save factor, percent on-off, and verb replacements.
+* 5
+ version #
+ file/name
+ hello+ sharpe
+ 00050600:
+* 1
+this sequence indicates that user has the file "file/name" open and is
+at the record with sequence number 50600. the leading zeros indicate
+that a record already exists with that number.
+* 6
+final remote terminal operations
+* 1
+the user should terminate his use of r/c with the "* end" command (see
+below). r/c will respond with "good bye."
+* 1
+after he has ened r/c, if the user is done with the remote terminal he
+* invalid 30
+should log-out by entering: "Qlo~"
+* 6
+r/c input
+* 1 
+input to r/c is either commands or records.
+* 1
+commands are indicated by the character "*" in the first input position.
+(if there is no open file, the "*" is optional.) all other input is 
+considered records to be placed in the open file. the format for a 
+command is the "*" followed by an r/c verb and, if needed, its 
+parameters. the verb and its parameter must be separated by a delimiter.
+* 1
+a delimiter is either a space or any special character except a ";", a 
+""", a ".", a "(", or a "[". multiple delimiters are treated as a 
+single delimiter.
+* 1
+a command may be followed by another input (either a command or a
+record) if it is terminiated by a ";". an error in a command of a 
+multiple input inhibits the processing of the rest of that input.
+* 5
+examples:
+* 5
+100:* inc 50~
+* 2
+this is an example of one of the input commands.
+* 5
+100:begin~
+* 2
+this is an example of placing a record at sequence number 100.
+* 5
+100:* inc 3;* reseq~
+* 2
+this is an example of multiple commands.
+* 5
+100:*35; this record goes at 35~
+* 2
+this is an example of a command followed by a record of input.
+* 5
+100:* open a/b data;* print for me;*close~
+* 2
+this is another example of multiple commands. note that the "*" must
+appear in the next character position following the semicolon or 
+remainder of the record is treated as data.
+* 1
+an input line is sent to the computer by typing the character "~". 
+typing errors can be corrected, by backspacing and line erasing,
+before a message is sent. the backspace character is apostrophe 
+(shift 7) and the line erase character is the up-arrow (shift n).
+all the following lines of input are equivalent (note the underlined
+characters represent use of the shift):
+* 5
+100:this is it~
+* 5
+100:this is not,butnthis is it~
+*indent 34
+-
+* 5
+100:this7is it~
+*indent 23
+-
+* 5 
+100:these777is is it~
+*indent 24
+---
+* 1
+if, after backspacing and line erasing, the input line contains more
+then 240 characters, the input is discarded with an "input overflw"
+error message. data records are als discarded (with the error message)
+if they are too large for the file. (i.e. gtr 66 for cobol files;
+gtr 80 for data files; and gtr 72 for all other files)
+* 1
+there are two classes of requests to r/c: long and short. long
+operations are those that usually are slow to execute and are
+characterized by the "wait..." message. all other requests are 
+classified as short operations. long operations are sometimes queued
+before the "wait..." message, to be executed one at a time. short 
+requests are done as they are received. the users in the long 
+request queue (and the user performing a long operation if it is not
+typing on the remote) periodically receives a few "rubout" charcters
+of reassurance. r/c ignores any input sent by users in the queue or
+by the user whose long operation is being processed.
+* 1
+if the user produces no input for five minutes, he is sent the
+message "look alive". if he does not respond within another five
+minute period, r/c processes a "*end ds" for that user.
+* 6
+r/c output
+* 1
+output to the teletypewriter of the specail characters ~, !, <, {, >,
+and } is replaced by the "$" character in order that they do not evoke
+teletypewriter control functions with which they are associated.
+(these include line-feed, carriage-return, message-end, and 
+paper-tape-on.)
+* 1
+when the "break" key is depressed during output, the output is
+terminated with the message "break".
+* 7
+r/c files
+* 1 all files created by r/c are permanent disk files. the save factor
+is normally 7 days, but it may be changed by the save verb (see below).
+* 6
+file types
+* 1
+r/c enables the user to create and maintain algol, cobol, fortran, 
+xalgol, basic, and data files. these files have 80 character-long
+records, (one card image).
+* 1
+xalgol, basic, algol and fortran files contain eight digit sequence
+numbers located in the positions 73-80 of the card image.
+* 1
+cobol files contain six-digit sequence numbers, placed in positions
+1-6 of the record.
+* 1
+data files are not physically sequenced although r/c maintains an 
+internal, eight-digit number for each record.
+* 6
+file names
+* 1
+file names must be supplied to r/c. the form of a name is 
+<file prefix> / <file suffix>. throughout this document, <file-prefix>
+is used to specify and should be in the form above. the <file prefix>
+and the <file suffix> may each be no longer than 7 characters.
+* 4
+examples:
+* 5
+a/b
+* 8
+grimy/gulch
+* 8
+zap/1
+* 8
+16jan/suffix
+* 8
+0000000/disk
+* 6
+record referencing
+* 1
+records in the open file (see open below) are referred to by their 
+sequence number. "data" files are implicitly sequenced by the value
+of the increment when they are opened.
+* 1
+an alternative method of referencing records in the open file is 
+relative sequence numbers. a relative sequence number is an integer
+preceeded by a + or - sign. it may be used anyplace a sequence number
+is used. it is translated to a sequence number by moving forward or
+backward the indicated number of records and using the sequence number
+of that record.
+* 1
+records in a non-open file (external file) are referred to by their
+relative position within the file. the first record is 1, the second 
+2, etc. any sequence that may be on the records is ignored.
+* 7
+file-handling verbs
+* 1
+this section describes versb that handle files as a whole, rather than
+records within a files. however, a few versb have options in r/c syntax
+that permit access to records within the file. the complete syntax is
+given for each verb as well as a discussion and examples of its use. an
+asterisk ("*") must always be the first character in the input string 
+when a command is entered. if this is not followed, an existing record
+may be overwritten by the command itself. 
+* page 1
+* 6
+file opening and creation (open)
+* glossary 12,10,68
+* skip 2 glos underline
+ * open <file-name> <file-type> new =
+* skip 2 glos underline
+ * open <file-name> <file-type> old =
+* skip 2 glos underline
+ * open <file-name> <file-type>  =
+* 1
+the "* open " verb attaches the user to the disk file <file-name>. the 
+<file-type> must be either "algol", "cobol", "fortran", "xalgol", 
+"basic", or "data". if the <open type> is "new", a new disk file is
+created. if the <open type> is "old", the disk file <file-name> is
+opened and resequenced by the current value of the increment. if the 
+<open type> is neither "new" or "old" the disk file <file-name> is 
+opened ad it is read to ddetermine its sequence numbers. this latter 
+form is slower than the open "old".
+* 4
+examples:
+* skip 2 indent 15
+:* open program/source algol new~
+* indent 20
+100:
+*5
+this creates a new disk file called program/source.
+* skip 2 indent 18
+63500:* open another/prog data old~
+* indent 19
+4500:
+*5
+this opens the file another/prog sequencing it by the current increment  
+value. note that the file that was open is first closed before the next
+file is opened.
+* skip 2 indent 15
+:* open yet/another cobol~
+* indent 15
+wait...
+* indent 15
+read only file.
+* indent 17
+7504
+* 5
+this opens the file yet/another using the sequence numbers within the
+file. the message "read only file" indicates that the user is forbidden
+(by the file security system) to modify the file.
+* 5
+ errors:
+* 8
+dup file: <file-name>
+* 5
+a file, <file-name>, alredy exists and the user is trying to create a
+file with that name with an "* open ... new".
+* 8
+no file: <file-name>
+* 5
+the user is trying to open a file, <file-name>, and it does not exist
+on disk.
+* 8
+bad file: <file-name>
+* 5 
+the file <file-name> which the user is trying to open is not blocked 
+correctly. the correct blocking is 10-word records with multiple of 
+3 records per block.
+* 8
+inv user: <file-name>
+* 5
+the user is trying to open a file to which he has no access. if the 
+user has either secondary or tertiary access, the message:
+"read only file" is typed.
+* 8
+file too long
+* 5
+the user is trying to open a file with more then 8191 records.
+* 8
+seq overflow
+* 5
+the files the user is opening cause the sequence counter to exceed
+2,097,151. the file is opened, but the user should resequence it.
+* 8
+seq err-<n>
+* 5
+the file contains a record whose sequence number <n> is less than
+the sequence number of the preceeding record. the file is not opened.
+* 8
+bad file type: <file-type>
+* 5
+<file-type> is not "algol", "cobol", "fortran", "xalgol", "basic", or
+"data".
+* page 1    
+* 6
+file closing (close)
+* skip 2 glos underline 
+ * close =
+* 6
+this verb detatches the open file, from r/c.
+* 5
+examples:
+* 8
+5600:* close~
+ :
+* 5
+this is an example of closing a file that is in the correct order.
+* 8
+ 450:* reseq 100~
+ 9000:* close~
+ wait...
+ :
+* 5
+this is an example of closing a file that is not in order.
+* 5
+error:
+* 8
+no file open: close
+* 8
+there is no open file to close
+* page 1
+* 6
+listings on the teletypewriter (list)
+* 1
+to list files or any of their separate records, the following 
+constructs apply:
+* skip 2 glos underline
+ * list
+* skip 2 glos underline
+ * list <file-name>
+* skip 2 glos underline
+ * list <file-name> no
+* skip 2 glos underline
+ * list <file-name> <m>
+* skip 2 glos underline
+ * list <file-name> <m> <n>
+* skip 2 glos underline
+ * list <m> 
+* skip 2 glos underline
+ * list <m> <n>
+* 1
+the "list" verb casuse an entire file or portions of a file to be
+listed on the teletypewriter. listing may be discontinued by pressing
+the break key on the teletypewriter.
+* 5
+the first form lists the open file.
+* 5
+the second form lists the file <file-name>.
+* 5
+the third form lists the file <file-name>, without the record numbers.
+* 5
+the fourth form lists <file-name> from the <m>th record to the end.
+* 5
+the fifth form lists <file-name> from the <m>th to the <n>th records.
+* 5
+the sixth form lists sequence number <m> of the open file.
+* 5
+the last form lists sequence numbers <m> through <n> of the open file.
+* 4
+examples:
+* 6
+ 500:* list~
+ 100:begin
+ 200: integer i, j, k ;
+ 300: real x, y, z ;
+ 400: array a [0 : 9] ;
+ 500:
+* skip
+* 6
+ 5500:* list 8900,+3~
+ 8950:     i := i + 5 ;
+ 9125:     go to next ;
+ 9300: help:
+ 9400:
+* skip
+    300* list 60~
+ 000060    move a to b.
+ 000070
+* skip
+:* list some/file~
+       1:begin
+       2: integer i, j, k ;
+       3: real x, y, z ;
+       4: array a [0 : 9] ;
+       5:      a [i] := x ;
+       6:end.
+:
+*skip
+    500:* list some/file no~
+ begin
+  integer i, j, k ;
+  real x, y, z ;
+  array a [0 : 9] ;
+       a [i] := x ;
+ end.
+    500:
+:* list library/file 2,4~
+      2:procedure readdata 567,653
+      3:procedure writedata 654,789
+      4:procedure data 790,808
+:
+*skip
+:* list some/file 5~
+    5:    a [i] := x ;
+    6:end.
+:
+*skip
+:* list some/file 200,500~
+use record #s.
+:
+*5
+the last example illustrates the common error of referencing
+an external file with sequence numbers instead of record numbers.
+*7
+compressed file listings (quick)
+*1
+a compressed file listing may be obtained from r/c by use of the 
+constructs:
+*skip
+ * quick
+*skip
+ * quick <file-name>
+*skip
+ * quick <file-name> no
+*skip
+ * quick <file-name> <m>
+*skip
+ * quick <file-name> <m> <n>
+*skip
+ * quick <m>
+*skip
+ * quick <m> <n>
+* 1
+the "* quick" verb lists on the teletypewriter deleting all contiguous
+blanks except the first.  the file is not affected by the verb.
+* 5
+example:
+* skip
+4500:* list 4300,4400~
+4300:        for i :=      a step -1 until 0    do
+4400:          x  [i]    :=   sin   (y) ;
+4500:*quick -2 + 1~
+4300: for i := a step -1 until 0 do
+4400: x [i] := sin (y) ;
+4500:
+*7
+file removal (remove)
+*1
+to remove a file use the following construct:
+*skip
+* remove <file-name>
+* 5
+the remove verb removes the file <file-name> from disk.
+*skip
+* remove listing
+* 5
+remove line/<usercode>, the listing file from the last compilation.
+*skip
+examples:
+* skip
+3200:* remove a/b~
+3200:
+*skip
+546:* remove another/file~
+no file: another/file
+546:
+*skip
+:* open example/x cobol old~
+46500* remove example/x~
+:
+* 7
+line-printer file reproduction (print)
+* 5
+the print verb:
+*skip
+ *print <a> <b>
+*5
+prints the opened file on the line printer (labeled <a> <b>). if "<b>"
+is "double" the double spacing is used.
+*skip
+ * print <a> <b> <m>
+* 5
+as above, starting with sequence number <m>.
+* skip
+ * print <a> <b> <m>, <n>
+*5
+as above, stopping with sequence number <n>.
+*5
+examples:
+*skip
+:* open test/case data; *print tc double;* close~
+:
+*5
+this example illustrates an instance where a sequence file should be
+treated as data to shorten the operation.  if the file was opened 
+"algol old" it would have been resequenced by the current value of
+increment and then when it was closed it would have been recopied.
+if it was opened "algol" it would have been read to determine its
+sequence numbers. either way would have made the whole operation 
+much slower than opening the file "data".
+*skip
+ 8700:* print for user~
+wait...
+ 8700:
+* 7
+punched-card file reproduction (punch)
+*5
+to punch a file:
+*5 underline
+ * punch <a> <b>
+* 5
+punches a card deck (labeled <a> <b>) of the opened file.
+* 5 underline
+ * punch <a> <b> <m>
+*5
+as above, starting with sequence number <m>.
+*5 underline
+ * punch <a> <b> <m> <n>
+*5
+as above, stopping with sequence number <n>.
+*5
+example:
+*5
+7600:* punch a b 100,+10~
+wait..
+7600:
+*7
+file compilation (compile)
+*5
+files may be compiled to tyhe b5500 library by the following construct:
+*5 underline
+ * compile <file-name>
+* 5
+this verb initiates the compilation of the open file to library using
+the compiler indicated in the open statement. the object code is named
+<file-name>. the listing output of the compilation is equated to 
+"line/<usercode>" on disk. the "* listing" verb may be used to list
+the syntax errors.
+* 5 underline
+ * compile <file-name> <compiler>
+*5
+compiles the open file using specified compiler.
+*5
+examples:
+*5
+5700:* compile object/code~
+wait...
+:
+479:* compile test/object eztran~
+queued( 1).wait...
+:
+*5
+in the last example, the "eztran" compiler (eztran/disk) will be used.
+if the file is not in order, it will be reordered. since this is a 
+long operation the user gets a "wait" message. the "queued" message
+indicates that another users long operation is being processed and
+that this long operation is queued until the other is done. the "1"
+indicates that this is the first request in the queue.
+*7
+output of the compilation (listing)
+*5
+the listing file of the compiler is equated to line/<usercode> on disk.
+the file may be accessed by the use of the listing verb:
+*5 underline
+ * listing <file-type> <s>, <l>, <u>
+*5
+lists the sequence numbers related to segment <s> from relative address
+<l> to relative address <u>. <file-type> is algol, xalgol, basic, 
+cobol,or fortran and indicates which compiler created the listing file
+"line/<usercode>". (this file is automatically generated by the 
+compile verb). 
+* 5 underline
+ * listing <file-type> errors
+* 5
+lists the syntax errors of your last compilation.
+*5 underline
+ * listing
+*5
+prints the line file of your last compilation on the printer.
+*5
+examples:
+*5
+:* listing algol 5, 25, 35~
+wait... segment =      5:
+   4300: rel. addr. =   26.
+   4400: rel. addr. =   29.
+   9200: rel. addr. =   32.
+   9300: rel. addr. =   35.
+:* listing algol errors~
+wait...
+   7800:error 100   i,
+:
+   8900:* listing~
+   8900:
+
+* finish
+?END

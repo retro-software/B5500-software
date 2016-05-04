@@ -1,0 +1,12 @@
+?COMPILE R/C WITH ALGOL FOR LIBRARY
+?ALGOL FILE TAPE = symbol/rcsy94 DISK SERIAL
+?ALGOL FILE LINE = PRINT BACK UP DISK
+?ALGOL STACK = 1024
+?STACK = 256
+?CORE = 2800
+?PRIORITY = 1
+?DATA CARD
+$ SET   TAPE SEQXEQ
+$ TAPE  LIST SINGLE             
+                                                                        99999999
+?END
