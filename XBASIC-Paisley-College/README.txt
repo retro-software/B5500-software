@@ -7,8 +7,10 @@ card deck.
 
 XBASIC.alg_m is the interpreter and was transcribed from
 http://bitsavers.org/pdf/burroughs/B5000_5500_5700/listing/
-B5700_XBASIC_Apr77.pdf by James Fehlinger.
+B5700_XBASIC_Apr77.pdf by James Fehlinger of New Jersey, US. Corrections
+by Rich Cornwell of North Carolina, US.
 
 STQB64.BAS is a Star Trek game originally written for Quick Basic and
 donated by James Fehlinger.
+
 

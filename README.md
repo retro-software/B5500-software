@@ -10,22 +10,22 @@ Source files should be prepared in Unisys "PWB format," named for the Programmer
 
 File name extensions of the form `.*_m` denote PWB-format files. The following table shows the common extensions used with B5500 source files, the locations of text, sequence, and mark fields with in the record, and the full length to which records should be padded. The length does not include line delimiters. "Mark" fields are used to carry patchmark ("blame") information, but were not used on the B5500, and may be left blank:
 
-|File Kind  |Ext   | Text|  Seq| Mark|Length|
-|:----------|:-----|----:|----:|----:|-----:|
-|ALGOL      |.alg_m| 1-72|73-80|81-90| 90|
-|BASIC      |.bas_m| 5-72|  1-4|73-80| 80|
-|COBOL      |.cob_m| 7-72|  1-6|73-80| 80|
-|DATA       |.dat_m|  all|  n/a|  n/a| variable|
-|DCP        |.dcp_m| 1-72|73-80|81-90| 90|
-|ESPOL      |.esp_m| 1-72|73-80|81-88| 88|
-|FORTRAN    |.for_m| 1-72|73-80|81-80| 80|
-|JOB        |.wfl_m| 1-80|83-90|91-90| 90|
-|NDL        |.ndl_m| 1-72|73-80|81-90| 90|
-|PASCAL     |.pas_m| 1-72|73-80|81-90| 90|
-|SEQDATA    |.sqd_m| 1-72|73-80|81-90| 80|
-|TEXTDATA   |.txt_m| 1-72|73-80|81-90| 90|
-|XFORTRAN   |.xfr_m| 1-72|73-80|81-80| 80|
-
+|File Kind  |Ext     | Text|  Seq| Mark|   Length|
+|:----------|:-------|----:|----:|----:|--------:|
+|ALGOL      |`.alg_m`| 1-72|73-80|81-90|       90|
+|BASIC      |`.bas_m`| 5-72|  1-4|73-80|       80|
+|COBOL      |`.cob_m`| 7-72|  1-6|73-80|       80|
+|DATA       |`.dat_m`|  all|  n/a|  n/a| variable|
+|DCP        |`.dcp_m`| 1-72|73-80|81-90|       90|
+|ESPOL      |`.esp_m`| 1-72|73-80|81-88|       88|
+|FORTRAN    |`.for_m`| 1-72|73-80|81-80|       80|
+|JOB        |`.wfl_m`| 1-80|83-90|91-90|       90|
+|NDL        |`.ndl_m`| 1-72|73-80|81-90|       90|
+|PASCAL     |`.pas_m`| 1-72|73-80|81-90|       90|
+|SEQDATA    |`.sqd_m`| 1-72|73-80|81-90|       80|
+|TEXTDATA   |`.txt_m`| 1-72|73-80|81-90|       90|
+|XFORTRAN   |`.xfr_m`| 1-72|73-80|81-80|       80|
+|Card deck  |`.card` |  all|  n/a|  n/a|      n/a|
 
 The initial set of files for this repository were extracted from http://github.com/pkimpel/retro-b5500 in April 2016.
 
