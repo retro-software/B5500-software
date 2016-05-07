@@ -1,52 +1,52 @@
-?COMPILE OBJECT/READER ALGOL LIBRARY  
-?ALGOL FILE LINE = PRINT BACK UP DISK 
-?ALGOL FILE NEWTAPE = SYMBOL/READER SERIAL DISK  
-?DATA CARD                                      
-$CARD LIST NEW TAPE SINGLE                                               
-BEGIN                                                                   0001000
-COMMENT: SET COMMON TO CHANGE THE ACTION OF THIS PROGRAM.               0002000
-         DEFAULT WITH COMMON = 0 IS TO COPY "S" TO "LINE".              0003000
-         WITH COMMON = 1 THE FILE "CARD" IS COPIED TO "LINE".           0004000
-         WITH COMMON = 2 THE FILE "S" IS COPIED TO BOTH                 0005000
-                           "LINE" AND "NEWTAPE".                        0006000
-         WITH COMMON = 3 THE FILE "CARD" IS COPIED TO BOTH              0007000
-                           "LINE" AND "NEWTAPE".                        0008000
-                                                                        0009000
-         SET COMMON=3 TO LOAD A DECK OF CARDS TO NEWTAPE.               0010000
-         NO SETTING WILL PRINT OUT FILE "S".                            0011000
-;                                                                       0012000
-INTEGER COMMON;                                                         0013000
-LABEL EOF;                                                              0014000
-SAVE  ARRAY REC[0:15];                                                  0015000
-FILE IN CARD (2, 10);                                                   0016000
-FILE IN S DISK SERIAL (2, 10, 150);                                     0017000
-SAVE FILE OUT  NEWTAPE DISK SERIAL [20:3000] (2,10,150,SAVE 99);        0018000
-FILE OUT LINE 15(5,15);                                                 0019000
-                                                                        0020000
-STREAM PROCEDURE FILLIT(DEST);                                          0021000
-BEGIN                                                                   0022000
-   DI := DEST ; 15(DS := 8 LIT "        ");                             0023000
-END;                                                                    0024000
-                                                                        0025000
-FILLIT(REC[*]);                                                         0026000
-WHILE TRUE DO                                                           0027000
-  BEGIN                                                                 0028000
-  IF BOOLEAN(COMMON.[47:1]) THEN                                        0029000
-      READ(CARD, 10, REC[*]) [EOF]                                      0030000
-  ELSE                                                                  0031000
-      READ(S, 10, REC[*]) [EOF];                                        0032000
-  IF BOOLEAN(COMMON.[46:1]) THEN                                        0033000
-      WRITE(NEWTAPE, 10, REC[*]);                                       0034000
-  WRITE(LINE, 15, REC[*]);                                              0035000
-  END WHILE;                                                            0036000
-                                                                        0037000
-EOF:                                                                    0038000
-LOCK(LINE);                                                             0039000
-IF BOOLEAN(COMMON.[46:1]) THEN LOCK(NEWTAPE,RELEASE);                   0040000
-IF BOOLEAN(COMMON.[47:1]) THEN                                          0041000
-   CLOSE(CARD)                                                          0042000
-ELSE                                                                    0043000
-   CLOSE(S);                                                            0044000
-END.                                                                    0045000
-END.       LAST CARD ON 0CRDING  TAPE                                   9999999
-?END                                                                       
+?COMPILE OBJECT/READER ALGOL LIBRARY
+?ALGOL FILE LINE = PRINT BACK UP DISK
+?ALGOL FILE NEWTAPE = SYMBOL/READER SERIAL DISK
+?DATA CARD
+$CARD LIST NEW TAPE SINGLE
+BEGIN                                                                   00010000
+COMMENT: SET COMMON TO CHANGE THE ACTION OF THIS PROGRAM.               00020000
+         DEFAULT WITH COMMON = 0 IS TO COPY "S" TO "LINE".              00030000
+         WITH COMMON = 1 THE FILE "CARD" IS COPIED TO "LINE".           00040000
+         WITH COMMON = 2 THE FILE "S" IS COPIED TO BOTH                 00050000
+                           "LINE" AND "NEWTAPE".                        00060000
+         WITH COMMON = 3 THE FILE "CARD" IS COPIED TO BOTH              00070000
+                           "LINE" AND "NEWTAPE".                        00080000
+                                                                        00090000
+         SET COMMON=3 TO LOAD A DECK OF CARDS TO NEWTAPE.               00100000
+         NO SETTING WILL PRINT OUT FILE "S".                            00110000
+;                                                                       00120000
+INTEGER COMMON;                                                         00130000
+LABEL EOF;                                                              00140000
+SAVE  ARRAY REC[0:15];                                                  00150000
+FILE IN CARD (2, 10);                                                   00160000
+FILE IN S DISK SERIAL (2, 10, 150);                                     00170000
+SAVE FILE OUT  NEWTAPE DISK SERIAL [20:3000] (2,10,150,SAVE 99);        00180000
+FILE OUT LINE 15(5,15);                                                 00190000
+                                                                        00200000
+STREAM PROCEDURE FILLIT(DEST);                                          00210000
+BEGIN                                                                   00220000
+   DI := DEST ; 15(DS := 8 LIT "        ");                             00230000
+END;                                                                    00240000
+                                                                        00250000
+FILLIT(REC[*]);                                                         00260000
+WHILE TRUE DO                                                           00270000
+  BEGIN                                                                 00280000
+  IF BOOLEAN(COMMON.[47:1]) THEN                                        00290000
+      READ(CARD, 10, REC[*]) [EOF]                                      00300000
+  ELSE                                                                  00310000
+      READ(S, 10, REC[*]) [EOF];                                        00320000
+  IF BOOLEAN(COMMON.[46:1]) THEN                                        00330000
+      WRITE(NEWTAPE, 10, REC[*]);                                       00340000
+  WRITE(LINE, 15, REC[*]);                                              00350000
+  END WHILE;                                                            00360000
+                                                                        00370000
+EOF:                                                                    00380000
+LOCK(LINE);                                                             00390000
+IF BOOLEAN(COMMON.[46:1]) THEN LOCK(NEWTAPE,RELEASE);                   00400000
+IF BOOLEAN(COMMON.[47:1]) THEN                                          00410000
+   CLOSE(CARD)                                                          00420000
+ELSE                                                                    00430000
+   CLOSE(S);                                                            00440000
+END.                                                                    00450000
+END.       LAST CARD ON 0CRDING  TAPE                                   99999999
+?END
