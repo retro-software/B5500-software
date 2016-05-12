@@ -20,8 +20,9 @@ from disk to the remote terminal.
 
 The source files for R/C were transcribed from portions of
 http://bitsavers.org/pdf/burroughs/B5000_5500_5700/listing/
-B5700_Text_Editors_Sep76.pdf by Rich Cornwell of Durham, North Carolina,
-US. Proofing and correction of the source was done by Paul Kimpel.
+B5700_Text_Editors_Sep76.pdf
+by Rich Cornwell of Durham, North Carolina, US. Proofing and correction
+of the source was done by Paul Kimpel.
 
 RC.alg_m
     The R/C program, written in Burroughs Extended Algol.
@@ -29,8 +30,12 @@ RC.alg_m
 RC-Compile.card
     A card deck that can be used to compile the R/C source.
 
-RC-Manual.txt_m
+RC-Reference.txt_m
     The raw text of the R/C Reference Manual. This is coded in the
     markup notation used by the XREF/JONES utility, available on the
-    Mark XIII SYSTEM tape.
+    Mark XIII SYSTEM tape. This file was not transcribed from original
+    markup -- Rich Cornwell reverse-engineered the markup for the first
+    few sections from B5700_Text_Editors_Sep76.pdf; the reconstruction
+    was completed by Paul Kimpel.
+
 
