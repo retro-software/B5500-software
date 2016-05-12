@@ -1,772 +1,772 @@
-?EXECUTE XREF/JONES
-? FILE LINE  =   XREF/LISTING PRINT BACK UP DISK
-? DATA CARD
-$ CARD DOCUMENT FINAL DOCONLY SIX SINGLE
-COMMENT DOCUMENT
-* skip 10 center underline 3
- r/c
- reference
- manual
-* skip 20 indent 50 double
-  by
-  ron brody
- 12/22/71 version 94
-* single page no
-* define 1 = skip 2 paragraph 5,68 *
-* define 2 = skip 2 paragraph 10,68 *
-* define 3 = paragraph 7,68,4 *
-* define 4 = skip 2 paragraph 6,68 *
-* define 5 = skip 2 indent 15 *
-* define 6 = skip 2 indent 5 index only underline *
-* define 7 = page index center underline *
-* define 8 = skip 1 indent 15 *
-* 7
-introduction
-* 1
-r/c permits a user at a remote teletypewrite to create and
-maintain source or data files on the b5500 system disk. file
-types created and maintained with r/c are: algol, xalgol, cobol,
-fortran, basic, and data. these files represent normal (80
-character-per-card) punched card decks except that they are
-stored on the disk. each record can be thought of as one card.
-* 1
-r/c allows the user to:
-* skip 1 paragraph 7,68,4
- * create a variety of files
-* 3
- * resequence files
-* 3
- * print or punch files
-* 3
- * delete or insert records into a file
-* 3
- * modify records within a file
-* 3
- * scan a file for the occurrence of a string 
-* indent 12 
- (optionally replacing it with another string)
-* 3
- * remove files
-* 3
- * compile files
-* 3
- * perform many other functions
-* 1
-the teletypewriter (in conjunction with the program r/c) can be
-considered a keyboard extension which eliminates punched cards.
-it offers great flexibility in file handling.
-* 3
-r/c has two major restictions:
-* 2
-while the sequence number 99999999 is permitted for convenience,
-the maximum sequence number is 2097151 (2*21-1).
-* 2
-the maximum number of records permitted in a file is 8191.
-* 1
-in the discussion of certain r/c verbs, some of the elements of the
-syntax are given as <m>, <n>, <i>, or <j>. in each case, these 
-elements represent integer values which much be provided by the user.
-the value may be a record number for some verbs, the sequence number
-for others, or an increment amount. the bracked construct is only a 
-form of notation used to represent an integer parameter.
-* 7
-program operation and record sequencing
-* 1
-during creation and file maintenance, r/c automatically advances (by
-the current value of the "increment") the sequence number of each
-record that is input. the user my set this increment to any desired 
-value through use of the "*inc" verb (see below). the increment value
-is initialized to 100 when the user first runs r/c.
-* 1
-the initial sequence number is set to the increment when a new file is
-opened by a user. for example, if the current increment were 100, the
-first sequence number in the file would be "100:". this initial
-sequence number may be changed by the user through the use of the
-construct "*<n>", (see below).
-* 1
-after each record is typed into the file, the sequence number of the
-next record in the file is set to the last sequence number plus the
-increment. this sequence number is next typed on the teletypewriter.
-* 1
-if the file type is not "cobol", the sequence number is followed by
-a colon. if a record already exists with this sequence number, leading
-zeros are typed as a warning; otherwise leading zeros are suppressed.
-after the sequence number is typed out, the user may then enter the 
-desired contents for that sequence number of may enter a verb to 
-perform some other function.
-* 1
-alternatively, the user may set the sequence to some other value 
-through the use of the construction "*<n>", where <n> is the desired
-sequence number. note that leading zeros are accepted but not 
-necessary with this construct.
-* 1
-by use of the "*<n>" construct and the "*inc" verb to set the sequence
-number increment, the user may set up his own numbering sequence 
-throughout his file.
-* 1
-the examples illustrate the sequence number of the record typed on the
-left side of the page as it appears on the teletypewriter and the 
-manner in which these records are incremented. although algol, xalgol,
-basic and fortran files actually carry the sequence number in character
-positions 73-80 of the record, r/c types the number on the left margin
-of the teletypewriter.
-* 7
-program execution
-* 6
-initial remote terminal operations
-* 1
-for  logging-in to a teletypewriter, press the "orgi" button, wait for
-a dial tone from the speaker, and dial the computer number. the b5500
-responds with the message:
-* skip 2 underline center
-burroughs b-5500: <tt>/<bb>
-* 2
-(the station number is <tt>/<bb> where <tt> is the terminal number and
-<bb> is the buffer number.)
-* 4
-you may type:
-* skip 2 underline indent 11 
-* invalid 1
-q li: <usercode>/<authentication code>~
-* skip 2
-* 2
-* invalid 50
-this log-in message may have been preceded by a "qbo~" message which
-would have blacked out the line on which the log-in message was typed.
-* 2
-the b5500 validates the <usercode> and <authentication-code> and 
-responds by typing out the station number and the time of day of the
-log-in.
-* 1
-to connect a remote terminal to r/c, enter:
-* skip 2 center underline 
-* invalid 1,2
-qq run r/c;end.~
-* 1
-the b555 responds by either typing out a "boj" (beginning of job)
-message, a "scheduled" message, or a "running" message. a "boj"
-message indicates that r/c was not previously running but has now been
-entered into the mix and is ready for use. a "scheduled" message
-indicates that r/c was not previously running and is scheduled. in
-this case, r/c is not brought into the mix until other system users
-complete their work. the "running" message indicates r/c is already
-in the mix.
-* 1
-with r/c in the mix, it automatically searches out and locks onto
-remote terminals which have requested connection (by "run r/c"). as 
-soon as your terminal is locked, r/c types one of the following 
-message sequences, according to the manner in which r/c ended during
-your last r/c run (first-time users are considered to have caused 
-normal last entries):
-* 4
-initial message after normal termination of last run:
-* 5
- <r/c version number>
- hello <usercode.
- :
-* 1
-initial message after "* end x" or abnormal last run termination:
-* 4
-if a file was open
-* skip indent 10
- <r/c version number>
- <file name of open file>
- hello+<usercode>
- <sequence number in the open file>:
-* 4
-or if no file is open
-* skip indent 10
- <r/c> version number>
- hello+<usercode>
- :
-* 1
-if a message has been sent from another user to your usercode (see the
-mail verb), "mail %" is typed instead of "hello".
-* 4
-examples:
-* 5
- version #
- hello blum
- :
-* 5
-this is the normal initial sequence from r/c.
-* 5
- version #
- hello+ wilner
- :
-* 1
-this sequence indicates that r/c remembers the users state from 
-previous run. the state indicates the increment value, tab amount,
-save factor, percent on-off, and verb replacements.
-* 5
- version #
- file/name
- hello+ sharpe
- 00050600:
-* 1
-this sequence indicates that user has the file "file/name" open and is
-at the record with sequence number 50600. the leading zeros indicate
-that a record already exists with that number.
-* 6
-final remote terminal operations
-* 1
-the user should terminate his use of r/c with the "* end" command (see
-below). r/c will respond with "good bye."
-* 1
-after he has ened r/c, if the user is done with the remote terminal he
-* invalid 30
-should log-out by entering: "Qlo~"
-* 6
-r/c input
-* 1 
-input to r/c is either commands or records.
-* 1
-commands are indicated by the character "*" in the first input position.
-(if there is no open file, the "*" is optional.) all other input is 
-considered records to be placed in the open file. the format for a 
-command is the "*" followed by an r/c verb and, if needed, its 
-parameters. the verb and its parameter must be separated by a delimiter.
-* 1
-a delimiter is either a space or any special character except a ";", a 
-""", a ".", a "(", or a "[". multiple delimiters are treated as a 
-single delimiter.
-* 1
-a command may be followed by another input (either a command or a
-record) if it is terminiated by a ";". an error in a command of a 
-multiple input inhibits the processing of the rest of that input.
-* 5
-examples:
-* 5
-100:* inc 50~
-* 2
-this is an example of one of the input commands.
-* 5
-100:begin~
-* 2
-this is an example of placing a record at sequence number 100.
-* 5
-100:* inc 3;* reseq~
-* 2
-this is an example of multiple commands.
-* 5
-100:*35; this record goes at 35~
-* 2
-this is an example of a command followed by a record of input.
-* 5
-100:* open a/b data;* print for me;*close~
-* 2
-this is another example of multiple commands. note that the "*" must
-appear in the next character position following the semicolon or 
-remainder of the record is treated as data.
-* 1
-an input line is sent to the computer by typing the character "~". 
-typing errors can be corrected, by backspacing and line erasing,
-before a message is sent. the backspace character is apostrophe 
-(shift 7) and the line erase character is the up-arrow (shift n).
-all the following lines of input are equivalent (note the underlined
-characters represent use of the shift):
-* 5
-100:this is it~
-* 5
-100:this is not,butnthis is it~
-*indent 34
--
-* 5
-100:this7is it~
-*indent 23
--
-* 5 
-100:these777is is it~
-*indent 24
----
-* 1
-if, after backspacing and line erasing, the input line contains more
-then 240 characters, the input is discarded with an "input overflw"
-error message. data records are als discarded (with the error message)
-if they are too large for the file. (i.e. gtr 66 for cobol files;
-gtr 80 for data files; and gtr 72 for all other files)
-* 1
-there are two classes of requests to r/c: long and short. long
-operations are those that usually are slow to execute and are
-characterized by the "wait..." message. all other requests are 
-classified as short operations. long operations are sometimes queued
-before the "wait..." message, to be executed one at a time. short 
-requests are done as they are received. the users in the long 
-request queue (and the user performing a long operation if it is not
-typing on the remote) periodically receives a few "rubout" charcters
-of reassurance. r/c ignores any input sent by users in the queue or
-by the user whose long operation is being processed.
-* 1
-if the user produces no input for five minutes, he is sent the
-message "look alive". if he does not respond within another five
-minute period, r/c processes a "*end ds" for that user.
-* 6
-r/c output
-* 1
-output to the teletypewriter of the specail characters ~, !, <, {, >,
-and } is replaced by the "$" character in order that they do not evoke
-teletypewriter control functions with which they are associated.
-(these include line-feed, carriage-return, message-end, and 
-paper-tape-on.)
-* 1
-when the "break" key is depressed during output, the output is
-terminated with the message "break".
-* 7
-r/c files
-* 1 all files created by r/c are permanent disk files. the save factor
-is normally 7 days, but it may be changed by the save verb (see below).
-* 6
-file types
-* 1
-r/c enables the user to create and maintain algol, cobol, fortran, 
-xalgol, basic, and data files. these files have 80 character-long
-records, (one card image).
-* 1
-xalgol, basic, algol and fortran files contain eight digit sequence
-numbers located in the positions 73-80 of the card image.
-* 1
-cobol files contain six-digit sequence numbers, placed in positions
-1-6 of the record.
-* 1
-data files are not physically sequenced although r/c maintains an 
-internal, eight-digit number for each record.
-* 6
-file names
-* 1
-file names must be supplied to r/c. the form of a name is 
-<file prefix> / <file suffix>. throughout this document, <file-prefix>
-is used to specify and should be in the form above. the <file prefix>
-and the <file suffix> may each be no longer than 7 characters.
-* 4
-examples:
-* 5
-a/b
-* 8
-grimy/gulch
-* 8
-zap/1
-* 8
-16jan/suffix
-* 8
-0000000/disk
-* 6
-record referencing
-* 1
-records in the open file (see open below) are referred to by their 
-sequence number. "data" files are implicitly sequenced by the value
-of the increment when they are opened.
-* 1
-an alternative method of referencing records in the open file is 
-relative sequence numbers. a relative sequence number is an integer
-preceeded by a + or - sign. it may be used anyplace a sequence number
-is used. it is translated to a sequence number by moving forward or
-backward the indicated number of records and using the sequence number
-of that record.
-* 1
-records in a non-open file (external file) are referred to by their
-relative position within the file. the first record is 1, the second 
-2, etc. any sequence that may be on the records is ignored.
-* 7
-file-handling verbs
-* 1
-this section describes versb that handle files as a whole, rather than
-records within a files. however, a few versb have options in r/c syntax
-that permit access to records within the file. the complete syntax is
-given for each verb as well as a discussion and examples of its use. an
-asterisk ("*") must always be the first character in the input string 
-when a command is entered. if this is not followed, an existing record
-may be overwritten by the command itself. 
-* page 1
-* 6
-file opening and creation (open)
-* glossary 12,10,68
-* skip 2 glos underline
- * open <file-name> <file-type> new =
-* skip 2 glos underline
- * open <file-name> <file-type> old =
-* skip 2 glos underline
- * open <file-name> <file-type>  =
-* 1
-the "* open " verb attaches the user to the disk file <file-name>. the 
-<file-type> must be either "algol", "cobol", "fortran", "xalgol", 
-"basic", or "data". if the <open type> is "new", a new disk file is
-created. if the <open type> is "old", the disk file <file-name> is
-opened and resequenced by the current value of the increment. if the 
-<open type> is neither "new" or "old" the disk file <file-name> is 
-opened ad it is read to ddetermine its sequence numbers. this latter 
-form is slower than the open "old".
-* 4
-examples:
-* skip 2 indent 15
-:* open program/source algol new~
-* indent 20
-100:
-*5
-this creates a new disk file called program/source.
-* skip 2 indent 18
-63500:* open another/prog data old~
-* indent 19
-4500:
-*5
-this opens the file another/prog sequencing it by the current increment  
-value. note that the file that was open is first closed before the next
-file is opened.
-* skip 2 indent 15
-:* open yet/another cobol~
-* indent 15
-wait...
-* indent 15
-read only file.
-* indent 17
-7504
-* 5
-this opens the file yet/another using the sequence numbers within the
-file. the message "read only file" indicates that the user is forbidden
-(by the file security system) to modify the file.
-* 5
- errors:
-* 8
-dup file: <file-name>
-* 5
-a file, <file-name>, alredy exists and the user is trying to create a
-file with that name with an "* open ... new".
-* 8
-no file: <file-name>
-* 5
-the user is trying to open a file, <file-name>, and it does not exist
-on disk.
-* 8
-bad file: <file-name>
-* 5 
-the file <file-name> which the user is trying to open is not blocked 
-correctly. the correct blocking is 10-word records with multiple of 
-3 records per block.
-* 8
-inv user: <file-name>
-* 5
-the user is trying to open a file to which he has no access. if the 
-user has either secondary or tertiary access, the message:
-"read only file" is typed.
-* 8
-file too long
-* 5
-the user is trying to open a file with more then 8191 records.
-* 8
-seq overflow
-* 5
-the files the user is opening cause the sequence counter to exceed
-2,097,151. the file is opened, but the user should resequence it.
-* 8
-seq err-<n>
-* 5
-the file contains a record whose sequence number <n> is less than
-the sequence number of the preceeding record. the file is not opened.
-* 8
-bad file type: <file-type>
-* 5
-<file-type> is not "algol", "cobol", "fortran", "xalgol", "basic", or
-"data".
-* page 1    
-* 6
-file closing (close)
-* skip 2 glos underline 
- * close =
-* 6
-this verb detatches the open file, from r/c.
-* 5
-examples:
-* 8
-5600:* close~
- :
-* 5
-this is an example of closing a file that is in the correct order.
-* 8
- 450:* reseq 100~
- 9000:* close~
- wait...
- :
-* 5
-this is an example of closing a file that is not in order.
-* 5
-error:
-* 8
-no file open: close
-* 8
-there is no open file to close
-* page 1
-* 6
-listings on the teletypewriter (list)
-* 1
-to list files or any of their separate records, the following 
-constructs apply:
-* skip 2 glos underline
- * list
-* skip 2 glos underline
- * list <file-name>
-* skip 2 glos underline
- * list <file-name> no
-* skip 2 glos underline
- * list <file-name> <m>
-* skip 2 glos underline
- * list <file-name> <m> <n>
-* skip 2 glos underline
- * list <m> 
-* skip 2 glos underline
- * list <m> <n>
-* 1
-the "list" verb casuse an entire file or portions of a file to be
-listed on the teletypewriter. listing may be discontinued by pressing
-the break key on the teletypewriter.
-* 5
-the first form lists the open file.
-* 5
-the second form lists the file <file-name>.
-* 5
-the third form lists the file <file-name>, without the record numbers.
-* 5
-the fourth form lists <file-name> from the <m>th record to the end.
-* 5
-the fifth form lists <file-name> from the <m>th to the <n>th records.
-* 5
-the sixth form lists sequence number <m> of the open file.
-* 5
-the last form lists sequence numbers <m> through <n> of the open file.
-* 4
-examples:
-* 6
- 500:* list~
- 100:begin
- 200: integer i, j, k ;
- 300: real x, y, z ;
- 400: array a [0 : 9] ;
- 500:
-* skip
-* 6
- 5500:* list 8900,+3~
- 8950:     i := i + 5 ;
- 9125:     go to next ;
- 9300: help:
- 9400:
-* skip
-    300* list 60~
- 000060    move a to b.
- 000070
-* skip
-:* list some/file~
-       1:begin
-       2: integer i, j, k ;
-       3: real x, y, z ;
-       4: array a [0 : 9] ;
-       5:      a [i] := x ;
-       6:end.
-:
-*skip
-    500:* list some/file no~
- begin
-  integer i, j, k ;
-  real x, y, z ;
-  array a [0 : 9] ;
-       a [i] := x ;
- end.
-    500:
-:* list library/file 2,4~
-      2:procedure readdata 567,653
-      3:procedure writedata 654,789
-      4:procedure data 790,808
-:
-*skip
-:* list some/file 5~
-    5:    a [i] := x ;
-    6:end.
-:
-*skip
-:* list some/file 200,500~
-use record #s.
-:
-*5
-the last example illustrates the common error of referencing
-an external file with sequence numbers instead of record numbers.
-*7
-compressed file listings (quick)
-*1
-a compressed file listing may be obtained from r/c by use of the 
-constructs:
-*skip
- * quick
-*skip
- * quick <file-name>
-*skip
- * quick <file-name> no
-*skip
- * quick <file-name> <m>
-*skip
- * quick <file-name> <m> <n>
-*skip
- * quick <m>
-*skip
- * quick <m> <n>
-* 1
-the "* quick" verb lists on the teletypewriter deleting all contiguous
-blanks except the first.  the file is not affected by the verb.
-* 5
-example:
-* skip
-4500:* list 4300,4400~
-4300:        for i :=      a step -1 until 0    do
-4400:          x  [i]    :=   sin   (y) ;
-4500:*quick -2 + 1~
-4300: for i := a step -1 until 0 do
-4400: x [i] := sin (y) ;
-4500:
-*7
-file removal (remove)
-*1
-to remove a file use the following construct:
-*skip
-* remove <file-name>
-* 5
-the remove verb removes the file <file-name> from disk.
-*skip
-* remove listing
-* 5
-remove line/<usercode>, the listing file from the last compilation.
-*skip
-examples:
-* skip
-3200:* remove a/b~
-3200:
-*skip
-546:* remove another/file~
-no file: another/file
-546:
-*skip
-:* open example/x cobol old~
-46500* remove example/x~
-:
-* 7
-line-printer file reproduction (print)
-* 5
-the print verb:
-*skip
- *print <a> <b>
-*5
-prints the opened file on the line printer (labeled <a> <b>). if "<b>"
-is "double" the double spacing is used.
-*skip
- * print <a> <b> <m>
-* 5
-as above, starting with sequence number <m>.
-* skip
- * print <a> <b> <m>, <n>
-*5
-as above, stopping with sequence number <n>.
-*5
-examples:
-*skip
-:* open test/case data; *print tc double;* close~
-:
-*5
-this example illustrates an instance where a sequence file should be
-treated as data to shorten the operation.  if the file was opened 
-"algol old" it would have been resequenced by the current value of
-increment and then when it was closed it would have been recopied.
-if it was opened "algol" it would have been read to determine its
-sequence numbers. either way would have made the whole operation 
-much slower than opening the file "data".
-*skip
- 8700:* print for user~
-wait...
- 8700:
-* 7
-punched-card file reproduction (punch)
-*5
-to punch a file:
-*5 underline
- * punch <a> <b>
-* 5
-punches a card deck (labeled <a> <b>) of the opened file.
-* 5 underline
- * punch <a> <b> <m>
-*5
-as above, starting with sequence number <m>.
-*5 underline
- * punch <a> <b> <m> <n>
-*5
-as above, stopping with sequence number <n>.
-*5
-example:
-*5
-7600:* punch a b 100,+10~
-wait..
-7600:
-*7
-file compilation (compile)
-*5
-files may be compiled to tyhe b5500 library by the following construct:
-*5 underline
- * compile <file-name>
-* 5
-this verb initiates the compilation of the open file to library using
-the compiler indicated in the open statement. the object code is named
-<file-name>. the listing output of the compilation is equated to 
-"line/<usercode>" on disk. the "* listing" verb may be used to list
-the syntax errors.
-* 5 underline
- * compile <file-name> <compiler>
-*5
-compiles the open file using specified compiler.
-*5
-examples:
-*5
-5700:* compile object/code~
-wait...
-:
-479:* compile test/object eztran~
-queued( 1).wait...
-:
-*5
-in the last example, the "eztran" compiler (eztran/disk) will be used.
-if the file is not in order, it will be reordered. since this is a 
-long operation the user gets a "wait" message. the "queued" message
-indicates that another users long operation is being processed and
-that this long operation is queued until the other is done. the "1"
-indicates that this is the first request in the queue.
-*7
-output of the compilation (listing)
-*5
-the listing file of the compiler is equated to line/<usercode> on disk.
-the file may be accessed by the use of the listing verb:
-*5 underline
- * listing <file-type> <s>, <l>, <u>
-*5
-lists the sequence numbers related to segment <s> from relative address
-<l> to relative address <u>. <file-type> is algol, xalgol, basic, 
-cobol,or fortran and indicates which compiler created the listing file
-"line/<usercode>". (this file is automatically generated by the 
-compile verb). 
-* 5 underline
- * listing <file-type> errors
-* 5
-lists the syntax errors of your last compilation.
-*5 underline
- * listing
-*5
-prints the line file of your last compilation on the printer.
-*5
-examples:
-*5
-:* listing algol 5, 25, 35~
-wait... segment =      5:
-   4300: rel. addr. =   26.
-   4400: rel. addr. =   29.
-   9200: rel. addr. =   32.
-   9300: rel. addr. =   35.
-:* listing algol errors~
-wait...
-   7800:error 100   i,
-:
-   8900:* listing~
-   8900:
-
-* finish
-?END
+?EXECUTE XREF/JONES                                                     00000100          
+? FILE LINE  =   XREF/LISTING PRINT BACK UP DISK                        00000200          
+? DATA CARD                                                             00000900          
+$ CARD DOCUMENT FINAL DOCONLY SIX SINGLE                                00001000          
+COMMENT DOCUMENT                                                        00010000          
+* SKIP 10 CENTER UNDERLINE 3                                            00100000          
+ R/C                                                                    00101000          
+ REFERENCE                                                              00102000          
+ MANUAL                                                                 00103000          
+* SKIP 20 INDENT 50 DOUBLE                                              00104000          
+  BY                                                                    00105000          
+  RON BRODY                                                             00106000          
+ 12/22/71 VERSION 94                                                    00107000          
+* SINGLE PAGE NO                                                        00108000          
+* DEFINE 1 = SKIP 2 PARAGRAPH 5,68 *                                    00109000          
+* DEFINE 2 = SKIP 2 PARAGRAPH 10,68 *                                   00110000          
+* DEFINE 3 = PARAGRAPH 7,68,4 *                                         00111000          
+* DEFINE 4 = SKIP 2 PARAGRAPH 6,68 *                                    00112000          
+* DEFINE 5 = SKIP 2 INDENT 15 *                                         00113000          
+* DEFINE 6 = SKIP 2 INDENT 5 INDEX ONLY UNDERLINE *                     00114000          
+* DEFINE 7 = PAGE INDEX CENTER UNDERLINE *                              00115000          
+* DEFINE 8 = SKIP 1 INDENT 15 *                                         00116000          
+* 7                                                                     00200000          
+INTRODUCTION                                                            00201000          
+* 1                                                                     00202000          
+R/C PERMITS A USER AT A REMOTE TELETYPEWRITE TO CREATE AND              00203000          
+MAINTAIN SOURCE OR DATA FILES ON THE B5500 SYSTEM DISK. FILE            00204000          
+TYPES CREATED AND MAINTAINED WITH R/C ARE: ALGOL, XALGOL, COBOL,        00205000          
+FORTRAN, BASIC, AND DATA. THESE FILES REPRESENT NORMAL (80              00206000          
+CHARACTER-PER-CARD) PUNCHED CARD DECKS EXCEPT THAT THEY ARE             00207000          
+STORED ON THE DISK. EACH RECORD CAN BE THOUGHT OF AS ONE CARD.          00208000          
+* 1                                                                     00209000          
+R/C ALLOWS THE USER TO:                                                 00210000          
+* SKIP 1 PARAGRAPH 7,68,4                                               00211000          
+ * CREATE A VARIETY OF FILES                                            00212000          
+* 3                                                                     00213000          
+ * RESEQUENCE FILES                                                     00214000          
+* 3                                                                     00215000          
+ * PRINT OR PUNCH FILES                                                 00216000          
+* 3                                                                     00217000          
+ * DELETE OR INSERT RECORDS INTO A FILE                                 00218000          
+* 3                                                                     00219000          
+ * MODIFY RECORDS WITHIN A FILE                                         00220000          
+* 3                                                                     00221000          
+ * SCAN A FILE FOR THE OCCURRENCE OF A STRING                           00222000          
+* INDENT 12                                                             00223000          
+ (OPTIONALLY REPLACING IT WITH ANOTHER STRING)                          00224000          
+* 3                                                                     00225000          
+ * REMOVE FILES                                                         00226000          
+* 3                                                                     00227000          
+ * COMPILE FILES                                                        00228000          
+* 3                                                                     00229000          
+ * PERFORM MANY OTHER FUNCTIONS                                         00230000          
+* 1                                                                     00231000          
+THE TELETYPEWRITER (IN CONJUNCTION WITH THE PROGRAM R/C) CAN BE         00232000          
+CONSIDERED A KEYBOARD EXTENSION WHICH ELIMINATES PUNCHED CARDS.         00233000          
+IT OFFERS GREAT FLEXIBILITY IN FILE HANDLING.                           00234000          
+* 3                                                                     00235000          
+R/C HAS TWO MAJOR RESTICTIONS:                                          00236000          
+* 2                                                                     00237000          
+WHILE THE SEQUENCE NUMBER 99999999 IS PERMITTED FOR CONVENIENCE,        00238000          
+THE MAXIMUM SEQUENCE NUMBER IS 2097151 (2*21-1).                        00239000          
+* 2                                                                     00240000          
+THE MAXIMUM NUMBER OF RECORDS PERMITTED IN A FILE IS 8191.              00241000          
+* 1                                                                     00242000          
+IN THE DISCUSSION OF CERTAIN R/C VERBS, SOME OF THE ELEMENTS OF THE     00243000          
+SYNTAX ARE GIVEN AS <M>, <N>, <I>, OR <J>. IN EACH CASE, THESE          00244000          
+ELEMENTS REPRESENT INTEGER VALUES WHICH MUCH BE PROVIDED BY THE USER.   00245000          
+THE VALUE MAY BE A RECORD NUMBER FOR SOME VERBS, THE SEQUENCE NUMBER    00246000          
+FOR OTHERS, OR AN INCREMENT AMOUNT. THE BRACKED CONSTRUCT IS ONLY A     00247000          
+FORM OF NOTATION USED TO REPRESENT AN INTEGER PARAMETER.                00248000          
+* 7                                                                     01000000          
+PROGRAM OPERATION AND RECORD SEQUENCING                                 01001000          
+* 1                                                                     01002000          
+DURING CREATION AND FILE MAINTENANCE, R/C AUTOMATICALLY ADVANCES (BY    01003000          
+THE CURRENT VALUE OF THE "INCREMENT") THE SEQUENCE NUMBER OF EACH       01004000          
+RECORD THAT IS INPUT. THE USER MY SET THIS INCREMENT TO ANY DESIRED     01005000          
+VALUE THROUGH USE OF THE "*INC" VERB (SEE BELOW). THE INCREMENT VALUE   01006000          
+IS INITIALIZED TO 100 WHEN THE USER FIRST RUNS R/C.                     01007000          
+* 1                                                                     01008000          
+THE INITIAL SEQUENCE NUMBER IS SET TO THE INCREMENT WHEN A NEW FILE IS  01009000          
+OPENED BY A USER. FOR EXAMPLE, IF THE CURRENT INCREMENT WERE 100, THE   01010000          
+FIRST SEQUENCE NUMBER IN THE FILE WOULD BE "100:". THIS INITIAL         01011000          
+SEQUENCE NUMBER MAY BE CHANGED BY THE USER THROUGH THE USE OF THE       01012000          
+CONSTRUCT "*<N>", (SEE BELOW).                                          01013000          
+* 1                                                                     01014000          
+AFTER EACH RECORD IS TYPED INTO THE FILE, THE SEQUENCE NUMBER OF THE    01015000          
+NEXT RECORD IN THE FILE IS SET TO THE LAST SEQUENCE NUMBER PLUS THE     01016000          
+INCREMENT. THIS SEQUENCE NUMBER IS NEXT TYPED ON THE TELETYPEWRITER.    01017000          
+* 1                                                                     01018000          
+IF THE FILE TYPE IS NOT "COBOL", THE SEQUENCE NUMBER IS FOLLOWED BY     01019000          
+A COLON. IF A RECORD ALREADY EXISTS WITH THIS SEQUENCE NUMBER, LEADING  01020000          
+ZEROS ARE TYPED AS A WARNING; OTHERWISE LEADING ZEROS ARE SUPPRESSED.   01021000          
+AFTER THE SEQUENCE NUMBER IS TYPED OUT, THE USER MAY THEN ENTER THE     01022000          
+DESIRED CONTENTS FOR THAT SEQUENCE NUMBER OF MAY ENTER A VERB TO        01023000          
+PERFORM SOME OTHER FUNCTION.                                            01024000          
+* 1                                                                     01025000          
+ALTERNATIVELY, THE USER MAY SET THE SEQUENCE TO SOME OTHER VALUE        01026000          
+THROUGH THE USE OF THE CONSTRUCTION "*<N>", WHERE <N> IS THE DESIRED    01027000          
+SEQUENCE NUMBER. NOTE THAT LEADING ZEROS ARE ACCEPTED BUT NOT           01028000          
+NECESSARY WITH THIS CONSTRUCT.                                          01029000          
+* 1                                                                     01030000          
+BY USE OF THE "*<N>" CONSTRUCT AND THE "*INC" VERB TO SET THE SEQUENCE  01031000          
+NUMBER INCREMENT, THE USER MAY SET UP HIS OWN NUMBERING SEQUENCE        01032000          
+THROUGHOUT HIS FILE.                                                    01033000          
+* 1                                                                     01034000          
+THE EXAMPLES ILLUSTRATE THE SEQUENCE NUMBER OF THE RECORD TYPED ON THE  01035000          
+LEFT SIDE OF THE PAGE AS IT APPEARS ON THE TELETYPEWRITER AND THE       01036000          
+MANNER IN WHICH THESE RECORDS ARE INCREMENTED. ALTHOUGH ALGOL, XALGOL,  01037000          
+BASIC AND FORTRAN FILES ACTUALLY CARRY THE SEQUENCE NUMBER IN CHARACTER 01038000          
+POSITIONS 73-80 OF THE RECORD, R/C TYPES THE NUMBER ON THE LEFT MARGIN  01039000          
+OF THE TELETYPEWRITER.                                                  01040000          
+* 7                                                                     02000000          
+PROGRAM EXECUTION                                                       02001000          
+* 6                                                                     02002000          
+INITIAL REMOTE TERMINAL OPERATIONS                                      02003000          
+* 1                                                                     02004000          
+FOR  LOGGING-IN TO A TELETYPEWRITER, PRESS THE "ORGI" BUTTON, WAIT FOR  02005000          
+A DIAL TONE FROM THE SPEAKER, AND DIAL THE COMPUTER NUMBER. THE B5500   02006000          
+RESPONDS WITH THE MESSAGE:                                              02007000          
+* SKIP 2 UNDERLINE CENTER                                               02008000          
+BURROUGHS B-5500: <TT>/<BB>                                             02009000          
+* 2                                                                     02010000          
+(THE STATION NUMBER IS <TT>/<BB> WHERE <TT> IS THE TERMINAL NUMBER AND  02011000          
+<BB> IS THE BUFFER NUMBER.)                                             02012000          
+* 4                                                                     02013000          
+YOU MAY TYPE:                                                           02014000          
+* SKIP 2 UNDERLINE INDENT 11                                            02015000          
+* INVALID 1                                                             02016000          
+Q LI: <USERCODE>/<AUTHENTICATION CODE>~                                 02017000          
+* SKIP 2                                                                02018000          
+* 2                                                                     02019000          
+* INVALID 50                                                            02020000          
+THIS LOG-IN MESSAGE MAY HAVE BEEN PRECEDED BY A "QBO~" MESSAGE WHICH    02021000          
+WOULD HAVE BLACKED OUT THE LINE ON WHICH THE LOG-IN MESSAGE WAS TYPED.  02022000          
+* 2                                                                     02023000          
+THE B5500 VALIDATES THE <USERCODE> AND <AUTHENTICATION-CODE> AND        02024000          
+RESPONDS BY TYPING OUT THE STATION NUMBER AND THE TIME OF DAY OF THE    02025000          
+LOG-IN.                                                                 02026000          
+* 1                                                                     02027000          
+TO CONNECT A REMOTE TERMINAL TO R/C, ENTER:                             02028000          
+* SKIP 2 CENTER UNDERLINE                                               02029000          
+* INVALID 1,2                                                           02030000          
+QQ RUN R/C;END.~                                                        02031000          
+* 1                                                                     02032000          
+THE B555 RESPONDS BY EITHER TYPING OUT A "BOJ" (BEGINNING OF JOB)       02033000          
+MESSAGE, A "SCHEDULED" MESSAGE, OR A "RUNNING" MESSAGE. A "BOJ"         02034000          
+MESSAGE INDICATES THAT R/C WAS NOT PREVIOUSLY RUNNING BUT HAS NOW BEEN  02035000          
+ENTERED INTO THE MIX AND IS READY FOR USE. A "SCHEDULED" MESSAGE        02036000          
+INDICATES THAT R/C WAS NOT PREVIOUSLY RUNNING AND IS SCHEDULED. IN      02037000          
+THIS CASE, R/C IS NOT BROUGHT INTO THE MIX UNTIL OTHER SYSTEM USERS     02038000          
+COMPLETE THEIR WORK. THE "RUNNING" MESSAGE INDICATES R/C IS ALREADY     02039000          
+IN THE MIX.                                                             02040000          
+* 1                                                                     02041000          
+WITH R/C IN THE MIX, IT AUTOMATICALLY SEARCHES OUT AND LOCKS ONTO       02042000          
+REMOTE TERMINALS WHICH HAVE REQUESTED CONNECTION (BY "RUN R/C"). AS     02043000          
+SOON AS YOUR TERMINAL IS LOCKED, R/C TYPES ONE OF THE FOLLOWING         02044000          
+MESSAGE SEQUENCES, ACCORDING TO THE MANNER IN WHICH R/C ENDED DURING    02045000          
+YOUR LAST R/C RUN (FIRST-TIME USERS ARE CONSIDERED TO HAVE CAUSED       02046000          
+NORMAL LAST ENTRIES):                                                   02047000          
+* 4                                                                     02048000          
+INITIAL MESSAGE AFTER NORMAL TERMINATION OF LAST RUN:                   02049000          
+* 5                                                                     02050000          
+ <R/C VERSION NUMBER>                                                   02051000          
+ HELLO <USERCODE.                                                       02052000          
+ :                                                                      02053000          
+* 1                                                                     02054000          
+INITIAL MESSAGE AFTER "* END X" OR ABNORMAL LAST RUN TERMINATION:       02055000          
+* 4                                                                     02056000          
+IF A FILE WAS OPEN                                                      02057000          
+* SKIP INDENT 10                                                        02058000          
+ <R/C VERSION NUMBER>                                                   02059000          
+ <FILE NAME OF OPEN FILE>                                               02060000          
+ HELLO+<USERCODE>                                                       02061000          
+ <SEQUENCE NUMBER IN THE OPEN FILE>:                                    02062000          
+* 4                                                                     02063000          
+OR IF NO FILE IS OPEN                                                   02064000          
+* SKIP INDENT 10                                                        02065000          
+ <R/C> VERSION NUMBER>                                                  02066000          
+ HELLO+<USERCODE>                                                       02067000          
+ :                                                                      02068000          
+* 1                                                                     02069000          
+IF A MESSAGE HAS BEEN SENT FROM ANOTHER USER TO YOUR USERCODE (SEE THE  02070000          
+MAIL VERB), "MAIL %" IS TYPED INSTEAD OF "HELLO".                       02071000          
+* 4                                                                     02072000          
+EXAMPLES:                                                               02073000          
+* 5                                                                     02074000          
+ VERSION #                                                              02075000          
+ HELLO BLUM                                                             02076000          
+ :                                                                      02077000          
+* 5                                                                     02078000          
+THIS IS THE NORMAL INITIAL SEQUENCE FROM R/C.                           02079000          
+* 5                                                                     02080000          
+ VERSION #                                                              02081000          
+ HELLO+ WILNER                                                          02082000          
+ :                                                                      02083000          
+* 1                                                                     02084000          
+THIS SEQUENCE INDICATES THAT R/C REMEMBERS THE USERS STATE FROM         02085000          
+PREVIOUS RUN. THE STATE INDICATES THE INCREMENT VALUE, TAB AMOUNT,      02086000          
+SAVE FACTOR, PERCENT ON-OFF, AND VERB REPLACEMENTS.                     02087000          
+* 5                                                                     02088000          
+ VERSION #                                                              02089000          
+ FILE/NAME                                                              02090000          
+ HELLO+ SHARPE                                                          02091000          
+ 00050600:                                                              02092000          
+* 1                                                                     02093000          
+THIS SEQUENCE INDICATES THAT USER HAS THE FILE "FILE/NAME" OPEN AND IS  02094000          
+AT THE RECORD WITH SEQUENCE NUMBER 50600. THE LEADING ZEROS INDICATE    02095000          
+THAT A RECORD ALREADY EXISTS WITH THAT NUMBER.                          02096000          
+* 6                                                                     02097000          
+FINAL REMOTE TERMINAL OPERATIONS                                        02098000          
+* 1                                                                     02099000          
+THE USER SHOULD TERMINATE HIS USE OF R/C WITH THE "* END" COMMAND (SEE  02100000          
+BELOW). R/C WILL RESPOND WITH "GOOD BYE."                               02101000          
+* 1                                                                     02102000          
+AFTER HE HAS ENED R/C, IF THE USER IS DONE WITH THE REMOTE TERMINAL HE  02103000          
+* INVALID 30                                                            02104000          
+SHOULD LOG-OUT BY ENTERING: "QLO~"                                      02105000          
+* 6                                                                     02106000          
+R/C INPUT                                                               02107000          
+* 1                                                                     02108000          
+INPUT TO R/C IS EITHER COMMANDS OR RECORDS.                             02109000          
+* 1                                                                     02110000          
+COMMANDS ARE INDICATED BY THE CHARACTER "*" IN THE FIRST INPUT POSITION.02111000          
+(IF THERE IS NO OPEN FILE, THE "*" IS OPTIONAL.) ALL OTHER INPUT IS     02112000          
+CONSIDERED RECORDS TO BE PLACED IN THE OPEN FILE. THE FORMAT FOR A      02113000          
+COMMAND IS THE "*" FOLLOWED BY AN R/C VERB AND, IF NEEDED, ITS          02114000          
+PARAMETERS. THE VERB AND ITS PARAMETER MUST BE SEPARATED BY A DELIMITER.02115000          
+* 1                                                                     02116000          
+A DELIMITER IS EITHER A SPACE OR ANY SPECIAL CHARACTER EXCEPT A ";", A  02117000          
+""", A ".", A "(", OR A "[". MULTIPLE DELIMITERS ARE TREATED AS A       02118000          
+SINGLE DELIMITER.                                                       02119000          
+* 1                                                                     02120000          
+A COMMAND MAY BE FOLLOWED BY ANOTHER INPUT (EITHER A COMMAND OR A       02121000          
+RECORD) IF IT IS TERMINIATED BY A ";". AN ERROR IN A COMMAND OF A       02122000          
+MULTIPLE INPUT INHIBITS THE PROCESSING OF THE REST OF THAT INPUT.       02123000          
+* 5                                                                     02124000          
+EXAMPLES:                                                               02125000          
+* 5                                                                     02126000          
+100:* INC 50~                                                           02127000          
+* 2                                                                     02128000          
+THIS IS AN EXAMPLE OF ONE OF THE INPUT COMMANDS.                        02129000          
+* 5                                                                     02130000          
+100:BEGIN~                                                              02131000          
+* 2                                                                     02132000          
+THIS IS AN EXAMPLE OF PLACING A RECORD AT SEQUENCE NUMBER 100.          02133000          
+* 5                                                                     02134000          
+100:* INC 3;* RESEQ~                                                    02135000          
+* 2                                                                     02136000          
+THIS IS AN EXAMPLE OF MULTIPLE COMMANDS.                                02137000          
+* 5                                                                     02138000          
+100:*35; THIS RECORD GOES AT 35~                                        02139000          
+* 2                                                                     02140000          
+THIS IS AN EXAMPLE OF A COMMAND FOLLOWED BY A RECORD OF INPUT.          02141000          
+* 5                                                                     02142000          
+100:* OPEN A/B DATA;* PRINT FOR ME;*CLOSE~                              02143000          
+* 2                                                                     02144000          
+THIS IS ANOTHER EXAMPLE OF MULTIPLE COMMANDS. NOTE THAT THE "*" MUST    02145000          
+APPEAR IN THE NEXT CHARACTER POSITION FOLLOWING THE SEMICOLON OR        02146000          
+REMAINDER OF THE RECORD IS TREATED AS DATA.                             02147000          
+* 1                                                                     02148000          
+AN INPUT LINE IS SENT TO THE COMPUTER BY TYPING THE CHARACTER "~".      02149000          
+TYPING ERRORS CAN BE CORRECTED, BY BACKSPACING AND LINE ERASING,        02150000          
+BEFORE A MESSAGE IS SENT. THE BACKSPACE CHARACTER IS APOSTROPHE         02151000          
+(SHIFT 7) AND THE LINE ERASE CHARACTER IS THE UP-ARROW (SHIFT N).       02152000          
+ALL THE FOLLOWING LINES OF INPUT ARE EQUIVALENT (NOTE THE UNDERLINED    02153000          
+CHARACTERS REPRESENT USE OF THE SHIFT):                                 02154000          
+* 5                                                                     02155000          
+100:THIS IS IT~                                                         02156000          
+* 5                                                                     02157000          
+100:THIS IS NOT,BUTNTHIS IS IT~                                         02158000          
+*INDENT 34                                                              02159000          
+-                                                                       02160000          
+* 5                                                                     02161000          
+100:THIS7IS IT~                                                         02162000          
+*INDENT 23                                                              02163000          
+-                                                                       02164000          
+* 5                                                                     02165000          
+100:THESE777IS IS IT~                                                   02166000          
+*INDENT 24                                                              02167000          
+---                                                                     02168000          
+* 1                                                                     02169000          
+IF, AFTER BACKSPACING AND LINE ERASING, THE INPUT LINE CONTAINS MORE    02170000          
+THEN 240 CHARACTERS, THE INPUT IS DISCARDED WITH AN "INPUT OVERFLW"     02171000          
+ERROR MESSAGE. DATA RECORDS ARE ALS DISCARDED (WITH THE ERROR MESSAGE)  02172000          
+IF THEY ARE TOO LARGE FOR THE FILE. (I.E. GTR 66 FOR COBOL FILES;       02173000          
+GTR 80 FOR DATA FILES; AND GTR 72 FOR ALL OTHER FILES)                  02174000          
+* 1                                                                     02175000          
+THERE ARE TWO CLASSES OF REQUESTS TO R/C: LONG AND SHORT. LONG          02176000          
+OPERATIONS ARE THOSE THAT USUALLY ARE SLOW TO EXECUTE AND ARE           02177000          
+CHARACTERIZED BY THE "WAIT..." MESSAGE. ALL OTHER REQUESTS ARE          02178000          
+CLASSIFIED AS SHORT OPERATIONS. LONG OPERATIONS ARE SOMETIMES QUEUED    02179000          
+BEFORE THE "WAIT..." MESSAGE, TO BE EXECUTED ONE AT A TIME. SHORT       02180000          
+REQUESTS ARE DONE AS THEY ARE RECEIVED. THE USERS IN THE LONG           02181000          
+REQUEST QUEUE (AND THE USER PERFORMING A LONG OPERATION IF IT IS NOT    02182000          
+TYPING ON THE REMOTE) PERIODICALLY RECEIVES A FEW "RUBOUT" CHARCTERS    02183000          
+OF REASSURANCE. R/C IGNORES ANY INPUT SENT BY USERS IN THE QUEUE OR     02184000          
+BY THE USER WHOSE LONG OPERATION IS BEING PROCESSED.                    02185000          
+* 1                                                                     02186000          
+IF THE USER PRODUCES NO INPUT FOR FIVE MINUTES, HE IS SENT THE          02187000          
+MESSAGE "LOOK ALIVE". IF HE DOES NOT RESPOND WITHIN ANOTHER FIVE        02188000          
+MINUTE PERIOD, R/C PROCESSES A "*END DS" FOR THAT USER.                 02189000          
+* 6                                                                     02190000          
+R/C OUTPUT                                                              02191000          
+* 1                                                                     02192000          
+OUTPUT TO THE TELETYPEWRITER OF THE SPECAIL CHARACTERS ~, !, <, {, >,   02193000          
+AND } IS REPLACED BY THE "$" CHARACTER IN ORDER THAT THEY DO NOT EVOKE  02194000          
+TELETYPEWRITER CONTROL FUNCTIONS WITH WHICH THEY ARE ASSOCIATED.        02195000          
+(THESE INCLUDE LINE-FEED, CARRIAGE-RETURN, MESSAGE-END, AND             02196000          
+PAPER-TAPE-ON.)                                                         02197000          
+* 1                                                                     02198000          
+WHEN THE "BREAK" KEY IS DEPRESSED DURING OUTPUT, THE OUTPUT IS          02199000          
+TERMINATED WITH THE MESSAGE "BREAK".                                    02200000          
+* 7                                                                     03000000          
+R/C FILES                                                               03001000          
+* 1 ALL FILES CREATED BY R/C ARE PERMANENT DISK FILES. THE SAVE FACTOR  03002000          
+IS NORMALLY 7 DAYS, BUT IT MAY BE CHANGED BY THE SAVE VERB (SEE BELOW). 03003000          
+* 6                                                                     03004000          
+FILE TYPES                                                              03005000          
+* 1                                                                     03006000          
+R/C ENABLES THE USER TO CREATE AND MAINTAIN ALGOL, COBOL, FORTRAN,      03007000          
+XALGOL, BASIC, AND DATA FILES. THESE FILES HAVE 80 CHARACTER-LONG       03008000          
+RECORDS, (ONE CARD IMAGE).                                              03009000          
+* 1                                                                     03010000          
+XALGOL, BASIC, ALGOL AND FORTRAN FILES CONTAIN EIGHT DIGIT SEQUENCE     03011000          
+NUMBERS LOCATED IN THE POSITIONS 73-80 OF THE CARD IMAGE.               03012000          
+* 1                                                                     03013000          
+COBOL FILES CONTAIN SIX-DIGIT SEQUENCE NUMBERS, PLACED IN POSITIONS     03014000          
+1-6 OF THE RECORD.                                                      03015000          
+* 1                                                                     03016000          
+DATA FILES ARE NOT PHYSICALLY SEQUENCED ALTHOUGH R/C MAINTAINS AN       03017000          
+INTERNAL, EIGHT-DIGIT NUMBER FOR EACH RECORD.                           03018000          
+* 6                                                                     03019000          
+FILE NAMES                                                              03020000          
+* 1                                                                     03021000          
+FILE NAMES MUST BE SUPPLIED TO R/C. THE FORM OF A NAME IS               03022000          
+<FILE PREFIX> / <FILE SUFFIX>. THROUGHOUT THIS DOCUMENT, <FILE-PREFIX>  03023000          
+IS USED TO SPECIFY AND SHOULD BE IN THE FORM ABOVE. THE <FILE PREFIX>   03024000          
+AND THE <FILE SUFFIX> MAY EACH BE NO LONGER THAN 7 CHARACTERS.          03025000          
+* 4                                                                     03026000          
+EXAMPLES:                                                               03027000          
+* 5                                                                     03028000          
+A/B                                                                     03029000          
+* 8                                                                     03030000          
+GRIMY/GULCH                                                             03031000          
+* 8                                                                     03032000          
+ZAP/1                                                                   03033000          
+* 8                                                                     03034000          
+16JAN/SUFFIX                                                            03035000          
+* 8                                                                     03036000          
+0000000/DISK                                                            03037000          
+* 6                                                                     03038000          
+RECORD REFERENCING                                                      03039000          
+* 1                                                                     03040000          
+RECORDS IN THE OPEN FILE (SEE OPEN BELOW) ARE REFERRED TO BY THEIR      03041000          
+SEQUENCE NUMBER. "DATA" FILES ARE IMPLICITLY SEQUENCED BY THE VALUE     03042000          
+OF THE INCREMENT WHEN THEY ARE OPENED.                                  03043000          
+* 1                                                                     03044000          
+AN ALTERNATIVE METHOD OF REFERENCING RECORDS IN THE OPEN FILE IS        03045000          
+RELATIVE SEQUENCE NUMBERS. A RELATIVE SEQUENCE NUMBER IS AN INTEGER     03046000          
+PRECEEDED BY A + OR - SIGN. IT MAY BE USED ANYPLACE A SEQUENCE NUMBER   03047000          
+IS USED. IT IS TRANSLATED TO A SEQUENCE NUMBER BY MOVING FORWARD OR     03048000          
+BACKWARD THE INDICATED NUMBER OF RECORDS AND USING THE SEQUENCE NUMBER  03049000          
+OF THAT RECORD.                                                         03050000          
+* 1                                                                     03051000          
+RECORDS IN A NON-OPEN FILE (EXTERNAL FILE) ARE REFERRED TO BY THEIR     03052000          
+RELATIVE POSITION WITHIN THE FILE. THE FIRST RECORD IS 1, THE SECOND    03053000          
+2, ETC. ANY SEQUENCE THAT MAY BE ON THE RECORDS IS IGNORED.             03054000          
+* 7                                                                     04000000          
+FILE-HANDLING VERBS                                                     04001000          
+* 1                                                                     04002000          
+THIS SECTION DESCRIBES VERSB THAT HANDLE FILES AS A WHOLE, RATHER THAN  04003000          
+RECORDS WITHIN A FILES. HOWEVER, A FEW VERSB HAVE OPTIONS IN R/C SYNTAX 04004000          
+THAT PERMIT ACCESS TO RECORDS WITHIN THE FILE. THE COMPLETE SYNTAX IS   04005000          
+GIVEN FOR EACH VERB AS WELL AS A DISCUSSION AND EXAMPLES OF ITS USE. AN 04006000          
+ASTERISK ("*") MUST ALWAYS BE THE FIRST CHARACTER IN THE INPUT STRING   04007000          
+WHEN A COMMAND IS ENTERED. IF THIS IS NOT FOLLOWED, AN EXISTING RECORD  04008000          
+MAY BE OVERWRITTEN BY THE COMMAND ITSELF.                               04009000          
+* PAGE 1                                                                04100000          
+* 6                                                                     04101000          
+FILE OPENING AND CREATION (OPEN)                                        04102000          
+* GLOSSARY 12,10,68                                                     04102500          
+* SKIP 2 GLOS UNDERLINE                                                 04103000          
+ * OPEN <FILE-NAME> <FILE-TYPE> NEW =                                   04103500          
+* SKIP 2 GLOS UNDERLINE                                                 04104000          
+ * OPEN <FILE-NAME> <FILE-TYPE> OLD =                                   04104500          
+* SKIP 2 GLOS UNDERLINE                                                 04105000          
+ * OPEN <FILE-NAME> <FILE-TYPE>  =                                      04105500          
+* 1                                                                     04106000          
+THE "* OPEN " VERB ATTACHES THE USER TO THE DISK FILE <FILE-NAME>. THE  04106500          
+<FILE-TYPE> MUST BE EITHER "ALGOL", "COBOL", "FORTRAN", "XALGOL",       04107000          
+"BASIC", OR "DATA". IF THE <OPEN TYPE> IS "NEW", A NEW DISK FILE IS     04107500          
+CREATED. IF THE <OPEN TYPE> IS "OLD", THE DISK FILE <FILE-NAME> IS      04108000          
+OPENED AND RESEQUENCED BY THE CURRENT VALUE OF THE INCREMENT. IF THE    04108500          
+<OPEN TYPE> IS NEITHER "NEW" OR "OLD" THE DISK FILE <FILE-NAME> IS      04109000          
+OPENED AD IT IS READ TO DDETERMINE ITS SEQUENCE NUMBERS. THIS LATTER    04109500          
+FORM IS SLOWER THAN THE OPEN "OLD".                                     04110000          
+* 4                                                                     04110500          
+EXAMPLES:                                                               04111000          
+* SKIP 2 INDENT 15                                                      04111500          
+:* OPEN PROGRAM/SOURCE ALGOL NEW~                                       04112000          
+* INDENT 20                                                             04112500          
+100:                                                                    04113000          
+*5                                                                      04113500          
+THIS CREATES A NEW DISK FILE CALLED PROGRAM/SOURCE.                     04114000          
+* SKIP 2 INDENT 18                                                      04114500          
+63500:* OPEN ANOTHER/PROG DATA OLD~                                     04115000          
+* INDENT 19                                                             04115500          
+4500:                                                                   04116000          
+*5                                                                      04116500          
+THIS OPENS THE FILE ANOTHER/PROG SEQUENCING IT BY THE CURRENT INCREMENT 04117000          
+VALUE. NOTE THAT THE FILE THAT WAS OPEN IS FIRST CLOSED BEFORE THE NEXT 04117500          
+FILE IS OPENED.                                                         04118000          
+* SKIP 2 INDENT 15                                                      04118500          
+:* OPEN YET/ANOTHER COBOL~                                              04119000          
+* INDENT 15                                                             04119500          
+WAIT...                                                                 04120000          
+* INDENT 15                                                             04120500          
+READ ONLY FILE.                                                         04121000          
+* INDENT 17                                                             04121500          
+7504                                                                    04122000          
+* 5                                                                     04122500          
+THIS OPENS THE FILE YET/ANOTHER USING THE SEQUENCE NUMBERS WITHIN THE   04123000          
+FILE. THE MESSAGE "READ ONLY FILE" INDICATES THAT THE USER IS FORBIDDEN 04123500          
+(BY THE FILE SECURITY SYSTEM) TO MODIFY THE FILE.                       04124000          
+* 5                                                                     04124500          
+ ERRORS:                                                                04125000          
+* 8                                                                     04125500          
+DUP FILE: <FILE-NAME>                                                   04126000          
+* 5                                                                     04126500          
+A FILE, <FILE-NAME>, ALREDY EXISTS AND THE USER IS TRYING TO CREATE A   04127000          
+FILE WITH THAT NAME WITH AN "* OPEN ... NEW".                           04127500          
+* 8                                                                     04128000          
+NO FILE: <FILE-NAME>                                                    04128500          
+* 5                                                                     04129000          
+THE USER IS TRYING TO OPEN A FILE, <FILE-NAME>, AND IT DOES NOT EXIST   04129500          
+ON DISK.                                                                04130000          
+* 8                                                                     04130500          
+BAD FILE: <FILE-NAME>                                                   04131000          
+* 5                                                                     04131500          
+THE FILE <FILE-NAME> WHICH THE USER IS TRYING TO OPEN IS NOT BLOCKED    04132000          
+CORRECTLY. THE CORRECT BLOCKING IS 10-WORD RECORDS WITH MULTIPLE OF     04132500          
+3 RECORDS PER BLOCK.                                                    04133000          
+* 8                                                                     04133500          
+INV USER: <FILE-NAME>                                                   04134000          
+* 5                                                                     04134500          
+THE USER IS TRYING TO OPEN A FILE TO WHICH HE HAS NO ACCESS. IF THE     04135000          
+USER HAS EITHER SECONDARY OR TERTIARY ACCESS, THE MESSAGE:              04135500          
+"READ ONLY FILE" IS TYPED.                                              04136000          
+* 8                                                                     04136500          
+FILE TOO LONG                                                           04137000          
+* 5                                                                     04137500          
+THE USER IS TRYING TO OPEN A FILE WITH MORE THEN 8191 RECORDS.          04138000          
+* 8                                                                     04138500          
+SEQ OVERFLOW                                                            04139000          
+* 5                                                                     04139500          
+THE FILES THE USER IS OPENING CAUSE THE SEQUENCE COUNTER TO EXCEED      04140000          
+2,097,151. THE FILE IS OPENED, BUT THE USER SHOULD RESEQUENCE IT.       04140500          
+* 8                                                                     04141000          
+SEQ ERR-<N>                                                             04141500          
+* 5                                                                     04142000          
+THE FILE CONTAINS A RECORD WHOSE SEQUENCE NUMBER <N> IS LESS THAN       04142500          
+THE SEQUENCE NUMBER OF THE PRECEEDING RECORD. THE FILE IS NOT OPENED.   04143000          
+* 8                                                                     04143500          
+BAD FILE TYPE: <FILE-TYPE>                                              04144000          
+* 5                                                                     04144500          
+<FILE-TYPE> IS NOT "ALGOL", "COBOL", "FORTRAN", "XALGOL", "BASIC", OR   04145000          
+"DATA".                                                                 04145500          
+* PAGE 1                                                                04150000          
+* 6                                                                     04151000          
+FILE CLOSING (CLOSE)                                                    04152000          
+* SKIP 2 GLOS UNDERLINE                                                 04153000          
+ * CLOSE =                                                              04154000          
+* 6                                                                     04155000          
+THIS VERB DETATCHES THE OPEN FILE, FROM R/C.                            04156000          
+* 5                                                                     04157000          
+EXAMPLES:                                                               04158000          
+* 8                                                                     04159000          
+5600:* CLOSE~                                                           04160000          
+ :                                                                      04161000          
+* 5                                                                     04162000          
+THIS IS AN EXAMPLE OF CLOSING A FILE THAT IS IN THE CORRECT ORDER.      04163000          
+* 8                                                                     04164000          
+ 450:* RESEQ 100~                                                       04165000          
+ 9000:* CLOSE~                                                          04166000          
+ WAIT...                                                                04167000          
+ :                                                                      04168000          
+* 5                                                                     04169000          
+THIS IS AN EXAMPLE OF CLOSING A FILE THAT IS NOT IN ORDER.              04170000          
+* 5                                                                     04171000          
+ERROR:                                                                  04172000          
+* 8                                                                     04173000          
+NO FILE OPEN: CLOSE                                                     04174000          
+* 8                                                                     04175000          
+THERE IS NO OPEN FILE TO CLOSE                                          04176000          
+* PAGE 1                                                                04200000          
+* 6                                                                     04201000          
+LISTINGS ON THE TELETYPEWRITER (LIST)                                   04202000          
+* 1                                                                     04203000          
+TO LIST FILES OR ANY OF THEIR SEPARATE RECORDS, THE FOLLOWING           04204000          
+CONSTRUCTS APPLY:                                                       04205000          
+* SKIP 2 GLOS UNDERLINE                                                 04206000          
+ * LIST                                                                 04207000          
+* SKIP 2 GLOS UNDERLINE                                                 04208000          
+ * LIST <FILE-NAME>                                                     04209000          
+* SKIP 2 GLOS UNDERLINE                                                 04210000          
+ * LIST <FILE-NAME> NO                                                  04211000          
+* SKIP 2 GLOS UNDERLINE                                                 04212000          
+ * LIST <FILE-NAME> <M>                                                 04213000          
+* SKIP 2 GLOS UNDERLINE                                                 04214000          
+ * LIST <FILE-NAME> <M> <N>                                             04215000          
+* SKIP 2 GLOS UNDERLINE                                                 04216000          
+ * LIST <M>                                                             04217000          
+* SKIP 2 GLOS UNDERLINE                                                 04218000          
+ * LIST <M> <N>                                                         04219000          
+* 1                                                                     04220000          
+THE "LIST" VERB CASUSE AN ENTIRE FILE OR PORTIONS OF A FILE TO BE       04221000          
+LISTED ON THE TELETYPEWRITER. LISTING MAY BE DISCONTINUED BY PRESSING   04222000          
+THE BREAK KEY ON THE TELETYPEWRITER.                                    04223000          
+* 5                                                                     04224000          
+THE FIRST FORM LISTS THE OPEN FILE.                                     04225000          
+* 5                                                                     04226000          
+THE SECOND FORM LISTS THE FILE <FILE-NAME>.                             04227000          
+* 5                                                                     04228000          
+THE THIRD FORM LISTS THE FILE <FILE-NAME>, WITHOUT THE RECORD NUMBERS.  04229000          
+* 5                                                                     04230000          
+THE FOURTH FORM LISTS <FILE-NAME> FROM THE <M>TH RECORD TO THE END.     04231000          
+* 5                                                                     04232000          
+THE FIFTH FORM LISTS <FILE-NAME> FROM THE <M>TH TO THE <N>TH RECORDS.   04233000          
+* 5                                                                     04234000          
+THE SIXTH FORM LISTS SEQUENCE NUMBER <M> OF THE OPEN FILE.              04235000          
+* 5                                                                     04236000          
+THE LAST FORM LISTS SEQUENCE NUMBERS <M> THROUGH <N> OF THE OPEN FILE.  04237000          
+* 4                                                                     04238000          
+EXAMPLES:                                                               04239000          
+* 6                                                                     04240000          
+ 500:* LIST~                                                            04241000          
+ 100:BEGIN                                                              04242000          
+ 200: INTEGER I, J, K ;                                                 04243000          
+ 300: REAL X, Y, Z ;                                                    04244000          
+ 400: ARRAY A [0 : 9] ;                                                 04245000          
+ 500:                                                                   04246000          
+* SKIP                                                                  04247000          
+* 6                                                                     04248000          
+ 5500:* LIST 8900,+3~                                                   04249000          
+ 8950:     I := I + 5 ;                                                 04250000          
+ 9125:     GO TO NEXT ;                                                 04251000          
+ 9300: HELP:                                                            04252000          
+ 9400:                                                                  04253000          
+* SKIP                                                                  04254000          
+    300* LIST 60~                                                       04255000          
+ 000060    MOVE A TO B.                                                 04256000          
+ 000070                                                                 04257000          
+* SKIP                                                                  04258000          
+:* LIST SOME/FILE~                                                      04259000          
+       1:BEGIN                                                          04260000          
+       2: INTEGER I, J, K ;                                             04261000          
+       3: REAL X, Y, Z ;                                                04262000          
+       4: ARRAY A [0 : 9] ;                                             04263000          
+       5:      A [I] := X ;                                             04264000          
+       6:END.                                                           04265000          
+:                                                                       04266000          
+*SKIP                                                                   04267000          
+    500:* LIST SOME/FILE NO~                                            04268000          
+ BEGIN                                                                  04269000          
+  INTEGER I, J, K ;                                                     04270000          
+  REAL X, Y, Z ;                                                        04271000          
+  ARRAY A [0 : 9] ;                                                     04272000          
+       A [I] := X ;                                                     04273000          
+ END.                                                                   04274000          
+    500:                                                                04275000          
+:* LIST LIBRARY/FILE 2,4~                                               04276000          
+      2:PROCEDURE READDATA 567,653                                      04277000          
+      3:PROCEDURE WRITEDATA 654,789                                     04278000          
+      4:PROCEDURE DATA 790,808                                          04279000          
+:                                                                       04280000          
+*SKIP                                                                   04281000          
+:* LIST SOME/FILE 5~                                                    04282000          
+    5:    A [I] := X ;                                                  04283000          
+    6:END.                                                              04284000          
+:                                                                       04285000          
+*SKIP                                                                   04286000          
+:* LIST SOME/FILE 200,500~                                              04287000          
+USE RECORD #S.                                                          04288000          
+:                                                                       04289000          
+*5                                                                      04290000          
+THE LAST EXAMPLE ILLUSTRATES THE COMMON ERROR OF REFERENCING            04291000          
+AN EXTERNAL FILE WITH SEQUENCE NUMBERS INSTEAD OF RECORD NUMBERS.       04292000          
+*7                                                                      04300000          
+COMPRESSED FILE LISTINGS (QUICK)                                        04301000          
+*1                                                                      04302000          
+A COMPRESSED FILE LISTING MAY BE OBTAINED FROM R/C BY USE OF THE        04303000          
+CONSTRUCTS:                                                             04304000          
+*SKIP                                                                   04305000          
+ * QUICK                                                                04306000          
+*SKIP                                                                   04307000          
+ * QUICK <FILE-NAME>                                                    04308000          
+*SKIP                                                                   04309000          
+ * QUICK <FILE-NAME> NO                                                 04310000          
+*SKIP                                                                   04311000          
+ * QUICK <FILE-NAME> <M>                                                04312000          
+*SKIP                                                                   04313000          
+ * QUICK <FILE-NAME> <M> <N>                                            04314000          
+*SKIP                                                                   04315000          
+ * QUICK <M>                                                            04316000          
+*SKIP                                                                   04317000          
+ * QUICK <M> <N>                                                        04318000          
+* 1                                                                     04319000          
+THE "* QUICK" VERB LISTS ON THE TELETYPEWRITER DELETING ALL CONTIGUOUS  04320000          
+BLANKS EXCEPT THE FIRST.  THE FILE IS NOT AFFECTED BY THE VERB.         04321000          
+* 5                                                                     04322000          
+EXAMPLE:                                                                04323000          
+* SKIP                                                                  04324000          
+4500:* LIST 4300,4400~                                                  04325000          
+4300:        FOR I :=      A STEP -1 UNTIL 0    DO                      04326000          
+4400:          X  [I]    :=   SIN   (Y) ;                               04327000          
+4500:*QUICK -2 + 1~                                                     04328000          
+4300: FOR I := A STEP -1 UNTIL 0 DO                                     04329000          
+4400: X [I] := SIN (Y) ;                                                04330000          
+4500:                                                                   04331000          
+*7                                                                      04350000          
+FILE REMOVAL (REMOVE)                                                   04351000          
+*1                                                                      04352000          
+TO REMOVE A FILE USE THE FOLLOWING CONSTRUCT:                           04353000          
+*SKIP                                                                   04354000          
+* REMOVE <FILE-NAME>                                                    04355000          
+* 5                                                                     04356000          
+THE REMOVE VERB REMOVES THE FILE <FILE-NAME> FROM DISK.                 04357000          
+*SKIP                                                                   04358000          
+* REMOVE LISTING                                                        04359000          
+* 5                                                                     04360000          
+REMOVE LINE/<USERCODE>, THE LISTING FILE FROM THE LAST COMPILATION.     04361000          
+*SKIP                                                                   04362000          
+EXAMPLES:                                                               04363000          
+* SKIP                                                                  04364000          
+3200:* REMOVE A/B~                                                      04365000          
+3200:                                                                   04366000          
+*SKIP                                                                   04367000          
+546:* REMOVE ANOTHER/FILE~                                              04368000          
+NO FILE: ANOTHER/FILE                                                   04369000          
+546:                                                                    04370000          
+*SKIP                                                                   04371000          
+:* OPEN EXAMPLE/X COBOL OLD~                                            04372000          
+46500* REMOVE EXAMPLE/X~                                                04373000          
+:                                                                       04374000          
+* 7                                                                     04400000          
+LINE-PRINTER FILE REPRODUCTION (PRINT)                                  04401000          
+* 5                                                                     04402000          
+THE PRINT VERB:                                                         04403000          
+*SKIP                                                                   04404000          
+ *PRINT <A> <B>                                                         04405000          
+*5                                                                      04406000          
+PRINTS THE OPENED FILE ON THE LINE PRINTER (LABELED <A> <B>). IF "<B>"  04407000          
+IS "DOUBLE" THE DOUBLE SPACING IS USED.                                 04408000          
+*SKIP                                                                   04409000          
+ * PRINT <A> <B> <M>                                                    04410000          
+* 5                                                                     04411000          
+AS ABOVE, STARTING WITH SEQUENCE NUMBER <M>.                            04412000          
+* SKIP                                                                  04413000          
+ * PRINT <A> <B> <M>, <N>                                               04414000          
+*5                                                                      04415000          
+AS ABOVE, STOPPING WITH SEQUENCE NUMBER <N>.                            04416000          
+*5                                                                      04417000          
+EXAMPLES:                                                               04418000          
+*SKIP                                                                   04419000          
+:* OPEN TEST/CASE DATA; *PRINT TC DOUBLE;* CLOSE~                       04420000          
+:                                                                       04421000          
+*5                                                                      04422000          
+THIS EXAMPLE ILLUSTRATES AN INSTANCE WHERE A SEQUENCE FILE SHOULD BE    04423000          
+TREATED AS DATA TO SHORTEN THE OPERATION.  IF THE FILE WAS OPENED       04424000          
+"ALGOL OLD" IT WOULD HAVE BEEN RESEQUENCED BY THE CURRENT VALUE OF      04425000          
+INCREMENT AND THEN WHEN IT WAS CLOSED IT WOULD HAVE BEEN RECOPIED.      04426000          
+IF IT WAS OPENED "ALGOL" IT WOULD HAVE BEEN READ TO DETERMINE ITS       04427000          
+SEQUENCE NUMBERS. EITHER WAY WOULD HAVE MADE THE WHOLE OPERATION        04428000          
+MUCH SLOWER THAN OPENING THE FILE "DATA".                               04429000          
+*SKIP                                                                   04430000          
+ 8700:* PRINT FOR USER~                                                 04431000          
+WAIT...                                                                 04432000          
+ 8700:                                                                  04433000          
+* 7                                                                     04450000          
+PUNCHED-CARD FILE REPRODUCTION (PUNCH)                                  04451000          
+*5                                                                      04452000          
+TO PUNCH A FILE:                                                        04453000          
+*5 UNDERLINE                                                            04454000          
+ * PUNCH <A> <B>                                                        04455000          
+* 5                                                                     04456000          
+PUNCHES A CARD DECK (LABELED <A> <B>) OF THE OPENED FILE.               04457000          
+* 5 UNDERLINE                                                           04458000          
+ * PUNCH <A> <B> <M>                                                    04459000          
+*5                                                                      04460000          
+AS ABOVE, STARTING WITH SEQUENCE NUMBER <M>.                            04461000          
+*5 UNDERLINE                                                            04462000          
+ * PUNCH <A> <B> <M> <N>                                                04463000          
+*5                                                                      04464000          
+AS ABOVE, STOPPING WITH SEQUENCE NUMBER <N>.                            04465000          
+*5                                                                      04466000          
+EXAMPLE:                                                                04467000          
+*5                                                                      04468000          
+7600:* PUNCH A B 100,+10~                                               04469000          
+WAIT..                                                                  04470000          
+7600:                                                                   04471000          
+*7                                                                      04500000          
+FILE COMPILATION (COMPILE)                                              04501000          
+*5                                                                      04502000          
+FILES MAY BE COMPILED TO TYHE B5500 LIBRARY BY THE FOLLOWING CONSTRUCT: 04503000          
+*5 UNDERLINE                                                            04504000          
+ * COMPILE <FILE-NAME>                                                  04505000          
+* 5                                                                     04506000          
+THIS VERB INITIATES THE COMPILATION OF THE OPEN FILE TO LIBRARY USING   04507000          
+THE COMPILER INDICATED IN THE OPEN STATEMENT. THE OBJECT CODE IS NAMED  04508000          
+<FILE-NAME>. THE LISTING OUTPUT OF THE COMPILATION IS EQUATED TO        04509000          
+"LINE/<USERCODE>" ON DISK. THE "* LISTING" VERB MAY BE USED TO LIST     04510000          
+THE SYNTAX ERRORS.                                                      04511000          
+* 5 UNDERLINE                                                           04512000          
+ * COMPILE <FILE-NAME> <COMPILER>                                       04513000          
+*5                                                                      04514000          
+COMPILES THE OPEN FILE USING SPECIFIED COMPILER.                        04515000          
+*5                                                                      04516000          
+EXAMPLES:                                                               04517000          
+*5                                                                      04518000          
+5700:* COMPILE OBJECT/CODE~                                             04519000          
+WAIT...                                                                 04520000          
+:                                                                       04521000          
+479:* COMPILE TEST/OBJECT EZTRAN~                                       04522000          
+QUEUED( 1).WAIT...                                                      04523000          
+:                                                                       04524000          
+*5                                                                      04525000          
+IN THE LAST EXAMPLE, THE "EZTRAN" COMPILER (EZTRAN/DISK) WILL BE USED.  04526000          
+IF THE FILE IS NOT IN ORDER, IT WILL BE REORDERED. SINCE THIS IS A      04527000          
+LONG OPERATION THE USER GETS A "WAIT" MESSAGE. THE "QUEUED" MESSAGE     04528000          
+INDICATES THAT ANOTHER USERS LONG OPERATION IS BEING PROCESSED AND      04529000          
+THAT THIS LONG OPERATION IS QUEUED UNTIL THE OTHER IS DONE. THE "1"     04530000          
+INDICATES THAT THIS IS THE FIRST REQUEST IN THE QUEUE.                  04531000          
+*7                                                                      04550000          
+OUTPUT OF THE COMPILATION (LISTING)                                     04551000          
+*5                                                                      04552000          
+THE LISTING FILE OF THE COMPILER IS EQUATED TO LINE/<USERCODE> ON DISK. 04553000          
+THE FILE MAY BE ACCESSED BY THE USE OF THE LISTING VERB:                04554000          
+*5 UNDERLINE                                                            04555000          
+ * LISTING <FILE-TYPE> <S>, <L>, <U>                                    04556000          
+*5                                                                      04557000          
+LISTS THE SEQUENCE NUMBERS RELATED TO SEGMENT <S> FROM RELATIVE ADDRESS 04558000          
+<L> TO RELATIVE ADDRESS <U>. <FILE-TYPE> IS ALGOL, XALGOL, BASIC,       04559000          
+COBOL,OR FORTRAN AND INDICATES WHICH COMPILER CREATED THE LISTING FILE  04560000          
+"LINE/<USERCODE>". (THIS FILE IS AUTOMATICALLY GENERATED BY THE         04561000          
+COMPILE VERB).                                                          04562000          
+* 5 UNDERLINE                                                           04563000          
+ * LISTING <FILE-TYPE> ERRORS                                           04564000          
+* 5                                                                     04565000          
+LISTS THE SYNTAX ERRORS OF YOUR LAST COMPILATION.                       04566000          
+*5 UNDERLINE                                                            04567000          
+ * LISTING                                                              04568000          
+*5                                                                      04569000          
+PRINTS THE LINE FILE OF YOUR LAST COMPILATION ON THE PRINTER.           04570000          
+*5                                                                      04571000          
+EXAMPLES:                                                               04572000          
+*5                                                                      04573000          
+:* LISTING ALGOL 5, 25, 35~                                             04574000          
+WAIT... SEGMENT =      5:                                               04575000          
+   4300: REL. ADDR. =   26.                                             04576000          
+   4400: REL. ADDR. =   29.                                             04577000          
+   9200: REL. ADDR. =   32.                                             04578000          
+   9300: REL. ADDR. =   35.                                             04579000          
+:* LISTING ALGOL ERRORS~                                                04580000          
+WAIT...                                                                 04581000          
+   7800:ERROR 100   I,                                                  04582000          
+:                                                                       04583000          
+   8900:* LISTING~                                                      04584000          
+   8900:                                                                04585000          
+                                                                        99990000          
+* FINISH                                                                99999900          
+?END                                                                    99999990          
