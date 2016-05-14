@@ -3296,7 +3296,7 @@ BEGIN                                                                   00001500
         END ;                                                           01102000          
         INTERUPT (1, 2, M) ;                                            01102500          
       END ;                                                             01103000          
-      IMAGE [9] := I ;                                                  01104000:= 1?     
+      IMAGE [9] := I ;                                                  01104000          
       WRITE (LIBRARY, 10, IMAGE [*]) ;                                  01104500          
       CLOSE (LIBRARY) ;                                                 01104600          
       IF NOT EMPTY1 THEN                                                01105000          
