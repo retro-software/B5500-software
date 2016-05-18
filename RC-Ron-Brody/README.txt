@@ -24,18 +24,18 @@ B5700_Text_Editors_Sep76.pdf
 by Rich Cornwell of Durham, North Carolina, US. Proofing and correction
 of the source was done by Paul Kimpel.
 
-RC.alg_m
+RCSY94.RON.alg_m
     The R/C program, written in Burroughs Extended Algol.
 
 RC-Compile.card
     A card deck that can be used to compile the R/C source.
 
-RC-Reference.txt_m
+TEACHER.0000094.txt_m
     The raw text of the R/C Reference Manual. This is coded in the
     markup notation used by the XREF/JONES utility, available on the
-    Mark XIII SYSTEM tape. This file was not transcribed from original
-    markup -- Rich Cornwell reverse-engineered the markup for the first
-    few sections from B5700_Text_Editors_Sep76.pdf; the reconstruction
-    was completed by Paul Kimpel.
+    Mark XIII SYSTEM tape. This file has not been transcribed from
+    original markup -- Rich Cornwell reverse-engineered the markup for
+    the first several sections from B5700_Text_Editors_Sep76.pdf; the
+    reconstruction was completed by Paul Kimpel.
 
 
