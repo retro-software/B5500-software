@@ -1,5 +1,5 @@
 ?COMPILE R/C WITH ALGOL FOR LIBRARY
-?ALGOL FILE TAPE = symbol/rcsy94 DISK SERIAL
+?ALGOL FILE TAPE = RCSY94/RON SERIAL
 ?ALGOL FILE LINE = PRINT BACK UP DISK
 ?ALGOL STACK = 1024
 ?STACK = 256
@@ -7,6 +7,6 @@
 ?PRIORITY = 1
 ?DATA CARD
 $ SET   TAPE SEQXEQ
-$ TAPE  LIST SINGLE             
+$ TAPE  LIST SINGLE
                                                                         99999999
 ?END

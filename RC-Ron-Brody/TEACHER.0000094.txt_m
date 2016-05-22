@@ -1,8 +1,31 @@
-?EXECUTE XREF/JONES                                                     00000100          
-? FILE LINE  =   XREF/LISTING PRINT BACK UP DISK                        00000200          
-? FILE NEWDISK = TEACHER/0000094 SERIAL                                 00000500          
-? DATA CARD                                                             00000900          
-$ CARD SIX DOCONLY DOCUMENT NEW DISK                                    00001000          
+16101647  0 EXECUTE                                                     00001000          
+08640890  1 DITTO                                                       00001100          
+09170945  2 COPY                                                        00001200          
+09831024  3 INLINE                                                      00001300          
+08190831  4 ZIP                                                         00001400          
+11051130  5 CHANGE                                                      00001500          
+12131233  6 EDIT                                                        00001600          
+14561463  7 SAVE                                                        00001700          
+12491269  8 RESEQ                                                       00001800          
+07200731  9 PUNCH                                                       00001900          
+06840696 10 PRINT                                                       00002000          
+12821293 11 DELETE                                                      00002100          
+05000503 12 CLOSE                                                       00002200          
+07440755 13 COMPILE                                                     00002300          
+14731490 14 COLUMN                                                      00002400          
+11521183 15 SCAN                                                        00002500          
+07800795 16 LISTING                                                     00002600          
+13181325 17 INC                                                         00002700          
+14161437 18 TAB                                                         00002800          
+13441374 19 PERCENT                                                     00002900          
+06240640 20 QUICK                                                       00003000          
+05310562 21 LIST                                                        00003100          
+04130427 22 OPEN                                                        00003200          
+15111518 23 MAIL                                                        00003300          
+15711579 24 TEACH                                                       00003400          
+06570664 25 REMOVE                                                      00003500          
+13971400 26 REPLACE                                                     00003600          
+15331551 27 END                                                         00003700          
 COMMENT DOCUMENT                                                        00010000          
 *DEFINE  1 = SKIP 2 PARAGRAPH 10,72,5 *                                 00011000          
 *DEFINE  2 = SKIP 2 PARAGRAPH 15,72,5 *                                 00012000          
@@ -386,6 +409,7 @@ WHEN A COMMAND IS ENTERED. IF THIS IS NOT FOLLOWED, AN EXISTING RECORD  04008000
 MAY BE OVERWRITTEN BY THE COMMAND ITSELF.                               04009000          
 *5                                                                      04100000          
 FILE OPENING AND CREATION (OPEN)                                        04102000          
+*RCTEACH OPEN                                                           04102500          
 *17                                                                     04103000          
  * OPEN  <FILE-NAME> <FILE-TYPE> NEW                                    04103500          
 *17                                                                     04104000          
@@ -401,6 +425,7 @@ OPENED AND RESEQUENCED BY THE CURRENT VALUE OF THE INCREMENT. IF THE    04108500
 <OPEN TYPE> IS NEITHER "NEW" NOR "OLD" THE DISK FILE <FILE-NAME> IS     04109000          
 OPENED AND IT IS READ TO DETERMINE ITS SEQUENCE NUMBERS. THIS LATTER    04109500          
 FORM IS SLOWER THAN THE OPEN "OLD".                                     04110000          
+*RCEND                                                                  04110200          
 *15                                                                     04110500          
 EXAMPLES:                                                               04111000          
 *25                                                                     04111500          
@@ -471,10 +496,12 @@ BAD FILE TYPE: <FILE-TYPE>                                              04144000
 FILE CLOSING (CLOSE)                                                    04152000          
 *1                                                                      04152200          
 FILES ARE CLOSED BY USE OF THE FOLLOWING CONSTRUCT:                     04152400          
+*RCTEACH CLOSE                                                          04152500          
 *17                                                                     04153000          
  * CLOSE                                                                04154000          
 *1                                                                      04155000          
 THIS VERB DETATCHES THE OPEN FILE, FROM R/C.                            04156000          
+*RCEND                                                                  04156500          
 *15                                                                     04157000          
 EXAMPLES:                                                               04158000          
 *25                                                                     04159000          
@@ -500,6 +527,7 @@ LISTINGS ON THE TELETYPEWRITER (LIST)                                   04202000
 *1                                                                      04203000          
 TO LIST FILES OR ANY OF THEIR SEPARATE RECORDS, THE FOLLOWING           04204000          
 CONSTRUCTS APPLY:                                                       04205000          
+*RCTEACH LIST                                                           04205500          
 *17                                                                     04206000          
  * LIST                                                                 04207000          
 *17                                                                     04208000          
@@ -532,6 +560,7 @@ THE FIFTH FORM LISTS <FILE-NAME> FROM THE <M>TH TO THE <N>TH RECORDS.   04233000
 THE SIXTH FORM LISTS SEQUENCE NUMBER <M> OF THE OPEN FILE.              04235000          
 *2                                                                      04236000          
 THE LAST FORM LISTS SEQUENCE NUMBERS <M> THROUGH <N> OF THE OPEN FILE.  04237000          
+*RCEND                                                                  04237500          
 *15                                                                     04238000          
 EXAMPLES:                                                               04239000          
 *25                                                                     04240000          
@@ -591,6 +620,7 @@ COMPRESSED FILE LISTINGS (QUICK)                                        04301000
 *1                                                                      04302000          
 A COMPRESSED FILE LISTING MAY BE OBTAINED FROM R/C BY USE OF THE        04303000          
 CONSTRUCTS:                                                             04304000          
+*RCTEACH QUICK                                                          04304500          
 *17                                                                     04305000          
  * QUICK                                                                04306000          
 *17                                                                     04307000          
@@ -608,6 +638,7 @@ CONSTRUCTS:                                                             04304000
 *1                                                                      04319000          
 THE "* QUICK" VERB LISTS ON THE TELETYPEWRITER DELETING ALL CONTIGUOUS  04320000          
 BLANKS EXCEPT THE FIRST.  THE FILE IS NOT AFFECTED BY THE VERB.         04321000          
+*RCEND                                                                  04321500          
 *15                                                                     04322000          
 EXAMPLE:                                                                04323000          
 *25                                                                     04324000          
@@ -622,6 +653,7 @@ EXAMPLE:                                                                04323000
 FILE REMOVAL (REMOVE)                                                   04351000          
 *1                                                                      04352000          
 TO REMOVE A FILE USE THE FOLLOWING CONSTRUCT:                           04353000          
+*RCTEACH REMOVE                                                         04353500          
 *17                                                                     04354000          
  * REMOVE <FILE-NAME>                                                   04355000          
 *2                                                                      04356000          
@@ -629,7 +661,8 @@ THE REMOVE VERB REMOVES THE FILE <FILE-NAME> FROM DISK.                 04357000
 *17                                                                     04358000          
  * REMOVE LISTING                                                       04359000          
 *2                                                                      04360000          
-REMOVE LINE/<USERCODE>, THE LISTING FILE FROM THE LAST COMPILATION.     04361000          
+REMOVES LINE/<USERCODE>, THE LISTING FILE FROM THE LAST COMPILATION.    04361000          
+*RCEND                                                                  04361500          
 *15                                                                     04362000          
 EXAMPLES:                                                               04363000          
 *25                                                                     04364000          
@@ -647,6 +680,7 @@ EXAMPLES:                                                               04363000
 LINE-PRINTER FILE REPRODUCTION (PRINT)                                  04401000          
 *1                                                                      04402000          
 THE PRINT VERB:                                                         04403000          
+*RCTEACH PRINT                                                          04403500          
 *17                                                                     04404000          
  *PRINT <A> <B>                                                         04405000          
 *2                                                                      04406000          
@@ -660,6 +694,7 @@ AS ABOVE, STARTING WITH SEQUENCE NUMBER <M>.                            04412000
  * PRINT <A> <B> <M>, <N>                                               04414000          
 *2                                                                      04415000          
 AS ABOVE, STOPPING WITH SEQUENCE NUMBER <N>.                            04416000          
+*RCEND                                                                  04416500          
 *15                                                                     04417000          
 EXAMPLES:                                                               04418000          
 *25                                                                     04419000          
@@ -681,6 +716,7 @@ MUCH SLOWER THAN OPENING THE FILE "DATA".                               04429000
 PUNCHED-CARD FILE REPRODUCTION (PUNCH)                                  04451000          
 *1                                                                      04452000          
 TO PUNCH A FILE:                                                        04453000          
+*RCTEACH PUNCH                                                          04453500          
 *17                                                                     04454000          
  * PUNCH <A> <B>                                                        04455000          
 *2                                                                      04456000          
@@ -693,6 +729,7 @@ AS ABOVE, STARTING WITH SEQUENCE NUMBER <M>.                            04461000
  * PUNCH <A> <B> <M>, <N>                                               04463000          
 *2                                                                      04464000          
 AS ABOVE, STOPPING WITH SEQUENCE NUMBER <N>.                            04465000          
+*RCEND                                                                  04465500          
 *15                                                                     04466000          
 EXAMPLE:                                                                04467000          
 *25                                                                     04468000          
@@ -703,6 +740,7 @@ EXAMPLE:                                                                04467000
 FILE COMPILATION (COMPILE)                                              04501000          
 *1                                                                      04502000          
 FILES MAY BE COMPILED TO THE B5500 LIBRARY BY THE FOLLOWING CONSTRUCT:  04503000          
+*RCTEACH COMPILE                                                        04503500          
 *17                                                                     04504000          
  * COMPILE <FILE-NAME>                                                  04505000          
 *2                                                                      04506000          
@@ -715,6 +753,7 @@ THE SYNTAX ERRORS.                                                      04511000
  * COMPILE <FILE-NAME> <COMPILER>                                       04513000          
 *2                                                                      04514000          
 COMPILES THE OPEN FILE USING SPECIFIED COMPILER.                        04515000          
+*RCEND                                                                  04515500          
 *15                                                                     04516000          
 EXAMPLES:                                                               04517000          
 *25                                                                     04518000          
@@ -737,6 +776,7 @@ OUTPUT OF THE COMPILATION (LISTING)                                     04551000
 *1                                                                      04552000          
 THE LISTING FILE OF THE COMPILER IS EQUATED TO LINE/<USERCODE> ON DISK. 04553000          
 THE FILE MAY BE ACCESSED BY THE USE OF THE LISTING VERB:                04554000          
+*RCTEACH LISTING                                                        04554500          
 *17                                                                     04555000          
  * LISTING <FILE-TYPE> <S>, <L>, <U>                                    04556000          
 *2                                                                      04557000          
@@ -753,6 +793,7 @@ LISTS THE SYNTAX ERRORS OF YOUR LAST COMPILATION.                       04566000
  * LISTING                                                              04568000          
 *2                                                                      04569000          
 PRINTS THE LINE FILE OF YOUR LAST COMPILATION ON THE PRINTER.           04570000          
+*RCEND                                                                  04570500          
 *15                                                                     04571000          
 EXAMPLES:                                                               04572000          
 *25                                                                     04573000          
@@ -774,21 +815,21 @@ FILE ZIPPED AS AN "EXECUTE" DECK (ZIP)                                  04601000
 *1                                                                      04602000          
 TO IMPLEMENT THE B5500 ZIP FUNCTION THROUGH R/C, USE THE                04603000          
 FOLLOWING CONSTRUCT:                                                    04604000          
+*RCTEACH ZIP                                                            04604500          
 *17                                                                     04605000          
  * ZIP                                                                  04606000          
 *2                                                                      04607000          
-THIS CONSTRUCT ZIPS THE OPENED FILE AFTER IT LINKS ALL                  04608000          
-THE CONTROL CARDS AS INDICATED BY                                       04609000          
-*INVALID 2                                                              04610000          
-"Q". SEE THE ALGOL                                                      04611000          
-REFERENCE MANUAL FOR A DESCRIPTION OF THE "ZIP WITH FILE-ID"            04612000          
-STATEMENT.                                                              04613000          
+THIS CONSTRUCT ZIPS THE OPENED FILE AFTER IT LINKS ALL THE CONTROL      04608000          
+*INVALID 24                                                             04609000          
+CARDS AS INDICATED BY "Q". SEE THE ALGOL REFERENCE MANUAL FOR A         04610000          
+DESCRIPTION OF THE "ZIP WITH FILE-ID" STATEMENT.                        04611000          
 *17                                                                     04614000          
  * ZIP <FILE-NAME>                                                      04615000          
 *2                                                                      04616000          
 COPIES THE OPENED FILE CREATING <FILE-NAME> AND ZIPS                    04617000          
 <FILE-NAME>. NOTE THIS "ZIP" CONSTRUCT DOES NOT DESTROY THE             04618000          
 OPEN FILE AS DOES THE FIRST FORM.                                       04619000          
+*RCEND                                                                  04619500          
 *15                                                                     04620000          
 EXAMPLES:                                                               04621000          
 *25                                                                     04622000          
@@ -802,7 +843,7 @@ EXAMPLES:                                                               04621000
                       700:* ZIP TEMP/NAME~                              04630000          
                  WAIT...                                                04631000          
                       700:                                              04632000          
-*2                                                                      04633000          
+*3                                                                      04633000          
 THIS EXAMPLE ILLUSTRATES HOW TO CREATE A CONTROL DECK                   04634000          
 AND INITIATE ITS EXECUTION. THE DECK WAS SAVED (UNDER THE               04635000          
 NAME "MAKE/MANUAL") SINCE THE ZIP CONSTRUCT INCLUDED THE                04636000          
@@ -819,6 +860,7 @@ RECORD COPYING (DITTO)                                                  05101000
 *1                                                                      05102000          
 RECORDS MAY BE COPIED FROM ONE PLACE TO ANOTHER WITHIN A                05103000          
 FILE BY THE CONSTRUCT:                                                  05104000          
+*RCTEACH DITTO                                                          05104500          
 *17                                                                     05105000          
  * DITTO <M>                                                            05106000          
 *2                                                                      05107000          
@@ -834,20 +876,19 @@ COPIES THE CARD IMAGES <M> TO <N> AS THE NEXT RECORDS.                  05112000
 *17                                                                     05117000          
  * DITTO OVERITE                                                        05118000          
 *2                                                                      05119000          
-IF THE DITTO OVERITE IS OFF AND AN EXISTING RECORD IS                   05120000          
-ABOUT TO BE OVERWRITTEN, THE DITTO TERMINATES WITH AN                   05121000          
-"OVERITE OFF" MESSAGE. (IT IS INITIALLY OFF.) THE ABOVE                 05122000          
-COMMANDS ARE USED TO SET THE OPTION AND TO PRINT ITS CURRENT            05123000          
-SETTING. ITS SETTING MAY BE REVERSED FOR ONE COMMAND BY                 05124000          
-PREFIXING THE DITTO WITH A -. (E.G. *-DITTO 10,50.)                     05125000          
+IF THE DITTO OVERITE IS OFF AND AN EXISTING RECORD IS ABOUT TO BE       05120000          
+OVERWRITTEN, THE DITTO TERMINATES WITH AN "OVERITE OFF" MESSAGE. (IT    05121000          
+IS INITIALLY OFF.) THE ABOVE COMMANDS ARE USED TO SET THE OPTION AND    05122000          
+TO PRINT ITS CURRENT SETTING. ITS SETTING MAY BE REVERSED FOR ONE       05123000          
+COMMAND BY PREFIXING THE DITTO WITH A -. (E.G. *-DITTO 10,50.)          05124000          
 *17                                                                     05126000          
  * DITTO <M> MOVE                                                       05127000          
 *17                                                                     05128000          
  * DITTO <M>, <N> MOVE                                                  05129000          
 *2                                                                      05130000          
-THE MOVE OPTION, MOVES RECORDS <M> THRU <N> TO THE                      05131000          
-CURRENT LOCATION. THIS OPTION IS VERY FAST, BUT OVERITING               05132000          
-IS NOT ALLOWED.                                                         05133000          
+THE MOVE OPTION, MOVES RECORDS <M> THRU <N> TO THE CURRENT LOCATION.    05131000          
+THIS OPTION IS VERY FAST, BUT OVERITING IS NOT ALLOWED.                 05132000          
+*RCEND                                                                  05133000          
 *15                                                                     05134000          
 EXAMPLES:                                                               05135000          
 *25                                                                     05136000          
@@ -872,6 +913,7 @@ COPYING EXTERNAL FILES (COPY)                                           05201000
 *1                                                                      05202000          
 WHOLE OR PARTIAL EXTERNAL FILES MAY BE COPIED INTO THE                  05203000          
 CURRENTLY OPENED FILE BY THE CONSTRUCTS:                                05204000          
+*RCTEACH COPY                                                           05204500          
 *17                                                                     05205000          
  * COPY <FILE-NAME>                                                     05206000          
 *17                                                                     05207000          
@@ -883,12 +925,12 @@ CURRENTLY OPENED FILE BY THE CONSTRUCTS:                                05204000
 *2                                                                      05213000          
 THE COPY VERB COPIES RECORDS FROM ANOTHER FILE (<FILE-NAME>).           05214000          
 *2                                                                      05215000          
-THE FIRST FORM COPIES THE WHOLE FILE. THE SECOND FORM                   05216000          
-COPIES THE <M>-TH RECORD (WHERE THE FIRST RECORD OF <FILE-NAME>         05217000          
-IS 1, THE SECOND RECORD IS 2, THE THIRD IS 3, ETC.).                    05218000          
-THE THIRD FORM COPIES THE <M>-TH THROUGH THE <N>-TH RECORDS.            05219000          
-THE LAST FORM USES THE SEQUENCE NUMBERS OF THE RECORDS OF               05220000          
-<FILE-NAME> TO DETERMINE THEIR POSITION IN THE OPEN FILE.               05221000          
+THE FIRST FORM COPIES THE WHOLE FILE. THE SECOND FORM COPIES THE        05216000          
+<M>-TH RECORD (WHERE THE FIRST RECORD OF <FILE-NAME> IS 1, THE SECOND   05217000          
+RECORD IS 2, THE THIRD IS 3, ETC.). THE THIRD FORM COPIES THE <M>-TH    05218000          
+THROUGH THE <N>-TH RECORDS. THE LAST FORM USES THE SEQUENCE NUMBERS OF  05219000          
+THE RECORDS OF <FILE-NAME> TO DETERMINE THEIR POSITION IN THE OPEN      05220000          
+FILE.                                                                   05221000          
 *17                                                                     05222000          
  * COPY OVERITE ON                                                      05223000          
 *17                                                                     05224000          
@@ -896,12 +938,12 @@ THE LAST FORM USES THE SEQUENCE NUMBERS OF THE RECORDS OF               05220000
 *17                                                                     05226000          
  * COPY OVERITE                                                         05227000          
 *2                                                                      05228000          
-IF THE COPY OVERITE IS OFF AND AN EXISTING RECORD IS                    05229000          
-ABOUT TO BE OVERWRITTEN, THE COPY TERMINATES WITH AN                    05230000          
-"OVERITE OFF" MESSAGE. (IT IS INITIALLY OFF.) THE ABOVE                 05231000          
-COMMANDS ARE USED TO SET THE OPTION AND TO PRINT ITS CURRENT            05232000          
-SETTING. ITS SETTING MAY BE REVERSED FOR ONE COMMAND BY                 05233000          
-PREFIXING THE COPY WITH A -. (E.G. *-COPY A/B 10,50.)                   05234000          
+IF THE COPY OVERITE IS OFF AND AN EXISTING RECORD IS ABOUT TO BE        05229000          
+OVERWRITTEN, THE COPY TERMINATES WITH AN "OVERITE OFF" MESSAGE. (IT IS  05230000          
+INITIALLY OFF.) THE ABOVE COMMANDS ARE USED TO SET THE OPTION AND TO    05231000          
+PRINT ITS CURRENT SETTING. ITS SETTING MAY BE REVERSED FOR ONE COMMAND  05232000          
+BY PREFIXING THE COPY WITH A -. (E.G. *-COPY A/B 10,50.)                05233000          
+*RCEND                                                                  05234000          
 *15                                                                     05235000          
 EXAMPLES:                                                               05236000          
 *25                                                                     05237000          
@@ -937,6 +979,7 @@ INTRA-RECORD EDITING (INLINE)                                           05301000
 *1                                                                      05302000          
 RECORDS MAY BE EDITED BY USE OF THE "* INLINE" CONSTRUCTS               05303000          
 DESCRIBED IN THE NEXT PARAGRAPHS.                                       05304000          
+*RCTEACH INLINE                                                         05304500          
 *17                                                                     05305000          
  * INLINE <M>                                                           05306000          
 *17                                                                     05307000          
@@ -946,9 +989,9 @@ DESCRIBED IN THE NEXT PARAGRAPHS.                                       05304000
 *17                                                                     05311000          
  * INLINE <EDIT CHAR>                                                   05312000          
 *1                                                                      05313000          
-THIS SETS UP LINE <M> FOR INLINE EDITING. IF THE SEQUENCE               05314000          
-NUMBER <M> IS NOT INCLUDED WITH THE COMMAND, THE PREVIOUS RECORD        05315000          
-IS USED AND THE INITIAL PRINTING OF IT IS SUPPRESSED.                   05316000          
+THIS SETS UP LINE <M> FOR INLINE EDITING. IF THE SEQUENCE NUMBER <M>    05314000          
+IS NOT INCLUDED WITH THE COMMAND, THE PREVIOUS RECORD IS USED AND THE   05315000          
+INITIAL PRINTING OF IT IS SUPPRESSED.                                   05316000          
 *17                                                                     05317000          
  * INLINE ECHO ON                                                       05318000          
 *17                                                                     05319000          
@@ -956,30 +999,30 @@ IS USED AND THE INITIAL PRINTING OF IT IS SUPPRESSED.                   05316000
 *17                                                                     05321000          
  * INLINE ECHO                                                          05322000          
 *1                                                                      05323000          
-THE MODIFIED RECORD WILL BE TYPED ON THE TELETYPE IF THE                05324000          
-INLINE ECHO IS ON. (IT IS INITIALLY ON.) THE ABOVE COMMANDS ARE         05325000          
-USED TO SET THE OPTION AND TO PRINT ITS CURRENT SETTING. ITS            05326000          
-SETTING MAY BE REVERSED FOR ONE COMMAND BY PREFIXING THE INLINE         05327000          
-WITH A -. (E.G. * -INLINE +3.)                                          05328000          
+THE MODIFIED RECORD WILL BE TYPED ON THE TELETYPE IF THE INLINE ECHO    05324000          
+IS ON. (IT IS INITIALLY ON.) THE ABOVE COMMANDS ARE USED TO SET THE     05325000          
+OPTION AND TO PRINT ITS CURRENT SETTING. ITS SETTING MAY BE REVERSED    05326000          
+FOR ONE COMMAND BY PREFIXING THE INLINE WITH A -. (E.G. * -INLINE +3.)  05327000          
 *1                                                                      05329000          
-TO MODIFY A PORTION OF A RECORD (CARD IMAGE) USE THE "*                 05330000          
-INLINE" VERB. R/C PRINTS THE RECORD NUMBER AND THE LINE, THEN           05331000          
-GIVES A CARRIAGE RETURN AND LINE FEED. IT NEXT SPACES THE PRINT         05332000          
-BALL (ON THE NEW LINE) DIRECTLY BELOW THE FIRST CHARACTER               05333000          
-POSITION OF THE OLD LINE, ABOVE. THE USER SPACES THE PRINT BALL         05334000          
-TO THE PROPER POSITION AND ACCOMPLISHES THE FOLLOWING ACTIONS:          05335000          
+TO MODIFY A PORTION OF A RECORD (CARD IMAGE) USE THE "* INLINE" VERB.   05330000          
+R/C PRINTS THE RECORD NUMBER AND THE LINE, THEN GIVES A CARRIAGE        05331000          
+RETURN AND LINE FEED. IT NEXT SPACES THE PRINT BALL (ON THE NEW LINE)   05332000          
+DIRECTLY BELOW THE FIRST CHARACTER POSITION OF THE OLD LINE, ABOVE.     05333000          
+THE USER SPACES THE PRINT BALL TO THE PROPER POSITION AND ACCOMPLISHES  05334000          
+THE FOLLOWING ACTIONS:                                                  05335000          
 *2                                                                      05336000          
-TO INSERT A STRING, TYPE THE LETTER "I" FOLLOWED BY THE                 05337000          
-STRING AND A "~".                                                       05338000          
+TO INSERT A STRING, TYPE THE LETTER "I" FOLLOWED BY THE STRING AND      05337000          
+A "~".                                                                  05338000          
 *2                                                                      05339000          
-TO DELETE A STRING, USE THE LETTER "D" FOLLOWED BY                      05340000          
-SPACES UNDER THE CHARACTERS TO BE DELETED AND THEN A "~".               05341000          
+TO DELETE A STRING, USE THE LETTER "D" FOLLOWED BY SPACES UNDER THE     05340000          
+CHARACTERS TO BE DELETED AND THEN A "~".                                05341000          
 *2                                                                      05342000          
-TO REPLACE A STRING, USE THE LETTER "R" FOLLOWED BY THE                 05343000          
-NEW STRING OF THE SAME LENGTH AND A "~".                                05344000          
+TO REPLACE A STRING, USE THE LETTER "R" FOLLOWED BY THE NEW STRING OF   05343000          
+THE SAME LENGTH AND A "~".                                              05344000          
 *2                                                                      05345000          
-IF THE MODIFICATION IS TO BE DONE IN THE FIRST                          05346000          
-CHARACTER, THEN INCLUDE THE "I", "R", OR "D" WITH THE INLINE COMMAND.   05347000          
+IF THE MODIFICATION IS TO BE DONE IN THE FIRST CHARACTER, THEN INCLUDE  05346000          
+THE "I", "R", OR "D" WITH THE INLINE COMMAND.                           05347000          
+*RCEND                                                                  05347500          
 *SKIP 2 INDENT 10                                                       05348000          
 EXAMPLES:                                                               05349000          
 *17                                                                     05350000          
@@ -1058,12 +1101,13 @@ CHANGING THE OCCURRENCE OF A STRING (CHANGE)                            05501000
 *1                                                                      05502000          
 ENTIRE STRINGS MAY BE CHANGED IN A FILE BY USE OF THE "*                05503000          
 CHANGE" VERB.                                                           05504000          
+*RCTEACH CHANGE                                                         05504500          
 *17                                                                     05505000          
  * CHANGE <STRING> TO <STRING>                                          05506000          
 *2                                                                      05507000          
-SCANS THE CURRENT RECORD REPLACING EVERY OCCURRENCE OF                  05508000          
-THE FIRST STRING WITH THE SECOND. IF NO "<STRING> TO                    05509000          
-<STRING>" APPEARS THE PREVIOUSLY USED STRINGS WILL BE USED AGAIN.       05510000          
+SCANS THE CURRENT RECORD REPLACING EVERY OCCURRENCE OF THE FIRST        05508000          
+STRING WITH THE SECOND. IF NO "<STRING> TO <STRING>" APPEARS THE        05509000          
+PREVIOUSLY USED STRINGS WILL BE USED AGAIN.                             05510000          
 *17                                                                     05511000          
  * CHANGE <M> <STRING> TO <STRING>                                      05512000          
 *2                                                                      05513000          
@@ -1079,11 +1123,12 @@ AS ABOVE, FOR ALL RECORDS FROM SEQUENCE NUMBER <M> TO <N>.              05518000
 *17                                                                     05523000          
  * CHANGE ECHO                                                          05524000          
 *2                                                                      05525000          
-THE MODIFIED RECORDS WILL BE TYPED ON THE TELETYPE IF                   05526000          
-THE CHANGE ECHO IS ON. (IT IS INITIALLY OFF.) THE ABOVE                 05527000          
-COMMANDS ARE USED TO SET THE OPTION AND TO PRINT ITS CURRENT            05528000          
-VALUE. ITS SETTING MAY BE REVERSED FOR A COMMAND BY                     05529000          
-PREFIXING THE CHANGE WITH A -. (E.G. *-CHANGE "X" TO "Z".)              05530000          
+THE MODIFIED RECORDS WILL BE TYPED ON THE TELETYPE IF THE CHANGE ECHO   05526000          
+IS ON. (IT IS INITIALLY OFF.) THE ABOVE COMMANDS ARE USED TO SET THE    05527000          
+OPTION AND TO PRINT ITS CURRENT VALUE. ITS SETTING MAY BE REVERSED FOR  05528000          
+A COMMAND BY PREFIXING THE CHANGE WITH A -. (E.G. *-CHANGE "X" TO       05529000          
+"Z".)                                                                   05530000          
+*RCEND                                                                  05530500          
 *15                                                                     05531000          
 EXAMPLES:                                                               05532000          
 *25                                                                     05533000          
@@ -1103,18 +1148,18 @@ EXAMPLES:                                                               05532000
               00003200:                                                 05547000          
 *5                                                                      05600000          
 SCANNING FOR OCCURRENCE OF A STRING (SCAN)                              05601000          
+*RCTEACH SCAN                                                           05601500          
 *17                                                                     05602000          
  * SCAN <STRING>                                                        05603000          
 *2                                                                      05604000          
-SCANS THE FILE FROM THE CURRENT SEQUENCE NUMBER TO THE                  05605000          
-END OF THE FILE OR UNTIL THE FIRST OCCURRENCE OF <STRING>.              05606000          
-IF THE STRING IS FOUND THE RECORD CONTAINING IT IS TYPED ON             05607000          
-THE TELETYPEWRITER. IF <STRING> IS ACTUALLY TWO <STRING>S               05608000          
-THE SCAN STOPS AT THE FIRST OCCURRENCE OF EITHER <STRING>.              05609000          
-IF NO <STRING> APPEARS WITH THE COMMAND, IT IS ASSUMED TO BE            05610000          
-THE SAME <STRING> AS IN THE LAST "* SCAN" OR "* CHANGE"                 05611000          
-COMMAND. IF THE SCAN VERB IS PREFIXED BY A -, THE SCAN WILL             05612000          
-BE FOR RECORDS NOT CONTAINING THE <STRING>.                             05613000          
+SCANS THE FILE FROM THE CURRENT SEQUENCE NUMBER TO THE END OF THE FILE  05605000          
+OR UNTIL THE FIRST OCCURRENCE OF <STRING>. IF THE STRING IS FOUND THE   05606000          
+RECORD CONTAINING IT IS TYPED ON THE TELETYPEWRITER. IF <STRING> IS     05607000          
+ACTUALLY TWO <STRING>S THE SCAN STOPS AT THE FIRST OCCURRENCE OF        05608000          
+EITHER <STRING>. IF NO <STRING> APPEARS WITH THE COMMAND, IT IS         05609000          
+ASSUMED TO BE THE SAME <STRING> AS IN THE LAST "* SCAN" OR "* CHANGE"   05610000          
+COMMAND. IF THE SCAN VERB IS PREFIXED BY A -, THE SCAN WILL BE FOR      05611000          
+RECORDS NOT CONTAINING THE <STRING>.                                    05612000          
 *17                                                                     05614000          
  * SCAN <M> <STRING>                                                    05615000          
 *2                                                                      05616000          
@@ -1126,8 +1171,8 @@ AS ABOVE, EXCEPT THAT THE SCANNING STOPS AFTER SEQUENCE NUMBER <N>.     05621000
 *17                                                                     05622000          
  * SCAN <FILE-NAME> <STRING>                                            05623000          
 *2                                                                      05624000          
-THE FILE <FILE-NAME> IS SCANNED FOR <STRING>. EVERY                     05625000          
-RECORD IN WHICH <STRING> OCCURS IS TYPED ON THE TELETYPEWRITER.         05626000          
+THE FILE <FILE-NAME> IS SCANNED FOR <STRING>. EVERY RECORD IN WHICH     05625000          
+<STRING> OCCURS IS TYPED ON THE TELETYPEWRITER.                         05626000          
 *17                                                                     05627000          
  * SCAN <FILE-NAME> <M> <STRING>                                        05628000          
 *2                                                                      05629000          
@@ -1136,6 +1181,7 @@ AS ABOVE, EXCEPT THE SCAN BEGINS AT RECORD NUMBER <M>.                  05630000
  * SCAN <FILE-NAME>  <M>, <N> <STRING>                                  05632000          
 *2                                                                      05633000          
 AS ABOVE, EXCEPT THAT THE SCAN STOPS AFTER THE <N>-TH RECORD.           05634000          
+*RCEND                                                                  05634500          
 *15                                                                     05635000          
 EXAMPLES:                                                               05636000          
 *25                                                                     05637000          
@@ -1163,17 +1209,17 @@ EXAMPLES:                                                               05636000
 RECORD FORMATTING (EDIT)                                                05701000          
 *1                                                                      05702000          
 RECORDS MAY BE FORMATTED BY THE FOLLOWING CONSTRUCTS:                   05703000          
+*RCTEACH EDIT                                                           05703500          
 *17                                                                     05704000          
  * EDIT <M>, <N>: <F>                                                   05705000          
 *2                                                                      05706000          
-EDITS EACH RECORD FROM SEQUENCE NUMBER <M> TO <N>                       05707000          
-ACCORDING TO THE FORMAT RECORD WITH SEQUENCE NUMBER <F>.                05708000          
+EDITS EACH RECORD FROM SEQUENCE NUMBER <M> TO <N> ACCORDING TO THE      05707000          
+FORMAT RECORD WITH SEQUENCE NUMBER <F>.                                 05708000          
 *2                                                                      05709000          
-THE RESULT OF THE EDIT IS THAT EACH RECORD BECOMES                      05710000          
-IDENTICAL WITH THE FORMAT RECORD EXCEPT WHERE THERE IS A "#"            05711000          
-OR "@" CHARACTER IN FORMAT RECORD. EACH "@" IS REPLACED BY              05712000          
-THE NEXT CHARACTER OF THE INPUT RECORD. EACH "#" SKIPS THE              05713000          
-NEXT CHARACTER OF THE INPUT RECORD.                                     05714000          
+THE RESULT OF THE EDIT IS THAT EACH RECORD BECOMES IDENTICAL WITH THE   05710000          
+FORMAT RECORD EXCEPT WHERE THERE IS A "#" OR "@" CHARACTER IN FORMAT    05711000          
+RECORD. EACH "@" IS REPLACED BY THE NEXT CHARACTER OF THE INPUT         05712000          
+RECORD. EACH "#" SKIPS THE NEXT CHARACTER OF THE INPUT RECORD.          05713000          
 *17                                                                     05715000          
  * EDIT ECHO ON                                                         05716000          
 *17                                                                     05717000          
@@ -1181,11 +1227,11 @@ NEXT CHARACTER OF THE INPUT RECORD.                                     05714000
 *17                                                                     05719000          
  * EDIT ECHO                                                            05720000          
 *2                                                                      05721000          
-THE MODIFIED RECORDS WILL BE TYPED ON THE TELETYPE IF                   05722000          
-THE EDIT ECHO IS ON. (IT IS INITIALLY OFF.) THE ABOVE                   05723000          
-COMMANDS ARE USED TO SET THE ECHO AND TO PRINT ITS CURRENT              05724000          
-SETTING. IT SETTING MAY BE REVERSED FOR A COMMAND BY                    05725000          
-PREFIXING THE EDIT WITH A -. (E.G. *- EDIT 200,800:2)                   05726000          
+THE MODIFIED RECORDS WILL BE TYPED ON THE TELETYPE IF THE EDIT ECHO IS  05722000          
+ON. (IT IS INITIALLY OFF.) THE ABOVE COMMANDS ARE USED TO SET THE ECHO  05723000          
+AND TO PRINT ITS CURRENT SETTING. IT SETTING MAY BE REVERSED FOR A      05724000          
+COMMAND BY PREFIXING THE EDIT WITH A -. (E.G. *- EDIT 200,800:2)        05725000          
+*RCEND                                                                  05726000          
 *15                                                                     05727000          
 EXAMPLE:                                                                05728000          
 *25                                                                     05729000          
@@ -1199,6 +1245,7 @@ EXAMPLE:                                                                05728000
 RESEQUENCING RECORD NUMBERS (RESEQ)                                     05751000          
 *1                                                                      05752000          
 FILE SEQUENCE NUMBERS MAY BE MODIFIED BY THE FOLLOWING CONSTRUCTS:      05753000          
+*RCTEACH RESEQ                                                          05753500          
 *17                                                                     05754000          
  * RESEQ                                                                05755000          
 *2                                                                      05756000          
@@ -1210,8 +1257,8 @@ SETS THE INCREMENT COUNTER TO <I> AND RESEQUENCES.                      05761000
 *17                                                                     05762000          
  * RESEQ <M>, <N>                                                       05763000          
 *2                                                                      05764000          
-RESEQUENCES THE SEQUENCE NUMBERS <M> THRU <N> BY THE                    05765000          
-CURRENT INCREMENT COUNTER. THE FIRST SEQUENCE NUMBER IS <M>.            05766000          
+RESEQUENCES THE SEQUENCE NUMBERS <M> THRU <N> BY THE CURRENT INCREMENT  05765000          
+COUNTER. THE FIRST SEQUENCE NUMBER IS <M>.                              05766000          
 *17                                                                     05767000          
  * RESEQ <M>, <N>, <K>                                                  05768000          
 *2                                                                      05769000          
@@ -1220,6 +1267,7 @@ AS ABOVE, EXCEPT THAT THE FIRST SEQUENCE NUMBER IS <K>.                 05770000
  * RESEQ <M>, <N>, <K>, <I>                                             05772000          
 *2                                                                      05773000          
 AS ABOVE, EXCEPT THE INCREMENT IS SET TO <I> FIRST.                     05774000          
+*RCEND                                                                  05774500          
 *15                                                                     05775000          
 EXAMPLES:                                                               05776000          
 *25                                                                     05777000          
@@ -1230,6 +1278,7 @@ EXAMPLES:                                                               05776000
 DELETION OF RECORDS (DELETE)                                            05801000          
 *1                                                                      05802000          
 RECORDS MAY BE DELETED FROM A FILE BY THE FOLLOWING CONSTRUCTS:         05803000          
+*RCTEACH DELETE                                                         05803500          
 *17                                                                     05804000          
  * DELETE <M>                                                           05805000          
 *2                                                                      05806000          
@@ -1242,6 +1291,7 @@ DELETES CARD IMAGES <M> THROUGH <N>.                                    05811000
  * DELETE                                                               05813000          
 *2                                                                      05814000          
 DELETES THE CURRENT CARD.                                               05815000          
+*RCEND                                                                  05815500          
 *15                                                                     05816000          
 EXAMPLES:                                                               05817000          
 *25                                                                     05818000          
@@ -1264,6 +1314,7 @@ OPERATIONAL COMMANDS                                                    06001000
 SET THE INCREMENT COUNTER (INC)                                         06101000          
 *1                                                                      06102000          
 THE INCREMENT COUNTER MAY BE SET BY THE CONSTRUCT "* INC".              06103000          
+*RCTEACH INC                                                            06103500          
 *17                                                                     06104000          
  * INC <N>                                                              06105000          
 *2                                                                      06106000          
@@ -1272,6 +1323,7 @@ THIS CONSTRUCT SETS THE INCREMENT COUNTER TO <N>.                       06107000
  * INC                                                                  06109000          
 *2                                                                      06110000          
 THIS CONSTRUCT PRINTS THE CURRENT VALUE.                                06111000          
+*RCEND                                                                  06111500          
 *15                                                                     06112000          
 EXAMPLES:                                                               06113000          
 *25                                                                     06114000          
@@ -1285,8 +1337,10 @@ EXAMPLES:                                                               06113000
 NON-TELETYPEWRITER CHARACTERS (PERCENT)                                 06201000          
 *1                                                                      06202000          
 SPECIAL CHARACTERS ON THE B5500 BUT NOT AVAILABLE ON THE                06203000          
-TELETYPEWRITER KEYBOARD (INCLUDING THE QUESTION MARK "?") MAY BE        06204000          
+*INVALID 55                                                             06203500          
+TELETYPEWRITER KEYBOARD (INCLUDING THE QUESTION MARK "Q") MAY BE        06204000          
 INSERTED INTO R/C MAINTAINED FILES BY THE "* PERCENT" CONSTRUCT.        06205000          
+*RCTEACH PERCENT                                                        06205500          
 *17                                                                     06206000          
  * PERCENT ON                                                           06207000          
 *17                                                                     06208000          
@@ -1294,29 +1348,31 @@ INSERTED INTO R/C MAINTAINED FILES BY THE "* PERCENT" CONSTRUCT.        06205000
 *17                                                                     06210000          
  * PERCENT                                                              06211000          
 *2                                                                      06212000          
-THE "* PERCENT" CONSTRUCTS ALLOW A USER TO INPUT THE                    06213000          
-SPECIAL RESERVED CHARACTERS (I.E. LEFT-ARROW, NEQ, LSS,                 06214000          
-GEQ, GTR, LEQ, AND ?). THE ABOVE COMMANDS ARE USED TO SET               06215000          
-THE OPTION AND TO PRINT ITS CURRENT SETTING. WHEN THE                   06216000          
-PERCENT OPTION IS ON, INPUT FROM THE TELETYPEWRITER IS                  06217000          
-SCANNED FOR SPECIAL CHARACTER PAIRS. IF A PAIR IS FOUND IT              06218000          
-IS REPLACED BY THE SINGLE CHARACTER AS FOLLOWS:                         06219000          
-*SKIP 2 TAB 15,35                                                       06220000          
-     CHARACTER PAIR / INTERNAL CHARACTER /                              06221000          
-     -------------- / ------------------ /                              06222000          
-*TAB 22,44                                                              06223000          
-     %- / ~ (LEFT ARROW) /                                              06224000          
-     %= / ! (NEQ) /                                                     06225000          
-     %( / < (LSS) /                                                     06226000          
-     %) / > (GTR) /                                                     06227000          
-     %[ / { (LEQ) /                                                     06228000          
-     %] / } (GEQ) /                                                     06229000          
-     %% / ? (QUESTION MARK) /                                           06230000          
-     %* / * (STAR) (1ST CHR ONLY) /                                     06231000          
+THE "* PERCENT" CONSTRUCTS ALLOW A USER TO INPUT THE SPECIAL RESERVED   06213000          
+*INVALID 59                                                             06213500          
+CHARACTERS (I.E. LEFT-ARROW, NEQ, LSS, GEQ, GTR, LEQ, AND Q). THE       06214000          
+ABOVE COMMANDS ARE USED TO SET THE OPTION AND TO PRINT ITS CURRENT      06215000          
+SETTING. WHEN THE PERCENT OPTION IS ON, INPUT FROM THE TELETYPEWRITER   06216000          
+IS SCANNED FOR SPECIAL CHARACTER PAIRS. IF A PAIR IS FOUND IT IS        06217000          
+REPLACED BY THE SINGLE CHARACTER AS FOLLOWS:                            06218000          
+*25                                                                     06220000          
+              CHARACTER PAIR      INTERNAL CHARACTER                    06221000          
+              --------------      ------------------                    06222000          
+*                                                                       06223000          
+                     %-                    ~ (LEFT ARROW)               06224000          
+                     %=                    ! (NEQ)                      06225000          
+                     %(                    < (LSS)                      06226000          
+                     %)                    > (GTR)                      06227000          
+                     %[                    { (LEQ)                      06228000          
+                     %]                    } (GEQ)                      06229000          
+*INVALID 44                                                             06229500          
+                     %%                    Q (QUESTION MARK)            06230000          
+                     %*                    * (STAR) (1ST CHR ONLY)      06231000          
 *2                                                                      06232000          
-A "%" FOLLOWED BY ANY OTHER CHARACTER REMAINS AS IS.                    06233000          
-WHEN THE PERCENT OPTION IS ON, THE TRANSLATION TAKES PLACE              06234000          
-IMMEDIATELY. HENCE ONLY ONE BACKSPACE (SHIFT 7) IS NEEDED.              06235000          
+A "%" FOLLOWED BY ANY OTHER CHARACTER REMAINS AS IS. WHEN THE PERCENT   06232500          
+OPTION IS ON, THE TRANSLATION TAKES PLACE IMMEDIATELY. HENCE ONLY ONE   06233000          
+BACKSPACE (SHIFT 7) IS NEEDED.                                          06233500          
+*RCEND                                                                  06234000          
 *15                                                                     06236000          
 EXAMPLES:                                                               06237000          
 *25                                                                     06238000          
@@ -1326,7 +1382,8 @@ EXAMPLES:                                                               06237000
                   200:%% COMPILE ... %=  %(   %A~                       06242000          
                   300:* LIST~                                           06243000          
                   100:%% COMPILE ... %=  %(   %A                        06244000          
-                  200:? COMPILE ... !  <   %A                           06245000          
+*INVALID 23                                                             06244500          
+                  200:Q COMPILE ... !  <   %A                           06245000          
                   300:                                                  06246000          
 *2                                                                      06247000          
 NOTE THAT ON THE TELETYPWRITER THE CHARACTERS "!" AND                   06248000          
@@ -1336,10 +1393,12 @@ R/C VERB RENAMING (REPLACE)                                             06251000
 *1                                                                      06252000          
 R/C VERBS MAY BE REPLACED BY OTHER WORDS THROUGH THE                    06253000          
 CONSTRUCT "* REPLACE".                                                  06254000          
+*RCTEACH REPLACE                                                        06254500          
 *17                                                                     06255000          
  * REPLACE <A>:<B>                                                      06256000          
 *2                                                                      06257000          
 THE REPLACE VERB RENAMES THE VERB <A> WITH THE WORD <B>.                06258000          
+*RCEND                                                                  06258500          
 *15                                                                     06259000          
 EXAMPLES:                                                               06260000          
 *25                                                                     06261000          
@@ -1353,6 +1412,7 @@ AUTOMATIC FIRST CHARACTER PLACEMENT (TAB)                               06301000
 *1                                                                      06302000          
 R/C USERS MAY INITIALLY (AUTOMATICALLY) PRE-POSITION THE                06303000          
 PRINT BALL AT ANY COLUMN BY USE OF THE "* TAB" CONSTRUCT.               06304000          
+*RCTEACH TAB                                                            06304500          
 *17                                                                     06305000          
  * TAB <N>                                                              06306000          
 *2                                                                      06307000          
@@ -1371,11 +1431,11 @@ ADJUSTS THE TAB AMOUNT BY THE VALUE OF <N>.                             06315000
 *17                                                                     06320000          
  *TAB                                                                   06321000          
 *2                                                                      06322000          
-THE TAB OPTION PERMITS THE USER (BY SETTING THE OPTION                  06323000          
-OFF) TO SURPRESS THE TAB SPACING ON THE TELETYPEWRITER. THE             06324000          
-AUTOMATIC INDENTING STILL APPLIES TO THE RECORDS CREATED.               06325000          
-THE LAST CONSTRUCT PRINTS BOTH THE SETTING OF THE OPTION AND            06326000          
-THE TAB VALUE.                                                          06327000          
+THE TAB OPTION PERMITS THE USER (BY SETTING THE OPTION OFF) TO          06323000          
+SURPRESS THE TAB SPACING ON THE TELETYPEWRITER. THE AUTOMATIC           06324000          
+INDENTING STILL APPLIES TO THE RECORDS CREATED. THE LAST CONSTRUCT      06325000          
+PRINTS BOTH THE SETTING OF THE OPTION AND THE TAB VALUE.                06326000          
+*RCEND                                                                  06327000          
 *15                                                                     06328000          
 EXAMPLE:                                                                06329000          
 *25                                                                     06330000          
@@ -1392,6 +1452,7 @@ SETTING THE SAVE FACTOR (SAVE)                                          06351000
 THE SAVE FACTOR OF A DISK FILE IS THE NUMBER OF DAYS AFTER              06353000          
 ITS LAST ACCESS BEFORE IT WILL BE CONSIDERED EXPIRED. THE SAVE          06354000          
 FACTOR FOR A NEW USER IS SET AT 7 DAYS. IT MAY BE CHANGED BY:           06355000          
+*RCTEACH SAVE                                                           06355500          
 *17                                                                     06356000          
  * SAVE <N>                                                             06357000          
 *2                                                                      06358000          
@@ -1400,6 +1461,7 @@ SETS THE SAVE FACTOR AT <N> DAYS.                                       06359000
  * SAVE                                                                 06361000          
 *2                                                                      06362000          
 PRINTS THE CURRENT VALUE OF THE SAVE FACTOR.                            06363000          
+*RCEND                                                                  06363500          
 *15                                                                     06364000          
 EXAMPLE:                                                                06365000          
 *25                                                                     06366000          
@@ -1407,6 +1469,7 @@ EXAMPLE:                                                                06365000
                 :                                                       06368000          
 *5                                                                      06400000          
 TABULATING (COLUMN)                                                     06401000          
+*RCTEACH COLUMN                                                         06401500          
 *17                                                                     06402000          
  * COLUMN <OPTIONAL STRING>                                             06403000          
 *17                                                                     06404000          
@@ -1416,16 +1479,16 @@ TABULATING (COLUMN)                                                     06401000
 *17                                                                     06408000          
  * COLUMN <STP1> <STP2> <STP3> <STP4> <OPTL STRING>                     06409000          
 *2                                                                      06410000          
-THE COLUMN VERB IS USED TO SET UP COLUMN POSITIONS AND                  06411000          
-INDICATE WHAT CHARACTER IS THE COLUMN CHARACTER. THE FIRST              06412000          
-FORM PRINTS THE CURRENT SETTINGS. THE SECOND AND THIRD                  06413000          
-FORMS ARE USED TO TURN THE OPTION ON OR OFF. THE FOURTH                 06414000          
-FORM SETS UP FROM 1 TO 4 COLUMN POSITIONS. ANY FORM MAY SET             06415000          
-THE COLUMN CHARACTER.                                                   06416000          
+THE COLUMN VERB IS USED TO SET UP COLUMN POSITIONS AND INDICATE WHAT    06411000          
+CHARACTER IS THE COLUMN CHARACTER. THE FIRST FORM PRINTS THE CURRENT    06412000          
+SETTINGS. THE SECOND AND THIRD FORMS ARE USED TO TURN THE OPTION ON OR  06413000          
+OFF. THE FOURTH FORM SETS UP FROM 1 TO 4 COLUMN POSITIONS. ANY FORM     06414000          
+MAY SET THE COLUMN CHARACTER.                                           06415000          
 *2                                                                      06417000          
-WHEN THE OPTION IS ON, EACH OCCURENCE OF THE COLUMN                     06418000          
-CHARACTER IN AN INPUT RECORD CAUSES BLANKS TO BE INSERTED TO            06419000          
-THE NEXT HIGHER COLUMN POSITION.                                        06420000          
+WHEN THE OPTION IS ON, EACH OCCURENCE OF THE COLUMN CHARACTER IN AN     06417500          
+INPUT RECORD CAUSES BLANKS TO BE INSERTED TO THE NEXT HIGHER COLUMN     06418000          
+POSITION.                                                               06418500          
+*RCEND                                                                  06419000          
 *15                                                                     06421000          
 EXAMPLE:                                                                06422000          
 *25                                                                     06423000          
@@ -1444,15 +1507,16 @@ MESSAGES TO OTHERS (MAIL)                                               07101000
 *1                                                                      07102000          
 MESSAGES MAY BE RECEIVED FROM, AND SENT TO, OTHER USERS OF              07103000          
 R/C BY THE "* MAIL" VERB DESCRIBED BELOW.                               07104000          
+*RCTEACH MAIL                                                           07104500          
 *17                                                                     07105000          
  * MAIL                                                                 07106000          
 *2                                                                      07107000          
-THIS LISTS THE MAIL SENT TO YOU, AND REMOVES IT FROM                    07108000          
-YOUR "MAIL-BOX".                                                        07109000          
+THIS LISTS THE MAIL SENT TO YOU, AND REMOVES IT FROM YOUR "MAIL-BOX".   07108000          
 *17                                                                     07110000          
  * MAIL TO <USERCODE>: MESSAGE                                          07111000          
 *2                                                                      07112000          
 THIS ADDS YOUR MESSAGE TO THE <USERCODE>-S MAIL.                        07113000          
+*RCEND                                                                  07113500          
 *15                                                                     07114000          
 EXAMPLES:                                                               07115000          
 *25                                                                     07116000          
@@ -1465,6 +1529,7 @@ HOW TO DETACH YOURSELF FROM R/C (END)                                   07201000
 *1                                                                      07202000          
 THREE METHODS ARE AVAILABLE TO THE USER WHEN HE WISHES TO               07203000          
 MAKE AN EXIT FROM R/C:                                                  07204000          
+*RCTEACH END                                                            07204500          
 *17                                                                     07205000          
  * END                                                                  07206000          
 *17                                                                     07207000          
@@ -1474,18 +1539,17 @@ MAKE AN EXIT FROM R/C:                                                  07204000
 *2                                                                      07211000          
 THE FIRST CONSTRUCT DETACHES THE USER FROM R/C.                         07212000          
 *2                                                                      07213000          
-THE SECOND CONSTRUCT CAUSES R/C TO REMEMBER, FROM ONE                   07214000          
-RUN TO THE NEXT, THE VALUES OF THE OPTIONS AND THE EFFECTS              07215000          
-OF THE "* REPLACE" VERB. THE "* END" CONSTRUCT DOES NOT                 07216000          
-GENERATE THIS LASTING EFFECT. <X> DENOTES ANY ALPHANUMERIC              07217000          
-CHARACTER STRING.                                                       07218000          
+THE SECOND CONSTRUCT CAUSES R/C TO REMEMBER, FROM ONE RUN TO THE NEXT,  07214000          
+THE VALUES OF THE OPTIONS AND THE EFFECTS OF THE "* REPLACE" VERB. THE  07215000          
+"* END" CONSTRUCT DOES NOT GENERATE THIS LASTING EFFECT. <X> DENOTES    07216000          
+ANY ALPHANUMERIC CHARACTER STRING.                                      07217000          
 *2                                                                      07219000          
-THE THIRD CONSTRUCT ALLOWS A USER TO END WITHOUT                        07220000          
-CLOSING THE OPEN FILE. R/C REMEMBERS THE FILE STRUCTURE FOR             07221000          
-THE NEXT TIME. HOWEVER THE FILE SHOULD NOT BE ACCESSED BY               07222000          
-ANY OTHER PROGRAM UNTIL IT IS CLOSED USING R/C. THIS FORM               07223000          
-CAN BE USED WHEN THE FILE EDITING IS SPLIT OVER MORE THAN               07224000          
-ONE RUNNING OF R/C.                                                     07225000          
+THE THIRD CONSTRUCT ALLOWS A USER TO END WITHOUT CLOSING THE OPEN       07220000          
+FILE. R/C REMEMBERS THE FILE STRUCTURE FOR THE NEXT TIME. HOWEVER THE   07221000          
+FILE SHOULD NOT BE ACCESSED BY ANY OTHER PROGRAM UNTIL IT IS CLOSED     07222000          
+USING R/C. THIS FORM CAN BE USED WHEN THE FILE EDITING IS SPLIT OVER    07223000          
+MORE THAN ONE RUNNING OF R/C.                                           07224000          
+*RCEND                                                                  07225000          
 *15                                                                     07226000          
 EXAMPLES:                                                               07227000          
 *25                                                                     07228000          
@@ -1503,15 +1567,17 @@ LEARNING ABOUT R/C ON THE TELETYPEWRITER (TEACH)                        07301000
 *1                                                                      07302000          
 THE TEACH VERB ALLOWS A USER AT THE TELETYPEWRITER TO LEARN             07303000          
 ABOUT THE R/C VERBS AND SPECIFICALLY WHAT VERBS HE MAY USE.             07304000          
+*RCTEACH TEACH                                                          07304500          
 *17                                                                     07305000          
  * TEACH                                                                07306000          
 *2                                                                      07307000          
-THIS LISTS THE VERBS THAT YOU ARE PERMITTED TO USE.                     07308000          
-THE LIST REFLECTS THE USE OF REPLACE ON ANY OF THE VERBS.               07309000          
+THIS LISTS THE VERBS THAT YOU ARE PERMITTED TO USE. THE LIST REFLECTS   07308000          
+THE USE OF REPLACE ON ANY OF THE VERBS.                                 07309000          
 *17                                                                     07310000          
  * TEACH <VERB>                                                         07311000          
 *2                                                                      07312000          
 THIS LISTS THE SYNTAX AND SEMANTICS OF THE RESERVED WORD <VERB>.        07313000          
+*RCEND                                                                  07313500          
 *15                                                                     07314000          
 EXAMPLES:                                                               07315000          
 *25                                                                     07316000          
@@ -1540,20 +1606,19 @@ MACRO VERB                                                              07501000
 MACRO (EXECUTE)                                                         07511000          
 *1                                                                      07512000          
 THE EXECUTE VERB GIVES R/C A SIMPLE MACRO CAPABILITY.                   07513000          
+*RCTEACH EXECUTE                                                        07513500          
 *17                                                                     07514000          
  * EXECUTE <SOURCE> <OPTIONAL PARAMETER LIST>                           07515000          
 *2                                                                      07516000          
-RECORDS ARE READ FROM THE <SOURCE> AND TREATED AS IF                    07517000          
-THEY CAME FROM THE TELETYPE. HENCE, THEY MAY CONTAIN                    07518000          
-COMMANDS. THE <OPTIONAL PARAMETER LIST>, IF PRESENT,                    07519000          
-CONTAINS FROM 0 TO 5 PARAMETERS ENCLOSED WITHIN PARENTHESIS             07520000          
-AND MAY BE FOLLOWED BY A REPEAT FACTOR. EACH PARAMETER MAY              07521000          
-BE A SEQUENCE NUMBER, A RELATIVE SEQUENCE NUMBER, A RECORD              07522000          
-NUMBER, A FILE PREFIX, A FILE SUFFIX, OR A VERB. WITHIN THE             07523000          
-<SOURCE> THE PARAMETERS ARE REFERRED TO BY #1, #2, ..., #5.             07524000          
-THE REPEAT FACTOR IS AN INTEGER FROM 0 TO 999 AND INDICATES             07525000          
-THE NUMBER OF TIMES TO PERFORM THE EXECUTE. IF IT IS NOT                07526000          
-SPECIFIED, IT IS ASSUMED TO BE 1.                                       07527000          
+RECORDS ARE READ FROM THE <SOURCE> AND TREATED AS IF THEY CAME FROM     07517000          
+THE TELETYPE. HENCE, THEY MAY CONTAIN COMMANDS. THE <OPTIONAL           07518000          
+PARAMETER LIST>, IF PRESENT, CONTAINS FROM 0 TO 5 PARAMETERS ENCLOSED   07519000          
+WITHIN PARENTHESIS AND MAY BE FOLLOWED BY A REPEAT FACTOR. EACH         07520000          
+PARAMETER MAY BE A SEQUENCE NUMBER, A RELATIVE SEQUENCE NUMBER, A       07521000          
+RECORD NUMBER, A FILE PREFIX, A FILE SUFFIX, OR A VERB. WITHIN THE      07522000          
+<SOURCE> THE PARAMETERS ARE REFERRED TO BY #1, #2, ..., #5. THE REPEAT  07523000          
+FACTOR IS AN INTEGER FROM 0 TO 999 AND INDICATES THE NUMBER OF TIMES    07524000          
+TO PERFORM THE EXECUTE. IF IT IS NOT SPECIFIED, IT IS ASSUMED TO BE 1.  07525000          
 *17                                                                     07528000          
  * EXECUTE ECHO ON                                                      07529000          
 *17                                                                     07530000          
@@ -1561,10 +1626,9 @@ SPECIFIED, IT IS ASSUMED TO BE 1.                                       07527000
 *17                                                                     07532000          
  * EXECUTE ECHO                                                         07533000          
 *2                                                                      07534000          
-IF THE EXECUTE ECHO IS ON, EACH RECORD WILL BE TYPED ON                 07535000          
-THE TELETYPE BEFORE IT IS EXECUTED. IT IS INITIALLY OFF.                07536000          
-IT MAY BE REVERSED FOR ONE COMMAND BY PREFIXING THE COMMAND             07537000          
-BY A -.                                                                 07538000          
+IF THE EXECUTE ECHO IS ON, EACH RECORD WILL BE TYPED ON THE TELETYPE    07535000          
+BEFORE IT IS EXECUTED. IT IS INITIALLY OFF. IT MAY BE REVERSED FOR ONE  07536000          
+COMMAND BY PREFIXING THE COMMAND BY A -.                                07537000          
 *17                                                                     07539000          
  * EXECUTE LIBRARY = <NAME>                                             07540000          
 *17                                                                     07541000          
@@ -1579,8 +1643,9 @@ WITH:                                                                   07549000
 *26                                                                     07550000          
                     * <FILE PREFIX> P1,P2,P3,P4                         07551000          
 *2                                                                      07552000          
-THE <MACRO LIBRARY> IS "MACRO" AND ANY OTHER NAME                       07553000          
-DESIGNATED THRU THE * EXECUTE LIBRARY = <NAME> COMMAND.                 07554000          
+THE <MACRO LIBRARY> IS "MACRO" AND ANY OTHER NAME DESIGNATED THRU THE   07553000          
+* EXECUTE LIBRARY = <NAME> COMMAND.                                     07554000          
+*RCEND                                                                  07554500          
 *15                                                                     07555000          
 EXAMPLES:                                                               07556000          
 *25                                                                     07557000          
@@ -1595,8 +1660,10 @@ EXAMPLES:                                                               07556000
                     5700:* TEACH CC~                                    07566000          
                        1:* SCAN + 1 "$$"@1                              07567000          
                        2:* DELETE -1                                    07568000          
-                       3:? COMPILE SOME/JOB FORTRAN.                    07569000          
-                       4:? DATA                                         07570000          
+*INVALID 26                                                             07568500          
+                       3:Q COMPILE SOME/JOB FORTRAN.                    07569000          
+*INVALID 26                                                             07569500          
+                       4:Q DATA                                         07570000          
                        5:FILE  6=FILE6, UNIT = PRINTER                  07571000          
                     5700:*1;* INC 10;*EXECUTE CC/MACRO ()@2~            07572000          
                  WAIT...                                                07573000          
@@ -1639,7 +1706,8 @@ Q DATA                                                                  08034000
 $ TAPE                                                                  08035000          
 *INDENT 63                                                              08036000          
 99999999                                                                08037000          
-*INDENT 15 INVALID 1                                                    08038000          
+*INDENT 15                                                              08038000          
+*INVALID 1                                                              08038500          
 Q END.                                                                  08039000          
 *1                                                                      08040000          
 WHEN PATCHES ARE ISSUED THEY SHOULD BE PLACED AFTER THE "$              08041000          
@@ -1845,4 +1913,4 @@ R / C USER-S GUIDE                                                      08104000
  * ZIP <SCRATCH FILE-NAME>                                              08262000          
                                                                         19998000          
 *FINISH                                                                 19999000          
-?END                                                                    99999999          
+                                                                        99999999          

@@ -1,0 +1,488 @@
+BEGIN COMMENT                                                           00001000          
+    RCIXGEN: PROGRAM TO GENERATE THE R/C TEACH VERB INDEX FROM THE      00001100          
+    SOURCE FOR THE R/C REFERENCE MANUAL (TEACHER/0000094 BY DEFAULT).   00001200          
+    THE VERB INDEX OCCUPIES THE INITIAL RECORDS IN THE TEACHER FILE.    00001300          
+    EACH INDEX RECORD HAS THE FOLLOWING FORMAT, STARTING IN COLUMN 1:   00001400          
+                                                                        00001500          
+                SSSSEEEE XX VVVVVVV                                     00001600          
+                                                                        00001700          
+    WHERE SSSS AND EEEE ARE THE STARTING AND ENDING 1-RELATIVE  RECORD  00001800          
+    NUMBERS FOR A TEACH SEGMENT, XX IS THE R/C INTERNAL VERB INDEX, AND 00001900          
+    VVVVVVV IS THE VERB NAME. ANY CHARACTERS AFTER THE VERB NAME ARE    00002000          
+    IGNORED. THE INDEX IS TERMINATED BY THE FIRST LINE THAT DOES NOT    00002100          
+    BEGIN WITH AN 8-DIGIT NUMBER.                                       00002200          
+                                                                        00002300          
+    2016-05-21  P.KIMPEL                                                00002400          
+        ORIGINAL VERSION.                                               00002500          
+    ;                                                                   00002600          
+                                                                        00100000          
+DEFINE                                                                  00100100          
+  MAXVERB =             30 #,                                           00100200          
+  WORDEQUAL(A, B) =                                                     00100300          
+      (REAL(BOOLEAN(A) EQV BOOLEAN(B)) = REAL(NOT FALSE)) #;            00100400          
+                                                                        00120000          
+REAL                                                                    00120100          
+  COMMON;                               % FOR CC COMMON VALUE           00120200          
+                                                                        00130000          
+INTEGER                                                                 00130100          
+  RECNR,                                % CURRENT 0-REL DISK REC NR     00130200          
+  VERBTOP;                              % TOP VERBS[*] INDEX            00130300          
+                                                                        00160000          
+ARRAY                                                                   00160100          
+  REC[0:9],                             % SOURCE FILE RECORD            00160200          
+  VERBINX[0:MAXVERB-1],                 % VERB INDEX WORDS              00160300          
+  VERBREC[0:MAXVERB-1],                 % VERB INDEX RECORD NR          00160400          
+  VERBS[0:MAXVERB-1];                   % VERB NAMES                    00160500          
+                                                                        00180000          
+FILE DISK DISK UPDATE "TEACHER" "0000094" (2, 10, 30);                  00180100          
+FILE OUT LINE 17 (1, 17);                                               00180200          
+                                                                        00200000          
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%00200100          
+BOOLEAN STREAM PROCEDURE ISNUMERIC(REC, X, LEN);                        00200200          
+  VALUE X, LEN;                                                         00200300          
+  BEGIN COMMENT                                                         00200400          
+      EXAMINES THE CHARACTERS IN ARRAY REC STARTING AT OFFSET X FOR LEN 00200500          
+      CHARACTERS. IF ALL CHARACTERS ARE NUMERIC [0-9], RETURNS TRUE;    00200600          
+  LOCAL                                                                 00200700          
+    CHUNKS;                             % (COUNT DIV 64) MOD 64         00200800          
+  LABEL                                                                 00200900          
+    EXIT;                                                               00201000          
+                                                                        00201100          
+  % GET HIGH-ORDER 6 BITS OF X FOR DIV 64 COUNT.                        00201200          
+  DI:= LOC CHUNKS;                                                      00201300          
+  DI:= DI+7;                                                            00201400          
+  SI:= LOC X;                                                           00201500          
+  SI:= SI+6;                                                            00201600          
+  DS:= 1 CHR;                                                           00201700          
+                                                                        00201800          
+  % ESTABLISH STARTING SOURCE INDEX AT OFFSET X                         00201900          
+  SI:= REC;                             % POINT TO SOURCE               00202000          
+  CHUNKS(SI:= SI+32; SI:= SI+32);       % ADVANCE X DIV 64 CHRS         00202100          
+  SI:= SI+X;                            % ADVANCE X MOD 64 CHRS         00202200          
+  REC:= SI;                             % SAVE STARTING SOURCE INDEX    00202300          
+                                                                        00202400          
+  % GET HIGH-ORDER 6 BITS OF LEN FOR DIV 64 COUNT.                      00202500          
+  DI:= LOC CHUNKS;                                                      00202600          
+  DI:= DI+7;                                                            00202700          
+  SI:= LOC LEN;                                                         00202800          
+  SI:= SI+6;                                                            00202900          
+  DS:= 1 CHR;                                                           00203000          
+                                                                        00203100          
+  SI:= REC;                             % RESTORE STARTING SOURCE INDEX 00203200          
+                                                                        00203300          
+  % TEST ANY 64-CHAR CHUNKS                                             00203400          
+  CHUNKS(                                                               00203500          
+    2(32(                                                               00203600          
+      IF SC < "0" THEN                                                  00203700          
+        JUMP OUT 3 TO EXIT                                              00203800          
+      ELSE IF SC > "9" THEN                                             00203900          
+        JUMP OUT 3 TO EXIT                                              00204000          
+      ELSE                                                              00204100          
+        SI:= SI+1;                                                      00204200          
+      ));                                                               00204300          
+    );                                                                  00204400          
+                                                                        00204500          
+  % TEST THE RESIDUAL CHUNK                                             00204600          
+  LEN(                                                                  00204700          
+    IF SC < "0" THEN                                                    00204800          
+      JUMP OUT TO EXIT                                                  00204900          
+    ELSE IF SC > "9" THEN                                               00205000          
+      JUMP OUT TO EXIT                                                  00205100          
+    ELSE                                                                00205200          
+      SI:= SI+1;                                                        00205300          
+    );                                                                  00205400          
+                                                                        00205500          
+  % IF WE GET TO HERE, IT-S ALL NUMERIC                                 00205600          
+  TALLY:= 1;                                                            00205700          
+                                                                        00205800          
+EXIT:                                                                   00205900          
+  ISNUMERIC:= TALLY;                                                    00206000          
+  END ISNUMERIC;                                                        00206100          
+                                                                        00220000          
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%00220100          
+INTEGER STREAM PROCEDURE GETCHAR(REC, X);                               00220200          
+  VALUE X;                                                              00220300          
+  BEGIN COMMENT                                                         00220400          
+      RETURNS THE CHARACTER AT CHAR-OFFSET X FROM THE START OF REC;     00220500          
+  LOCAL                                                                 00220600          
+    CHUNKS;                             % (X DIV 64) MOD 64             00220700          
+                                                                        00220800          
+  % GET HIGH-ORDER 6 BITS OF X FOR DIV 64 COUNT.                        00220900          
+  DI:= LOC CHUNKS;                                                      00221000          
+  DI:= DI+7;                                                            00221100          
+  SI:= LOC X;                                                           00221200          
+  SI:= SI+6;                                                            00221300          
+  DS:= 1 CHR;                                                           00221400          
+                                                                        00221500          
+  % RETURN THE CHARACTER AT OFFSET X                                    00221600          
+  SI:= REC;                             % POINT TO SOURCE               00221700          
+  CHUNKS(SI:= SI+32; SI:= SI+32);       % ADVANCE X DIV 64 CHRS         00221800          
+  SI:= SI+X;                            % ADVANCE X MOD 64 CHRS         00221900          
+  DI:= LOC GETCHAR;                     % POINT TO PROCEDURE RESULT     00222000          
+  DS:= 7 LIT "0";                       % ZERO THE TOP 42 BITS          00222100          
+  DS:= 1 CHR;                           % SET CHARACTER IN RESULT       00222200          
+  END GETCHAR;                                                          00222300          
+                                                                        00230000          
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%00230100          
+ALPHA PROCEDURE GETTOKEN(REC, X, LEN, NEWX);                            00230200          
+  VALUE X, LEN;                                                         00230300          
+  ARRAY REC[0];                                                         00230400          
+  INTEGER X, LEN, NEWX;                                                 00230500          
+  BEGIN COMMENT                                                         00230600          
+      RETURNS THE NEXT SPACE-DELIMITED TOKEN, UP TO 7 CHARACTERS IN     00230700          
+      LENGTH, FROM ARRAY REC STARTING AT OFFSET X. THE TOKEN WILL BE    00230800          
+      LEFT-JUSTIFIED IN THE LOW-ORDER 7 CHARACTERS OVER SPACES. THE     00230900          
+      HIGH-ORDER CHARACTER OF THE RESULT WILL BE ZERO. LEN IS THE       00231000          
+      LENGTH OF VALID DATA IN REC -- THE SCAN WILL NOT PROCEED BEYOND   00231100          
+      THIS POINT. THE OFFSET OF THE NEXT CHARACTER BEYOND THE TOKEN IS  00231200          
+      RETURNED IN NEWX (X AND NEWX MAY REFER TO THE SAME WORD). IF NO   00231300          
+      FURTHER TOKEN EXISTS IN REC, THE PROCEDURE RESULT WILL BE -1 AND  00231400          
+      NEWX=LEN;                                                         00231500          
+  INTEGER                                                               00231600          
+    CX,                                 % CHAR OFFSET                   00231700          
+    LEFT,                               % MAX CHARS LEFT TO SCAN        00231800          
+    NX,                                 % UPDATED CHAR OFFSET           00231900          
+    WX;                                 % WORD OFFSET                   00232000          
+                                                                        00232100          
+  %---------------------------------------------------------------------00232200          
+  INTEGER STREAM PROCEDURE DEBLANK(REC, X, LEFT);                       00232300          
+    VALUE X, LEFT;                                                      00232400          
+    BEGIN COMMENT                                                       00232500          
+        DEBLANKS THE STRING FROM THE ARRAY REC STARTING AT OFFSET X     00232600          
+        (X<64), RETURNING THE OFFSET OF THE NEXT NON-SPACE CHARACTER    00232700          
+        FOUND, OR -1 IF NONE IS FOUND. LEFT IS THE MAXIMUM NUMBER OF    00232800          
+        CHARACTERS TO SCAN;                                             00232900          
+    LOCAL                                                               00233000          
+      CHUNKS;                           % (LEFT DIV 64) MOD 64          00233100          
+    LABEL                                                               00233200          
+      FOUND,                                                            00233300          
+      EXIT;                                                             00233400          
+                                                                        00233500          
+    % GET HIGH-ORDER 6 BITS OF X FOR DIV 64 COUNT.                      00233600          
+    DI:= LOC CHUNKS;                                                    00233700          
+    DI:= DI+7;                                                          00233800          
+    SI:= LOC LEFT;                                                      00233900          
+    SI:= SI+6;                                                          00234000          
+    DS:= 1 CHR;                                                         00234100          
+                                                                        00234200          
+    DI:= X;                             % LOAD OFFSET VALUE INTO DI     00234300          
+    SI:= REC;                           % LOAD SOURCE INDEX             00234400          
+    SI:= SI+X;                          % ADJUST SOURCE INDEX BY OFFSET 00234500          
+                                                                        00234600          
+    % SEARCH ANY 64-CHAR CHUNKS FOR A NON-BLANK CHARACTER.              00234700          
+    CHUNKS(                                                             00234800          
+      2(32(                                                             00234900          
+        IF SC ! " " THEN                                                00235100          
+          JUMP OUT 3 TO FOUND                                           00235200          
+        ELSE                                                            00235300          
+          BEGIN                                                         00235400          
+          SI:= SI+1;                                                    00235500          
+          DI:= DI+8;                    % INCREMENT OFFSET BY 1 (WORD)  00235600          
+          END;                                                          00235700          
+        ));                                                             00235800          
+      );                                                                00236000          
+                                                                        00236100          
+    % SEARCH THE MOD-64 CHUNK FOR A NON-BLANK CHARACTER                 00236200          
+    LEFT(                                                               00236300          
+      IF SC ! " " THEN                                                  00236400          
+        JUMP OUT TO FOUND                                               00236500          
+      ELSE                                                              00236600          
+        BEGIN                                                           00236700          
+        SI:= SI+1;                                                      00236800          
+        DI:= DI+8;                      % INCREMENT OFFSET BY 1 (WORD)  00236900          
+        END;                                                            00237000          
+      );                                                                00237100          
+                                                                        00237200          
+    % EXHAUSTED THE SOURCE, SO RETURN -1.                               00237300          
+    DI:= LOC DEBLANK;                                                   00237400          
+    DS:= 1 RESET;                                                       00237500          
+    DS:= 1 SET;                         % SET THE SIGN BIT [1:1]        00237600          
+    DS:= 45 RESET;                                                      00237700          
+    DS:= 1 SET;                         % SET THE 1 BIT [47:1]          00237800          
+    GO TO EXIT;                                                         00237900          
+                                                                        00238000          
+  FOUND:                                                                00238100          
+    DEBLANK:= DI;                                                       00238200          
+  EXIT:                                                                 00238300          
+    END DEBLANK;                                                        00238400          
+                                                                        00238500          
+  %---------------------------------------------------------------------00238600          
+  ALPHA STREAM PROCEDURE PARSETOKEN(REC, X, LEFT, NEWX);                00238700          
+    VALUE X, LEFT;                                                      00238800          
+    BEGIN COMMENT                                                       00238900          
+        RETURNS UP TO THE NEXT 7 CHARACTERS FROM REC AT OFFSET X (X<64) 00239000          
+        UNTIL A SPACE IS ENCOUNTERED OR LEFT CHARACTERS HAVE BEEN       00239100          
+        TRANSFERRED. THE RESULT WILL HAVE ITS HIGH-ORDER CHARACTER ZERO,00239200          
+        WITH THE TOKEN LEFT-JUSTIFIED OVER SPACES IN THE LOW-ORDER 7    00239300          
+        CHARACTERS. IF X INITIALLY REFERENCES A SPACE OR LEFT=0, THE    00239400          
+        RESULT WILL BE 7 SPACES;                                        00239500          
+    LOCAL                                                               00239600          
+      INDEX;                                                            00239700          
+    LABEL                                                               00239800          
+      PARSE;                                                            00239900          
+                                                                        00240000          
+    % ADJUST LEFT TO BE A MAX OF 7.                                     00240100          
+    SI:= LOC LEFT;                                                      00240200          
+    SI:= SI+6;                          % POINT TO 7TH CHAR OF LEFT WORD00240300          
+    IF SC = "0" THEN                                                    00240400          
+      BEGIN                             % LEFT < 64, SO CHECK NEXT CHAR 00240500          
+      SI:= SI+1;                                                        00240600          
+      IF SC } "0" THEN                                                  00240700          
+        IF SC { "7" THEN                                                00240800          
+          GO TO PARSE;                  % LEFT IS IN (0,7) SO USE AS IS 00240900          
+      END;                                                              00241000          
+                                                                        00241100          
+    % SET LEFT TO MAX VALUE OF 7                                        00241200          
+    DI:= LOC LEFT;                                                      00241300          
+    DI:= DI+7;                                                          00241400          
+    DS:= LIT "7";                                                       00241500          
+                                                                        00241600          
+  PARSE:                                                                00241700          
+    SI:= REC;                                                           00241800          
+    SI:= SI+X;                          % ADJUST SOURCE INDEX BY OFFSET 00241900          
+                                                                        00242000          
+    % INITIALIZE INDEX:= X                                              00242100          
+    DI:= X;                                                             00242200          
+    INDEX:= DI;                                                         00242300          
+                                                                        00242400          
+    % INITIALIZE PROCEDURE RESULT                                       00242500          
+    DI:= LOC PARSETOKEN;                                                00242600          
+    DS:= 8 LIT "0       ";                                              00242700          
+    DI:= DI-7;                                                          00242800          
+                                                                        00242900          
+    % MOVE AT MOST "LEFT" TOKEN CHARS                                   00243000          
+    LEFT(                                                               00243100          
+      IF SC = " " THEN                                                  00243200          
+        JUMP OUT                                                        00243300          
+      ELSE                                                              00243400          
+        BEGIN                                                           00243500          
+        DS:= CHR;                       % MOVE THE TOKEN CHAR           00243600          
+        X:= DI;                         % SAVE THE CURRENT TOKEN INDEX  00243700          
+        DI:= INDEX;                     % LOAD NEWX INDEX INTO DI       00243800          
+        DI:= DI+8;                      % INCREMENT NEWX BY 1 (WORD)    00243900          
+        INDEX:= DI;                     % SAVE UPDATED NEWX             00244000          
+        DI:= X;                         % RESTORE TOKEN INDEX           00244100          
+        END;                                                            00244200          
+      );                                                                00244300          
+                                                                        00244400          
+    % RETURN INDEX IN NEWX                                              00244500          
+    SI:= LOC INDEX;                                                     00244600          
+    DI:= NEWX;                                                          00244700          
+    DS:= WDS;                                                           00244800          
+    END PARSETOKEN;                                                     00244900          
+                                                                        00245000          
+  %----- GETTOKEN OUTER BLOCK ------------------------------------------00245100          
+  WX:= X DIV 8;                                                         00245200          
+  CX:= X MOD 8;                                                         00245300          
+  LEFT:= LEN - X;                                                       00245400          
+  NX:= DEBLANK(REC[WX], CX, LEFT);                                      00245500          
+  IF NX < 0 THEN                                                        00245600          
+    BEGIN                                                               00245700          
+    NEWX:= LEN;                                                         00245800          
+    GETTOKEN:= -1;                                                      00245900          
+    END                                                                 00246000          
+  ELSE                                                                  00246100          
+    BEGIN                                                               00246200          
+    LEFT:= LEFT - NX + CX;              % UPDATE BY DEBLANK COUNT       00246300          
+    WX:= WX + NX DIV 8;                                                 00246400          
+    CX:= NX MOD 8;                                                      00246500          
+    GETTOKEN:= PARSETOKEN(REC[WX], CX, LEFT, NX);                       00246600          
+    NEWX:= WX|8 + NX;                                                   00246700          
+    END;                                                                00246800          
+  END GETTOKEN;                                                         00246900          
+                                                                        00400000          
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%00400100          
+INTEGER PROCEDURE READDISK(REC);                                        00400200          
+  ARRAY REC[0];                                                         00400300          
+  BEGIN COMMENT                                                         00400400          
+      READS THE NEXT RECORD FROM THE DISK FILE INTO REC AND INCREMENTS  00400500          
+      THE RECNR COUNTER. RETURNS THE 0-RELATIVE RECNR FOR THE RECORD    00400600          
+      JUST READ OR -1 AT EOF;                                           00400700          
+  LABEL                                                                 00400800          
+    EOF,                                                                00400900          
+    EXIT;                                                               00401000          
+                                                                        00401100          
+  READ(DISK, 10, REC[*]) [EOF];                                         00401200          
+  READDISK:= (RECNR:= RECNR+1);                                         00401300          
+  GO TO EXIT;                                                           00401400          
+                                                                        00401500          
+EOF:                                                                    00401600          
+  READDISK:= -1;                                                        00401700          
+EXIT:                                                                   00401800          
+  END READDISK;                                                         00401900          
+                                                                        00500000          
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%00500100          
+PROCEDURE LOADVERBS;                                                    00500200          
+  BEGIN COMMENT                                                         00500300          
+      READS THE INITIAL RECORDS OF THE TEACHER FILE AS THE EXISTING     00500400          
+      TEACH COMMAND INDEX TO DETERMINE THE VERBS TO BE INDEXED. ONLY    00500500          
+      THE VERB NAME IS SIGNIFICANT IN THIS PASS. THE SSSS, EEEE, AND XX 00500600          
+      FIELDS ARE IGNORED, EXCEPT THAT THE INDEX IS TERMINATED BY THE    00500700          
+      FIRST RECORD IN WHICH SSSSEEEE IS NOT NUMERIC;                    00500800          
+  INTEGER                                                               00500900          
+    NEWX,                               % UPDATED GETTOKEN INDEX        00501000          
+    RN;                                 % 0-RELATIVE REC NR             00501100          
+                                                                        00501200          
+  BOOLEAN                                                               00501300          
+    DONE;                               % TERMINATING FLAG              00501400          
+                                                                        00501500          
+  RECNR:= -1;                                                           00501600          
+  VERBTOP:= -1;                                                         00501700          
+                                                                        00501800          
+  DO BEGIN                                                              00501900          
+    RN:= READDISK(REC);                                                 00502000          
+    IF RN < 0 THEN                                                      00502100          
+      BEGIN                                                             00502200          
+      DONE:= TRUE;                                                      00502300          
+      WRITE(LINE, <"*** EOF DURING LOAD OF VERB TABLE">);               00502400          
+      END                                                               00502500          
+    ELSE                                                                00502600          
+      BEGIN                                                             00502700          
+      IF NOT ISNUMERIC(REC, 0, 8) THEN                                  00502800          
+        DONE:= TRUE                                                     00502900          
+      ELSE                                                              00503000          
+        BEGIN                                                           00503100          
+        VERBTOP:= VERBTOP+1;                                            00503200          
+        IF VERBTOP } MAXVERB THEN                                       00503300          
+          BEGIN                                                         00503400          
+          DONE:= TRUE;                                                  00503500          
+          WRITE(LINE, <"*** VERBS TABLE OVERFLOW">);                    00503600          
+          END                                                           00503700          
+        ELSE                                                            00503800          
+          BEGIN                                                         00503900          
+          VERBS[VERBTOP]:= GETTOKEN(REC, 11, 72, NEWX);                 00504000          
+          VERBREC[VERBTOP]:= -RN;                                       00504100          
+          END                                                           00504200          
+        END;                                                            00504300          
+      END;                                                              00504400          
+    END                                                                 00504500          
+  UNTIL DONE;                                                           00504600          
+                                                                        00504700          
+  WRITE(LINE, <"R/C REFERENCE MANUAL VERB INDEX LOCATIONS:">);          00504800          
+  FOR NEWX:= 0 STEP 1 UNTIL VERBTOP DO                                  00504900          
+    WRITE(LINE, <I8,X2,O>, VERBREC[NEWX], VERBS[NEWX]);                 00505000          
+  END LOADVERBS;                                                        00505100          
+                                                                        00600000          
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%00600100          
+PROCEDURE FINDTEACHABLEMOMENTS;                                         00600200          
+  BEGIN COMMENT                                                         00600300          
+      SCANS THE TEACHER FILE LOOKING FOR "*RCTEACH" AND "*RCEND" DUMMY  00600400          
+      FORMATTING CONTROL RECORDS. USES THE CORRESONDING RECORD NUMBERS  00600500          
+      TO BUILD THE INDEX VALUES FOR THE TEACH TEXT SEGMENTS IN VERBINX; 00600600          
+  INTEGER                                                               00600700          
+    NEWX,                               % UPDATED PARSING OFFSET        00600800          
+    RN,                                 % CURRENT RECORD NUMBER         00600900          
+    STARTRN;                            % STARTING RECNR OF SEGMENT     00601000          
+  ALPHA                                                                 00601100          
+    TOKEN,                              % SCANNED TOKEN                 00601200          
+    VERB;                               % VERB NAME                     00601300          
+  BOOLEAN                                                               00601400          
+    DONE,                               % TRUE AT EOF                   00601500          
+    ENDTEACH;                           % TRUE AT END OF TEACH SEGMENT  00601600          
+                                                                        00601700          
+  %---------------------------------------------------------------------00601800          
+  STREAM PROCEDURE FORMATINDEXWORD(W, STARTRN, ENDRN);                  00601900          
+    VALUE STARTRN, ENDRN;                                               00602000          
+    BEGIN COMMENT                                                       00602100          
+        FORMATS AN 8-DIGIT INDEX WORD WITH THE STARTING RECORD NUMBER   00602200          
+        IN THE HIGH-ORDER 4 DIGITS AND THE ENDING NUMBER IN THE LOW 4;  00602300          
+                                                                        00602400          
+    DI:= W;                                                             00602500          
+    SI:= LOC STARTRN;                                                   00602600          
+    DS:= 4 DEC;                                                         00602700          
+    SI:= LOC ENDRN;                                                     00602800          
+    DS:= 4 DEC;                                                         00602900          
+    END FORMATINDEXWORD;                                                00603000          
+                                                                        00603100          
+  %----- FINDTEACHABLEMOMENTS OUTER BLOCK ------------------------------00603200          
+  DO BEGIN                                                              00603300          
+    RN:= READDISK(REC);                                                 00603400          
+    IF RN < 0 THEN                                                      00603500          
+      DONE:= TRUE                                                       00603600          
+    ELSE                                                                00603700          
+      BEGIN                                                             00603800          
+      IF GETCHAR(REC, 0) = "*" THEN                                     00603900          
+        BEGIN                                                           00604000          
+        TOKEN:= GETTOKEN(REC, 1, 72, NEWX);                             00604100          
+        IF WORDEQUAL(TOKEN, "RCTEACH") THEN                             00604200          
+          BEGIN                                                         00604300          
+          VERB:= GETTOKEN(REC, NEWX, 72, NEWX);                         00604400          
+          STARTRN:= RN+1;                                               00604500          
+                                                                        00604700          
+          % PROCESS THE TEACH SEGMENT                                   00604800          
+          ENDTEACH:= FALSE;                                             00604900          
+          DO BEGIN                                                      00605000          
+            RN:= READDISK(REC);                                         00605100          
+            IF RN < 0 THEN                                              00605200          
+              DONE:= ENDTEACH:= TRUE                                    00605300          
+            ELSE                                                        00605400          
+              BEGIN                                                     00605500          
+              IF GETCHAR(REC, 0) = "*" THEN                             00605600          
+                BEGIN                                                   00605700          
+                TOKEN:= GETTOKEN(REC, 1, 72, NEWX);                     00605800          
+                IF WORDEQUAL(TOKEN, "RCEND  ") THEN                     00605900          
+                  ENDTEACH:= TRUE;                                      00606000          
+                END;                                                    00606100          
+              END;                                                      00606200          
+            END                                                         00606300          
+          UNTIL ENDTEACH;                                               00606400          
+                                                                        00606500          
+          % CREATE THE INDEX WORD WITH 1-RELATIVE RECORD NUMBERS.       00606600          
+          % THE CURRENT RN VALUE IS 0-RELATIVE FOR THE *RCEND RECORD,   00606700          
+          % SO IT-S 1-RELATIVE FOR THE ENDING RECORD OF THE SEGMENT.    00606800          
+          FOR NEWX:= VERBTOP STEP -1 UNTIL 0 DO                         00606900          
+            BEGIN                                                       00607000          
+            IF WORDEQUAL(VERBS[NEWX], VERB) THEN                        00607100          
+              BEGIN                                                     00607200          
+              VERBREC[NEWX]:= ABS(VERBREC[NEWX]);                       00607300          
+              FORMATINDEXWORD(VERBINX[NEWX], STARTRN+1, RN);            00607400          
+              NEWX:= 0;                 % KILL THE FOR LOOP             00607500          
+              END;                                                      00607600          
+            END FOR NEWX;                                               00607700          
+                                                                        00607800          
+          END;                                                          00607900          
+        END;                                                            00608000          
+      END;                                                              00608100          
+    END                                                                 00608200          
+  UNTIL DONE;                                                           00608300          
+                                                                        00608400          
+  WRITE(LINE, </,"TEACH INDEX WORDS:">);                                00608500          
+  FOR NEWX:= 0 STEP 1 UNTIL VERBTOP DO                                  00608600          
+    WRITE(LINE, <I8,I4,X2,O,X2,O>, NEWX,                                00608700          
+        VERBREC[NEWX], VERBINX[NEWX], VERBS[NEWX]);                     00608800          
+  END FINDTEACHABLEMOMENTS;                                             00608900          
+                                                                        00700000          
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%00700100          
+PROCEDURE UPDATEINDEX;                                                  00700200          
+  BEGIN COMMENT                                                         00700300          
+      STEPS THROUGH THE VERB INDEX DATA BUILT BY THE PREVIOUS PHASES    00700400          
+      AND UPDATES THE INDEX RECORDS IN THE TEACHER FILE;                00700500          
+  INTEGER                                                               00700600          
+    RN,                                 % 0-RELATIVE RECORD NUMBER      00700700          
+    X;                                  % TABLE INDEX                   00700800          
+                                                                        00700900          
+  WRITE(LINE, </,"UPDATED TEACH INDEX RECORDS:">);                      00701000          
+  FOR X:= 0 STEP 1 UNTIL VERBTOP DO                                     00701100          
+    BEGIN                                                               00701200          
+    RN:= VERBREC[X];                                                    00701300          
+    READ(DISK[ABS(RN)], 10, REC[*]);                                    00701400          
+    WRITE(LINE, 10, REC[*]);                                            00701500          
+    IF BOOLEAN(RN.[1:1]) THEN           % SIGN BIT                      00701600          
+      REC[0]:= 0                        % NO SEGMENT FOUND, ZERO INDEX  00701700          
+    ELSE                                                                00701800          
+      REC[0]:= VERBINX[X];                                              00701900          
+                                                                        00702000          
+    WRITE(DISK[ABS(RN)], 10, REC[*]);                                   00702100          
+    WRITE(LINE[DBL], 10, REC[*]);                                       00702200          
+    END FOR X;                                                          00702300          
+  END UPDATEINDEX;                                                      00702400          
+                                                                        00900000          
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%00900100          
+                                                                        00900200          
+LOADVERBS;                                                              00900300          
+FINDTEACHABLEMOMENTS;                                                   00900400          
+UPDATEINDEX;                                                            00900500          
+                                                                        00990000          
+CLOSE(DISK, RELEASE);                                                   00990100          
+END.                                                                    00999000          
+                                                                        00999999          
