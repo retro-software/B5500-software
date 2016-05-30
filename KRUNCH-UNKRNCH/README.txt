@@ -1,0 +1,71 @@
+KRUNCH and UNKRNCH Utilities for the Burroughs B5500
+
+KRUNCH reads a card deck containing a B5500 Algol source program,
+removing all extraneous spaces and reducing the source to the minimum
+number of card images, writing the filtered source to the card punch.
+All comments are also removed from the source, and the output deck is
+resequenced 10+10. The source program is still compilable, but it is not
+very readable. A sample run deck would be:
+
+        ?EXECUTE KRUNCH/UTILITY
+        ?DATA CARD
+            :                   :
+            : Algol source deck :
+            :                   :
+        ?END
+
+UNKRNCH reads a B5500 Algol source program and reformats it, applying
+standard spacing and indentation to it. It was probably written
+originally to reverse what KRUNCH does, but it will work on any Algol
+source to function as a primitive "pretty print" formatter. It preserves
+comments in the input, but of course cannot reinsert comments that were
+stripped out by KRUNCH.
+
+Input can be from a card deck or a "0CRDIMG" library tape. Output can be
+to a new punched card deck, another "0CRDIMG" tape, or the line printer.
+The reformatted program is resequenced 100+100. The program reads a
+parameter card in free-field format with two integers that define the
+modes of input and output. The values of these integers are defined in a
+comment at the beginning of the source. A sample run deck to read the
+original program from cards and output to the line printer would be
+(note the trailing comma on the parameter card):
+
+        ?EXECUTE UNKRNCH/UTILITY
+        ?DATA CARD
+        0,2,
+            :                   :
+            : Algol source deck :
+            :                   :
+        ?END
+
+
+These programs appear to have been written by someone at Burroughs. They
+were donated by Burroughs to the CUBE (user association) library in
+1968. I encountered them at the University of Delaware in 1970 and saved
+compile listings of them. The source files below were transcribed from
+those listing.
+
+KRUNCH.UTILITY.alg_m
+    Algol source for the KRUNCH utility.
+
+KRUNCH-As-krunched.card
+    Card deck resulting from running the source for KRUNCH through
+    KRUNCH itself.
+
+KRUNCH-Compile.lst
+    Algol compile listing for KRUNCH generated using the retro-B5500
+    emulator running Mark XIII software.
+
+UNKRNCH.UTILITY.alg_m
+    Algol source for the UNKRNCH utility.
+
+UNKRNCH-Compile-Run.lst
+    Algol file listing for UNKRNCH generated using the retro-B5500
+    emulator running Mark XIII software, followed by an execution of
+    UNKRNCH that read the KRUNCH-As-krunched.card file and output the
+    reformatted source to the line printer.
+
+Paul Kimpel
+May 2016
+
+

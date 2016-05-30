@@ -1,0 +1,895 @@
+ LABEL  000000000LINE   00186150?COMPILE UNKRNCH/UTILITY ALGOL LIBRARY                                   ALGOL  /UNKRNCH
+
+
+
+
+
+                      BURROUGHS B-5700 ALGOL COMPILER MARK XIII.0     FRIDAY, 05/30/86,   1:06 PM.
+
+
+
+
+
+                 LABEL  000000000PUNCH  001701410170141000000000000000000000001000010000        00000000    0000
+                UNKRUNCH    000107AA                                                            00000100    0000
+                                                                                                00000200    0000
+                                                                                                00000300    0000
+                ************************************************************************        00000400    0000
+                           PLEASE NOTE THAT THE BURROUGHS CORPORATION ASSUMES                   00000500    0000
+                     NO RESPONSIBILITY FOR THE USE OR MAINTENANCE OF THIS PROGRAM.              00000600    0000
+                ***********************************************************************;        00000700    0000
+                % UNKRUNCH/UTILITY PRODUCES A NEW SOURCE DECK OF ALGOL, REFORMATTED             00000800    0000
+                % FOR BETTER READABILITY.                                                       00000900    0000
+                % THE CONTROL CARD FOR THIS PROGRAM IS FREE FIELD AND SETS THE                  00001000    0000
+                %        SWITCH FILES FOR THE INPUT AND OUTPUT.                                 00001100    0000
+                %        THE FIRST NUMBER IS FOR THE INPUT.                                     00001200    0000
+                %        INPUT = 0 THEN A CARD DECK IS EXPECTED AFTER THE CONTROL CARD          00001300    0000
+                %        INPUT = 1 THEN A 0CRDIMG TAPE IS EXPECTED                              00001400    0000
+                %        OUTPUT = 0 THEN THE CARD PUNCH WILL MAKE A NEW SEQUENCED DECK          00001500    0000
+                %        OUTPUT = 1 THEN A NEW RESEQUENCED 0CRDIMG TAPE IS MADE                 00001600    0000
+                %        OUTPUT = 2 THE OUTPUT APPEARS ON THE LINE PRINTER.                     00001700    0000
+                %                                                                               00001800    0000
+                BEGIN                                                                           00001900    0000
+                                                                                        START OF SEGMENT **********    2
+                   FILE CARD(5,10,30),                                                          00002000    0000
+                        TAPE "0CRDIMG" (2,56,10),                                               00002100    0003
+                        LINE 18(2,15),                                                          00002200    0007
+                        PUNCH 0(5,10),                                                          00002300    0010
+                        NEWTAPE "0CRDIMG" (2,56,10,SAVE 1);                                     00002400    0014
+                   INTEGER I, J, PAREN, WIN, CIN, WBUF, CBUF, WOUT, COUT, SQ, SCOL,             00002500    0020
+                        TEMP;                                                                   00002600    0020
+                   ALPHA PARM, T, FILER, CHAR, BLKBGN, BLKEND, ELSER, SEMICO, COMMA,            00002700    0020
+                        RTPAREN, LISTR, FRMATR, LFPAREN;                                        00002800    0020
+                   ARRAY BUFIMG [0 : 9], CP [0 : 9], BUF [0 : 9];                               00002900    0020
+                   BOOLEAN COMA, DECL, NUMSW, FLORMAT, SEMI, ENDR;                              00003000    0025
+                   SWITCH FILE INPUT := CARD,                                                   00003100    0025
+                        TAPE;                                                                   00003200    0028
+                   SWITCH FILE OUTPUT := PUNCH,                                                 00003300    0029
+                        NEWTAPE,                                                                00003400    0032
+                        LINE;                                                                   00003500    0034
+                   LABEL ENDIT, ST;                                                             00003600    0035
+                   BOOLEAN STREAM PROCEDURE BLANK (CP);                                         00003700    0035
+                   BEGIN                                                                        00003800    0037
+                      LABEL L7;                                                                 00003900    0037
+                      TALLY ← 0;                                                                00004000    0037
+                      SI ← CP;                                                                  00004100    0037
+                      2 (36 (IF SC ≠ " " THEN JUMP OUT 2 TO L7;                                 00004200    0037
+                      SI ← SI + 1));                                                            00004300    0039
+                      TALLY ← 1;                                                                00004400    0040
+                      L7: BLANK ← TALLY;                                                        00004500    0040
+                   END BLANK;                                                                   00004600    0041
+                   ALPHA STREAM PROCEDURE GNCH (CR, CIN);                                       00004700    0042
+                   VALUE CIN;                                                                   00004800    0042
+                   BEGIN                                                                        00004900    0042
+                      SI ← CR;                                                                  00005000    0043
+                      SI ← SI + CIN;                                                            00005100    0043
+                      DI ← LOC GNCH;                                                            00005200    0043
+                      DI ← DI + 7;                                                              00005300    0044
+                      DS ← CHR;                                                                 00005400    0044
+                   END GNCH;                                                                    00005500    0044
+                   ALPHA PROCEDURE GETCHAR;                                                     00005600    0045
+                   BEGIN                                                                        00005700    0045
+                      IF CIN < 0 THEN                                                           00005800    0045
+                      BEGIN                                                                     00005900    0046
+                         CIN ← CIN + 8;                                                         00006000    0047
+                         WIN ← WIN - 1                                                          00006100    0048
+                      END;                                                                      00006200    0048
+                      IF WIN > 8 THEN                                                           00006300    0049
+                      BEGIN                                                                     00006400    0050
+                         READ (INPUT [I], 10, BUFIMG [*]) [ENDIT];                              00006500    0051
+                         WIN ← CIN ← 0;                                                         00006600    0056
+                      END;                                                                      00006700    0057
+                      GETCHAR ← GNCH (BUFIMG [WIN], CIN);                                       00006800    0057
+                      CIN ← CIN + 1;                                                            00006900    0060
+                      IF CIN > 7 THEN                                                           00007000    0061
+                      BEGIN                                                                     00007100    0062
+                         WIN ← WIN + 1;                                                         00007200    0062
+                         CIN ← CIN - 8;                                                         00007300    0063
+                      END;                                                                      00007400    0065
+                   END GETCHAR;                                                                 00007500    0065
+                   STREAM PROCEDURE BUFTOOUT (BUF, TEMP, CP, COUT);                             00007600    0067
+                   VALUE TEMP, COUT;                                                            00007700    0067
+                   BEGIN                                                                        00007800    0067
+                      SI ← BUF;                                                                 00007900    0068
+                      DI ← CP;                                                                  00008000    0068
+                      DI ← DI + COUT;                                                           00008100    0068
+                      DS ← TEMP CHR;                                                            00008200    0069
+                   END BUFTOOUT;                                                                00008300    0069
+                   BOOLEAN STREAM PROCEDURE COMEQUAL (BUF);                                     00008400    0069
+                   BEGIN                                                                        00008500    0069
+                      LOCAL NIC;                                                                00008600    0070
+                      TALLY ← 0;                                                                00008700    0070
+                      SI ← BUF;                                                                 00008800    0070
+                      DI ← LOC NIC;                                                             00008900    0070
+                      DS ← 8 LIT "COMMENT ";                                                    00009000    0070
+                      DI ← DI - 8;                                                              00009100    0072
+                      IF 8 SC = DC THEN TALLY ← 1;                                              00009200    0072
+                      COMEQUAL ← TALLY;                                                         00009300    0073
+                   END COMEQUAL;                                                                00009400    0073
+                   BOOLEAN STREAM PROCEDURE EQUAL (BUF, COUNT, T);                              00009500    0074
+                   VALUE COUNT;                                                                 00009600    0074
+                   BEGIN                                                                        00009700    0074
+                      LABEL L1;                                                                 00009800    0075
+                      TALLY ← 0;                                                                00009900    0075
+                      SI ← BUF;                                                                 00010000    0075
+                      DI ← T;                                                                   00010100    0075
+                      DI ← DI + 2;                                                              00010200    0075
+                      COUNT (IF SC ≠ DC THEN JUMP OUT 1 TO L1);                                 00010300    0076
+                      TALLY ← 1;                                                                00010400    0078
+                      L1: EQUAL ← TALLY;                                                        00010500    0078
+                   END EQUAL;                                                                   00010600    0079
+                   STREAM PROCEDURE CB (T, BUF, CBUF);                                          00010700    0080
+                   VALUE CBUF;                                                                  00010800    0080
+                   BEGIN                                                                        00010900    0080
+                      SI ← T;                                                                   00011000    0081
+                      SI ← SI + 7;                                                              00011100    0081
+                      DI ← BUF;                                                                 00011200    0081
+                      DI ← DI + CBUF;                                                           00011300    0081
+                      DS ← CHR;                                                                 00011400    0082
+                   END CR;                                                                      00011500    0082
+                   PROCEDURE CHARTOBUF (T);                                                     00011600    0082
+                   VALUE T;                                                                     00011700    0082
+                   ALPHA T;                                                                     00011800    0082
+                   BEGIN                                                                        00011900    0082
+                      CB (T, BUF [WBUF], CBUF);                                                 00012000    0082
+                      CBUF ← CBUF + 1;                                                          00012100    0084
+                      IF CBUF > 7 THEN                                                          00012200    0085
+                      BEGIN                                                                     00012300    0086
+                         WBUF ← WBUF + 1;                                                       00012400    0087
+                         CBUF ← CBUF - 8;                                                       00012500    0088
+                      END;                                                                      00012600    0089
+                   END CHARTOBUF;                                                               00012700    0089
+                   BOOLEAN STREAM PROCEDURE ALPHACHECK (T);                                     00012800    0089
+                   BEGIN                                                                        00012900    0089
+                      SI ← T;                                                                   00013000    0090
+                      SI ← SI + 7;                                                              00013100    0090
+                      IF SC = ALPHA THEN TALLY ← 1 ELSE TALLY ← 0;                              00013200    0090
+                      ALPHACHECK ← TALLY;                                                       00013300    0091
+                   END ALPHACHECK;                                                              00013400    0092
+                   STREAM PROCEDURE CLEARBUF (BUF);                                             00013500    0093
+                   BEGIN                                                                        00013600    0093
+                      DI ← BUF;                                                                 00013700    0093
+                      2 (DS ← 40 LIT " ");                                                      00013800    0093
+                   END CLEARBUF;                                                                00013900    0099
+                   STREAM PROCEDURE SEQUENCE (FO, SQ);                                          00014000    0099
+                   BEGIN                                                                        00014100    0099
+                      DI ← FO;                                                                  00014200    0100
+                      2 (DI ← DI + 36);                                                         00014300    0100
+                      SI ← SQ;                                                                  00014400    0101
+                      DS ← 8 DEC;                                                               00014500    0101
+                   END SEQUENCE;                                                                00014600    0101
+                   PROCEDURE DROP;                                                              00014700    0101
+                   BEGIN                                                                        00014800    0101
+                      IF NOT BLANK (CP[0]) THEN                                                 00014900    0101
+                      BEGIN                                                                     00015000    0103
+                         SEQUENCE (CP [0], SQ);                                                 00015100    0104
+                         SQ ← SQ + 100;                                                         00015200    0105
+                         WRITE (OUTPUT[J] [DBL], 10, CP[ *]);                                   00015300    0106
+                         CLEARBUF (CP);                                                         00015400    0111
+                      END;                                                                      00015500    0112
+                      WOUT ← SCOL DIV 8;                                                        00015600    0112
+                      COUT ← SCOL MOD 8;                                                        00015700    0113
+                   END DROP;                                                                    00015800    0114
+                   PROCEDURE PERCENT;                                                           00015900    0115
+                   BEGIN                                                                        00016000    0115
+                      INTEGER NUMCHAR, REMCHAR;                                                 00016100    0115
+                                                                                        START OF SEGMENT **********    3
+                      STREAM PROCEDURE MVCHAR (NUMB, SOURCE, SSKIP, DEST, DSKIP);               00016200    0000
+                      VALUE NUMB, SSKIP, DSKIP;                                                 00016300    0000
+                      BEGIN                                                                     00016400    0000
+                         SI ← SOURCE;                                                           00016500    0000
+                         SI ← SI + SSKIP;                                                       00016600    0000
+                         DI ← DEST;                                                             00016700    0000
+                         DI ← DI + DSKIP;                                                       00016800    0001
+                         DS ← NUMB CHR;                                                         00016900    0001
+                      END MVCHAR;                                                               00017000    0002
+                      IF (CIN ← CIN - 1) < 0 THEN                                               00017100    0002
+                      BEGIN                                                                     00017200    0004
+                         CIN ← CIN + 8;                                                         00017300    0005
+                         WIN ← WIN - 1;                                                         00017400    0006
+                      END;                                                                      00017500    0007
+                      DROP;                                                                     00017600    0007
+                      NUMCHAR ← 72 - (8 × WIN + CIN);                                           00017700    0008
+                      IF (REMCHAR ← NUMCHAR - 40) > 0 THEN                                      00017800    0010
+                      BEGIN                                                                     00017900    0012
+                         MVCHAR (40, BUFIMG [WIN], CIN, CP [WIN], CIN);                         00018000    0012
+                         MVCHAR (REMCHAR, BUFIMG [WIN + 5], CIN, CP [WIN + 5], CIN);            00018100    0015
+                      END                                                                       00018200    0018
+                      ELSE MVCHAR (NUMCHAR, BUFIMG [WIN], CIN, CP[WIN], CIN);                   00018300    0018
+                      DROP;                                                                     00018400    0021
+                      WIN ← 9;                                                                  00018500    0021
+                      T ← " ";                                                                  00018600    0022
+                   END PERCENT;                                                                 00018700    0023
+                                                                                           3 IS   26 LONG, NEXT SEG    2
+                   PROCEDURE COMSCAN;                                                           00018800    0115
+                COMMENT   THIS PROCEDURE HANDLES THE OUTPUTTING OF COMMENTS THAT                00018900    0115
+                          APPEAR IN THE PROGRAM, PLACING THEM IN THE SAME POSITION              00019000    0115
+                          THAT THEY HAD IN THE ORIGINAL CARD;                                   00019100    0115
+                   BEGIN                                                                        00019200    0115
+                      LABEL FOO;                                                                00019300    0115
+                                                                                        START OF SEGMENT **********    4
+                      INTEGER COL;                                                              00019400    0000
+                      COL ← SCOL;                                                               00019500    0000
+                      SCOL ← 0;                                                                 00019600    0000
+                      CLEARBUF (CP);                                                            00019700    0001
+                      WIN ← WIN - 1;                                                            00019800    0002
+                      COUT ← CIN;                                                               00019900    0003
+                      WOUT ← WIN;                                                               00020000    0004
+                      FOO:T ← GETCHAR;                                                          00020100    0005
+                      IF WOUT > 8 THEN DROP;                                                    00020200    0007
+                      CB (T, CP [WOUT], COUT);                                                  00020300    0008
+                      COUT ← COUT + 1;                                                          00020400    0010
+                      WOUT ← WOUT + COUT DIV 8;                                                 00020500    0011
+                      COUT ← COUT MOD 8;                                                        00020600    0013
+                      IF T ≠ ";" THEN GO TO FOO;                                                00020700    0014
+                      T ← GETCHAR;                                                              00020800    0015
+                      SCOL ← COL;                                                               00020900    0016
+                      DROP;                                                                     00021000    0017
+                   END COMSCAN;                                                                 00021100    0018
+                                                                                           4 IS   21 LONG, NEXT SEG    2
+                   PROCEDURE CREAD;                                                             00021200    0115
+                   BEGIN                                                                        00021300    0115
+                      LABEL N1, N2, DONE, C1, Q1, ST;                                           00021400    0115
+                                                                                        START OF SEGMENT **********    5
+                      CBUF ← WBUF ← 0;                                                          00021500    0000
+                      CLEARBUF (BUF);                                                           00021600    0001
+                      CIN ← CIN - 1;                                                            00021700    0002
+                      ST: T ← GETCHAR;                                                          00021800    0003
+                      IF ALPHACHECK (T) THEN                                                    00021900    0005
+                      BEGIN                                                                     00022000    0006
+                         IF T < 10 THEN                                                         00022100    0006
+                         BEGIN                                                                  00022200    0007
+                            NUMSW ← TRUE;                                                       00022300    0008
+                            N1: CHARTOBUF (T);                                                  00022400    0008
+                            T ← GETCHAR;                                                        00022500    0009
+                            IF ALPHACHECK (T) AND T > 9 AND NUMSW AND NOT FLORMAT THEN          00022600    0010
+                            BEGIN                                                               00022700    0014
+                               NUMSW ← FALSE;                                                   00022800    0014
+                               GO TO DONE;                                                      00022900    0015
+                            END;                                                                00023000    0016
+                            IF ALPHACHECK (T) THEN GO TO N1;                                    00023100    0016
+                            IF T = "." OR T = ":" OR T = "," THEN GO TO N1;                     00023200    0018
+                            IF T = "@" THEN                                                     00023300    0021
+                            BEGIN                                                               00023400    0022
+                               CHARTOBUF (T);                                                   00023500    0022
+                               T ← GETCHAR;                                                     00023600    0023
+                               N2: CHARTOBUF (T);                                               00023700    0024
+                               T ← GETCHAR;                                                     00023800    0025
+                               IF T < 10 THEN GO TO N2;                                         00023900    0026
+                            END;                                                                00024000    0028
+                            GO TO DONE;                                                         00024100    0028
+                         END;                                                                   00024200    0028
+                         C1:CHARTOBUF (T);                                                      00024300    0028
+                         T ← GETCHAR;                                                           00024400    0029
+                         IF ALPHACHECK (T) OR T = "." OR T = "[" OR T = ":" THEN GO TO          00024500    0030
+                              C1;                                                               00024600    0035
+                         IF T = " " THEN GO TO DONE;                                            00024700    0035
+                         IF T = "." THEN                                                        00024800    0037
+                         BEGIN                                                                  00024900    0037
+                            CHARTOBUF (".");                                                    00025000    0038
+                            T ← GETCHAR;                                                        00025100    0039
+                         END;                                                                   00025200    0040
+                         IF T = ":" THEN                                                        00025300    0040
+                         BEGIN                                                                  00025400    0040
+                            CHARTOBUF (":");                                                    00025500    0041
+                            T ← GETCHAR;                                                        00025600    0042
+                         END;                                                                   00025700    0043
+                         GO TO DONE;                                                            00025800    0043
+                      END;                                                                      00025900    0043
+                      IF T = """ THEN                                                           00026000    0043
+                      BEGIN                                                                     00026100    0044
+                         T ← GETCHAR;                                                           00026200    0044
+                         IF T = """ THEN                                                        00026300    0045
+                         BEGIN                                                                  00026400    0046
+                            T ← GETCHAR;                                                        00026500    0047
+                            IF T ≠ """ THEN GO TO ENDIT;                                        00026600    0048
+                            CHARTOBUF (""");                                                    00026700    0051
+                            CHARTOBUF (""");                                                    00026800    0052
+                            CHARTOBUF (""");                                                    00026900    0053
+                            T ← GETCHAR;                                                        00027000    0053
+                            GO TO DONE;                                                         00027100    0054
+                         END;                                                                   00027200    0055
+                         CHARTOBUF (""");                                                       00027300    0055
+                         Q1: CHARTOBUF (T);                                                     00027400    0056
+                         T ← GETCHAR;                                                           00027500    0056
+                         IF T ≠ """ THEN GO TO Q1;                                              00027600    0057
+                         CHARTOBUF (""");                                                       00027700    0059
+                         T ← GETCHAR;                                                           00027800    0059
+                         GO TO DONE;                                                            00027900    0060
+                      END;                                                                      00028000    0061
+                      IF T = "%" THEN PERCENT;                                                  00028100    0061
+                      IF T = " " THEN GO TO ST;                                                 00028200    0063
+                      IF T = "," OR T = ";" OR T = ")" OR T = "]" THEN COUT ← COUT - 1;         00028300    0064
+                      IF COUT < 0 THEN                                                          00028400    0069
+                      BEGIN                                                                     00028500    0070
+                         COUT ← COUT + 8;                                                       00028600    0071
+                         WOUT ← WOUT - 1;                                                       00028700    0072
+                      END;                                                                      00028800    0073
+                      CHARTOBUF (T);                                                            00028900    0073
+                      PARM ← GETCHAR;                                                           00029000    0074
+                      IF T = ";" THEN FLORMAT ← FALSE;                                          00029100    0075
+                      IF T ≠ "." AND T ≠ "[" AND T ≠ "(" THEN DONE : CHARTOBUF (" ");           00029200    0077
+                   END CREAD;                                                                   00029300    0081
+                                                                                           5 IS   82 LONG, NEXT SEG    2
+                %***********************************************************************        00029400    0115
+                   READ (CARD, /, I, J);                                                        00029500    0115
+                   IF I = 1 THEN CLOSE (CARD, RELEASE);                                         00029600    0124
+                   FILER ← "FILE  ";                                                            00029700    0127
+                   BLKBGN ← "BEGIN ";                                                           00029800    0128
+                   BLKEND ← "END . ";                                                           00029900    0129
+                   ELSER ← "ELSE  ";                                                            00030000    0130
+                   SEMICO ← ";     ";                                                           00030100    0130
+                   COMMA ← ",     ";                                                            00030200    0131
+                   RTPAREN ← ")     ";                                                          00030300    0132
+                   LFPAREN ← "(     ";                                                          00030400    0133
+                   LISTR ← "LIST  ";                                                            00030500    0133
+                   FRMATR ← "FORMAT";                                                           00030600    0134
+                   SEMI ← COMA ← DECL ← FALSE;                                                  00030700    0135
+                   PAREN ← 0;                                                                   00030800    0137
+                   WOUT ← WBUF ← CBUF ← 0;                                                      00030900    0137
+                   CIN ← 1;                                                                     00031000    0139
+                   WIN ← 10;                                                                    00031100    0140
+                   CLEARBUF (CP);                                                               00031200    0141
+                   CLEARBUF (BUF);                                                              00031300    0142
+                   SQ ← 100;                                                                    00031400    0143
+                   ST: CREAD;                                                                   00031500    0143
+                   TEMP ← 8 × WBUF + CBUF;                                                      00031600    0144
+                   IF EQUAL (BUF, 6, BLKBGN) THEN                                               00031700    0146
+                   BEGIN                                                                        00031800    0148
+                      DROP;                                                                     00031900    0148
+                      IF SEMI THEN SCOL ← SCOL - 2 ELSE SCOL ← SCOL + 3;                        00032000    0149
+                      SEMI ← FALSE;                                                             00032100    0163
+                   END;                                                                         00032200    0164
+                   IF EQUAL (BUF, TEMP, BLKEND) THEN                                            00032300    0164
+                   BEGIN                                                                        00032400    0166
+                      IF SEMI THEN SCOL ← SCOL - 5;                                             00032500    0166
+                      SCOL ← SCOL - 3;                                                          00032600    0168
+                      DROP;                                                                     00032700    0169
+                      SEMI ← FALSE;                                                             00032800    0170
+                      ENDR ← TRUE;                                                              00032900    0171
+                   END;                                                                         00033000    0171
+                   IF ENDR AND EQUAL (BUF, TEMP, ELSER) THEN DROP;                              00033100    0171
+                   IF TEMP + COUT + 8 × WOUT > 72 THEN                                          00033200    0175
+                   BEGIN                                                                        00033300    0177
+                      IF NOT SEMI THEN SCOL ← SCOL + 5;                                         00033400    0178
+                      SEMI ← TRUE;                                                              00033500    0180
+                      DROP;                                                                     00033600    0181
+                   END;                                                                         00033700    0181
+                   BUFTOOUT (BUF, TEMP, CP [WOUT], COUT);                                       00033800    0181
+                   COUT ← COUT + TEMP;                                                          00033900    0183
+                   WOUT ← WOUT + COUT DIV 8;                                                    00034000    0184
+                   COUT ← COUT MOD 8;                                                           00034100    0186
+                   IF COMEQUAL (BUF) THEN COMSCAN;                                              00034200    0187
+                   IF EQUAL (BUF, TEMP, LISTR) THEN DECL ← TRUE;                                00034300    0190
+                   IF EQUAL (BUF, 6, FRMATR) THEN DECL ← FLORMAT ← TRUE;                        00034400    0193
+                   IF EQUAL (BUF, TEMP, FILER) THEN DECL ← TRUE;                                00034500    0197
+                   IF DECL THEN                                                                 00034600    0200
+                   BEGIN                                                                        00034700    0201
+                      IF NOT SEMI THEN SCOL ← SCOL + 5;                                         00034800    0201
+                      SEMI ← TRUE;                                                              00034900    0203
+                      IF NOT COMA THEN SCOL ← SCOL + 3;                                         00035000    0204
+                      COMA ← TRUE;                                                              00035100    0206
+                      IF EQUAL (BUF, TEMP, LFPAREN) THEN PAREN ← PAREN + 1;                     00035200    0207
+                      IF EQUAL (BUF, TEMP, RTPAREN) THEN PAREN ← PAREN - 1;                     00035300    0211
+                      IF PAREN = 0 AND EQUAL (BUF, TEMP, COMMA) THEN                            00035400    0215
+                      BEGIN                                                                     00035500    0218
+                         SCOL ← SCOL - 3;                                                       00035600    0218
+                         COMA ← FALSE;                                                          00035700    0219
+                         DROP;                                                                  00035800    0220
+                      END;                                                                      00035900    0221
+                   END;                                                                         00036000    0221
+                   IF EQUAL (BUF, TEMP, SEMICO) THEN                                            00036100    0221
+                   BEGIN                                                                        00036200    0223
+                      IF SEMI THEN SCOL ← SCOL - 5;                                             00036300    0223
+                      IF COMA THEN SCOL ← SCOL - 3;                                             00036400    0225
+                      COMA ← DECL ← FLORMAT ← ENDR ← SEMI ← FALSE;                              00036500    0227
+                      DROP;                                                                     00036600    0230
+                   END;                                                                         00036700    0230
+                   IF EQUAL (BUF, 6, BLKBGN) THEN DROP;                                         00036800    0230
+                   GO TO ST;                                                                    00036900    0233
+                   ENDIT: DROP;                                                                 00037000    0234
+                END .                                                                           00037100    0235
+                                                                                           2 IS  239 LONG, NEXT SEG    1
+PRT(5) = BLOCK CONTROL INTRINSIC, SEGMENT NUMBER =    6.
+PRT(123) = INPUT(W) INTRINSIC, SEGMENT NUMBER =    7.
+PRT(104) = GO TO SOLVER  INTRINSIC, SEGMENT NUMBER =    8.
+PRT(14) = ALGOL WRITE   INTRINSIC, SEGMENT NUMBER =    9.
+PRT(15) = ALGOL READ    INTRINSIC, SEGMENT NUMBER =   10.
+PRT(16) = ALGOL SELECT  INTRINSIC, SEGMENT NUMBER =   11.
+PRT(33) = FILE ATTRBUTS INTRINSIC, SEGMENT NUMBER =   12.
+                                                                                           1 IS    2 LONG, NEXT SEG    0
+                                                                                          13 IS   69 LONG, NEXT SEG    0
+NUMBER OF ERRORS DETECTED =   0.  COMPILATION TIME =   20 SECONDS.
+
+PRT SIZE =  84; TOTAL SEGMENT SIZE =   439 WORDS; DISK SIZE =  36 SEGS; NO. PGM. SEGS =  13
+
+ESTIMATED CORE STORAGE REQUIRED =  3333 WORDS.
+
+ESTIMATED AUXILIARY MEMORY REQUIRED =     0 WORDS.
+
+
+
+
+
+
+ LABEL  000000000LINE   00186150?COMPILE UNKRNCH/UTILITY ALGOL LIBRARY                                   ALGOL  /UNKRNCH
+
+
+
+
+
+
+
+
+
+
+
+ LABEL  000000000LINE   00186150?EXECUTE UNKRNCH/UTILITY                                                 UNKRNCH/UTILITY
+
+
+
+
+
+KRUNCH 000104 AA * * * * * * * * * * * * * * * * * * * * * * * * * * *  00000100
+
+     * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *  00000200
+
+     * * * * * * * * * * * * PLEASE NOTE THAT THE BURROUGHS CORPORATION 00000300
+
+     ASSUMES NO RESPONSIBILITY FOR THE USE OR MAINTENANCE OF THIS       00000400
+
+     PROGRAM. * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 00000500
+
+     * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *  00000600
+
+     * * * * * * * * * *                                                00000700
+
+     BEGIN                                                              00000800
+
+   ALPHA CH, T, IDENT, CHAR, SAVE1, TUF1, TUF2;                         00000900
+
+   BOOLEAN ID, ID1, ID2, FIRSTCARD, EOF;                                00001000
+
+   INTEGER I, WIN, WOUT, CIN, COUT, SQ;                                 00001100
+
+   LABEL K, L, M, N, ENDIT, N1;                                         00001200
+
+   ALPHA ARRAY BUFIMG[0:9];                                             00001300
+
+   DEFINE CR = BUFIMG #;                                                00001400
+
+   FILE IN KRUCARD (1,10);                                              00001500
+
+   FILE OUT KRUPNCH 0 (1,10);                                           00001600
+
+   DEFINE CP = KRUPNCH #;                                               00001700
+
+   STREAM PROCEDURE SEQUENCE (FO, SQ, IDENT);                           00001800
+
+   BEGIN                                                                00001900
+
+      DI ← FO;                                                          00002000
+
+      SI ← IDENT;                                                       00002100
+
+      SI ← SI + 5;                                                      00002200
+
+      DS ← 3 CHR;                                                       00002300
+
+      SI ← SQ;                                                          00002400
+
+      DS ← 5 DEC                                                        00002500
+
+   END;                                                                 00002600
+
+   BOOLEAN STREAM PROCEDURE ALPHACHECK (T);                             00002700
+
+   BEGIN                                                                00002800
+
+      SI ← T;                                                           00002900
+
+      SI ← SI + 7;                                                      00003000
+
+      DI ← LOC ALPHACHECK;                                              00003100
+
+      DS ← 8 LIT "0";                                                   00003200
+
+      DI ← DI - 1;                                                      00003300
+
+      SKIP 5 DB;                                                        00003400
+
+      IF SC = ALPHA THEN DS ← 1 SET;                                    00003500
+
+   END;                                                                 00003600
+
+   ALPHA STREAM PROCEDURE GNCH (FI, CIN);                               00003700
+
+   VALUE CIN;                                                           00003800
+
+   BEGIN                                                                00003900
+
+      SI ← FI;                                                          00004000
+
+      SI ← SI + CIN;                                                    00004100
+
+      DI ← LOC GNCH;                                                    00004200
+
+      DI ← DI + 7;                                                      00004300
+
+      DS ← CHR;                                                         00004400
+
+   END GNCH;                                                            00004500
+
+   ALPHA PROCEDURE GETCHAR;                                             00004600
+
+   BEGIN                                                                00004700
+
+      IF WIN ≥ 9 THEN                                                   00004800
+
+      BEGIN                                                             00004900
+
+         LABEL L1, L2;                                                  00005000
+
+         FORMAT FMT (13A6,A2);                                          00005100
+
+         ALPHA ARRAY INFO[0:13];                                        00005200
+
+         STREAM PROCEDURE CONCAT (INBUF, OUTBUF);                       00005300
+
+         BEGIN                                                          00005400
+
+            SI ← INBUF;                                                 00005500
+
+            DI ← OUTBUF;                                                00005600
+
+            13 (SI ← SI + 2;                                            00005700
+
+            DS ← 6 CHR);                                                00005800
+
+            SI ← SI + 6;                                                00005900
+
+            DS ← 2 CHR;                                                 00006000
+
+         END;                                                           00006100
+
+         STREAM PROCEDURE GETIDENT (IDENT, BUFIMG);                     00006200
+
+         BEGIN                                                          00006300
+
+            SI ← BUFIMG;                                                00006400
+
+            DI ← IDENT;                                                 00006500
+
+            DI ← DI + 5;                                                00006600
+
+            DS ← 3 CHR                                                  00006700
+
+         END;                                                           00006800
+
+         INTEGER I;                                                     00006900
+
+         READ (KRUCARD, FMT, FOR I ← 0 STEP 1 UNTIL 13 DO INFO[I]) [L1] 00007000
+
+              ;                                                         00007100
+
+         CONCAT (INFO[0], BUFIMG[0]);                                   00007200
+
+         IF FIRSTCARD THEN                                              00007300
+
+         BEGIN                                                          00007400
+
+            GETIDENT (IDENT, BUFIMG[9]);                                00007500
+
+            FIRSTCARD ← FALSE;                                          00007600
+
+         END;                                                           00007700
+
+         GO TO L2;                                                      00007800
+
+         L1:EOF ← TRUE;                                                 00007900
+
+         L2:CIN ← WIN ← 0;                                              00008000
+
+      END;                                                              00008100
+
+      TUF1 ← TUF2;                                                      00008200
+
+      GETCHAR ← TUF2 ← GNCH (CR[WIN], CIN);                             00008300
+
+      ID1 ← ID;                                                         00008400
+
+      ID ← ALPHACHECK (TUF2) AND (ID OR TUF2 ≥ 10);                     00008500
+
+      CIN ← CIN + 1;                                                    00008600
+
+      IF CIN ≥ 8 THEN                                                   00008700
+
+      BEGIN                                                             00008800
+
+         WIN ← WIN + 1;                                                 00008900
+
+         CIN ← CIN - 8                                                  00009000
+
+      END;                                                              00009100
+
+   END CHAR;                                                            00009200
+
+   STREAM PROCEDURE PPCH (FO, COUT, CH);                                00009300
+
+   VALUE COUT;                                                          00009400
+
+   BEGIN                                                                00009500
+
+      SI ← CH;                                                          00009600
+
+      SI ← SI + 7;                                                      00009700
+
+      DI ← FO;                                                          00009800
+
+      DI ← DI + COUT;                                                   00009900
+
+      DS ← CHR;                                                         00010000
+
+   END;                                                                 00010100
+
+   PROCEDURE CHAROUT (CH);                                              00010200
+
+   VALUE CH;                                                            00010300
+
+   ALPHA CH;                                                            00010400
+
+   BEGIN                                                                00010500
+
+      IF WOUT ≥ 9 THEN                                                  00010600
+
+      BEGIN                                                             00010700
+
+         SEQUENCE (CP (9), SQ, IDENT);                                  00010800
+
+         SQ ← SQ + 10;                                                  00010900
+
+         RELEASE (CP);                                                  00011000
+
+         COUT ← WOUT ← 0;                                               00011100
+
+      END;                                                              00011200
+
+      PPCH (CP (WOUT), COUT, CH);                                       00011300
+
+      COUT ← COUT + 1;                                                  00011400
+
+      IF COUT ≥ 8 THEN                                                  00011500
+
+      BEGIN                                                             00011600
+
+         WOUT ← WOUT + 1;                                               00011700
+
+         COUT ← COUT - 8;                                               00011800
+
+      END;                                                              00011900
+
+   END CHAROUT;                                                         00012000
+
+   PROCEDURE CLEAR;                                                     00012100
+
+   BEGIN                                                                00012200
+
+      INTEGER I;                                                        00012300
+
+      FOR I ← 0 WHILE WOUT < 9 DO CHAROUT (" ");                        00012400
+
+   END;                                                                 00012500
+
+   PROCEDURE COMMENTCHECK (L);                                          00012600
+
+   LABEL L;                                                             00012700
+
+   BEGIN                                                                00012800
+
+      LABEL NOPE;                                                       00012900
+
+      INTEGER PTR, PWD;                                                 00013000
+
+      PTR ← CIN;                                                        00013100
+
+      PWD ← WIN;                                                        00013200
+
+      SAVE1 ← T;                                                        00013300
+
+      FOR CH ← "O", "M", "M", "E", "N", "T" DO                          00013400
+
+      BEGIN                                                             00013500
+
+         IF WIN ≥ 9 THEN GO TO NOPE;                                    00013600
+
+         CHAR ← GETCHAR;                                                00013700
+
+         IF EOF THEN GO TO ENDIT;                                       00013800
+
+         IF CH ≠ CHAR THEN GO TO NOPE;                                  00013900
+
+      END;                                                              00014000
+
+      CHAR ← GETCHAR;                                                   00014100
+
+      IF EOF THEN GO TO ENDIT;                                          00014200
+
+      T ← CHAR;                                                         00014300
+
+      IF NOT ALPHACHECK (T) THEN FOR CH ← T WHILE CHAR ≠ ";" DO         00014400
+
+      BEGIN                                                             00014500
+
+         CHAR ← GETCHAR;                                                00014600
+
+         IF EOF THEN GO TO ENDIT;                                       00014700
+
+         T ← CHAR;                                                      00014800
+
+      END                                                               00014900
+
+      ELSE GO TO NOPE;                                                  00015000
+
+      GO TO L;                                                          00015100
+
+      NOPE:WIN ← PWD;                                                   00015200
+
+      CIN ← PTR;                                                        00015300
+
+      ID ← ID1 ← TRUE;                                                  00015400
+
+      T ← SAVE1;                                                        00015500
+
+   END;                                                                 00015600
+
+   WIN ← 10;                                                            00015700
+
+   FIRSTCARD ← TRUE;                                                    00015800
+
+   EOF ← FALSE;                                                         00015900
+
+   TUF1 ← TUF2 ← ";";                                                   00016000
+
+   SQ ← 10;                                                             00016100
+
+   L:CHAR ← GETCHAR;                                                    00016200
+
+   IF EOF THEN GO TO ENDIT;                                             00016300
+
+   T ← CHAR;                                                            00016400
+
+   IF T = """ THEN                                                      00016500
+
+   BEGIN                                                                00016600
+
+      N:CHAR ← GETCHAR;                                                 00016700
+
+      IF EOF THEN GO TO ENDIT;                                          00016800
+
+      T ← CHAR;                                                         00016900
+
+      IF T = """ THEN                                                   00017000
+
+      BEGIN                                                             00017100
+
+         CHAR ← GETCHAR;                                                00017200
+
+         IF EOF THEN GO TO ENDIT;                                       00017300
+
+         IF CHAR ≠ """ THEN                                             00017400
+
+         BEGIN                                                          00017500
+
+            ENDIT:CLEAR;                                                00017600
+
+            SEQUENCE (CP (9), SQ, IDENT);                               00017700
+
+            RELEASE (CP);                                               00017800
+
+            GO TO N1;                                                   00017900
+
+         END;                                                           00018000
+
+         FOR I ← 1,2,3 DO CHAROUT (""");                                00018100
+
+         GO TO L;                                                       00018200
+
+      END;                                                              00018300
+
+      CHAROUT (""");                                                    00018400
+
+      CHAROUT (T);                                                      00018500
+
+      K:CHAR ← GETCHAR;                                                 00018600
+
+      IF EOF THEN GO TO ENDIT;                                          00018700
+
+      T ← CHAR;                                                         00018800
+
+      CHAROUT (T);                                                      00018900
+
+      IF T ≠ """ THEN GO TO K;                                          00019000
+
+      CHAR ← GETCHAR;                                                   00019100
+
+      IF EOF THEN GO TO ENDIT;                                          00019200
+
+      T ← CHAR;                                                         00019300
+
+   END;                                                                 00019400
+
+   IF T = " " THEN                                                      00019500
+
+   BEGIN                                                                00019600
+
+      ID2 ← ID1;                                                        00019700
+
+      M:CHAR ← GETCHAR;                                                 00019800
+
+      IF EOF THEN GO TO ENDIT;                                          00019900
+
+      T ← CHAR;                                                         00020000
+
+      IF T = " " THEN GO TO M;                                          00020100
+
+      IF ID2 AND ALPHACHECK (T) THEN CHAROUT (" ");                     00020200
+
+      IF T = """ THEN GO TO N;                                          00020300
+
+   END;                                                                 00020400
+
+   IF T = "%" THEN                                                      00020500
+
+   BEGIN                                                                00020600
+
+      WIN ← 10;                                                         00020700
+
+      GO TO L;                                                          00020800
+
+   END;                                                                 00020900
+
+   IF T = "$" AND 8 × WIN + CIN = 1 THEN                                00021000
+
+   BEGIN                                                                00021100
+
+      IF 8 × WOUT + COUT ≠ 0 THEN                                       00021200
+
+      BEGIN                                                             00021300
+
+         CLEAR;                                                         00021400
+
+         WOUT ← 10;                                                     00021500
+
+      END;                                                              00021600
+
+      CHAROUT ("$");                                                    00021700
+
+      FOR I ← 1 STEP 1 UNTIL 71 DO                                      00021800
+
+      BEGIN                                                             00021900
+
+         CHAR ← GETCHAR;                                                00022000
+
+         IF EOF THEN GO TO ENDIT;                                       00022100
+
+         CHAROUT ((T ← CHAR));                                          00022200
+
+      END;                                                              00022300
+
+      GO TO L;                                                          00022400
+
+   END;                                                                 00022500
+
+   IF T = "C" AND NOT ALPHACHECK (TUF1) THEN COMMENTCHECK (L);          00022600
+
+   CHAROUT (T);                                                         00022700
+
+   GO TO L;                                                             00022800
+
+   N1:END.END;                                                          00022900
+
+   END.LAST CARD ON 0 CRDING TAPE                                       00023000
+
+
+
+ LABEL  000000000LINE   00186150?EXECUTE UNKRNCH/UTILITY                                                 UNKRNCH/UTILITY
