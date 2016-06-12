@@ -1,0 +1,479 @@
+?execute object/reader
+?common=3
+?file newtape = pascrun/disk serial 
+?data card
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%           00001
+%                                                           %           00002
+%                  the pascal run time-system.              %           00003
+%                  ---------------------------              %           00004
+%                                                           %           00005
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%           00006
+begin%                                                                  00007
+integer v00167,v00168,v00169;%                                          00008
+file input "input" (2,10);%                                             00009
+file output 1 (2,17);%                                                  00010
+%                                                                       00011
+define procedu =procedure#,%                                            00012
+       functn  =real procedure#,%                                       00013
+       downto  =step -1 until#,%                                        00014
+       upto    =step  1 until#,%                                        00015
+       b       =boolean#,%                                              00016
+       f00603  =input#,%                                                00017
+       f00742  =output#,%                                               00018
+       lastch  =[5:6]#,%                                                00019
+       bufsize =[13:8]#,%                                               00020
+       bufpnt  =[21:8]#,%                                               00021
+       eof     =[22:1]#,%                                               00022
+       eoln    =[23:1]#,%                                               00023
+       inp     =[24:1]#,%                                               00024
+       outp    =[25:1]#,%                                               00025
+       endfound=[26:1]#,%                                               00026
+       memsize =10000#,%                                                00027
+       maxint  =549755813887#;%                                         00028
+%                                                                       00029
+array mem[0:memsize div 1022,0:1022], text,char[0:0], temptext[0:19],%  00030
+    v00603[0:9], v00742[0:16];%                                         00031
+integer mempnt,t,t1,i00603,i00742;%                                     00032
+pointer charpnt,textpnt;%                                               00033
+label terminate;%                                                       00034
+format termmess ("**** program execution terminated at line ",i*,"."),% 00035
+       checkerr ("**** the value ",i*," is not in the range ",i*,"..",% 00036
+              i*,"."),%                                                 00037
+       errmark  (x*,"x"),%                                              00038
+       concaterr("**** concat error: [",i*,":",i*,":",i*,"]"),%         00039
+       illegalcc("**** illegal carriage control character:"""",a1,""");%00040
+switch format errmess :=%                                               00041
+    (),%                                                                00042
+    ("**** no reading while eof is true."),                          %1 00043
+    ("**** no writing while eof is false."),                         %2 00044
+    ("**** illegal character,"),                                     %3 00045
+    ("**** overflow error."),                                        %4 00046
+    ("**** no reset/rewrite on input/output."),                      %5 00047
+    ("**** line image overflow.");                                   %6 00048
+monitor expovr:=realoverflow;%                                          00049
+%                                                                       00050
+integer procedure numdigits(n);%                                        00051
+value n; integer n;%                                                    00052
+numdigits:=if n<0 then 1+numdigits(-n) else%                            00053
+           if n>9 then 1+numdigits(n div 10) else 1;%                   00054
+%                                                                       00055
+procedure runerr(errnum,linenum);       %*** run time error ***         00056
+value errnum,linenum;%                                                  00057
+integer errnum,linenum;%                                                00058
+begin%                                                                  00059
+    write(output,errmess[errnum]);%                                     00060
+    write(output,termmess,numdigits(linenum),linenum);%                 00061
+    go to terminate;%                                                   00062
+end of runner;%                                                         00063
+%                                                                       00064
+integer procedure check(val,lim1,lim2,linenum);%                        00065
+value val,lim1,lim2,linenum;%                                           00066
+integer val,lim1,lim2,linenum;%                                         00067
+begin%                                                                  00068
+    if val<lim1 or val>lim2 then%                                       00069
+    begin write(output,checkerr,numdigits(val),val,numdigits(lim1),%    00070
+                lim1,numdigits(lim2),lim2);%                            00071
+          runerr(4,linenum);%                                           00072
+    end;%                                                               00073
+    check:=val;%                                                        00074
+end of check;%                                                          00075
+%                                                                       00076
+alpha procedure curdat;%                                                00077
+curdat:=" "&time(5)[41:35:36];%                                         00078
+%                                                                       00079
+alpha procedure weekda;%                                                00080
+weekda:=time(6)&" "[41:5:6];%                                           00081
+%                                                                       00082
+integer procedure trunc(x,linenum);%                                    00083
+value x,linenum;%                                                       00084
+real x; integer linenum;%                                               00085
+begin%                                                                  00086
+    if abs(x)>maxint then runerr(4,linenum);%                           00087
+    trunc:=if x<0 then -entier(-x) else entier(x);%                     00088
+end of trunc;                                                           00089
+%                                                                       00090
+integer procedure round(x,linenum);%                                    00091
+value x,linenum;%                                                       00092
+real x; integer linenum;%                                               00093
+begin%                                                                  00094
+    if abs(x)>maxint then runerr(4,linenum);%                           00095
+    round:=x;%                                                          00096
+end of round;%                                                          00097
+%                                                                       00098
+boolean procedure odd(n);%                                              00099
+value n;  integer n;%                                                   00100
+odd:=n mod 2 = 1;%                                                      00101
+%                                                                       00102
+real procedure sqr(x,linenum);%                                         00103
+value x,linenum;%                                                       00104
+real x; integer linenum;%                                               00105
+begin%                                                                  00106
+    if abs(x)>2.0769187@34 then runerr(4,linenum);%                     00107
+    sqr:=x|x;%                                                          00108
+end of sqr;%                                                            00109
+%                                                                       00110
+boolean procedure incl1(a,b);           %*** is the set "a" included    00111
+value a,b;  real a,b;                   %*** in the set "b".            00112
+incl1:=real(boolean(a) and not boolean(b))=0;%                          00113
+%                                                                       00114
+boolean procedure incl2(a,b);           %*** is the set "b" included    00115
+value a,b;  real a,b;                   %*** in the set "a".            00116
+incl2:=real(boolean(b) and not boolean(a))=0;%                          00117
+%                                                                       00118
+boolean procedure intst(a,b);           %*** is the value "a" an element00119
+value a,b;  real a,b;                   %*** in the set "b".            00120
+intst:=if a<0 or b>38 then false else 0&b[0:38-a:1]=1;%                 00121
+%                                                                       00122
+procedure new(p,size);%                                                 00123
+value size; real p; integer size;%                                      00124
+begin%                                                                  00125
+    p:=if mempnt+size>memsize then 0 else mempnt;%                      00126
+    mempnt:=mempnt+size;%                                               00127
+end of new;%                                                            00128
+%                                                                       00129
+procedure dispose(p,size);%                                             00130
+value size; real p; integer size;%                                      00131
+begin%                                                                  00132
+end of dispose;%                                                        00133
+%                                                                       00134
+procedure pack(a,llim,ulim,i,z,linenum);%                               00135
+value llim,ulim,i,linenum;%                                             00136
+array a[*];  alpha z;%                                                  00137
+integer llim,ulim,i,linenum;%                                           00138
+begin;%                                                                 00139
+    z:=0;%                                                              00140
+    for t1:=0 step 1 until 6 do%                                        00141
+    z:=a[check(i+t1,llim,ulim,linenum)] & z [41:35:36];%                00142
+end;%                                                                   00143
+%                                                                       00144
+procedure unpack(z,a,llim,ulim,i,linenum);%                             00145
+value z,llim,ulim,i,linenum;%                                           00146
+array a[*];  alpha z;%                                                  00147
+integer llim,ulim,i,linenum;%                                           00148
+for t1:=0 step 1 until 6 do%                                            00149
+a[check(i+t1,llim,ulim,linenum)]:= 0 & z [5:41-6|t1:6];%                00150
+%                                                                       00151
+real procedure concat(a,b,as,bs,n,linenum);%                            00152
+value a,b,as,bs,n,linenum;%                                             00153
+real a,b; integer as,bs,n,linenum;%                                     00154
+begin%                                                                  00155
+    if as<1 or bs<1 or n<0 or as+n>48 or bs+n>48 then%                  00156
+    begin%                                                              00157
+      write(output,concaterr,numdigits(as),as,numdigits(bs),%           00158
+            bs,numdigits(n),n);%                                        00159
+      runerr(0,linenum);%                                               00160
+    end;                                                                00161
+    concat:=a & b [47-as:47-bs:n];%                                     00162
+end of concat;%                                                         00163
+%                                                                       00164
+boolean procedure bit(n,linenum);%     %*** set bit no "n" in a word.   00165
+value n,linenum; integer n,linenum;%                                    00166
+bit:=boolean(0 & 1 [38-check(n,0,38,linenum):0:1]);%                    00167
+%                                                                       00168
+boolean procedure bits(n1,n2,linenum);  %*** set bits "n1".."n2".       00169
+value n1,n2,linenum;%                                                   00170
+integer n1,n2,linenum;%                                                 00171
+bits:=boolean(0 & 3"7777777777777" [38-check(n1,0,38,linenum):38:%      00172
+                                       check(n2,0,38,linenum)-n1+1]);%  00173
+%                                                                       00174
+procedure rline(f,buf,info);%                                           00175
+file f; array buf[0]; integer info;%                                    00176
+begin%                                                                  00177
+    label endfile;%                                                     00178
+    info.eoln:=0;  info.bufpnt:=1;%                                     00179
+    read(f,999,buf[*]) [endfile];%                                      00180
+    replace charpnt by pointer(buf[*]) for 1;%                          00181
+    info.lastch:=char[0];%                                              00182
+    if false then%                                                      00183
+    begin endfile: info.endfound:=1;%                                   00184
+    end;%                                                               00185
+end of rline;%                                                          00186
+%                                                                       00187
+real procedure pread(f,buf,info,mode,linenum);%                         00188
+value mode,linenum;%                                                    00189
+file f;  array buf[0];%                                                 00190
+integer info,mode,linenum;%                                             00191
+begin%                                                                  00192
+    define getchar=%                                                    00193
+    begin%                                                              00194
+        if boolean(info.eoln) then%                                     00195
+        begin%                                                          00196
+          rline(f,buf,info);  ch:=info.lastch;%                         00197
+        end else%                                                       00198
+        if info.bufpnt=info.bufsize then%                               00199
+        begin ch:=" "; info.eoln:=1 end else%                           00200
+        begin%                                                          00201
+            replace charpnt by pointer(buf[*])+info.bufpnt for 1;%      00202
+            ch:=char[0];  info.bufpnt:=info.bufpnt+1;%                  00203
+    end end of getchar#;%                                               00204
+%                                                                       00205
+    define readerr(errnum)=%                                            00206
+    begin                                                               00207
+        write(output,999,buf[*]);%                                      00208
+        write(output,errmark,info.bufpnt-1);%                           00209
+        runerr(errnum,linenum);%                                        00210
+    end readerr#;%                                                      00211
+%                                                                       00212
+    real res;  alpha ch;%                                               00213
+    boolean negative,negexp;  integer power,exp;%                       00214
+    label overflow,return;%                                             00215
+%                                                                       00216
+    if boolean(info.eof) then runerr(1,linenum);%                       00217
+    if boolean(info.endfound) then%                                     00218
+    begin%                                                              00219
+      info.eof:=1;  pread:=0;%                                          00220
+      go to return;%                                                    00221
+    end;%                                                               00222
+    if mode=1 then                      %*** mode = char ***            00223
+    begin%                                                              00224
+      pread:=info.lastch;  getchar;  info.lastch:=ch;%                  00225
+    end else%                                                           00226
+    begin                               %*** mode = real/integer ***    00227
+      ch:=info.lastch;%                                                 00228
+      while ch=" " and not boolean(info.endfound) do getchar;%          00229
+      if boolean(info.endfound) then%                                   00230
+      begin%                                                            00231
+        info.eof:=1;  pread:=0;%                                        00232
+        go to return;%                                                  00233
+      end;%                                                             00234
+      if ch="+" or ch="-" then begin negative:=ch="-"; getchar end;%    00235
+      if ch>9 then readerr(3);%                                         00236
+      res:=ch;  getchar;%                                               00237
+      while ch{9 do begin res:=10|res+ch; getchar end;%                 00238
+      if mode=3 then    % mode = real.                                  00239
+      begin%                                                            00240
+        if ch="." then%                                                 00241
+        begin%                                                          00242
+          getchar;  if ch>9 then readerr(3);%                           00243
+          while ch{9 do begin res:=10|res+ch;power:=power-1;getchar end;00244
+        end;%                                                           00245
+        if ch="e" then%                                                 00246
+        begin%                                                          00247
+          getchar;%                                                     00248
+          if ch="+" or ch="-" then begin negexp:=ch="-"; getchar end;%  00249
+          if ch>9 then readerr(3);%                                     00250
+          while ch{9 do begin exp:=10|exp+ch; getchar end;%             00251
+          if negexp then exp:=-exp;%                                    00252
+        end;                                                            00253
+        power:=power+exp;%                                              00254
+        realoverflow:=overflow;  res:=res|10*power;%                    00255
+        if false then   overflow: readerr(4);%                          00256
+        realoverflow:=0;%                                               00257
+      end else if res>maxint then readerr(4);%                          00258
+      pread:=if negative then -res else res;%                           00259
+      info.lastch:=ch;%                                                 00260
+    end;%                                                               00261
+return:%                                                                00262
+end of pread;%                                                          00263
+%                                                                       00264
+%                                                                       00265
+procedure wline(f,buf,info);           %*** print a line.***            00266
+file f; array buf[0]; integer info;%                                    00267
+begin%                                                                  00268
+    alpha cc;%                                                          00269
+    if boolean(info.outp) then%                                         00270
+    begin%                                                              00271
+      replace charpnt by pointer(buf[*]) for 1;  cc:=char[0];%          00272
+      replace pointer(buf[*]) by " ";%                                  00273
+      if cc=" " then write(output,999,buf[*]) else%                     00274
+      if cc="+" then write(output[no],999,buf[*]) else%                 00275
+      begin%                                                            00276
+        if cc="0" then write(output) else%                              00277
+        if cc="-" then write(output[dbl]) else%                         00278
+        if cc="1" then write(output[page]) else%                        00279
+        write(output,illegalcc,cc);%                                    00280
+        write(output,999,buf[*]);%                                      00281
+      end;%                                                             00282
+    end else write(f,999,buf[*]);%                                      00283
+    replace pointer(buf[*]) by " " for info.bufsize;%                   00284
+    info.bufpnt:=0;%                                                    00285
+end of wline;%                                                          00286
+%                                                                       00287
+%                                                                       00288
+procedure chfil(f);%                                                    00289
+file f;%                                                                00290
+begin%                                                                  00291
+    array a[0:6];%                                                      00292
+    search(f,a[*]);%                                                    00293
+    if a[0]=-1 then%                                                    00294
+    begin%                                                              00295
+        f.areas := 20;%                                                 00296
+        f.areasize := 300;%                                             00297
+    end;%                                                               00298
+end of chfil;%                                                          00299
+%                                                                       00300
+%                                                                       00301
+procedure walfa(f,buf,info,a1,a2,a3,a4,a5,a6,a7,a8,a9,a10,a11,a12,aleng,00302
+                                                           linenum);%   00303
+value a1,a2,a3,a4,a5,a6,a7,a8,a9,a10,a11,a12,aleng,linenum;%            00304
+file f;  array buf[0];  integer info,aleng,linenum;%                    00305
+alpha a1,a2,a3,a4,a5,a6,a7,a8,a9,a10,a11,a12;%                          00306
+begin%                                                                  00307
+    alpha a;  pointer pnt;%                                             00308
+    label exit;%                                                        00309
+    if not boolean(info.eof) then runerr(2,linenum);%                   00310
+    if info.bufpnt+aleng}info.bufsize then wline(f,buf,info);%          00311
+    pnt:=pointer(buf[*])+info.bufpnt;%                                  00312
+    info.bufpnt:=info.bufpnt+aleng;%                                    00313
+    for a:=a1,a2,a3,a4,a5,a6,a7,a8,a9,a10,a11,a12 do%                   00314
+    begin%                                                              00315
+      text[0]:=a;%                                                      00316
+      replace pnt:pnt by textpnt for min(aleng,7);%                     00317
+      aleng:=aleng-7;  if aleng{0 then go to exit;%                     00318
+    end;%                                                               00319
+exit:%                                                                  00320
+end of walfa;%                                                          00321
+%                                                                       00322
+%                                                                       00323
+procedure pwrite(f,buf,info,e,emode,m,n,linenum);%                      00324
+value e,emode,m,n,linenum;%                                             00325
+file f;  array buf[0];  real e;                                         00326
+integer info,emode,m,n,linenum;%                                        00327
+begin%                                                                  00328
+    integer nchars,nexp,i;  pointer cpnt;%                              00329
+    define putchar(c)=                 % puts a character into temptext 00330
+    begin char[0]:=c;  nchars:=nchars+1;%                               00331
+          replace cpnt:cpnt by charpnt for 1;%                          00332
+    end#;%                                                              00333
+%                                                                       00334
+    procedure putint(n);               % puts an integer into temptext  00335
+    value n;  integer n;               % with zero suppression.         00336
+    if n{9 then putchar(n) else%                                        00337
+    begin putint(n div 10); putchar(entier(n mod 10)) end;%             00338
+%                                                                       00339
+    cpnt:=pointer(temptext[*]);%                                        00340
+    if not boolean(info.eof) then runerr(2,linenum);%                   00341
+    if emode=1 then                     %*** mode = integer ***         00342
+    begin%                                                              00343
+      if e<0 then begin putchar("-"); e:=-e end;%                       00344
+      putint(e);%                                                       00345
+    end else%                                                           00346
+    if emode=2 then                     %*** mode = real ***            00347
+    begin%                                                              00348
+      putchar(" ");%                                                    00349
+      if e<0 then begin putchar("-"); e:=-e end;%                       00350
+      if e>maxint or n<0 then    % floating-point.                      00351
+      begin%                                                            00352
+        if e>0 then%                                                    00353
+        begin%                                                          00354
+          while e<1 do begin nexp:=nexp-1; e:=10|e end;%                00355
+          while e}10 do begin nexp:=nexp+1; e:=e/10 end;%               00356
+        end;                                                            00357
+        i:=max(m-8,1);%                                                 00358
+        e:=e+0.5|10*(-i);%                                              00359
+        if e geq 10 then begin nexp:=nexp+1; e:=e/10 end;%              00360
+        putchar(entier(e));  e:=e-entier(e);  putchar(".");%            00361
+        do begin%                                                       00362
+          e:=10|e;  putchar(entier(e));%                                00363
+          e:=e-entier(e);  i:=i-1;%                                     00364
+        end until i{0;%                                                 00365
+        putchar("e");%                                                  00366
+        if nexp<0 then begin putchar("-"); nexp:=-nexp end%             00367
+                  else putchar("+");%                                   00368
+        putchar(nexp div 10);   putchar(entier(nexp mod 10));%          00369
+      end else%                                                         00370
+      begin                       % fixed-point.                        00371
+        e:=e+0.5|10*(-n);%                                              00372
+        putint(entier(e));  putchar(".");  e:=e-entier(e);%             00373
+        if n>150 then runerr(6,linenum);%                               00374
+        for i:=1 step 1 until n do%                                     00375
+        begin e:=10|e;  putchar(entier(e));%                            00376
+              e:=e-entier(e);%                                          00377
+    end end end else%                                                   00378
+    if emode=3 then                   %*** mode = boolean ***           00379
+    begin%                                                              00380
+      if e<0.5 then replace cpnt by "false" else replace cpnt by "true";00381
+      nchars:=if e<0.5 then 5 else 4;%                                  00382
+    end else%                                                           00383
+    if emode=5 then                   %*** mode = alfa ***              00384
+    begin%                                                              00385
+      text[0]:=e;  nchars:=min(m,7);%                                   00386
+      replace cpnt:cpnt by textpnt for 7;%                              00387
+    end else%                                                           00388
+    begin                             %*** mode = char ***              00389
+      putchar(e);%                                                      00390
+    end;%                                                               00391
+    if nchars>m then m:=nchars;%                                        00392
+    if info.bufpnt+m>info.bufsize then wline(f,buf,info);%              00393
+    if m>info.bufsize then runerr(6,linenum);%                          00394
+    replace pointer(buf[*])+(info.bufpnt+m-nchars) by%                  00395
+            pointer(temptext[*]) for nchars;%                           00396
+    info.bufpnt:=info.bufpnt+m;%                                        00397
+end of pwrite;%                                                         00398
+%                                                                       00399
+%                                                                       00400
+procedure put(f,buf,info,linenum);%                                     00401
+value linenum;%                                                         00402
+file f;  array buf[*];%                                                 00403
+integer info,linenum;%                                                  00404
+begin%                                                                  00405
+    if info.bufsize=0 then%                                             00406
+    begin%                                                              00407
+      if not boolean(info.eof) then runerr(2,linenum);%                 00408
+      write(f,1023,buf[*]);%                                            00409
+    end else pwrite(f,buf,info,info.lastch,4,1,1,linenum);%             00410
+end of put;%                                                            00411
+%                                                                       00412
+%                                                                       00413
+procedure get(f,buf,info,linenum);%                                     00414
+value linenum;%                                                         00415
+file f;  array buf[*];%                                                 00416
+integer info,linenum;%                                                  00417
+begin%                                                                  00418
+    alpha x;  label endfile;%                                           00419
+    if info.bufsize=0 then%                                             00420
+    begin%                                                              00421
+      if boolean(info.eof) then runerr(1,linenum);%                     00422
+      read(f,1023,buf[*]) [endfile];%                                   00423
+      if false then   endfile: info.eof:=1;%                            00424
+    end else x:=pread(f,buf,info,1,linenum);%                           00425
+end of get;                                                             00426
+%                                                                       00427
+%                                                                       00428
+procedure ppage(f,buf,info,linenum);%                                   00429
+value linenum;%                                                         00430
+file f;  array buf[*];%                                                 00431
+integer info,linenum;%                                                  00432
+begin%                                                                  00433
+    if not boolean(info.eof) then runerr(2,linenum);%                   00434
+    write(f[page]);%                                                    00435
+end of ppage;%                                                          00436
+%                                                                       00437
+%                                                                       00438
+procedure reset(f,buf,info,linenum);%                                   00439
+value linenum;%                                                         00440
+file f;  array buf[*];%                                                 00441
+integer info,linenum;%                                                  00442
+begin%                                                                  00443
+    if boolean(info.inp) or boolean(info.outp) then runerr(5,linenum);% 00444
+    rewind(f);  info.eof:=0;  info.eoln:=0;  info.bufpnt:=0;%           00445
+    info.endfound:=0;%                                                  00446
+    if info.bufsize=0 then get(f,buf,info,linenum)%                     00447
+                      else rline(f,buf,info);%                          00448
+end of reset;%                                                          00449
+%                                                                       00450
+procedure rewrite(f,buf,info,linenum);%                                 00451
+value linenum;%                                                         00452
+file f;  array buf[*];%                                                 00453
+integer info,linenum;%                                                  00454
+begin%                                                                  00455
+    if boolean(info.inp) or boolean(info.outp) then runerr(5,linenum);% 00456
+    rewind(f);    info.eof:=1;  info.bufpnt:=0;  info.endfound:=0;%     00457
+    if info.bufsize>0 then%                                             00458
+    replace pointer(buf[*]) by " " for info.bufsize;%                   00459
+end of rewrite;%                                                        00460
+%                                                                       00461
+%                                                                       00462
+procedure init(inputdecl);%                                             00463
+value inputdecl;%                                                       00464
+boolean inputdecl;%                                                     00465
+begin%                                                                  00466
+    mempnt:=1;%                                                         00467
+    charpnt:=pointer(char[*])+7;  textpnt:=pointer(text[*])+1;%         00468
+    t:=0;  t.bufsize:=80;  t.bufpnt:=80;  t.eoln:=1;  t.inp:=1;%        00469
+    i00603:=t;  if inputdecl then rline(input,v00603,i00603);%          00470
+    t:=0;  t.bufsize:=132;  t.eoln:=1;  t.outp:=1;  t.eof:=1;%          00471
+    i00742:=t;%                                                         00472
+    replace pointer(v00742[*]) by " " for 17 words;%                    00473
+end of init;%                                                           00474
+?end.
