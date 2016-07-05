@@ -1,0 +1,1674 @@
+ LABEL  000000000LINES  00186183?RUN PASCAL/DISK                                                         PASCAL /DISK
+
+
+
+
+
+PASCAL(2.3)/B-5700                           02/07/86    18:20                  PAGE 1
+
+00001=> (*$L+,C-,A+*)
+00002=> PROGRAM HMSS2 (OUTPUT);
+00003=> (*----------------------------------------------------------------------
+00004=>                                    CHE 342
+00005=>                      CHIMNEY TEMPERATURE PROFILE PROBLEM
+00006=>       VERSION 1               1 MAY 1969          P. KIMPEL
+00007=>  -----------------------------------------------------------------------
+00008=>  MODIFICATION LOG.
+00009=>  92/04/01  P.KIMPEL
+00010=>      CONVERT FROM SDS-9300 FORTRAN TO MS-DOS PASCAL VER 3.32.
+00011=>  92/11/15  P.KIMPEL
+00012=>      ADD TNEW ARRAY TO HOLD INTERMEDIATE RESULTS DURING CALCULATIONS.
+00013=>  2016-07-02  P.KIMPEL
+00014=>      CONVERT TO HERIOT-WATT PASCAL FOR THE BURROUGHS B5500.
+00015=>  ---------------------------------------------------------------------*)
+00016=>
+00017=>  CONST
+00018=>    TAIR=                20.0;
+00019=>    TWALL=               350.0;
+00020=>    H=                   2.0;
+00021=>    DELTAX=              0.02;
+00022=>    K=                   0.6;
+00023=>    EPSILON=             0.5;
+00024=>    XMAX=                50;
+00025=>    YMAX=                100;
+00026=>    FLUEXMIN=            25;
+00027=>    FLUEXMAX=            50;
+00028=>    FLUEYMIN=            25;
+00029=>    FLUEYMAX=            75;
+00030=>
+00031=>  VAR
+00032=>    I:                   INTEGER;
+00033=>    J:                   INTEGER;
+00034=>    T:                   ARRAY [0..XMAX, 0..YMAX] OF REAL;
+00035=>    TNEW:                ARRAY [0..XMAX, 0..YMAX] OF REAL;
+00036=>    CODE:                PACKED ARRAY [0..27] OF CHAR;
+00037=>    PASS:                INTEGER;
+00038=>    RMAX:                REAL;
+00039=>    XNU:                 REAL;
+00040=>    XNUTAIR:             REAL;
+00041=>    ET:                  REAL;
+00042=>
+00043=> (*--------------------------------------------------------------------*)
+00044=> PROCEDURE RESIDUAL (I, J: INTEGER; TCELL: REAL);
+00045=>   VAR
+00046=>     R:                  REAL;
+00047=>
+00048=>   BEGIN (*RESIDUAL*)                                                                  B1
+00049=>   R:= ABS (TCELL - T[I,J]);
+00050=>   IF R > RMAX THEN
+00051=>     RMAX:= R;
+00052=>
+00053=>   TNEW[I,J]:= TCELL;
+00054=>   END (*RESIDUAL*);                                                                   E1
+00055=>
+00056=> (*--------------------------------------------------------------------*)
+
+
+PASCAL(2.3)/B-5700                           02/07/86    18:20                  PAGE 2
+
+00057=> BEGIN (*HMSS*)                                                                        B2
+00058=> ET:= TIME;
+00059=>
+00060=> PASS:= 0;
+00061=> FOR I:= 0 TO 27 DO
+00062=>   CODE[I]:= " ";
+00063=> FOR I:= 1 TO 9 DO
+00064=>   CODE[I*2-1]:= CHR (ORD ("A") + I-1);
+00065=> FOR I:= 10 TO 14 DO
+00066=>   CODE[I*2-1]:= CHR (ORD ("J") + I-10);
+00067=>
+00068=> (*INITIAL CONDITIONS -- LINEAR PROFILE*)
+00069=> FOR I:= 0 TO FLUEXMIN DO
+00070=>   FOR J:= 0 TO YMAX DO
+00071=>     TNEW[I,J]:= (TWALL - TAIR) * I/XMAX + TAIR;
+00072=>
+00073=> FOR J:= FLUEYMIN TO FLUEYMAX DO
+00074=>   TNEW[FLUEXMIN,J]:= TWALL;
+00075=>
+00076=> FOR I:= FLUEXMIN TO FLUEXMAX DO
+00077=>   BEGIN                                                                               B3
+00078=>   TNEW[I,FLUEYMIN]:= TWALL;
+00079=>   TNEW[I,FLUEYMAX]:= TWALL;
+00080=>   FOR J:= 0 TO FLUEYMIN DO
+00081=>     TNEW[I,J]:= (TWALL - TAIR) * I/XMAX + TAIR;
+00082=>   FOR J:= FLUEYMIN+1 TO FLUEYMAX-1 DO
+00083=>     TNEW[I,J]:= TWALL + 20.0;
+00084=>   FOR J:= FLUEYMAX TO YMAX DO
+00085=>     TNEW[I,J]:= (TWALL - TAIR) * I/XMAX + TAIR;
+00086=>   END (*FOR I*);                                                                      E3
+00087=>
+00088=> XNU:= H * DELTAX / K;
+00089=> XNUTAIR:= XNU * TAIR;
+00090=>
+00091=> REPEAT                                                                                R1
+00092=>   PASS:= PASS+1;
+00093=>   WRITE (" PASS", PASS:5, ": ");
+00094=>   RMAX:= 0.0;
+00095=>
+00096=>   (*MOVE TNEW[*,*] VALUES TO T[*,*]*)
+00097=>   FOR I:= 0 TO XMAX DO
+00098=>     FOR J:= 0 TO YMAX DO
+00099=>       T[I,J]:= TNEW[I,J];
+00100=>
+00101=>   FOR I:= 1 TO XMAX-1 DO
+00102=>     BEGIN                                                                             B4
+00103=>     FOR J:= 1 TO YMAX-1 DO
+00104=>       BEGIN                                                                           B5
+00105=>       IF (I < FLUEXMIN) OR (J < FLUEYMIN) OR (J > FLUEYMAX) THEN
+00106=>         RESIDUAL (I, J,
+00107=>             0.25 * (T[I+1,J] + T[I-1,J] + T[I,J+1] + T[I,J-1]));
+00108=>       END (*FOR J*);                                                                  E5
+00109=>
+00110=>     (*FREE BOUNDARY AT Y=0: AIR*)
+00111=>     RESIDUAL (I, 0,
+00112=>         (XNUTAIR + 0.5 * (2.0 * T[I,1] + T[I+1,0] + T[I-1,0])) /
+
+
+PASCAL(2.3)/B-5700                           02/07/86    18:20                  PAGE 3
+
+00113=>         (XNU + 2.0));
+00114=>
+00115=>     (*INSULATED BOUNDARY AT Y=YMAX: HOUSE WALL*)
+00116=>     RESIDUAL (I, YMAX,
+00117=>         0.25 * (T[I+1,YMAX] + T[I-1,YMAX] + 2.0 * T[I,YMAX-1]));
+00118=>     END (*FOR I*);                                                                    E4
+00119=>
+00120=>   FOR J:= 1 TO YMAX-1 DO
+00121=>     BEGIN                                                                             B6
+00122=>     (*FREE BOUNDARY AT X=0*)
+00123=>     RESIDUAL (0, J,
+00124=>         (XNUTAIR + 0.5 * (2.0 * T[1,J] + T[0,J+1] + T[0,J-1])) /
+00125=>         (XNU + 2.0));
+00126=>
+00127=>     (*SYMMETRY BOUNDARY AT X=XMAX (DT/DX=0: ERGO, INSULATED)*)
+00128=>     IF (J < FLUEYMIN) OR (J > FLUEYMAX) THEN
+00129=>       RESIDUAL (XMAX, J, 0.25 * (T[XMAX,J+1] + T[XMAX,J-1] +
+00130=>                                  2.0 * T[XMAX-1,J]));
+00131=>     END (*FOR J*);                                                                    E6
+00132=>
+00133=>   (*CORNER BOUNDARY AT X=XMAX, Y=YMAX*)
+00134=>   RESIDUAL (XMAX, YMAX, 0.50 * (T[XMAX-1,YMAX] + T[XMAX,YMAX-1]));
+00135=>
+00136=>   (*CORNER BOUNDARY AT X=0, Y=YMAX*)
+00137=>   RESIDUAL (0, YMAX, (XNUTAIR - T[0,YMAX-1] + T[1,YMAX]) / XNU);
+00138=>
+00139=>   (*CORNER BOUNARY AT X=XMAX, Y=0*)
+00140=>   RESIDUAL (XMAX, 0, (XNUTAIR - T[XMAX-1,0] + T[XMAX,1]) / XNU);
+00141=>
+00142=>   (*CORNER BOUNDARY AT X=0, Y=0*)
+00143=>   RESIDUAL (0, 0,
+00144=>            (2.0 * XNUTAIR + T[1,0] + T[0,1]) / 2.0 / (XNU + 1.0));
+00145=>
+00146=>   WRITELN ("RMAX = ", RMAX:8:4);
+00147=> UNTIL RMAX <= EPSILON;                                                                U1
+00148=>
+00149=> WRITELN;
+00150=> WRITELN (" FINAL RMAX = ", RMAX);
+00151=> WRITELN;
+00152=> WRITELN (" TIMES: ET=", (TIME-ET):8:2, ", PT=", ELAPSED:8:2,
+00153=>          ", IO=", IOTIME:8:2);
+00154=> WRITELN;
+00155=> WRITELN (" TEMPERATURE PROFILE");
+00156=> WRITELN (" KEY   A =  21- 40");
+00157=> WRITELN ("       B =  61- 80");
+00158=> WRITELN ("       C = 101-120");
+00159=> WRITELN ("       D = 141-160");
+00160=> WRITELN ("       E = 181-200");
+00161=> WRITELN ("       F = 221-240");
+00162=> WRITELN ("       G = 261-280");
+00163=> WRITELN ("       H = 301-320");
+00164=> WRITELN ("       I = 341-360");
+00165=> WRITELN;
+00166=>
+00167=> FOR J:= 0 TO YMAX DO
+00168=>   BEGIN                                                                               B7
+
+
+PASCAL(2.3)/B-5700                           02/07/86    18:20                  PAGE 4
+
+00169=>   WRITE (J:4, " ");
+00170=>   FOR I:= 0 TO XMAX DO
+00171=>     WRITE (CODE[TRUNC(T[I,J]/20)]);
+00172=>
+00173=>   WRITELN;
+00174=>   END (*FOR J*);                                                                      E7
+00175=>
+00176=> WRITELN;
+00177=> WRITELN (" TIMES: ET=", (TIME-ET):8:2, ", PT=", ELAPSED:8:2,
+00178=>          ", IO=", IOTIME:8:2);
+00179=> END (*HMSS*).                                                                         E2
+
+
+
+
+NO ERRORS DETECTED.
+
+
+
+
+
+
+ LABEL  000000000LINES  00186183?RUN PASCAL/DISK                                                         PASCAL /DISK
+
+
+
+
+
+
+
+
+
+
+
+ LABEL  0XALGOL 0COMPILE00186183CC USER=0000000;   COMPILE HMSS2/0000000 XALGOL ;XALGOL FILE CARD=PASC85 XALGOL /HMSS2
+
+
+
+
+
+                      BURROUGHS B-5700 XALGOL COMPILER MARK XIII.0  WEDNESDAY, 07/02/86,   6:20 PM.
+
+
+
+
+
+                %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%               00000000    0000
+
+                %                                                               %               00000000    0000
+
+                %                  THE PASCAL RUN TIME-SYSTEM.                  %               00000000    0000
+
+                %                  ---------------------------                  %               00000000    0000
+
+                %                                                               %               00000000    0000
+
+                %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%               00000000    0000
+
+                BEGIN%                                                                          00000000    0000
+
+                                                                                        START OF SEGMENT **********    2
+
+                INTEGER V00167,V00168,V00169;%                                                  00000000    0000
+
+                FILE INPUT "INPUT" (2,10);%                                                     00000000    0000
+
+                FILE OUTPUT 1 (2,17);%                                                          00000000    0003
+
+                %                                                                               00000000    0007
+
+                DEFINE PROCEDU =PROCEDURE#,%                                                    00000000    0007
+
+                       FUNCTN  =REAL PROCEDURE#,%                                               00000000    0007
+
+                       DOWNTO  =STEP -1 UNTIL#,%                                                00000000    0007
+
+                       UPTO    =STEP  1 UNTIL#,%                                                00000000    0007
+
+                       B       =BOOLEAN#,%                                                      00000000    0007
+
+                       F00603  =INPUT#,%                                                        00000000    0007
+
+                       F00742  =OUTPUT#,%                                                       00000000    0007
+
+                       LASTCH  =[5:6]#,%                                                        00000000    0007
+
+                       BUFSIZE =[13:8]#,%                                                       00000000    0007
+
+                       BUFPNT  =[21:8]#,%                                                       00000000    0007
+
+                       EOF     =[22:1]#,%                                                       00000000    0007
+
+                       EOLN    =[23:1]#,%                                                       00000000    0007
+
+                       INP     =[24:1]#,%                                                       00000000    0007
+
+                       OUTP    =[25:1]#,%                                                       00000000    0007
+
+                       ENDFOUND=[26:1]#,%                                                       00000000    0007
+
+                       MEMSIZE =10000#,%                                                        00000000    0007
+
+                       MAXINT  =549755813887#;%                                                 00000000    0007
+
+                %                                                                               00000000    0007
+
+                ARRAY MEM[0:MEMSIZE DIV 1022,0:1022], TEXT,CHAR[0:0], TEMPTEXT[0:19],%          00000000    0007
+
+                    V00603[0:9], V00742[0:16];%                                                 00000000    0014
+
+                INTEGER MEMPNT,T,T1,I00603,I00742;%                                             00000000    0017
+
+                POINTER CHARPNT,TEXTPNT;%                                                       00000000    0017
+
+                LABEL TERMINATE;%                                                               00000000    0017
+
+                FORMAT TERMMESS ("**** PROGRAM EXECUTION TERMINATED AT LINE ",I*,"."),%         00000000    0017
+
+                                                                                        START OF SEGMENT **********    3
+
+                       CHECKERR ("**** THE VALUE ",I*," IS NOT IN THE RANGE ",I*,"..",%         00000000    0017
+
+                              I*,"."),%                                                         00000000    0017
+
+                       ERRMARK  (X*,"|"),%                                                      00000000    0017
+
+                       CONCATERR("**** CONCAT ERROR:  [",I*,":",I*,":",I*,"]"),%                00000000    0017
+
+                       ILLEGALCC("**** ILLEGAL CARRIAGE CONTROL CHARACTER:"""",I7,""");%        00000000    0017
+
+                                                                                           3 IS   58 LONG, NEXT SEG    2
+
+                SWITCH FORMAT ERRMESS :=%                                                       00000000    0017
+
+                                                                                        START OF SEGMENT **********    4
+
+                    (),%                                                                        00000000    0017
+
+                    ("**** NO READING WHILE EOF IS TRUE."),                          %1         00000000    0017
+
+                    ("**** NO WRITING WHILE EOF IS FALSE."),                         %2         00000000    0017
+
+                    ("**** ILLEGAL CHARACTER,"),                                     %3         00000000    0017
+
+                    ("**** OVERFLOW ERROR."),                                        %4         00000000    0017
+
+                    ("**** NO RESET/REWRITE ON INPUT/OUTPUT."),                      %5         00000000    0017
+
+                    ("**** LINE IMAGE OVERFLOW.");                                   %6         00000000    0017
+
+                                                                                           4 IS   60 LONG, NEXT SEG    2
+
+                MONITOR EXPOVR:=REALOVERFLOW;%                                                  00000000    0017
+
+                %                                                                               00000000    0020
+
+                INTEGER PROCEDURE NUMDIGITS(N);%                                                00000000    0020
+
+                VALUE N; INTEGER N;%                                                            00000000    0022
+
+                NUMDIGITS:=IF N<0 THEN 1+NUMDIGITS(-N) ELSE%                                    00000000    0022
+
+                           IF N>9 THEN 1+NUMDIGITS(N DIV 10) ELSE 1;%                           00000000    0025
+
+                %                                                                               00000000    0032
+
+                PROCEDURE RUNERR(ERRNUM,LINENUM);       %*** RUN TIME ERROR ***                 00000000    0032
+
+                VALUE ERRNUM,LINENUM;%                                                          00000000    0032
+
+                INTEGER ERRNUM,LINENUM;%                                                        00000000    0032
+
+                BEGIN%                                                                          00000000    0032
+
+                    WRITE(OUTPUT,ERRMESS[ERRNUM]);%                                             00000000    0032
+
+                    WRITE(OUTPUT,TERMMESS,NUMDIGITS(LINENUM),LINENUM);%                         00000000    0036
+
+                    GO TO TERMINATE;%                                                           00000000    0046
+
+                END OF RUNNER;%                                                                 00000000    0048
+
+                %                                                                               00000000    0051
+
+                INTEGER PROCEDURE CHECK(VAL,LIM1,LIM2,LINENUM);%                                00000000    0051
+
+                VALUE VAL,LIM1,LIM2,LINENUM;%                                                   00000000    0051
+
+                INTEGER VAL,LIM1,LIM2,LINENUM;%                                                 00000000    0051
+
+                BEGIN%                                                                          00000000    0051
+
+                    IF VAL<LIM1 OR VAL>LIM2 THEN%                                               00000000    0051
+
+                    BEGIN WRITE(OUTPUT,CHECKERR,NUMDIGITS(VAL),VAL,NUMDIGITS(LIM1),%            00000000    0053
+
+                                LIM1,NUMDIGITS(LIM2),LIM2);%                                    00000000    0064
+
+                          RUNERR(4,LINENUM);%                                                   00000000    0072
+
+                    END;%                                                                       00000000    0073
+
+                    CHECK:=VAL;%                                                                00000000    0073
+
+                END OF CHECK;%                                                                  00000000    0074
+
+                %                                                                               00000000    0077
+
+                ALPHA PROCEDURE CURDAT;%                                                        00000000    0077
+
+                CURDAT:=" "&TIME(5)[41:35:36];%                                                 00000000    0077
+
+                %                                                                               00000000    0082
+
+                ALPHA PROCEDURE WEEKDA;%                                                        00000000    0082
+
+                WEEKDA:=TIME(6)&" "[41:5:6];%                                                   00000000    0082
+
+                %                                                                               00000000    0087
+
+                INTEGER PROCEDURE TRUNC(X,LINENUM);%                                            00000000    0087
+
+                VALUE X,LINENUM;%                                                               00000000    0087
+
+                REAL X; INTEGER LINENUM;%                                                       00000000    0087
+
+                BEGIN%                                                                          00000000    0087
+
+                    IF ABS(X)>MAXINT THEN RUNERR(4,LINENUM);%                                   00000000    0087
+
+                    TRUNC:=IF X<0 THEN -ENTIER(-X) ELSE ENTIER(X);%                             00000000    0089
+
+                END OF TRUNC;%                                                                  00000000    0094
+
+                %                                                                               00000000    0100
+
+                INTEGER PROCEDURE ROUND(X,LINENUM);%                                            00000000    0100
+
+                VALUE X,LINENUM;%                                                               00000000    0100
+
+                REAL X; INTEGER LINENUM;%                                                       00000000    0100
+
+                BEGIN%                                                                          00000000    0100
+
+                    IF ABS(X)>MAXINT THEN RUNERR(4,LINENUM);%                                   00000000    0100
+
+                    ROUND:=X;%                                                                  00000000    0102
+
+                END OF ROUND;%                                                                  00000000    0103
+
+                %                                                                               00000000    0107
+
+                BOOLEAN PROCEDURE ODD(N);%                                                      00000000    0107
+
+                VALUE N;  INTEGER N;%                                                           00000000    0107
+
+                ODD:=N MOD 2 = 1;%                                                              00000000    0107
+
+                %                                                                               00000000    0112
+
+                REAL PROCEDURE SQR(X,LINENUM);%                                                 00000000    0112
+
+                VALUE X,LINENUM;%                                                               00000000    0112
+
+                REAL X; INTEGER LINENUM;%                                                       00000000    0112
+
+                BEGIN%                                                                          00000000    0112
+
+                    IF ABS(X)>2.0769187@34 THEN RUNERR(4,LINENUM);%                             00000000    0112
+
+                    SQR:=X|X;%                                                                  00000000    0114
+
+                END OF SQR;%                                                                    00000000    0115
+
+                %                                                                               00000000    0120
+
+                BOOLEAN PROCEDURE INCL1(A,B);           %*** IS THE SET "A" INCLUDED            00000000    0120
+
+                VALUE A,B;  REAL A,B;                   %*** IN THE SET "B".                    00000000    0120
+
+                INCL1:=REAL(BOOLEAN(A) AND NOT BOOLEAN(B))=0;%                                  00000000    0120
+
+                %                                                                               00000000    0125
+
+                BOOLEAN PROCEDURE INCL2(A,B);           %*** IS THE SET "B" INCLUDED            00000000    0125
+
+                VALUE A,B;  REAL A,B;                   %*** IN THE SET "A".                    00000000    0125
+
+                INCL2:=REAL(BOOLEAN(B) AND NOT BOOLEAN(A))=0;%                                  00000000    0125
+
+                %                                                                               00000000    0130
+
+                BOOLEAN PROCEDURE INTST(A,B);           %*** IS THE VALUE "A" AN ELEMENT        00000000    0130
+
+                VALUE A,B;  REAL A,B;                   %*** IN THE SET "B".                    00000000    0130
+
+                INTST:=IF A<0 OR B>38 THEN FALSE ELSE 0&B[0:38-A:1]=1;%                         00000000    0130
+
+                %                                                                               00000000    0140
+
+                PROCEDURE NEW(P,SIZE);%                                                         00000000    0140
+
+                VALUE SIZE; REAL P; INTEGER SIZE;%                                              00000000    0140
+
+                BEGIN%                                                                          00000000    0140
+
+                    P:=IF MEMPNT+SIZE>MEMSIZE THEN 0 ELSE MEMPNT;%                              00000000    0140
+
+                    MEMPNT:=MEMPNT+SIZE;%                                                       00000000    0143
+
+                END OF NEW;%                                                                    00000000    0144
+
+                %                                                                               00000000    0146
+
+                PROCEDURE DISPOSE(P,SIZE);%                                                     00000000    0146
+
+                VALUE SIZE; REAL P; INTEGER SIZE;%                                              00000000    0146
+
+                BEGIN%                                                                          00000000    0146
+
+                END OF DISPOSE;%                                                                00000000    0146
+
+                %                                                                               00000000    0146
+
+                PROCEDURE PACK(A,LLIM,ULIM,I,Z,LINENUM);%                                       00000000    0146
+
+                VALUE LLIM,ULIM,I,LINENUM;%                                                     00000000    0146
+
+                ARRAY A[*];  ALPHA Z;%                                                          00000000    0146
+
+                INTEGER LLIM,ULIM,I,LINENUM;%                                                   00000000    0146
+
+                BEGIN;%                                                                         00000000    0146
+
+                    Z:=0;%                                                                      00000000    0147
+
+                    FOR T1:=0 STEP 1 UNTIL 6 DO%                                                00000000    0148
+
+                    Z:=A[CHECK(I+T1,LLIM,ULIM,LINENUM)] & Z [41:35:36];%                        00000000    0149
+
+                END;%                                                                           00000000    0155
+
+                %                                                                               00000000    0156
+
+                PROCEDURE UNPACK(Z,A,LLIM,ULIM,I,LINENUM);%                                     00000000    0156
+
+                VALUE Z,LLIM,ULIM,I,LINENUM;%                                                   00000000    0156
+
+                ARRAY A[*];  ALPHA Z;%                                                          00000000    0156
+
+                INTEGER LLIM,ULIM,I,LINENUM;%                                                   00000000    0156
+
+                FOR T1:=0 STEP 1 UNTIL 6 DO%                                                    00000000    0156
+
+                A[CHECK(I+T1,LLIM,ULIM,LINENUM)]:= 0 & Z [5:41-6|T1:6];%                        00000000    0157
+
+                %                                                                               00000000    0166
+
+                REAL PROCEDURE CONCAT(A,B,AS,BS,N,LINENUM);%                                    00000000    0166
+
+                VALUE A,B,AS,BS,N,LINENUM;%                                                     00000000    0166
+
+                REAL A,B; INTEGER AS,BS,N,LINENUM;%                                             00000000    0166
+
+                BEGIN%                                                                          00000000    0166
+
+                    IF AS<1 OR BS<1 OR N<0 OR AS+N>48 OR BS+N>48 THEN%                          00000000    0166
+
+                    BEGIN%                                                                      00000000    0172
+
+                      WRITE(OUTPUT,CONCATERR,NUMDIGITS(AS),AS,NUMDIGITS(BS),%                   00000000    0173
+
+                            BS,NUMDIGITS(N),N);%                                                00000000    0183
+
+                      RUNERR(0,LINENUM);%                                                       00000000    0191
+
+                    END;%                                                                       00000000    0192
+
+                    CONCAT:=A & B [47-AS:47-BS:N];%                                             00000000    0192
+
+                END OF CONCAT;%                                                                 00000000    0197
+
+                %                                                                               00000000    0200
+
+                BOOLEAN PROCEDURE BIT(N,LINENUM);%      %*** SET BIT NO "N" IN A WORD.          00000000    0200
+
+                VALUE N,LINENUM; INTEGER N,LINENUM;%                                            00000000    0200
+
+                BIT:=BOOLEAN(0 & 1 [38-CHECK(N,0,38,LINENUM):0:1]);%                            00000000    0200
+
+                %                                                                               00000000    0208
+
+                BOOLEAN PROCEDURE BITS(N1,N2,LINENUM);  %*** SET BITS "N1".."N2".               00000000    0208
+
+                VALUE N1,N2,LINENUM;%                                                           00000000    0208
+
+                INTEGER N1,N2,LINENUM;%                                                         00000000    0208
+
+                BITS:=BOOLEAN(0 & 3"7777777777777" [38-CHECK(N1,0,38,LINENUM):38:%              00000000    0208
+
+                                                       CHECK(N2,0,38,LINENUM)-N1+1]);%          00000000    0211
+
+                %                                                                               00000000    0219
+
+                PROCEDURE RLINE(F,BUF,INFO);%                                                   00000000    0219
+
+                FILE F; ARRAY BUF[0]; INTEGER INFO;%                                            00000000    0219
+
+                BEGIN%                                                                          00000000    0219
+
+                    LABEL ENDFILE;%                                                             00000000    0219
+
+                                                                                        START OF SEGMENT **********    5
+
+                    INFO.EOLN:=0;  INFO.BUFPNT:=1;%                                             00000000    0000
+
+                    READ(F,999,BUF[*]) [ENDFILE];%                                              00000000    0004
+
+                    REPLACE CHARPNT BY POINTER(BUF[*]) FOR 1;%                                  00000000    0009
+
+                    INFO.LASTCH:=CHAR[0];%                                                      00000000    0013
+
+                    IF FALSE THEN%                                                              00000000    0015
+
+                    BEGIN ENDFILE: INFO.ENDFOUND:=1;%                                           00000000    0015
+
+                    END;%                                                                       00000000    0019
+
+                END OF RLINE;%                                                                  00000000    0019
+
+                                                                                           5 IS   24 LONG, NEXT SEG    2
+
+                %                                                                               00000000    0219
+
+                REAL PROCEDURE PREAD(F,BUF,INFO,MODE,LINENUM);%                                 00000000    0219
+
+                VALUE MODE,LINENUM;%                                                            00000000    0219
+
+                FILE F;  ARRAY BUF[0];%                                                         00000000    0219
+
+                INTEGER INFO,MODE,LINENUM;%                                                     00000000    0219
+
+                BEGIN%                                                                          00000000    0219
+
+                    DEFINE GETCHAR=%                                                            00000000    0219
+
+                                                                                        START OF SEGMENT **********    6
+
+                    BEGIN%                                                                      00000000    0000
+
+                        IF BOOLEAN(INFO.EOLN) THEN%                                             00000000    0000
+
+                        BEGIN%                                                                  00000000    0000
+
+                          RLINE(F,BUF,INFO);  CH:=INFO.LASTCH;%                                 00000000    0000
+
+                        END ELSE%                                                               00000000    0000
+
+                        IF INFO.BUFPNT=INFO.BUFSIZE THEN%                                       00000000    0000
+
+                        BEGIN CH:=" "; INFO.EOLN:=1 END ELSE%                                   00000000    0000
+
+                        BEGIN%                                                                  00000000    0000
+
+                            REPLACE CHARPNT BY POINTER(BUF[*])+INFO.BUFPNT FOR 1;%              00000000    0000
+
+                            CH:=CHAR[0];  INFO.BUFPNT:=INFO.BUFPNT+1;%                          00000000    0000
+
+                    END END OF GETCHAR#;%                                                       00000000    0000
+
+                %                                                                               00000000    0000
+
+                    DEFINE READERR(ERRNUM)=%                                                    00000000    0000
+
+                    BEGIN%                                                                      00000000    0000
+
+                        WRITE(OUTPUT,999,BUF[*]);%                                              00000000    0000
+
+                        WRITE(OUTPUT,ERRMARK,INFO.BUFPNT-1);%                                   00000000    0000
+
+                        RUNERR(ERRNUM,LINENUM);%                                                00000000    0000
+
+                    END READERR#;%                                                              00000000    0000
+
+                %                                                                               00000000    0000
+
+                    REAL RES;  ALPHA CH;%                                                       00000000    0000
+
+                    BOOLEAN NEGATIVE,NEGEXP;  INTEGER POWER,EXP;%                               00000000    0000
+
+                    LABEL OVERFLOW,RETURN;%                                                     00000000    0000
+
+                %                                                                               00000000    0000
+
+                    IF BOOLEAN(INFO.EOF) THEN RUNERR(1,LINENUM);%                               00000000    0000
+
+                    IF BOOLEAN(INFO.ENDFOUND) THEN%                                             00000000    0002
+
+                    BEGIN%                                                                      00000000    0003
+
+                      INFO.EOF:=1;  PREAD:=0;%                                                  00000000    0003
+
+                      GO TO RETURN;%                                                            00000000    0006
+
+                    END;%                                                                       00000000    0007
+
+                    IF MODE=1 THEN                      %*** MODE = CHAR ***                    00000000    0007
+
+                    BEGIN%                                                                      00000000    0007
+
+                      PREAD:=INFO.LASTCH;  GETCHAR;  INFO.LASTCH:=CH;%                          00000000    0008
+
+                    END ELSE%                                                                   00000000    0032
+
+                    BEGIN                               %*** MODE = REAL/INTEGER ***            00000000    0032
+
+                      CH:=INFO.LASTCH;%                                                         00000000    0033
+
+                      WHILE CH=" " AND NOT BOOLEAN(INFO.ENDFOUND) DO GETCHAR;%                  00000000    0034
+
+                      IF BOOLEAN(INFO.ENDFOUND) THEN%                                           00000000    0058
+
+                      BEGIN%                                                                    00000000    0059
+
+                        INFO.EOF:=1;  PREAD:=0;%                                                00000000    0059
+
+                        GO TO RETURN;%                                                          00000000    0062
+
+                      END;%                                                                     00000000    0063
+
+                      IF CH="+" OR CH="-" THEN BEGIN NEGATIVE:=CH="-"; GETCHAR END;%            00000000    0063
+
+                      IF CH>9 THEN READERR(3);%                                                 00000000    0087
+
+                      RES:=CH;  GETCHAR;%                                                       00000000    0104
+
+                      WHILE CH{9 DO BEGIN RES:=10|RES+CH; GETCHAR END;%                         00000000    0126
+
+                      IF MODE=3 THEN    % MODE = REAL.                                          00000000    0150
+
+                      BEGIN%                                                                    00000000    0151
+
+                        IF CH="." THEN%                                                         00000000    0151
+
+                        BEGIN%                                                                  00000000    0152
+
+                          GETCHAR;  IF CH>9 THEN READERR(3);%                                   00000000    0153
+
+                          WHILE CH{9 DO BEGIN RES:=10|RES+CH;POWER:=POWER-1;GETCHAR END;        00000000    0190
+
+                        END;%                                                                   00000000    0215
+
+                        IF CH="E" THEN%                                                         00000000    0216
+
+                        BEGIN%                                                                  00000000    0216
+
+                          GETCHAR;%                                                             00000000    0217
+
+                          IF CH="+" OR CH="-" THEN BEGIN NEGEXP:=CH="-"; GETCHAR END;%          00000000    0238
+
+                          IF CH>9 THEN READERR(3);%                                             00000000    0262
+
+                          WHILE CH{9 DO BEGIN EXP:=10|EXP+CH; GETCHAR END;%                     00000000    0279
+
+                          IF NEGEXP THEN EXP:=-EXP;%                                            00000000    0303
+
+                        END;%                                                                   00000000    0305
+
+                        POWER:=POWER+EXP;%                                                      00000000    0305
+
+                        REALOVERFLOW:=OVERFLOW;  RES:=RES|10*POWER;%                            00000000    0306
+
+                        IF FALSE THEN   OVERFLOW: READERR(4);%                                  00000000    0311
+
+                        REALOVERFLOW:=0;%                                                       00000000    0328
+
+                      END ELSE IF RES>MAXINT THEN READERR(4);%                                  00000000    0329
+
+                      PREAD:=IF NEGATIVE THEN -RES ELSE RES;%                                   00000000    0346
+
+                      INFO.LASTCH:=CH;%                                                         00000000    0348
+
+                    END;%                                                                       00000000    0351
+
+                RETURN:%                                                                        00000000    0351
+
+                END OF PREAD;%                                                                  00000000    0351
+
+                                                                                           6 IS  357 LONG, NEXT SEG    2
+
+                %                                                                               00000000    0219
+
+                %                                                                               00000000    0219
+
+                PROCEDURE WLINE(F,BUF,INFO);           %*** PRINT A LINE.***                    00000000    0219
+
+                FILE F; ARRAY BUF[0]; INTEGER INFO;%                                            00000000    0219
+
+                BEGIN%                                                                          00000000    0219
+
+                    ALPHA CC;%                                                                  00000000    0219
+
+                                                                                        START OF SEGMENT **********    7
+
+                    IF BOOLEAN(INFO.OUTP) THEN%                                                 00000000    0000
+
+                    BEGIN%                                                                      00000000    0000
+
+                      REPLACE CHARPNT BY POINTER(BUF[*]) FOR 1;  CC:=CHAR[0];%                  00000000    0001
+
+                      REPLACE POINTER(BUF[*]) BY " ";%                                          00000000    0005
+
+                      IF CC=" " THEN WRITE(OUTPUT,999,BUF[*]) ELSE%                             00000000    0009
+
+                      IF CC="+" THEN WRITE(OUTPUT[NO],999,BUF[*]) ELSE%                         00000000    0015
+
+                      BEGIN%                                                                    00000000    0021
+
+                        IF CC="0" THEN WRITE(OUTPUT) ELSE%                                      00000000    0021
+
+                        IF CC="-" THEN WRITE(OUTPUT[DBL]) ELSE%                                 00000000    0026
+
+                        IF CC="1" THEN WRITE(OUTPUT[PAGE]) ELSE%                                00000000    0032
+
+                        WRITE(OUTPUT,ILLEGALCC,CC);%                                            00000000    0038
+
+                        WRITE(OUTPUT,999,BUF[*]);%                                              00000000    0046
+
+                      END;%                                                                     00000000    0050
+
+                    END ELSE WRITE(F,999,BUF[*]);%                                              00000000    0050
+
+                    REPLACE POINTER(BUF[*]) BY " " FOR INFO.BUFSIZE;%                           00000000    0055
+
+                    INFO.BUFPNT:=0;%                                                            00000000    0059
+
+                END OF WLINE;%                                                                  00000000    0062
+
+                                                                                           7 IS   65 LONG, NEXT SEG    2
+
+                %                                                                               00000000    0219
+
+                %                                                                               00000000    0219
+
+                PROCEDURE CHFIL(F);%                                                            00000000    0219
+
+                FILE F;%                                                                        00000000    0219
+
+                BEGIN%                                                                          00000000    0219
+
+                    ARRAY A[0:6];%                                                              00000000    0219
+
+                                                                                        START OF SEGMENT **********    8
+
+                    SEARCH(F,A[*]);%                                                            00000000    0001
+
+                    IF A[0]=-1 THEN%                                                            00000000    0003
+
+                    BEGIN%                                                                      00000000    0004
+
+                        F.AREAS := 20;%                                                         00000000    0005
+
+                        F.AREASIZE := 300;%                                                     00000000    0007
+
+                    END;%                                                                       00000000    0010
+
+                END OF CHFIL;%                                                                  00000000    0010
+
+                                                                                           8 IS   16 LONG, NEXT SEG    2
+
+                %                                                                               00000000    0219
+
+                %                                                                               00000000    0219
+
+                PROCEDURE WALFA(F,BUF,INFO,A1,A2,A3,A4,A5,A6,A7,A8,A9,A10,A11,A12,ALENG,        00000000    0219
+
+                                                                           LINENUM);%           00000000    0219
+
+                VALUE A1,A2,A3,A4,A5,A6,A7,A8,A9,A10,A11,A12,ALENG,LINENUM;%                    00000000    0219
+
+                FILE F;  ARRAY BUF[0];  INTEGER INFO,ALENG,LINENUM;%                            00000000    0219
+
+                ALPHA A1,A2,A3,A4,A5,A6,A7,A8,A9,A10,A11,A12;%                                  00000000    0219
+
+                BEGIN%                                                                          00000000    0219
+
+                    ALPHA A;  POINTER PNT;%                                                     00000000    0219
+
+                                                                                        START OF SEGMENT **********    9
+
+                    LABEL EXIT;%                                                                00000000    0000
+
+                    IF NOT BOOLEAN(INFO.EOF) THEN RUNERR(2,LINENUM);%                           00000000    0000
+
+                    IF INFO.BUFPNT+ALENG}INFO.BUFSIZE THEN WLINE(F,BUF,INFO);%                  00000000    0002
+
+                    PNT:=POINTER(BUF[*])+INFO.BUFPNT;%                                          00000000    0007
+
+                    INFO.BUFPNT:=INFO.BUFPNT+ALENG;%                                            00000000    0011
+
+                    FOR A:=A1,A2,A3,A4,A5,A6,A7,A8,A9,A10,A11,A12 DO%                           00000000    0014
+
+                    BEGIN%                                                                      00000000    0039
+
+                      TEXT[0]:=A;%                                                              00000000    0039
+
+                      REPLACE PNT:PNT BY TEXTPNT FOR MIN(ALENG,7);%                             00000000    0040
+
+                      ALENG:=ALENG-7;  IF ALENG{0 THEN GO TO EXIT;%                             00000000    0045
+
+                    END;%                                                                       00000000    0047
+
+                EXIT:%                                                                          00000000    0048
+
+                END OF WALFA;%                                                                  00000000    0049
+
+                                                                                           9 IS   53 LONG, NEXT SEG    2
+
+                %                                                                               00000000    0219
+
+                %                                                                               00000000    0219
+
+                PROCEDURE PWRITE(F,BUF,INFO,E,EMODE,M,N,LINENUM);%                              00000000    0219
+
+                VALUE E,EMODE,M,N,LINENUM;%                                                     00000000    0219
+
+                FILE F;  ARRAY BUF[0];  REAL E;%                                                00000000    0219
+
+                INTEGER INFO,EMODE,M,N,LINENUM;%                                                00000000    0219
+
+                BEGIN%                                                                          00000000    0219
+
+                    INTEGER NCHARS,NEXP,I;   POINTER CPNT;%                                     00000000    0219
+
+                                                                                        START OF SEGMENT **********   10
+
+                    DEFINE PUTCHAR(C)=                  % PUTS A CHARACTER INTO TEMPTEXT        00000000    0000
+
+                    BEGIN CHAR[0]:=C;  NCHARS:=NCHARS+1;%                                       00000000    0000
+
+                          REPLACE CPNT:CPNT BY CHARPNT FOR 1;%                                  00000000    0000
+
+                    END#;%                                                                      00000000    0000
+
+                %                                                                               00000000    0000
+
+                    PROCEDURE PUTINT(N);                % PUTS AN INTEGER INTO TEMPTEXT         00000000    0000
+
+                    VALUE N;  INTEGER N;                % WITH ZERO SUPPRESSION.                00000000    0000
+
+                    IF N{9 THEN PUTCHAR(N) ELSE%                                                00000000    0000
+
+                    BEGIN PUTINT(N DIV 10); PUTCHAR(ENTIER(N MOD 10)) END;%                     00000000    0007
+
+                %                                                                               00000000    0019
+
+                    CPNT:=POINTER(TEMPTEXT[*]);%                                                00000000    0019
+
+                    IF NOT BOOLEAN(INFO.EOF) THEN RUNERR(2,LINENUM);%                           00000000    0020
+
+                    IF EMODE=1 THEN                     %*** MODE = INTEGER ***                 00000000    0023
+
+                    BEGIN%                                                                      00000000    0023
+
+                      IF E<0 THEN BEGIN PUTCHAR("-"); E:=-E END;%                               00000000    0024
+
+                      PUTINT(E);%                                                               00000000    0031
+
+                    END ELSE%                                                                   00000000    0033
+
+                    IF EMODE=2 THEN                     %*** MODE = REAL ***                    00000000    0033
+
+                    BEGIN%                                                                      00000000    0034
+
+                      PUTCHAR(" ");%                                                            00000000    0034
+
+                      IF E<0 THEN BEGIN PUTCHAR("-"); E:=-E END;%                               00000000    0040
+
+                      IF E>MAXINT OR N<0 THEN    % FLOATING-POINT.                              00000000    0047
+
+                      BEGIN%                                                                    00000000    0049
+
+                        IF E>0 THEN%                                                            00000000    0049
+
+                        BEGIN%                                                                  00000000    0050
+
+                          WHILE E<1 DO BEGIN NEXP:=NEXP-1; E:=10|E END;%                        00000000    0051
+
+                          WHILE E}10 DO BEGIN NEXP:=NEXP+1; E:=E/10 END;%                       00000000    0057
+
+                        END;%                                                                   00000000    0061
+
+                        I:=MAX(M-8,1);%                                                         00000000    0061
+
+                        E:=E+0.5|10*(-I);%                                                      00000000    0064
+
+                        IF E GEQ 10 THEN BEGIN NEXP:=NEXP+1; E:=E/10 END;%                      00000000    0068
+
+                        PUTCHAR(ENTIER(E));  E:=E-ENTIER(E);  PUTCHAR(".");%                    00000000    0072
+
+                        DO BEGIN%                                                               00000000    0086
+
+                          E:=10|E;  PUTCHAR(ENTIER(E));%                                        00000000    0086
+
+                          E:=E-ENTIER(E);  I:=I-1;%                                             00000000    0093
+
+                        END UNTIL I{0;%                                                         00000000    0097
+
+                        PUTCHAR("E");%                                                          00000000    0098
+
+                        IF NEXP<0 THEN BEGIN PUTCHAR("-"); NEXP:=-NEXP END%                     00000000    0103
+
+                                  ELSE PUTCHAR("+");%                                           00000000    0111
+
+                        PUTCHAR(NEXP DIV 10);  PUTCHAR(ENTIER(NEXP MOD 10));%                   00000000    0118
+
+                      END ELSE%                                                                 00000000    0130
+
+                      BEGIN                      % FIXED-POINT.                                 00000000    0130
+
+                        E:=E+0.5|10*(-N);%                                                      00000000    0133
+
+                        PUTINT(ENTIER(E));  PUTCHAR(".");  E:=E-ENTIER(E);%                     00000000    0137
+
+                        IF N>150 THEN RUNERR(6,LINENUM);%                                       00000000    0146
+
+                        FOR I:=1 STEP 1 UNTIL N DO%                                             00000000    0149
+
+                        BEGIN E:=10|E;  PUTCHAR(ENTIER(E));%                                    00000000    0151
+
+                              E:=E-ENTIER(E);%                                                  00000000    0158
+
+                    END END END ELSE%                                                           00000000    0160
+
+                    IF EMODE=3 THEN                     %*** MODE = BOOLEAN ***                 00000000    0163
+
+                    BEGIN%                                                                      00000000    0165
+
+                      IF E<0.5 THEN REPLACE CPNT BY "FALSE" ELSE REPLACE CPNT BY "TRUE";        00000000    0166
+
+                      NCHARS:=IF E<0.5 THEN 5 ELSE 4;%                                          00000000    0174
+
+                    END ELSE%                                                                   00000000    0178
+
+                    IF EMODE=5 THEN                     %*** MODE = ALFA ***                    00000000    0178
+
+                    BEGIN%                                                                      00000000    0182
+
+                      TEXT[0]:=E;  NCHARS:=MIN(M,7);%                                           00000000    0183
+
+                      REPLACE CPNT:CPNT BY TEXTPNT FOR 7;%                                      00000000    0187
+
+                    END ELSE%                                                                   00000000    0190
+
+                    BEGIN                               %*** MODE = CHAR ***                    00000000    0190
+
+                      PUTCHAR(E);%                                                              00000000    0190
+
+                    END;%                                                                       00000000    0196
+
+                    IF NCHARS>M THEN M:=NCHARS;%                                                00000000    0196
+
+                    IF INFO.BUFPNT+M>INFO.BUFSIZE THEN WLINE(F,BUF,INFO);%                      00000000    0198
+
+                    IF M>INFO.BUFSIZE THEN RUNERR(6,LINENUM);%                                  00000000    0202
+
+                    REPLACE POINTER(BUF[*])+(INFO.BUFPNT+M-NCHARS) BY%                          00000000    0205
+
+                            POINTER(TEMPTEXT[*]) FOR NCHARS;%                                   00000000    0210
+
+                    INFO.BUFPNT:=INFO.BUFPNT+M;%                                                00000000    0213
+
+                END OF PWRITE;%                                                                 00000000    0216
+
+                                                                                          10 IS  223 LONG, NEXT SEG    2
+
+                %                                                                               00000000    0219
+
+                %                                                                               00000000    0219
+
+                PROCEDURE PUT(F,BUF,INFO,LINENUM);%                                             00000000    0219
+
+                VALUE LINENUM;%                                                                 00000000    0219
+
+                FILE F;  ARRAY BUF[*];%                                                         00000000    0219
+
+                INTEGER INFO,LINENUM;%                                                          00000000    0219
+
+                BEGIN%                                                                          00000000    0219
+
+                    IF INFO.BUFSIZE=0 THEN%                                                     00000000    0219
+
+                    BEGIN%                                                                      00000000    0220
+
+                      IF NOT BOOLEAN(INFO.EOF) THEN RUNERR(2,LINENUM);%                         00000000    0220
+
+                      WRITE(F,1023,BUF[*]);%                                                    00000000    0223
+
+                    END ELSE PWRITE(F,BUF,INFO,INFO.LASTCH,4,1,1,LINENUM);%                     00000000    0227
+
+                END OF PUT;%                                                                    00000000    0231
+
+                %                                                                               00000000    0231
+
+                %                                                                               00000000    0231
+
+                PROCEDURE GET(F,BUF,INFO,LINENUM);%                                             00000000    0231
+
+                VALUE LINENUM;%                                                                 00000000    0231
+
+                FILE F;  ARRAY BUF[*];%                                                         00000000    0231
+
+                INTEGER INFO,LINENUM;%                                                          00000000    0231
+
+                BEGIN%                                                                          00000000    0231
+
+                    ALPHA X;  LABEL ENDFILE;%                                                   00000000    0231
+
+                                                                                        START OF SEGMENT **********   11
+
+                    IF INFO.BUFSIZE=0 THEN%                                                     00000000    0000
+
+                    BEGIN%                                                                      00000000    0001
+
+                      IF BOOLEAN(INFO.EOF) THEN RUNERR(1,LINENUM);%                             00000000    0001
+
+                      READ(F,1023,BUF[*]) [ENDFILE];%                                           00000000    0004
+
+                      IF FALSE THEN   ENDFILE: INFO.EOF:=1;%                                    00000000    0009
+
+                    END ELSE X:=PREAD(F,BUF,INFO,1,LINENUM);%                                   00000000    0012
+
+                END OF GET;%                                                                    00000000    0015
+
+                                                                                          11 IS   21 LONG, NEXT SEG    2
+
+                %                                                                               00000000    0231
+
+                %                                                                               00000000    0231
+
+                PROCEDURE PPAGE(F,BUF,INFO,LINENUM);%                                           00000000    0231
+
+                VALUE LINENUM;%                                                                 00000000    0231
+
+                FILE F;  ARRAY BUF[*];%                                                         00000000    0231
+
+                INTEGER INFO,LINENUM;%                                                          00000000    0231
+
+                BEGIN%                                                                          00000000    0231
+
+                    IF NOT BOOLEAN(INFO.EOF) THEN RUNERR(2,LINENUM);%                           00000000    0231
+
+                    WRITE(F[PAGE]);%                                                            00000000    0234
+
+                END OF PPAGE;%                                                                  00000000    0238
+
+                %                                                                               00000000    0238
+
+                %                                                                               00000000    0238
+
+                PROCEDURE RESET(F,BUF,INFO,LINENUM);%                                           00000000    0238
+
+                VALUE LINENUM;%                                                                 00000000    0238
+
+                FILE F;  ARRAY BUF[*];%                                                         00000000    0238
+
+                INTEGER INFO,LINENUM;%                                                          00000000    0238
+
+                BEGIN%                                                                          00000000    0238
+
+                    IF BOOLEAN(INFO.INP) OR BOOLEAN(INFO.OUTP) THEN RUNERR(5,LINENUM);%         00000000    0238
+
+                    REWIND(F);  INFO.EOF:=0;  INFO.EOLN:=0;  INFO.BUFPNT:=0;%                   00000000    0242
+
+                    INFO.ENDFOUND:=0;%                                                          00000000    0251
+
+                    IF INFO.BUFSIZE=0 THEN GET(F,BUF,INFO,LINENUM)%                             00000000    0253
+
+                                      ELSE RLINE(F,BUF,INFO);%                                  00000000    0257
+
+                END OF RESET;%                                                                  00000000    0260
+
+                %                                                                               00000000    0260
+
+                PROCEDURE REWRITE(F,BUF,INFO,LINENUM);%                                         00000000    0260
+
+                VALUE LINENUM;%                                                                 00000000    0260
+
+                FILE F;  ARRAY BUF[*];%                                                         00000000    0260
+
+                INTEGER INFO,LINENUM;%                                                          00000000    0260
+
+                BEGIN%                                                                          00000000    0260
+
+                    IF BOOLEAN(INFO.INP) OR BOOLEAN(INFO.OUTP) THEN RUNERR(5,LINENUM);%         00000000    0260
+
+                    REWIND(F);    INFO.EOF:=1;  INFO.BUFPNT:=0;  INFO.ENDFOUND:=0;%             00000000    0264
+
+                    IF INFO.BUFSIZE>0 THEN%                                                     00000000    0273
+
+                    REPLACE POINTER(BUF[*]) BY " " FOR INFO.BUFSIZE;%                           00000000    0274
+
+                END OF REWRITE;%                                                                00000000    0279
+
+                %                                                                               00000000    0280
+
+                %                                                                               00000000    0280
+
+                PROCEDURE INIT(INPUTDECL);%                                                     00000000    0280
+
+                VALUE INPUTDECL;%                                                               00000000    0280
+
+                BOOLEAN INPUTDECL;%                                                             00000000    0280
+
+                BEGIN%                                                                          00000000    0280
+
+                    MEMPNT:=1;%                                                                 00000000    0280
+
+                    CHARPNT:=POINTER(CHAR[*])+7;  TEXTPNT:=POINTER(TEXT[*])+1;%                 00000000    0280
+
+                    T:=0;  T.BUFSIZE:=80;  T.BUFPNT:=80;  T.EOLN:=1;  T.INP:=1;%                00000000    0287
+
+                    I00603:=T;  IF INPUTDECL THEN RLINE(INPUT,V00603,I00603);%                  00000000    0295
+
+                    T:=0;  T.BUFSIZE:=132;  T.EOLN:=1;  T.OUTP:=1;  T.EOF:=1;%                  00000000    0299
+
+                    I00742:=T;%                                                                 00000000    0306
+
+                    REPLACE POINTER(V00742[*]) BY " " FOR 17 WORDS;%                            00000000    0307
+
+                END OF INIT;%                                                                   00000000    0311
+
+                REAL V01025,V01033;ARRAY V01051[0:050,0:100],V01980[0:050,0:100],V01142         00000044    0312
+                [0:027];REAL V01479,V01290,V01384,V01833,V01398;PROCEDU V01794(V02025,          00000044    0316
+                V02033,V02931);VALUE V02025,V02033,V02931;REAL V02025,V02033,V02931;            00000045    0317
+                BEGIN REAL V02041;INTEGER T01,T02,T03,T04,T05;BEGIN V02041 :=   ABS (           00000049    0317
+                                                                                        START OF SEGMENT **********   12
+                V02931 -V01051 [V02025 ,V02033 ]);IF V02041 >V01290  THEN V01290 :=             00000051    0000
+                V02041 ;V01980 [V02025 ,V02033 ]:=V02931 ;; END END ;INTEGER T01,T02,           00000057    0003
+                                                                                          12 IS   11 LONG, NEXT SEG    2
+                T03,T04,T05;INIT(FALSE);BEGIN V01398 :=(TIME( 1)/60) ;V01479 :=0;BEGIN          00000061    0317
+                V01025~0;T01~027;FOR V01025~V01025 UPTO T01 DO V01142 [V01025 ]:=048            00000062    0321
+                 END ;BEGIN V01025~1;T01~9;FOR V01025~V01025 UPTO T01 DO V01142 [               00000064    0324
+                V01025 |2-1]:=CHECK( (017)+V01025 -1,0,063,064) END ;BEGIN V01025~010;          00000065    0330
+                T01~014;FOR V01025~V01025 UPTO T01 DO V01142 [V01025 |2-1]:=CHECK( (033         00000066    0337
+                )+V01025 -010,0,063,066) END ;BEGIN V01025~0;T01~025;FOR V01025~V01025          00000070    0340
+                UPTO T01 DO BEGIN V01033~0;T02~100;FOR V01033~V01033 UPTO T02 DO                00000071    0347
+                V01980 [V01025 ,V01033 ]:=(3500000.000000@-04-2000000.000000@-05)|              00000071    0351
+                V01025 /050+2000000.000000@-05 END  END ;BEGIN V01033~025;T01~075;FOR           00000074    0353
+                V01033~V01033 UPTO T01 DO V01980 [025,V01033 ]:=3500000.000000@-04 END          00000074    0361
+                ;BEGIN V01025~025;T01~050;FOR V01025~V01025 UPTO T01 DO BEGIN V01980 [          00000078    0368
+                V01025 ,025]:=3500000.000000@-04;V01980 [V01025 ,075]:=                         00000079    0372
+                3500000.000000@-04;BEGIN V01033~0;T02~025;FOR V01033~V01033 UPTO T02            00000081    0375
+                 DO V01980 [V01025 ,V01033 ]:=(3500000.000000@-04-                              00000081    0377
+                2000000.000000@-05)|V01025 /050+2000000.000000@-05 END ;BEGIN V01033~           00000082    0381
+                025+1;T02~075-1;FOR V01033~V01033 UPTO T02 DO V01980 [V01025 ,V01033 ]          00000083    0386
+                :=3500000.000000@-04+2000000.000000@-05 END ;BEGIN V01033~075;T02~100;          00000085    0393
+                FOR V01033~V01033 UPTO T02 DO V01980 [V01025 ,V01033 ]:=(                       00000085    0398
+                3500000.000000@-04-2000000.000000@-05)|V01025 /050+                             00000085    0402
+                2000000.000000@-05 END ;; END  END ;V01384 :=2000000.000000@-06|                00000088    0404
+                2000000.000003@-08/6000000.000000@-07;V01833 :=V01384 |                         00000089    0409
+                2000000.000000@-05;DO BEGIN V01479 :=V01479 +1; BEGIN PWRITE(F00742,            00000093    0411
+                V00742,I00742," PASS  ",5,5,-1,093);PWRITE(F00742,V00742,I00742,V01479          00000093    0414
+                ,1,5,-1,093);PWRITE(F00742,V00742,I00742,":      ",5,2,-1,093);END ;            00000094    0419
+                V01290 :=0;BEGIN V01025~0;T01~050;FOR V01025~V01025 UPTO T01 DO BEGIN           00000098    0424
+                V01033~0;T02~100;FOR V01033~V01033 UPTO T02 DO V01051 [V01025 ,V01033 ]         00000099    0435
+                :=V01980 [V01025 ,V01033 ] END  END ;BEGIN V01025~1;T01~050-1;FOR               00000102    0439
+                V01025~V01025 UPTO T01 DO BEGIN BEGIN V01033~1;T02~100-1;FOR V01033~            00000104    0447
+                V01033 UPTO T02 DO BEGIN IF (V01025 <025)    OR (V01033 <025)    OR (           00000105    0451
+                V01033 >075) THEN V01794 (V01025 ,V01033 ,2500000.000000@-07|(V01051 [          00000107    0453
+                V01025 +1,V01033 ]+V01051 [V01025 -1,V01033 ]+V01051 [V01025 ,V01033 +1         00000107    0456
+                ]+V01051 [V01025 ,V01033 -1]));; END  END ;V01794 (V01025 ,0,(V01833 +          00000113    0461
+                5000000.000000@-07|(2000000.000000@-06|V01051 [V01025 ,1]+V01051 [              00000113    0467
+                V01025 +1,0]+V01051 [V01025 -1,0]))/(V01384 +2000000.000000@-06));              00000117    0469
+                V01794 (V01025 ,100,2500000.000000@-07|(V01051 [V01025 +1,100]+V01051 [         00000117    0475
+                V01025 -1,100]+2000000.000000@-06|V01051 [V01025 ,100-1]));; END  END ;         00000120    0478
+                BEGIN V01033~1;T01~100-1;FOR V01033~V01033 UPTO T01 DO BEGIN V01794 (0,         00000125    0485
+                V01033 ,(V01833 +5000000.000000@-07|(2000000.000000@-06|V01051 [1,              00000125    0492
+                V01033 ]+V01051 [0,V01033 +1]+V01051 [0,V01033 -1]))/(V01384 +                  00000125    0494
+                2000000.000000@-06));IF (V01033 <025)    OR (V01033 >075) THEN V01794 (         00000130    0499
+                050,V01033 ,2500000.000000@-07|(V01051 [050,V01033 +1]+V01051 [050,             00000130    0503
+                V01033 -1]+2000000.000000@-06|V01051 [050-1,V01033 ]));; END  END ;             00000134    0506
+                V01794 (050,100,5000000.000000@-07|(V01051 [050-1,100]+V01051 [050,100-         00000134    0513
+                1]));V01794 (0,100,(V01833 -V01051 [0,100-1]+V01051 [1,100])/V01384 );          00000140    0516
+                V01794 (050,0,(V01833 -V01051 [050-1,0]+V01051 [050,1])/V01384 );               00000144    0523
+                V01794 (0,0,(2000000.000000@-06|V01833 +V01051 [1,0]+V01051 [0,1])/             00000144    0528
+                2000000.000000@-06/(V01384 +1000000.000000@-06)); BEGIN PWRITE(F00742,          00000146    0533
+                V00742,I00742,"RMAX = ",5,7,-1,146);PWRITE(F00742,V00742,I00742,V01290          00000146    0535
+                ,2,8,4,146);WLINE(F00742,V00742,I00742)END ;; END UNTIL V01290 {                00000147    0540
+                5000000.000000@-07; BEGIN WLINE(F00742,V00742,I00742)END ; BEGIN WALFA(         00000150    0544
+                F00742,V00742,I00742," FINAL ","RMAX = ",0,0,0,0,0,0,0,0,0,0,014,150);          00000150    0547
+                PWRITE(F00742,V00742,I00742,V01290 ,2,016,-1,150);WLINE(F00742,V00742,          00000150    0552
+                I00742)END ; BEGIN WLINE(F00742,V00742,I00742)END ; BEGIN WALFA(F00742,         00000152    0557
+                V00742,I00742," TIMES:"," ET= = ",0,0,0,0,0,0,0,0,0,0,011,152);PWRITE(          00000152    0560
+                F00742,V00742,I00742,((TIME( 1)/60) -V01398 ),2,8,2,152);PWRITE(F00742,         00000152    0565
+                V00742,I00742,", PT=  ",5,5,-1,152);PWRITE(F00742,V00742,I00742,(TIME(          00000152    0571
+                2)/60) ,2,8,2,152);PWRITE(F00742,V00742,I00742,", IO=  ",5,5,-1,153);           00000153    0575
+                PWRITE(F00742,V00742,I00742,(TIME( 3)/60) ,2,8,2,153);WLINE(F00742,             00000153    0581
+                V00742,I00742)END ; BEGIN WLINE(F00742,V00742,I00742)END ; BEGIN WALFA(         00000155    0586
+                F00742,V00742,I00742," TEMPER","ATURE P","ROFILE0",0,0,0,0,0,0,0,0,0,           00000155    0590
+                020,155);WLINE(F00742,V00742,I00742)END ; BEGIN WALFA(F00742,V00742,            00000156    0594
+                I00742," KEY   ","A =  21","- 40LE0",0,0,0,0,0,0,0,0,0,018,156);WLINE(          00000156    0612
+                F00742,V00742,I00742)END ; BEGIN WALFA(F00742,V00742,I00742,"       ",          00000157    0616
+                "B =  61","- 80LE0",0,0,0,0,0,0,0,0,0,018,157);WLINE(F00742,V00742,             00000157    0620
+                I00742)END ; BEGIN WALFA(F00742,V00742,I00742,"       ","C = 101",              00000158    0625
+                "-120LE0",0,0,0,0,0,0,0,0,0,018,158);WLINE(F00742,V00742,I00742)END ;           00000159    0628
+                 BEGIN WALFA(F00742,V00742,I00742,"       ","D = 141","-160LE0",0,0,0,          00000159    0633
+                0,0,0,0,0,0,018,159);WLINE(F00742,V00742,I00742)END ; BEGIN WALFA(              00000160    0636
+                F00742,V00742,I00742,"       ","E = 181","-200LE0",0,0,0,0,0,0,0,0,0,           00000160    0641
+                018,160);WLINE(F00742,V00742,I00742)END ; BEGIN WALFA(F00742,V00742,            00000161    0645
+                I00742,"       ","F = 221","-240LE0",0,0,0,0,0,0,0,0,0,018,161);WLINE(          00000161    0650
+                F00742,V00742,I00742)END ; BEGIN WALFA(F00742,V00742,I00742,"       ",          00000162    0654
+                "G = 261","-280LE0",0,0,0,0,0,0,0,0,0,018,162);WLINE(F00742,V00742,             00000162    0658
+                I00742)END ; BEGIN WALFA(F00742,V00742,I00742,"       ","H = 301",              00000163    0663
+                "-320LE0",0,0,0,0,0,0,0,0,0,018,163);WLINE(F00742,V00742,I00742)END ;           00000164    0665
+                 BEGIN WALFA(F00742,V00742,I00742,"       ","I = 341","-360LE0",0,0,0,          00000164    0671
+                0,0,0,0,0,0,018,164);WLINE(F00742,V00742,I00742)END ; BEGIN WLINE(              00000165    0674
+                F00742,V00742,I00742)END ;BEGIN V01033~0;T01~100;FOR V01033~V01033              00000168    0678
+                UPTO T01 DO BEGIN  BEGIN PWRITE(F00742,V00742,I00742,V01033 ,1,4,-1,169         00000169    0682
+                );PWRITE(F00742,V00742,I00742,048,4,1,-1,169);END ;BEGIN V01025~0;T02~          00000170    0706
+                050;FOR V01025~V01025 UPTO T02 DO  BEGIN PWRITE(F00742,V00742,I00742,           00000171    0710
+                V01142 [ TRUNC (V01051 [V01025 ,V01033 ]/020,171)],4,1,-1,171);END              00000171    0714
+                 END ; BEGIN WLINE(F00742,V00742,I00742)END ;; END  END ; BEGIN WLINE(          00000176    0719
+                F00742,V00742,I00742)END ; BEGIN WALFA(F00742,V00742,I00742," TIMES:",          00000177    0725
+                " ET=341",0,0,0,0,0,0,0,0,0,0,011,177);PWRITE(F00742,V00742,I00742,(            00000177    0729
+                (TIME( 1)/60) -V01398 ),2,8,2,177);PWRITE(F00742,V00742,I00742,                 00000177    0734
+                ", PT=  ",5,5,-1,177);PWRITE(F00742,V00742,I00742,(TIME( 2)/60) ,2,8,2,         00000177    0739
+                177);PWRITE(F00742,V00742,I00742,", IO=  ",5,5,-1,178);PWRITE(F00742,           00000178    0745
+                V00742,I00742,(TIME( 3)/60) ,2,8,2,178);WLINE(F00742,V00742,I00742)END          00000178    0749
+                ;; END                                                                          00000179    0755
+                ; TERMINATE: END OF PASCAL PROGRAM.                                                         0755
+                                                                                           2 IS  764 LONG, NEXT SEG    1
+                                                                                           1 IS    2 LONG, NEXT SEG    0
+                                                                                          25 IS   69 LONG, NEXT SEG    0
+NUMBER OF ERRORS DETECTED =   0.  COMPILATION TIME =   36 SECONDS.
+
+PRT SIZE = 112; TOTAL SEGMENT SIZE =  1723 WORDS; DISK SIZE =  88 SEGS; NO. PGM. SEGS =  25
+
+ESTIMATED CORE STORAGE REQUIRED =  6769 WORDS.
+
+ESTIMATED AUXILIARY MEMORY REQUIRED =     0 WORDS.
+
+
+
+ LABEL  0XALGOL 0COMPILE00186183CC USER=0000000;   COMPILE HMSS2/0000000 XALGOL ;XALGOL FILE CARD=PASC85 XALGOL /HMSS2
+
+
+
+
+
+
+
+
+
+
+
+ LABEL  000000000OUTPUT 00186183CC USER=0000000;   COMPILE HMSS2/0000000 XALGOL ;XALGOL FILE CARD=PASC85 HMSS2  /0000000
+
+
+
+
+
+ PASS    1: RMAX =  230.0000
+ PASS    2: RMAX =  106.9839
+ PASS    3: RMAX =  30.0786
+ PASS    4: RMAX =  23.8685
+ PASS    5: RMAX =  15.8328
+ PASS    6: RMAX =  12.3433
+ PASS    7: RMAX =  10.9879
+ PASS    8: RMAX =   9.0:98
+ PASS    9: RMAX =   8.5020
+ PASS   10: RMAX =   7.3267
+ PASS   10: RMAX =   6.9743
+ PASS   12: RMAX =   6.0>73
+ PASS   13: RMAX =   5.9338
+ PASS   14: RMAX =   5.30:6
+ PASS   15: RMAX =   5.1764
+ PASS   16: RMAX =   4.6904
+ PASS   17: RMAX =   4.5987
+ PASS   18: RMAX =   4.2054
+ PASS   19: RMAX =   4.0>24
+ PASS   20: RMAX =   3.8467
+ PASS   20: RMAX =   3.7723
+ PASS   22: RMAX =   3.5496
+ PASS   23: RMAX =   3.4656
+ PASS   24: RMAX =   3.2966
+ PASS   25: RMAX =   3.20:5
+ PASS   26: RMAX =   3.0785
+ PASS   27: RMAX =   3.0047
+ PASS   28: RMAX =   2.8883
+ PASS   29: RMAX =   2.8223
+ PASS   30: RMAX =   2.720#
+ PASS   30: RMAX =   2.6616
+ PASS   32: RMAX =   2.5726
+ PASS   33: RMAX =   2.5187
+ PASS   34: RMAX =   2.4400
+ PASS   35: RMAX =   2.3909
+ PASS   36: RMAX =   2.3207
+ PASS   37: RMAX =   2.2759
+ PASS   38: RMAX =   2.20?9
+ PASS   39: RMAX =   2.1717
+ PASS   40: RMAX =   2.0@49
+ PASS   40: RMAX =   2.0769
+ PASS   42: RMAX =   2.0254
+ PASS   43: RMAX =   1.9902
+ PASS   44: RMAX =   1.9434
+ PASS   45: RMAX =   1.90#7
+ PASS   46: RMAX =   1.8678
+ PASS   47: RMAX =   1.8374
+ PASS   48: RMAX =   1.7980
+ PASS   49: RMAX =   1.7696
+ PASS   50: RMAX =   1.7334
+ PASS   50: RMAX =   1.7068
+ PASS   52: RMAX =   1.6733
+ PASS   53: RMAX =   1.6483
+ PASS   54: RMAX =   1.6173
+ PASS   55: RMAX =   1.5938
+ PASS   56: RMAX =   1.5650
+ PASS   57: RMAX =   1.5428
+ PASS   58: RMAX =   1.5160
+ PASS   59: RMAX =   0.>950
+ PASS   60: RMAX =   0.>700
+ PASS   60: RMAX =   0.>502
+ PASS   62: RMAX =   0.>267
+ PASS   63: RMAX =   0.>079
+ PASS   64: RMAX =   0.:869
+ PASS   65: RMAX =   0.:681
+ PASS   66: RMAX =   0.:504
+ PASS   67: RMAX =   0.:305
+ PASS   68: RMAX =   0.:159
+ PASS   69: RMAX =   0.?949
+ PASS   70: RMAX =   0.?830
+ PASS   70: RMAX =   0.?60?
+ PASS   72: RMAX =   0.?518
+ PASS   73: RMAX =   0.?297
+ PASS   74: RMAX =   0.?220
+ PASS   75: RMAX =   0.?00#
+ PASS   76: RMAX =   0.@937
+ PASS   77: RMAX =   0.@737
+ PASS   78: RMAX =   0.@666
+ PASS   79: RMAX =   0.@475
+ PASS   80: RMAX =   0.@407
+ PASS   80: RMAX =   0.@225
+ PASS   82: RMAX =   0.@159
+ PASS   83: RMAX =   0.#985
+ PASS   84: RMAX =   0.#922
+ PASS   85: RMAX =   0.#755
+ PASS   86: RMAX =   0.#694
+ PASS   87: RMAX =   0.#534
+ PASS   88: RMAX =   0.#476
+ PASS   89: RMAX =   0.#323
+ PASS   90: RMAX =   0.#266
+ PASS   90: RMAX =   0.#0@9
+ PASS   92: RMAX =   0.#064
+ PASS   93: RMAX =   0.9923
+ PASS   94: RMAX =   0.9870
+ PASS   95: RMAX =   0.9734
+ PASS   96: RMAX =   0.9683
+ PASS   97: RMAX =   0.9553
+ PASS   98: RMAX =   0.9503
+ PASS   99: RMAX =   0.9377
+ PASS  100: RMAX =   0.9329
+ PASS  100: RMAX =   0.9208
+ PASS  102: RMAX =   0.9161
+ PASS  103: RMAX =   0.9045
+ PASS  104: RMAX =   0.8999
+ PASS  105: RMAX =   0.8887
+ PASS  106: RMAX =   0.8843
+ PASS  107: RMAX =   0.8735
+ PASS  108: RMAX =   0.8692
+ PASS  109: RMAX =   0.8587
+ PASS  100: RMAX =   0.8545
+ PASS  100: RMAX =   0.8444
+ PASS  102: RMAX =   0.8404
+ PASS  103: RMAX =   0.830#
+ PASS  104: RMAX =   0.8267
+ PASS  105: RMAX =   0.8183
+ PASS  106: RMAX =   0.80:4
+ PASS  107: RMAX =   0.8059
+ PASS  108: RMAX =   0.8005
+ PASS  109: RMAX =   0.7939
+ PASS  120: RMAX =   0.7880
+ PASS  120: RMAX =   0.7822
+ PASS  122: RMAX =   0.7758
+ PASS  123: RMAX =   0.7708
+ PASS  124: RMAX =   0.7640
+ PASS  125: RMAX =   0.7597
+ PASS  126: RMAX =   0.7526
+ PASS  127: RMAX =   0.7490
+ PASS  128: RMAX =   0.7415
+ PASS  129: RMAX =   0.7385
+ PASS  130: RMAX =   0.7307
+ PASS  130: RMAX =   0.7283
+ PASS  132: RMAX =   0.7204
+ PASS  133: RMAX =   0.7183
+ PASS  134: RMAX =   0.70#7
+ PASS  135: RMAX =   0.7086
+ PASS  136: RMAX =   0.700?
+ PASS  137: RMAX =   0.6992
+ PASS  138: RMAX =   0.6919
+ PASS  139: RMAX =   0.6899
+ PASS  140: RMAX =   0.6829
+ PASS  140: RMAX =   0.6809
+ PASS  142: RMAX =   0.6740
+ PASS  143: RMAX =   0.6721
+ PASS  144: RMAX =   0.6654
+ PASS  145: RMAX =   0.6636
+ PASS  146: RMAX =   0.6570
+ PASS  147: RMAX =   0.6552
+ PASS  148: RMAX =   0.6488
+ PASS  149: RMAX =   0.6470
+ PASS  150: RMAX =   0.6408
+ PASS  150: RMAX =   0.6390
+ PASS  152: RMAX =   0.6329
+ PASS  153: RMAX =   0.630?
+ PASS  154: RMAX =   0.6252
+ PASS  155: RMAX =   0.6235
+ PASS  156: RMAX =   0.6177
+ PASS  157: RMAX =   0.6160
+ PASS  158: RMAX =   0.60#4
+ PASS  159: RMAX =   0.6087
+ PASS  160: RMAX =   0.6032
+ PASS  160: RMAX =   0.6016
+ PASS  162: RMAX =   0.5962
+ PASS  163: RMAX =   0.5946
+ PASS  164: RMAX =   0.5893
+ PASS  165: RMAX =   0.5877
+ PASS  166: RMAX =   0.5825
+ PASS  167: RMAX =   0.580#
+ PASS  168: RMAX =   0.5759
+ PASS  169: RMAX =   0.5744
+ PASS  170: RMAX =   0.5696
+ PASS  170: RMAX =   0.5680
+ PASS  172: RMAX =   0.5635
+ PASS  173: RMAX =   0.5617
+ PASS  174: RMAX =   0.5576
+ PASS  175: RMAX =   0.5555
+ PASS  176: RMAX =   0.5517
+ PASS  177: RMAX =   0.5494
+ PASS  178: RMAX =   0.5460
+ PASS  179: RMAX =   0.5434
+ PASS  180: RMAX =   0.5403
+ PASS  180: RMAX =   0.5376
+ PASS  182: RMAX =   0.5348
+ PASS  183: RMAX =   0.5319
+ PASS  184: RMAX =   0.5293
+ PASS  185: RMAX =   0.5263
+ PASS  186: RMAX =   0.5240
+ PASS  187: RMAX =   0.5207
+ PASS  188: RMAX =   0.5187
+ PASS  189: RMAX =   0.5153
+ PASS  190: RMAX =   0.50:6
+ PASS  190: RMAX =   0.50#0
+ PASS  192: RMAX =   0.5085
+ PASS  193: RMAX =   0.5048
+ PASS  194: RMAX =   0.5035
+ PASS  195: RMAX =   0.4997
+
+ FINAL RMAX =   4.99680577E-00
+
+ TIMES: ET=  507.55, PT=  504.57, IO=    8.75
+
+ TEMPERATURE PROFILE
+ KEY   A =  21- 40
+       B =  61- 80
+       C = 101-120
+       D = 141-160
+       E = 181-200
+       F = 221-240
+       G = 261-280
+       H = 301-320
+       I = 341-360
+
+   0         BBBBBB     CCCCC     DDDDD      EEEEEEEEEEE
+   1        BBBBBB     CCCCC    DDDDD     EEEEEEE
+   2        BBBBB     CCCCC    DDDD     EEEEE
+   3       BBBBBB    CCCCC    DDDD    EEEEE       FFFFFF
+   4      BBBBBB     CCCC    DDDD    EEEE     FFFFFFFFFF
+   5      BBBBB     CCCC    DDDD   EEEEE    FFFFFFF
+   6     BBBBBB    CCCC    DDDD   EEEE     FFFFF
+   7     BBBBBB    CCCC   DDDD    EEE    FFFFF
+   8     BBBBB    CCCC    DDD    EEE    FFFFF      GGGGG
+   9    BBBBBB    CCCC   DDDD   EEEE   FFFFF     GGGGGGG
+  10    BBBBBB    CCC    DDD    EEE    FFFF    GGGGGGGGG
+  10    BBBBB    CCCC   DDDD   EEEE   FFFF    GGGGGGGGG
+  12    BBBBB    CCCC   DDD    EEE    FFF    GGGGGG
+  13   BBBBBB    CCC    DDD   EEEE   FFFF    GGGGG
+  14   BBBBBB    CCC   DDDD   EEE    FFF    GGGGG
+  15   BBBBBB    CCC   DDD    EEE    FFF    GGGG
+  16   BBBBB    CCCC   DDD   EEEE   FFFF   GGGGG
+  17   BBBBB    CCC   DDD    EEE    FFFF   GGGG       HH
+  18   BBBBB    CCC   DDD   EEEE    FFF    GGGG     HHHH
+  19   BBBBB    CCC   DD    EEEE    FFF    GGG     HHHHH
+  20   BBBBB    CCC  DDD   EEEE     FFF    GGG    HHHHHH
+  20   BBBBB   CCC   DD   EEEEE     FFF   GGGG    HHHHHH
+  22   BBBBB   CCC   DD  EEEE       FFF   GGGG   HHHHHH
+  23  BBBBBB   CCC  DD   EE         FFF   GGG    HHHH
+  24  BBBBBB   CCC  DD  EE     E    FFF   GGG   HHHH
+  25  BBBBB    CC   D  EE  FFFEEE   FFF   GGG   HHH   II
+  26  BBBBB    CC  DD  E  F G
+  27  BBBBB   CCC  DD EE F G
+  28  BBBBB   CCC  DD E  F GH
+  29  BBBBB   CCC  D  E F G H
+  30  BBBBB   CC  DD  E F G HI
+  30  BBBBB   CC  DD EE F G HI
+  32  BBBBB   CC  DD E  F G  I
+  33  BBBBB   CC  DD E  F G  I
+  34  BBBBB   CC  DD E FF  H I
+  35  BBBBB   CC  D  E F G H I
+  36  BBBBB   CC  D  E F G H I
+  37  BBBBB   CC  D  E F G H I
+  38  BBBBB   CC  D  E F G H I
+  39  BBBBB   CC  D  E F G H I
+  40  BBBBB   CC  D  E F G H I
+  40  BBBBB   CC  D  E F G H I
+  42  BBBBB   CC  D  E F G H I
+  43  BBBBB   CC  D  E F G H I
+  44  BBBBB   CC  D  E F G H I
+  45  BBBBB   CC  D  E F G H I
+  46  BBBBB   CC  D  E F G H I
+  47  BBBBB   CC  D  E F G H I
+  48  BBBBB   CC  D  E F G H I
+  49  BBBBB  CCC  D  E F G H I
+  50  BBBBB  CCC  D  E F G H I
+  50  BBBBB  CCC  D  E F G H I
+  52  BBBBB   CC  D  E F G H I
+  53  BBBBB   CC  D  E F G H I
+  54  BBBBB   CC  D  E F G H I
+  55  BBBBB   CC  D  E F G H I
+  56  BBBBB   CC  D  E F G H I
+  57  BBBBB   CC  D  E F G H I
+  58  BBBBB   CC  D  E F G H I
+  59  BBBBB   CC  D  E F G H I
+  60  BBBBB   CC  D  E F G H I
+  60  BBBBB   CC  D  E F G H I
+  62  BBBBB   CC  D  E F G H I
+  63  BBBBB   CC  D  E F G H I
+  64  BBBBB   CC  D  E F G H I
+  65  BBBBB   CC  D  E F G H I
+  66  BBBBB   CC  DD E FF  H I
+  67  BBBBB   CC  DD E  F G  I
+  68  BBBBB   CC  DD E  F G  I
+  69  BBBBB   CC  DD EE F G HI
+  70  BBBBB   CC  DD  E F G HI
+  70  BBBBB   CCC  D  E F G H
+  72  BBBBB   CCC  DD E  F GH
+  73  BBBBB   CCC  DD EE F G
+  74  BBBBB    CC  DD  E  F G
+  75  BBBBB    CC   D  EE  FFFEEE   FFF   GGG   HHH   II
+  76  BBBBB    CCC  DD  EE     E    FFF   GGG   HHHH
+  77  BBBBBB   CCC  DD  EEE         FFF   GGG    HHH
+  78  BBBBBB   CCC  DDD  EEEE      FFFF   GGG    HHHHH
+  79   BBBBB   CCC   DD   EEEEE    FFFF   GGGG   HHHHHHH
+  80   BBBBB   CCC   DDD   EEEE    FFFF   GGGG    HHHHHH
+  80   BBBBB    CCC   DD   EEEE    FFFF   GGGG    HHHHHH
+  82   BBBBB    CCC   DDD   EEEE   FFFF   GGGG     HHHHH
+  83   BBBBB    CCC   DDD   EEEE   FFFF   GGGG     HHHHH
+  84   BBBBB    CCC   DDD    EEE    FFF   GGGG      HHHH
+  85   BBBBB    CCC    DDD   EEE    FFF   GGGG      HHHH
+  86   BBBBB    CCCC   DDD   EEE    FFF    GGGG      HHH
+  87   BBBBB    CCCC   DDD   EEE    FFF    GGGG       HH
+  88   BBBBB    CCCC   DDD   EEEE   FFF    GGGG       HH
+  89   BBBBB    CCCC   DDD   EEEE   FFF    GGGG
+  90   BBBBB    CCCC   DDD   EEEE   FFF    GGGG
+  90   BBBBB    CCCC   DDD    EEE   FFF    GGGG
+  92   BBBBB    CCCC   DDD    EEE   FFF    GGGG
+  93   BBBBB    CCCC   DDD    EEE   FFF    GGGG
+  94   BBBBB     CCC   DDDD   EEE   FFF    GGGG
+  95   BBBBB     CCC   DDDD   EEE   FFF    GGGG
+  96  BBBBBB     CCC   DDDD   EEE   FFF    GGGG
+  97  BBBBBB     CCC   DDDD   EEE   FFF    GGGG
+  98  BBBBBB     CCC   DDDD   EEE   FFF    GGGG
+  99  BBBBBB     CCC   DDDD   EEE   FFF    GGGG
+ 100  BBBBBB     CCC   DDDD   EEE   FFF    GGGG
+
+ TIMES: ET=  526.93, PT=  523.87, IO=    9.37
+
+
+
+
+ LABEL  000000000OUTPUT 00186183CC USER=0000000;   COMPILE HMSS2/0000000 XALGOL ;XALGOL FILE CARD=PASC85 HMSS2  /0000000
+
+
+
+
+

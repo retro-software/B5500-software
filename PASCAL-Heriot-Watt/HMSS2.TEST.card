@@ -1,0 +1,182 @@
+?RUN PASCAL/DISK
+?DATA SOURCE
+(*$L+,C-,A+*)
+PROGRAM HMSS2 (OUTPUT);
+(*----------------------------------------------------------------------
+                                   CHE 342
+                     CHIMNEY TEMPERATURE PROFILE PROBLEM
+      VERSION 1               1 MAY 1969          P. KIMPEL
+ -----------------------------------------------------------------------
+ MODIFICATION LOG.
+ 92/04/01  P.KIMPEL
+     CONVERT FROM SDS-9300 FORTRAN TO MS-DOS PASCAL VER 3.32.
+ 92/11/15  P.KIMPEL
+     ADD TNEW ARRAY TO HOLD INTERMEDIATE RESULTS DURING CALCULATIONS.
+ 2016-07-02  P.KIMPEL
+     CONVERT TO HERIOT-WATT PASCAL FOR THE BURROUGHS B5500.
+ ---------------------------------------------------------------------*)
+
+ CONST
+   TAIR=                20.0;
+   TWALL=               350.0;
+   H=                   2.0;
+   DELTAX=              0.02;
+   K=                   0.6;
+   EPSILON=             0.5;
+   XMAX=                50;
+   YMAX=                100;
+   FLUEXMIN=            25;
+   FLUEXMAX=            50;
+   FLUEYMIN=            25;
+   FLUEYMAX=            75;
+
+ VAR
+   I:                   INTEGER;
+   J:                   INTEGER;
+   T:                   ARRAY [0..XMAX, 0..YMAX] OF REAL;
+   TNEW:                ARRAY [0..XMAX, 0..YMAX] OF REAL;
+   CODE:                PACKED ARRAY [0..27] OF CHAR;
+   PASS:                INTEGER;
+   RMAX:                REAL;
+   XNU:                 REAL;
+   XNUTAIR:             REAL;
+   ET:                  REAL;
+
+(*--------------------------------------------------------------------*)
+PROCEDURE RESIDUAL (I, J: INTEGER; TCELL: REAL);
+  VAR
+    R:                  REAL;
+
+  BEGIN (*RESIDUAL*)
+  R:= ABS (TCELL - T[I,J]);
+  IF R > RMAX THEN
+    RMAX:= R;
+
+  TNEW[I,J]:= TCELL;
+  END (*RESIDUAL*);
+
+(*--------------------------------------------------------------------*)
+BEGIN (*HMSS*)
+ET:= TIME;
+
+PASS:= 0;
+FOR I:= 0 TO 27 DO
+  CODE[I]:= " ";
+FOR I:= 1 TO 9 DO
+  CODE[I*2-1]:= CHR (ORD ("A") + I-1);
+FOR I:= 10 TO 14 DO
+  CODE[I*2-1]:= CHR (ORD ("J") + I-10);
+
+(*INITIAL CONDITIONS -- LINEAR PROFILE*)
+FOR I:= 0 TO FLUEXMIN DO
+  FOR J:= 0 TO YMAX DO
+    TNEW[I,J]:= (TWALL - TAIR) * I/XMAX + TAIR;
+
+FOR J:= FLUEYMIN TO FLUEYMAX DO
+  TNEW[FLUEXMIN,J]:= TWALL;
+
+FOR I:= FLUEXMIN TO FLUEXMAX DO
+  BEGIN
+  TNEW[I,FLUEYMIN]:= TWALL;
+  TNEW[I,FLUEYMAX]:= TWALL;
+  FOR J:= 0 TO FLUEYMIN DO
+    TNEW[I,J]:= (TWALL - TAIR) * I/XMAX + TAIR;
+  FOR J:= FLUEYMIN+1 TO FLUEYMAX-1 DO
+    TNEW[I,J]:= TWALL + 20.0;
+  FOR J:= FLUEYMAX TO YMAX DO
+    TNEW[I,J]:= (TWALL - TAIR) * I/XMAX + TAIR;
+  END (*FOR I*);
+
+XNU:= H * DELTAX / K;
+XNUTAIR:= XNU * TAIR;
+
+REPEAT
+  PASS:= PASS+1;
+  WRITE (" PASS", PASS:5, ": ");
+  RMAX:= 0.0;
+
+  (*MOVE TNEW[*,*] VALUES TO T[*,*]*)
+  FOR I:= 0 TO XMAX DO
+    FOR J:= 0 TO YMAX DO
+      T[I,J]:= TNEW[I,J];
+
+  FOR I:= 1 TO XMAX-1 DO
+    BEGIN
+    FOR J:= 1 TO YMAX-1 DO
+      BEGIN
+      IF (I < FLUEXMIN) OR (J < FLUEYMIN) OR (J > FLUEYMAX) THEN
+        RESIDUAL (I, J,
+            0.25 * (T[I+1,J] + T[I-1,J] + T[I,J+1] + T[I,J-1]));
+      END (*FOR J*);
+
+    (*FREE BOUNDARY AT Y=0: AIR*)
+    RESIDUAL (I, 0,
+        (XNUTAIR + 0.5 * (2.0 * T[I,1] + T[I+1,0] + T[I-1,0])) /
+        (XNU + 2.0));
+
+    (*INSULATED BOUNDARY AT Y=YMAX: HOUSE WALL*)
+    RESIDUAL (I, YMAX,
+        0.25 * (T[I+1,YMAX] + T[I-1,YMAX] + 2.0 * T[I,YMAX-1]));
+    END (*FOR I*);
+
+  FOR J:= 1 TO YMAX-1 DO
+    BEGIN
+    (*FREE BOUNDARY AT X=0*)
+    RESIDUAL (0, J,
+        (XNUTAIR + 0.5 * (2.0 * T[1,J] + T[0,J+1] + T[0,J-1])) /
+        (XNU + 2.0));
+
+    (*SYMMETRY BOUNDARY AT X=XMAX (DT/DX=0: ERGO, INSULATED)*)
+    IF (J < FLUEYMIN) OR (J > FLUEYMAX) THEN
+      RESIDUAL (XMAX, J, 0.25 * (T[XMAX,J+1] + T[XMAX,J-1] +
+                                 2.0 * T[XMAX-1,J]));
+    END (*FOR J*);
+
+  (*CORNER BOUNDARY AT X=XMAX, Y=YMAX*)
+  RESIDUAL (XMAX, YMAX, 0.50 * (T[XMAX-1,YMAX] + T[XMAX,YMAX-1]));
+
+  (*CORNER BOUNDARY AT X=0, Y=YMAX*)
+  RESIDUAL (0, YMAX, (XNUTAIR - T[0,YMAX-1] + T[1,YMAX]) / XNU);
+
+  (*CORNER BOUNARY AT X=XMAX, Y=0*)
+  RESIDUAL (XMAX, 0, (XNUTAIR - T[XMAX-1,0] + T[XMAX,1]) / XNU);
+
+  (*CORNER BOUNDARY AT X=0, Y=0*)
+  RESIDUAL (0, 0,
+           (2.0 * XNUTAIR + T[1,0] + T[0,1]) / 2.0 / (XNU + 1.0));
+
+  WRITELN ("RMAX = ", RMAX:8:4);
+UNTIL RMAX <= EPSILON;
+
+WRITELN;
+WRITELN (" FINAL RMAX = ", RMAX);
+WRITELN;
+WRITELN (" TIMES: ET=", (TIME-ET):8:2, ", PT=", ELAPSED:8:2,
+         ", IO=", IOTIME:8:2);
+WRITELN;
+WRITELN (" TEMPERATURE PROFILE");
+WRITELN (" KEY   A =  21- 40");
+WRITELN ("       B =  61- 80");
+WRITELN ("       C = 101-120");
+WRITELN ("       D = 141-160");
+WRITELN ("       E = 181-200");
+WRITELN ("       F = 221-240");
+WRITELN ("       G = 261-280");
+WRITELN ("       H = 301-320");
+WRITELN ("       I = 341-360");
+WRITELN;
+
+FOR J:= 0 TO YMAX DO
+  BEGIN
+  WRITE (J:4, " ");
+  FOR I:= 0 TO XMAX DO
+    WRITE (CODE[TRUNC(T[I,J]/20)]);
+
+  WRITELN;
+  END (*FOR J*);
+
+WRITELN;
+WRITELN (" TIMES: ET=", (TIME-ET):8:2, ", PT=", ELAPSED:8:2,
+         ", IO=", IOTIME:8:2);
+END (*HMSS*).
+?END

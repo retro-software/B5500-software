@@ -14,6 +14,26 @@ The compiler, run-time system, and patches were originally transcribed
 by Rich Cornwell of North Carolina, US. Proofing and correction were
 performed by Paul Kimpel of San Diego, California, US.
 
+HMSS2.TEST.card
+    Card deck to compile and run a sample Pascal program. This program
+    computes the temperature profile in a square chimney with one side
+    against a perfectly-insulated wall and the other three sides exposed
+    to ambient air. Note that this program takes almost nine minutes to
+    run in the retro-B5500 emulator (which is close to the performance
+    of a real B5500).
+
+HMSS2.TEST.lst
+    Listing produced by running the HMSS2.TEST.card job, including the
+    Pascal compiler listing, a listing of the generated Algol code, and
+    the output from running the generated program.
+
+PASCAL.MARKXIII.card
+    Compile deck and patches to allow the PASCAL compiler to compile
+    using B5500 Mark XIII Algol.
+
+PASCAL.MARKXIII-Compile.lst
+    Listing produced by running the PASCAL.MARKXIII.card job.
+
 PASCRUN.DISK.alg_m
     Algol source for the run-time system inserted into the translated
     Algol by the compiler. Transcribed from
@@ -33,5 +53,11 @@ SYMBOL.PASCAL.alg_m
     B5700_Pascal_Mar79.pdf.
 
 
-Paul Kimpel
-June 2016
+2016-06-12 Paul Kimpel
+    Initial commits to source control.
+2016-07-04 Paul Kimpel
+    Commit proofreading corrections to SYMBOL.PASCAL and PASCRUN.DISK.
+    Commit compile deck and listing with patches to allow the compiler
+    to work with B5500 Mark XIII Algol. Commit compile & go deck and
+    output listing for HMSS2.TEST sample program.
+

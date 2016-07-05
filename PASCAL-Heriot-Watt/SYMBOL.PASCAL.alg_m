@@ -1,40 +1,40 @@
                                                                         10001000          
                                                                         10002000          
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 10003000          
-%                                                                     % 10004000          
-%                                                                     % 10005000          
-%               *                                 *                   % 10006000          
-%               *  P A S C A L   C O M P I L E R  *                   % 10007000          
-%               ***********************************                   % 10008000          
-%                                                                     % 10009000          
-%                                                                     % 10010000          
-%                 WRITTEN 1975 BY                                     % 10011000          
-%                    DAG F. LANGMYHR,                                 % 10012000          
-%                       HERIOT-WATT UNIVERSITY,                       % 10013000          
-%                          EDINBURGH.                                 % 10014000          
-%                                                                     % 10015000          
-%                                                                     % 10016000          
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 10017000          
-%                                                                     % 10018000          
-%                                                                     % 10019000          
-%                 PART 1:  DECLARATIONS.                              % 10020000          
-%                          -------------                              % 10021000          
-%                                                                     % 10022000          
-%                                                                     % 10023000          
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 10024000          
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  10003000          
+%                                                                    %  10004000          
+%                                                                    %  10005000          
+%               *                                 *                  %  10006000          
+%               *  P A S C A L   C O M P I L E R  *                  %  10007000          
+%               ***********************************                  %  10008000          
+%                                                                    %  10009000          
+%                                                                    %  10010000          
+%                  WRITTEN 1975 BY                                   %  10011000          
+%                     DAG F. LANGMYHR,                               %  10012000          
+%                        HERIOT-WATT UNIVERSITY,                     %  10013000          
+%                           EDINBURGH.                               %  10014000          
+%                                                                    %  10015000          
+%                                                                    %  10016000          
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  10017000          
+%                                                                    %  10018000          
+%                                                                    %  10019000          
+%                  PART 1:  DECLARATIONS.                            %  10020000          
+%                           -------------                            %  10021000          
+%                                                                    %  10022000          
+%                                                                    %  10023000          
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  10024000          
                                                                         10025000          
                                                                         10026000          
 BEGIN                                                                   10027000          
 DEFINE EDITION="2.3"#;                                                  10028000          
-INTEGER NUMERRS,       % @R+21: NUMBER OF ERROS IN PROGRAM.             10029000          
-        SAVEFACTOR,    % @R+22: SAVEFACTOR FOR CODE FILE.               10030000          
-                       %          >0  COMPILE TO LIBRARY.               10031000          
-                       %          =0  COMPILE AND RUN.                  10032000          
-                       %          <0  COMPILE FOR SYNTAX.               10033000          
-        CARDCNT;       % @R+23: NUMBER OF CARDS READ.                   10034000          
-FILE CARD "SOURCE" (2,10,150);              % SOURCE CODE INPUT FILE    10035000          
-FILE LINES 1 (2,17);                      % PRINT FILE.                 10036000          
-FILE PASCALGOL DISK SERIAL [20:610] (2,10,150,SAVE 0);  % CODE FILE     10037000          
+INTEGER NUMERRS,        % @R+21: NUMBER OF ERRORS IN PROGRAM.           10029000          
+        SAVEFACTOR,     % @R+22: SAVEFACTOR FOR CODE FILE.              10030000          
+                        %          >0  COMPILE TO LIBRARY.              10031000          
+                        %          =0  COMPILE AND RUN.                 10032000          
+                        %          <0  COMPILE FOR SYNTAX.              10033000          
+        CARDCNT;        % @R+23: NUMBER OF CARDS READ.                  10034000          
+FILE CARD "SOURCE" (2,10,150);                % SOURCE CODE INPUT FILE  10035000          
+FILE LINES 1 (2,17);                         % PRINT FILE.              10036000          
+FILE PASCALGOL DISK SERIAL [20:600] (2,10,150,SAVE 0);  % CODE FILE     10037000          
 DEFINE LINESPERPAGE=58#,                                                10038000          
        MAXINT=549755813887#;                                            10039000          
                                                                         10040000          
@@ -43,14 +43,14 @@ DEFINE MAXTABLES  =50#,      %MAX NUMBER OF NAME TABLES.                10042000
        MAXNAMES   =997#,     %MAX NAMES IN EACH TABLE.                  10043000          
        MAXLEVEL   =15#,      %MAX DEPTH OF PROCEDURE DECLARATIONS.      10044000          
        MAXCASES   =211#,     %MAX LABELS IN A CASE-STATEMENT.           10045000          
-       MAXLABS    =110#,     %MAX NUMBER OF LABELS.                     10046000          
-       MAXPARAMS  =210#,     %MAX NUMBER OF PARAMETERS IN WHOLE PROGRAM.10047000          
+       MAXLABS    =100#,     %MAX NUMBER OF LABELS.                     10046000          
+       MAXPARAMS  =200#,     %MAX NUMBER OF PARAMETERS IN WHOLE PROGRAM.10047000          
        MAXTYPES   =1022#,    %MAX NUMBER OF DIFFERENT TYPES.            10048000          
-       MAXCONSTS  =210#,     %SIZE OF CONSTANT TABLE.                   10049000          
+       MAXCONSTS  =200#,     %SIZE OF CONSTANT TABLE.                   10049000          
        MAXTEMPS   =5#,       %NUMBER OF EXTRA VARS IN EACH PROCEDURE.   10050000          
        MAXWITHSYMS=250#,     %MAX NUMBER OF SYMBOLS USED BY WITH-STATMS.10051000          
-       MAXSYMS    =810#,     %MAX NUMBER OF SYMBOLS IN ONE EXPRESSION.  10052000          
-       LISTLENGTH =810#,     %MAX LENGTH OF VAR AND PARAM LISTS.        10053000          
+       MAXSYMS    =800#,     %MAX NUMBER OF SYMBOLS IN ONE EXPRESSION.  10052000          
+       LISTLENGTH =800#,     %MAX LENGTH OF VAR AND PARAM LISTS.        10053000          
        MAXEXTFILES=20#,      %MAX NUMBER OF EXTERNAL FILES.             10054000          
        MAXFILES   =20#,      %MAX NUMBER OF FILES DECLARED AT ONE TIME. 10055000          
        MAXPNTRS   =50#;      %MAX NUMBER OF UNDECLARED POINTERS.        10056000          
@@ -134,10 +134,10 @@ ARRAY HEADTEXT[0:10], ERRLINE[0:16];                                    10133000
   INTEGER LINECNT,PAGECNT,ERRINX;                                       10134000          
                                                                         10135000          
 %*** XREF FILE AND TABLE ***                                            10136000          
-FILE XREFFILE DISK SERIAL [20:3100] (2,3,15);                           10137000          
+FILE XREFFILE DISK SERIAL [20:3000] (2,3,150);                          10137000          
 ARRAY BLOCKTAB[0:MAXTABLES], XREFLINE[0:16];                            10138000          
   INTEGER NUMXREF,NUMBLOCKS;  POINTER XREFPNT;                          10139000          
-                                                                        10140000          
+%                                                                       10140000          
 %*** OTHER TABLES ***                                                   10141000          
 INTEGER ARRAY VARLIST[0:LISTLENGTH];    % TEMPORARY LIST OF VARIABLES.  10142000          
   INTEGER VARINDEX,FIRSTVAR;                                            10143000          
@@ -212,13 +212,13 @@ DEFINE   IDENTIFIER=1#, INTCONST=2#,   REALCONST=3#,  ALFACONST=4#,     10196000
                                                                         10212000          
 DEFINE INITIAL=0#, MIDDLE=1#, TERMINAL=2#;                              10213000          
 DEFINE NUMBER=0#, BITPATTERN=1#;                                        10214000          
-$ PAGE                                                                  10215000          
+$ PAGE                                                                  20000000          
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%20001000          
 %                                                                      %20002000          
 %                                                                      %20003000          
 %                                                                      %20004000          
-%                 PART 2:   COMPILER UTILITY ROUTINES.                 %20005000          
-%                           --------------------------                 %20006000          
+%                  PART 2:   COMPILER UTILITY ROUTINES.                %20005000          
+%                            --------------------------                %20006000          
 %                                                                      %20007000          
 %                                                                      %20008000          
 %                                                                      %20009000          
@@ -332,7 +332,7 @@ BEGIN                                                                   20102000
     IF ABSX> 0 THEN                                                     20117000          
     BEGIN                                                               20118000          
       WHILE ABSX}1@7 DO BEGIN ABSX:=ABSX/10; POWER:=POWER+1; END;       20119000          
-      WHILE ABSX<1@6 DO BEGIN ABSX:=ABSX/10; POWER:=POWER-1; END;       20120000          
+      WHILE ABSX<1@6 DO BEGIN ABSX:=ABSX|10; POWER:=POWER-1; END;       20120000          
       V1:=ENTIER(ABSX);                                                 20121000          
       V2:=ENTIER((ABSX-V1)|1000000);                                    20122000          
       REPLACE ALGOLPNT:ALGOLPNT BY V1 FOR 7 DIGITS, ".",                20123000          
@@ -432,7 +432,7 @@ BEGIN                         %*** IDENTIFIER JUST READ.                20209000
       END;                                                              20217000          
       FOUND:=TNAME!0;                                                   20218000          
     IF XREFOPTION THEN                                                  20219000          
-    IF FOUND THEN NEWXREF(CURNAME1,CURNAME2,TAB,FALSE);                 20220000          
+    IF FOUND THEN NEWXREF(CURNAME1,CURNAME2,TAB,FALSE); %               20220000          
 END OF SEARCHTAB#;                                                      20221000          
                                                                         20222000          
 DEFINE SEARCH=                %*** SEARCH ALL TABLES CURRENTLY IN USE.  20223000          
@@ -505,11 +505,11 @@ BEGIN                                   %**********************         20302000
     INTTYPE:=T3:=1;                     %*** "INTEGER" ***              20338000          
     T1:=NUMERIC;  T1.SIZE:=1;   T1.STRUCT:=0;                           20339000          
     TYPETAB1[1]:=T1;  TYPETAB2[1]:=-MAXINT;  TYPETAB3[1]:=MAXINT;       20340000          
-    NEWNAME("7INTEGE", "R", 0);  T3.IDCLASS:=TYPES;                     20341000          
+    NEWNAME("7INTEGE","R",0);  T3.IDCLASS:=TYPES;                       20341000          
     NAMETAB3[0,THISINDEX]:=T3;                                          20342000          
     REALTYPE:=T3:=2;                    %*** "REAL" ***                 20343000          
-    T1.FORM:=FLOATING;   TYPETAB1[2]:=T1;                               20344000          
-    NEWNAME("400REAL", 0,0);  T3.IDCLASS:=TYPES;                        20345000          
+    T1.FORM:=FLOATING;  TYPETAB1[2]:=T1;                                20344000          
+    NEWNAME("400REAL",0,0);  T3.IDCLASS:=TYPES;                         20345000          
     NAMETAB3[0,THISINDEX]:=T3;                                          20346000          
     ALFATYPE:=T3:=3;                    %*** "ALFA" ***                 20347000          
     T1.FORM:=ALFA;  TYPETAB1[3]:=T1;                                    20348000          
@@ -517,11 +517,11 @@ BEGIN                                   %**********************         20302000
     NAMETAB3[0,THISINDEX]:=T3;                                          20350000          
     BOOLTYPE:=T3:=4;                    %*** "BOOLEAN" ***              20351000          
     T1.FORM:=SYMBOLIC;  TYPETAB1[4]:=T1;  TYPETAB3[4]:=1;               20352000          
-    NEWNAME("7BOOLEA", "N",0); T3.IDCLASS:=TYPES;                       20353000          
+    NEWNAME("7BOOLEA","N",0);  T3.IDCLASS:=TYPES;                       20353000          
     NAMETAB3[0,THISINDEX]:=T3;                                          20354000          
-    BOOLTYPE:=T3:=5;                    %*** "CHAR" ***                 20355000          
+    CHARTYPE:=T3:=5;                    %*** "CHAR" ***                 20355000          
     T1.FORM:=CHAR;  TYPETAB1[5]:=T1;  TYPETAB3[5]:=63;                  20356000          
-    NEWNAME("400CHAR", 0,0); T3.IDCLASS:=TYPES;                         20357000          
+    NEWNAME("400CHAR",0,0);  T3.IDCLASS:=TYPES;                         20357000          
     NAMETAB3[0,THISINDEX]:=T3;                                          20358000          
     T3:=BOOLTYPE;  T3.IDCLASS:=CONST;    %*** "FALSE" ***               20359000          
     NEWNAME("50FALSE",0,0);  NAMETAB3[0,THISINDEX]:=T3;                 20360000          
@@ -530,22 +530,22 @@ BEGIN                                   %**********************         20302000
     NUMTYPES:=5;                                                        20363000          
     NILTYPE:=-1;                        %*** TYPE OF "NIL" ***          20364000          
     EMPTYSET:=-2;                       %*** TYPE OF [] ***             20365000          
-    NEWNAME("6MAXINT",0,0);   T3:=INTTYPE;        %*** "MAXINT" ***     20366000          
+    NEWNAME("6MAXINT",0,0);  T3:=INTTYPE;         %*** "MAXINT" ***     20366000          
     T3.IDCLASS:=CONST;  T3.INFO:=1024;                                  20367000          
     NAMETAB3[0,THISINDEX]:=T3;                                          20368000          
     NUMCONSTS:=1;  CONSTTAB[1]:=MAXINT;                                 20369000          
                                                                         20370000          
-    T3:=0;    T3.IDCLASS:=PROC;         %*** PROCEDURES ***             20371000          
+    T3:=0;  T3.IDCLASS:=PROC;           %*** PROCEDURES ***             20371000          
     FOR A:="3000GET", "3000NEW", "400PACK", "400PAGE", "3000PUT",       20372000          
            "400READ", "6READLN", "50RESET", "6UNPACK", "50WRITE" DO     20373000          
     BEGIN                                                               20374000          
-        NEWNAME(A,0,0);   NAMETAB3[0,THISINDEX]:=T3;                    20375000          
+        NEWNAME(A,0,0);  NAMETAB3[0,THISINDEX]:=T3;                     20375000          
     END;                                                                20376000          
-    NEWNAME("7DISPOS","E",0);   NAMETAB3[0,THISINDEX]:=T3;              20377000          
-    NEWNAME("7REWRIT","E",0);   NAMETAB3[0,THISINDEX]:=T3;              20378000          
-    NEWNAME("7WRITEL","N",0);   NAMETAB3[0,THISINDEX]:=T3;              20379000          
+    NEWNAME("7DISPOS","E",0);  NAMETAB3[0,THISINDEX]:=T3;               20377000          
+    NEWNAME("7REWRIT","E",0);  NAMETAB3[0,THISINDEX]:=T3;               20378000          
+    NEWNAME("7WRITEL","N",0);  NAMETAB3[0,THISINDEX]:=T3;               20379000          
                                                                         20380000          
-    T3.IDCLASS:=FUNC;                  %*** FUNCTIONS ***               20381000          
+    T3.IDCLASS:=FUNC;                   %*** FUNCTIONS ***              20381000          
     FOR A:="3000ABS", "6ARCTAN", "3000CHR", "3000COS", "3000EOF",       20382000          
            "400EOLN", "3000EXP", "20000LN", "3000ODD", "400PRED",       20383000          
            "400SUCC", "50ROUND", "3000SIN", "3000SQR", "400SQRT",       20384000          
@@ -554,18 +554,18 @@ BEGIN                                   %**********************         20302000
     DO BEGIN                                                            20387000          
         NEWNAME(A,0,0);  NAMETAB3[0,THISINDEX]:=T3;                     20388000          
     END;                                                                20389000          
-    NEWNAME("7ELAPSE","D",0);   NAMETAB3[0,THISINDEX]:=T3;              20390000          
-    NEWNAME("7WEEKDA","Y",0);   NAMETAB3[0,THISINDEX]:=T3;              20391000          
+    NEWNAME("7ELAPSE","D",0);  NAMETAB3[0,THISINDEX]:=T3;               20390000          
+    NEWNAME("7WEEKDA","Y",0);  NAMETAB3[0,THISINDEX]:=T3;               20391000          
                                                                         20392000          
     TEXTTYPE:=T3:=NUMTYPES:=NUMTYPES+1;  %*** "TEXT" ***                20393000          
-    T1 := TEXTFILE;  T1.STRUCT := 1;  TYPETAB1[TEXTTYPE] := T1;         20394000          
-    T3.IDCLASS := TYPES;                                                20395000          
+    T1 := TEXTFILE;  T1.STRUCT := 1;  TYPETAB1[TEXTTYPE] := T1; %       20394000          
+    T3.IDCLASS := TYPES; %                                              20395000          
     NEWNAME("400TEXT",0,0);  NAMETAB3[0,THISINDEX]:=T3;                 20396000          
-    T3:=TEXTTYPE;  T3.IDCLASS:=VAR;      %*** "INPUT" ***               20397000          
+    T3:=TEXTTYPE;  T3.IDCLASS:=VAR;     %*** "INPUT" ***                20397000          
     T3.EXTERNALFILE:=1;                                                 20398000          
-    NEWNAME("50INPUT",0,0);   INPUTFILE:=THISINDEX;                     20399000          
+    NEWNAME("50INPUT",0,0);  INPUTFILE:=THISINDEX;                      20399000          
     NAMETAB3[0,THISINDEX]:=T3;                                          20400000          
-    NEWNAME("6OUTPUT",0,0);              %*** "OUTPUT" ***              20401000          
+    NEWNAME("6OUTPUT",0,0);                       %*** "OUTPUT" ***     20401000          
     NAMETAB3[0,THISINDEX]:=T3;  OUTPUTFILE:=THISINDEX;                  20402000          
 END OF INTIALIZED;                                                      20403000          
                                                                         20404000          
@@ -596,14 +596,14 @@ END OF NEWXREF;                                                         20522000
 PROCEDURE XREFMAX(A);                                                   20524000          
 ARRAY A[0];                                                             20525000          
 BEGIN                                                                   20526000          
-    A[0]:="AZZZZZZ";  A[1]:="ZZZZZZ"; A[2]:=9999999999;                 20527000          
+    A[0]:="AZZZZZZ";  A[1]:="ZZZZZZ";  A[2]:=9999999999;                20527000          
 END OF XREFMAX;                                                         20528000          
                                                                         20529000          
                                                                         20530000          
 BOOLEAN PROCEDURE XREFCOMPARE(A,B);                                     20531000          
 ARRAY A,B[0];                                                           20532000          
 BEGIN                                                                   20533000          
-    A0:=A[0];  B0:=B[0];   A1:=A[1];  B1:=B[1];                         20534000          
+    A0:=A[0];  B0:=B[0];  A1:=A[1];  B1:=B[1];                          20534000          
     XREFCOMPARE:=                                                       20535000          
     IF A0.[35:36]!B0.[35:36] THEN A0.[35:36]<B0.[35:36] ELSE            20536000          
     IF A1!B1 THEN A1<B1 ELSE                                            20537000          
@@ -684,9 +684,9 @@ BEGIN                                                                   20805000
           F1:=TT1.FORM;        F2:=TT2.FORM;                            20826000          
         END;                                                            20827000          
         WHILE F1=SUBTYPE DO                                             20828000          
-        BEGIN LT:=TT1.MAINTYPE;   TT1:=TYPETAB1[LT];  F1:=TT1.FORM END; 20829000          
+        BEGIN LT:=TT1.MAINTYPE;  TT1:=TYPETAB1[LT];  F1:=TT1.FORM END;  20829000          
         WHILE F2=SUBTYPE DO                                             20830000          
-        BEGIN RT:=TT2.MAINTYPE;   TT2:=TYPETAB1[RT];  F2:=TT2.FORM END; 20831000          
+        BEGIN RT:=TT2.MAINTYPE;  TT2:=TYPETAB1[RT];  F2:=TT2.FORM END;  20831000          
         IF LT>0 AND RT>0 THEN                                           20832000          
         IF LT!RT THEN                                                   20833000          
         IF F1!NUMERIC OR F2!NUMERIC THEN                                20834000          
@@ -730,8 +730,8 @@ END OF FILEPARAM#;                                                      20869000
 INTEGER TFORM;                                                          20872000          
 BOOLEAN SIGNED,NEGATIVE;                                                20873000          
                                                                         20874000          
-DEFINE CONSTANT(CVAL,CTYPE)=           %*** <CONSTANT> ***              20875000          
-BEGIN                                  %******************              20876000          
+DEFINE CONSTANT(CVAL,CTYPE)=            %*** <CONSTANT> ***             20875000          
+BEGIN                                   %******************             20876000          
     IF CURSY=MINUS OR CURSY=PLUS THEN                                   20877000          
     BEGIN SIGNED:=TRUE; NEGATIVE:=CURSY=MINUS;                          20878000          
           INSYMBOL;                                                     20879000          
@@ -768,7 +768,7 @@ BEGIN                                  %******************              20876000
             IF SIGNED THEN                                              20910000          
             BEGIN                                                       20911000          
                 TFORM:=TYPETAB1[THISID.TYPE].FORM;                      20912000          
-                IF TFORM!NUMERIC AND TFORM!FLOATING THEN ERROR(29) ELSE%20913000          
+                IF TFORM!NUMERIC AND TFORM!FLOATING THEN ERROR(29) ELSE 20913000          
                 IF NEGATIVE THEN CVAL:=-CVAL;                           20914000          
             END;                                                        20915000          
           END ELSE BEGIN ERROR(48); CVAL:=CTYPE:=0 END;                 20916000          
@@ -777,82 +777,82 @@ BEGIN                                  %******************              20876000
     END ELSE BEGIN ERROR(32); CVAL:=CTYPE:=0 END;                       20919000          
     INSYMBOL;                                                           20920000          
 END OF CONSTANT#;                                                       20921000          
-$ PAGE                                                                  20922000          
+$ PAGE                                                                  30000000          
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%30001000          
 %                                                                      %30002000          
 %                                                                      %30003000          
 %                                                                      %30004000          
-%                  PART 3:  THE SCANNER.                               %30005000          
-%                           ------------                               %30006000          
+%                  PART 3:   THE SCANNER.                              %30005000          
+%                            ------------                              %30006000          
 %                                                                      %30007000          
 %                                                                      %30008000          
 %                                                                      %30009000          
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%30010000          
-%                                                                       30011000          
-%                 INTERNAL      INTERNAL          SYMBOL                30012000          
-%   SYMBOL         NUMBER         NAME             KIND                 30013000          
+                                                                        30011000          
+%                       INTERNAL     INTERNAL            SYMBOL         30012000          
+%        SYMBOL          NUMBER        NAME               KIND          30013000          
 %                                                                       30014000          
-%   IDENTIFIER        1         IDENTIFIER        MIDDLE                30015000          
-%   122               2         INTCONST          MIDDLE                30016000          
-%   2.5               3         REALCONST         MIDDLE                30017000          
-%   "ABCD"            4         ALFACONST         MIDDLE                30018000          
-%   "C"               5         CHARCONST         MIDDLE                30019000          
-%   NOT               6         NOTSY             MIDDLE                30020000          
-%   *                 7         ASTERISK          MIDDLE                30021000          
-%   /                 8         SLASH             MIDDLE                30022000          
-%   &    AND          9         ANDSY             MIDDLE                30023000          
-%   DIV              10         DIVSY             MIDDLE                30024000          
-%   MOD              11         MODSY             MIDDLE                30025000          
-%   +                12         PLUS              MIDDLE                30026000          
-%   -                13         MINUS             MIDDLE                30027000          
-%   OR               14         ORSY              MIDDLE                30028000          
-%   <    LSS         15         LSSSY             MIDDLE                30029000          
-%   <=   LEQ   {     16         LEQSY             MIDDLE                30030000          
-%   >=   GEQ   }     17         GEQSY             MIDDLE                30031000          
-%   >    GTR         18         GTRSY             MIDDLE                30032000          
-%   <>   NEQ   !     19         NEQSY             MIDDLE                30033000          
-%   =    EQL         30         EQLSY             MIDDLE                30034000          
-%   IN               21         INSY              MIDDLE                30035000          
-%   (                22         LPAR              MIDDLE                30036000          
-%   )                23         RPAR              MIDDLE                30037000          
-%   [                24         LBRACKET          MIDDLE                30038000          
-%   ]                25         RBRACKET          MIDDLE                30039000          
-%   ..               26         DOUBLEDOT         MIDDLE                30040000          
-%   ,                27         COMMA             MIDDLE                30041000          
-%   ;                28         SEMICOLON         TERMINAL              30042000          
-%   .                29         DOT               MIDDLE                30043000          
-%   ~     @          30         ARROW             MIDDLE                30044000          
-%   :                31         COLON             MIDDLE                30045000          
-%   :=               32         ASSIGNSY          MIDDLE                30046000          
-%   BEGIN            33         BEGINSY           INITIAL               30047000          
-%   END              34         ENDSY             TERMINAL              30048000          
-%   IF               35         IFSY              INITIAL               30049000          
-%   THEN             36         THENSY            MIDDLE                30050000          
-%   ELSE             37         ELSESY            TERMINAL              30051000          
-%   CASE             38         CASESY            INITIAL               30052000          
-%   OF               39         OFSY              MIDDLE                30053000          
-%   REPEAT           40         REPEATSY          INITIAL               30054000          
-%   UNTIL            41         UNTILSY           TERMINAL              30055000          
-%   WHILE            42         WHILESY           INITIAL               30056000          
-%   DO               43         DOSY              MIDDLE                30057000          
-%   FOR              44         FORSY             INITIAL               30058000          
-%   TO               45         TOSY              MIDDLE                30059000          
-%   DOWNTO           46         DOWNTOSY          MIDDLE                30060000          
-%   GOTO             47         GOTOSY            INITIAL               30061000          
-%   NIL              48         NILSY             MIDDLE                30062000          
-%   TYPE             49         TYPESY            INITIAL               30063000          
-%   ARRAY            50         ARRAYSY           MIDDLE                30064000          
-%   RECORD           51         RECORDSY          MIDDLE                30065000          
-%   FILE             52         FILESY            MIDDLE                30066000          
-%   SET              53         SETSY             MIDDLE                30067000          
-%   CONST            54         CONSTSY           INITIAL               30068000          
-%   VAR              55         VARSY             INITIAL               30069000          
-%   LABEL            56         LABELSY           INITIAL               30070000          
-%   FUNCTION         57         FUNCSY            INITIAL               30071000          
-%   PROCEDURE        58         PROCSY            INITIAL               30072000          
-%   WITH             59         WITHSY            INITIAL               30073000          
-%   PROGRAM          60         PROGRAMSY         INITIAL               30074000          
-%   PACKED           61         PACKEDSY          MIDDLE                30075000          
+%        IDENTIFIER         1        IDENTIFIER          MIDDLE         30015000          
+%        122                2        INTCONST            MIDDLE         30016000          
+%        2.5                3        REALCONST           MIDDLE         30017000          
+%        "ABCD"             4        ALFACONST           MIDDLE         30018000          
+%        "C"                5        CHARCONST           MIDDLE         30019000          
+%        NOT                6        NOTSY               MIDDLE         30020000          
+%        *                  7        ASTERISK            MIDDLE         30021000          
+%        /                  8        SLASH               MIDDLE         30022000          
+%        &    AND           9        ANDSY               MIDDLE         30023000          
+%        DIV               10        DIVSY               MIDDLE         30024000          
+%        MOD               11        MODSY               MIDDLE         30025000          
+%        +                 12        PLUS                MIDDLE         30026000          
+%        -                 13        MINUS               MIDDLE         30027000          
+%        OR                14        ORSY                MIDDLE         30028000          
+%        <    LSS          15        LSSSY               MIDDLE         30029000          
+%        <=   LEQ   {      16        LEQSY               MIDDLE         30030000          
+%        >=   GEQ   }      17        GEQSY               MIDDLE         30031000          
+%        >    GTR          18        GTRSY               MIDDLE         30032000          
+%        <>   NEQ   !      19        NEQSY               MIDDLE         30033000          
+%        =    EQL          30        EQLSY               MIDDLE         30034000          
+%        IN                21        INSY                MIDDLE         30035000          
+%        (                 22        LPAR                MIDDLE         30036000          
+%        )                 23        RPAR                MIDDLE         30037000          
+%        [                 24        LBRACKET            MIDDLE         30038000          
+%        ]                 25        RBRACKET            MIDDLE         30039000          
+%        ..                26        DOUBLEDOT           MIDDLE         30040000          
+%        ,                 27        COMMA               MIDDLE         30041000          
+%        ;                 28        SEMICOLON           TERMINAL       30042000          
+%        .                 29        DOT                 MIDDLE         30043000          
+%        ~     @           30        ARROW               MIDDLE         30044000          
+%        :                 31        COLON               MIDDLE         30045000          
+%        :=                32        ASSIGNSY            MIDDLE         30046000          
+%        BEGIN             33        BEGINSY             INITIAL        30047000          
+%        END               34        ENDSY               TERMINAL       30048000          
+%        IF                35        IFSY                INITIAL        30049000          
+%        THEN              36        THENSY              MIDDLE         30050000          
+%        ELSE              37        ELSESY              TERMINAL       30051000          
+%        CASE              38        CASESY              INITIAL        30052000          
+%        OF                39        OFSY                MIDDLE         30053000          
+%        REPEAT            40        REPEATSY            INITIAL        30054000          
+%        UNTIL             41        UNTILSY             TERMINAL       30055000          
+%        WHILE             42        WHILESY             INITIAL        30056000          
+%        DO                43        DOSY                MIDDLE         30057000          
+%        FOR               44        FORSY               INITIAL        30058000          
+%        TO                45        TOSY                MIDDLE         30059000          
+%        DOWNTO            46        DOWNTOSY            MIDDLE         30060000          
+%        GOTO              47        GOTOSY              INITIAL        30061000          
+%        NIL               48        NILSY               MIDDLE         30062000          
+%        TYPE              49        TYPESY              INITIAL        30063000          
+%        ARRAY             50        ARRAYSY             MIDDLE         30064000          
+%        RECORD            51        RECORDSY            MIDDLE         30065000          
+%        FILE              52        FILESY              MIDDLE         30066000          
+%        SET               53        SETSY               MIDDLE         30067000          
+%        CONST             54        CONSTSY             INITIAL        30068000          
+%        VAR               55        VARSY               INITIAL        30069000          
+%        LABEL             56        LABELSY             INITIAL        30070000          
+%        FUNCTION          57        FUNCSY              INITIAL        30071000          
+%        PROCEDURE         58        PROCSY              INITIAL        30072000          
+%        WITH              59        WITHSY              INITIAL        30073000          
+%        PROGRAM           60        PROGRAMSY           INITIAL        30074000          
+%        PACKED            61        PACKEDSY            MIDDLE         30075000          
                                                                         30076000          
                                                                         30077000          
 DEFINE BLANK=48#, EQUAL=61#, QUOTES=63#, DOLLAR=42#,                    30078000          
@@ -912,21 +912,21 @@ START:                                                                  30103000
                  IF CURNAME1="20000OR" THEN ORSY ELSE                   30132000          
                  IF CURNAME1="20000OF" THEN OFSY ELSE                   30133000          
                  IF CURNAME1="20000IN" THEN INSY ELSE IDENTIFIER;       30134000          
-          CURSY:=IF CURNAME1="3010END" THEN ENDSY ELSE                  30135000          
-                 IF CURNAME1="3010FOR" THEN FORSY ELSE                  30136000          
-                 IF CURNAME1="3010DIV" THEN DIVSY ELSE                  30137000          
-                 IF CURNAME1="3010MOD" THEN MODSY ELSE                  30138000          
-                 IF CURNAME1="3010NIL" THEN NILSY ELSE                  30139000          
-                 IF CURNAME1="3010AND" THEN ANDSY ELSE                  30140000          
-                 IF CURNAME1="3010NOT" THEN NOTSY ELSE                  30141000          
-                 IF CURNAME1="3010VAR" THEN VARSY ELSE                  30142000          
-                 IF CURNAME1="3010SET" THEN SETSY ELSE                  30143000          
-                 IF CURNAME1="3010LSS" THEN LSSSY ELSE                  30144000          
-                 IF CURNAME1="3010LEQ" THEN LEQSY ELSE                  30145000          
-                 IF CURNAME1="3010GEQ" THEN GEQSY ELSE                  30146000          
-                 IF CURNAME1="3010GTR" THEN GTRSY ELSE                  30147000          
-                 IF CURNAME1="3010NEQ" THEN NEQSY ELSE                  30148000          
-                 IF CURNAME1="3010EQL" THEN EQLSY ELSE IDENTIFIER;      30149000          
+          CURSY:=IF CURNAME1="3000END" THEN ENDSY ELSE                  30135000          
+                 IF CURNAME1="3000FOR" THEN FORSY ELSE                  30136000          
+                 IF CURNAME1="3000DIV" THEN DIVSY ELSE                  30137000          
+                 IF CURNAME1="3000MOD" THEN MODSY ELSE                  30138000          
+                 IF CURNAME1="3000NIL" THEN NILSY ELSE                  30139000          
+                 IF CURNAME1="3000AND" THEN ANDSY ELSE                  30140000          
+                 IF CURNAME1="3000NOT" THEN NOTSY ELSE                  30141000          
+                 IF CURNAME1="3000VAR" THEN VARSY ELSE                  30142000          
+                 IF CURNAME1="3000SET" THEN SETSY ELSE                  30143000          
+                 IF CURNAME1="3000LSS" THEN LSSSY ELSE                  30144000          
+                 IF CURNAME1="3000LEQ" THEN LEQSY ELSE                  30145000          
+                 IF CURNAME1="3000GEQ" THEN GEQSY ELSE                  30146000          
+                 IF CURNAME1="3000GTR" THEN GTRSY ELSE                  30147000          
+                 IF CURNAME1="3000NEQ" THEN NEQSY ELSE                  30148000          
+                 IF CURNAME1="3000EQL" THEN EQLSY ELSE IDENTIFIER;      30149000          
           CURSY:=IF CURNAME1="400THEN" THEN THENSY ELSE                 30150000          
                  IF CURNAME1="400ELSE" THEN ELSESY ELSE                 30151000          
                  IF CURNAME1="400WITH" THEN WITHSY ELSE                 30152000          
@@ -944,7 +944,7 @@ START:                                                                  30103000
                  IF CURNAME1="6DOWNTO" THEN DOWNTOSY ELSE               30164000          
                  IF CURNAME1="6RECORD" THEN RECORDSY ELSE               30165000          
                  IF CURNAME1="6PACKED" THEN PACKEDSY ELSE IDENTIFIER;   30166000          
-          CURSY:=IF CURNAME1="7PROGRA" AND CURNAME2="M" THEN PROGRAMSY %30167000          
+          CURSY:=IF CURNAME1="7PROGRA" AND CURNAME2="M" THEN PROGRAMSY  30167000          
                                         ELSE IDENTIFIER;                30168000          
           CURSY:=IF CURNAME1="8FUNCTI" AND CURNAME2="ON" THEN FUNCSY    30169000          
                                         ELSE IDENTIFIER;                30170000          
@@ -963,7 +963,7 @@ START:                                                                  30103000
     END OF LETTER ELSE                                                  30183000          
     IF C{9 THEN                                                         30184000          
     BEGIN                                                               30185000          
-        CURVAL:=C;   CURSY:=INTCONST;                                   30186000          
+        CURVAL:=C;  CURSY:=INTCONST;                                    30186000          
         NEXTCHAR;                                                       30187000          
         WHILE C{9 DO BEGIN CURVAL:=10|CURVAL+C; NEXTCHAR END;           30188000          
         IF C="." THEN                                                   30189000          
@@ -1036,17 +1036,17 @@ OVERFLOW:   ERROR(14);  CURVAL:=0;  REALOVERFLOW:=0;                    30219000
         IF CURSY=GTRSY AND C=EQUAL THEN                                 30256000          
            BEGIN CURSY:=GEQSY; NEXTCHAR END ELSE                        30257000          
         IF CURSY=LPAR AND C="*" THEN                                    30258000          
-        BEGIN                      % *** COMMENT ***                    30259000          
+        BEGIN                           % *** COMMENT ***               30259000          
             NEXTCHAR;                                                   30260000          
             IF C=DOLLAR THEN      %  DOLLAR INDICATES COMPILER OPTIONS. 30261000          
             DO BEGIN                                                    30262000          
               NEXTCHAR; CX:=C;  NEXTCHAR;                               30263000          
               IF CX="L" THEN IF C=1 THEN HEADING                        30264000          
-                                    ELSE LISTOPTION:=C="+"   ELSE       30265000          
-              IF CX="R" THEN RESWORDOPTION:=C="+"            ELSE       30266000          
-              IF CX="C" THEN CHECKOPTION:=C="+"              ELSE       30267000          
-              IF CX="D" THEN DUMPOPTION:=C="+"               ELSE       30268000          
-              IF CX="X" THEN XREFOPTION:=C="+"               ELSE       30269000          
+                                    ELSE LISTOPTION:=C="+"  ELSE        30265000          
+              IF CX="R" THEN RESWORDOPTION:=C="+"           ELSE        30266000          
+              IF CX="C" THEN CHECKOPTION:=C="+"             ELSE        30267000          
+              IF CX="D" THEN DUMPOPTION:=C="+"              ELSE        30268000          
+              IF CX="X" THEN XREFOPTION:=C="+"              ELSE        30269000          
               IF CX="A" THEN                                            30270000          
                 IF C="+" THEN WRITE(PASCALGOL,ALIST)                    30271000          
                          ELSE WRITE(PASCALGOL,NOALIST)   ELSE           30272000          
@@ -1074,13 +1074,13 @@ OVERFLOW:   ERROR(14);  CURVAL:=0;  REALOVERFLOW:=0;                    30219000
        END OF COMMENT;                                                  30294000          
    END;                                                                 30295000          
 END OF INSYMBOL;                                                        30296000          
-$ PAGE                                                                  30297000          
+$ PAGE                                                                  40000000          
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%40001000          
 %                                                                      %40002000          
 %                                                                      %40003000          
 %                                                                      %40004000          
-%                  PART 4:  EXPRESSION PARSER.                         %40005000          
-%                           ------------------                         %40006000          
+%                  PART 4:   EXPRESSION PARSER.                        %40005000          
+%                            ------------------                        %40006000          
 %                                                                      %40007000          
 %                                                                      %40008000          
 %                                                                      %40009000          
@@ -1131,13 +1131,13 @@ DEFINE WRITEEXPR=                                                       40053000
 BEGIN                                                                   40054000          
     FOR T1:=1 STEP 1 UNTIL NUMSYMS DO                                   40055000          
     BEGIN                                                               40056000          
-       SX:=SYMTAB[T1];  TX:=SX.[41:6];                                  40057000          
-       IF TX=0 THEN GEN(SX,7,2) ELSE                                    40058000          
-       IF TX=3 THEN             ELSE                                    40059000          
-       IF TX=1 THEN GEN(SX,7,1) ELSE                                    40060000          
-       BEGIN                                                            40061000          
-           T1:=T1+1;  SX:=SYMTAB[T1];                                   40062000          
-           IF SX.[44:6]=0 THEN GENINT(SX) ELSE GENREAL(SX);             40063000          
+        SX:=SYMTAB[T1];  TX:=SX.[41:6];                                 40057000          
+        IF TX=0 THEN GEN(SX,7,2) ELSE                                   40058000          
+        IF TX=3 THEN             ELSE                                   40059000          
+        IF TX=1 THEN GEN(SX,1,7) ELSE                                   40060000          
+        BEGIN                                                           40061000          
+            T1:=T1+1;  SX:=SYMTAB[T1];                                  40062000          
+            IF SX.[44:6]=0 THEN GENINT(SX) ELSE GENREAL(SX);            40063000          
     END END;                                                            40064000          
     NUMSYMS:=0;                                                         40065000          
 END OF WRITEEXPR#;                                                      40066000          
@@ -1166,7 +1166,7 @@ BEGIN                                                                   40084000
                                                                         40089000          
     STARTSYM:=NUMSYMS+1;                                                40090000          
     IF THISLEVEL>CURLEVEL THEN         % VARIABLE IN FIELD LIST OF      40091000          
-    BEGIN                              % RECORD USED IN WITH-STATEMENT  40092000          
+    BEGIN                              % RECORD USED IN WITH-STATEMENT. 40092000          
       T:=DISPLAY[THISLEVEL];                                            40093000          
       T4:=T.FIRSTWITHSYM;  T5:=T.LASTWITHSYM;                           40094000          
       FOR T3:=T4 STEP 1 UNTIL T5 DO PUTTEXT(WITHTAB[T3]);               40095000          
@@ -1225,8 +1225,8 @@ BEGIN                                                                   40084000
             IF FOUND THEN                                               40148000          
             BEGIN                                                       40149000          
               THISID:=NAMETAB3[T.RECTAB,THISINDEX];                     40150000          
- ADDADDR:     PUTSYM("+");                                              40151000          
-              PUTCONST(THISID.INFO); CURTYPE:=THISID.TYPE;              40152000          
+ADDADDR:      PUTSYM("+");                                              40151000          
+              PUTCONST(THISID.INFO);  CURTYPE:=THISID.TYPE;             40152000          
             END ELSE BEGIN ERROR(1); CURTYPE:=0 END;                    40153000          
           END ELSE BEGIN ERROR(9); CURTYPE:=0 END;                      40154000          
           INRECORD:=TRUE;                                               40155000          
@@ -1327,8 +1327,8 @@ BEGIN                                                                   40205000
                 IF PARAM.PARAMFILE=1 THEN                               40250000          
                 BEGIN                                                   40251000          
                   CURTYPE:=THISID.TYPE;                                 40252000          
-                  PUTID("V",1000|THISLEVEL+THISINDEX,5); PUTSYM(",");   40253000          
-                  PUTID("F",1000|THISLEVEL+THISINDEX,5); PUTSYM(",");   40254000          
+                  PUTID("V",1000|THISLEVEL+THISINDEX,5);  PUTSYM(",");  40253000          
+                  PUTID("F",1000|THISLEVEL+THISINDEX,5);  PUTSYM(",");  40254000          
                   PUTID("I",1000|THISLEVEL+THISINDEX,5);                40255000          
                   INSYMBOL;                                             40256000          
                 END ELSE                                                40257000          
@@ -1373,7 +1373,7 @@ BEGIN                                            %**************        40294000
     BOOLEAN FIRST;                                                      40296000          
     REAL VAL;                                                           40297000          
                                                                         40298000          
-    DEFINE PARAMETER=        %*** CHECK THAT THE FUNCTION HAS 1 PARAM.  40299000          
+    DEFINE PARAMETER=         %*** CHECK THAT THE FUNCTION HAS 1 PARAM. 40299000          
     BEGIN                                                               40300000          
         INSYMBOL;                                                       40301000          
         IF CURSY=LPAR THEN                                              40302000          
@@ -1396,19 +1396,19 @@ BEGIN                                            %**************        40294000
         THEN VARIABLE ELSE                                              40319000          
         IF THISID.IDCLASS=CONST THEN                                    40320000          
         BEGIN                                                           40321000          
-         IF THISID.INFO{1023 THEN PUTCONST(THISID.INFO)                 40322000          
-                             ELSE PUTCONST(CONSTTAB[THISID.INFO-1023]); 40323000          
-          CURTYPE:=THISID.TYPE; CURMODE:=NUMBER;                        40324000          
+          IF THISID.INFO{1023 THEN PUTCONST(THISID.INFO)                40322000          
+                              ELSE PUTCONST(CONSTTAB[THISID.INFO-1023]);40323000          
+          CURTYPE:=THISID.TYPE;  CURMODE:=NUMBER;                       40324000          
           INSYMBOL;                                                     40325000          
         END ELSE                                                        40326000          
         IF THISID.IDCLASS=FUNC THEN                                     40327000          
         BEGIN                                                           40328000          
-          IF THISTAB=0 THEN            %*** INTRINSIC FUNCTION ***      40329000          
+          IF THISTAB=0 THEN             %*** INTRINSIC FUNCTION ***     40329000          
           BEGIN                                                         40330000          
             INTEGER DUMMY;                                              40350000          
-            IF CURNAME1="3000ABS" THEN            % "ABS"               40351000          
+            IF CURNAME1="3000ABS" THEN             % "ABS"              40351000          
             BEGIN                                                       40352000          
-              PUTTEXT("   ABS"); PARAMETER;                             40353000          
+              PUTTEXT("   ABS");  PARAMETER;                            40353000          
               IF CURTYPE!REALTYPE AND CURTYPE!INTTYPE THEN ERROR(67);   40354000          
             END ELSE                                                    40355000          
             IF CURNAME1="3000CHR" THEN            % "CHR"               40356000          
@@ -1416,47 +1416,47 @@ BEGIN                                            %**************        40294000
               INSYMBOL;                                                 40358000          
               IF CURSY=LPAR THEN                                        40359000          
               BEGIN INSYMBOL;  CHECKEXPR(0,63);                         40360000          
-                 IF TYPETAB1[CURTYPE].FORM!NUMERIC THEN ERROR(67);      40361000          
-                 IF CURSY!RPAR THEN BEGIN ERROR(46); SKIP(RPAR) END;    40362000          
-                 IF CURSY=RPAR THEN INSYMBOL;                           40363000          
-           END ELSE ERROR(58);                                          40364000          
-           CURTYPE:=CHARTYPE;                                           40365000          
-         END ELSE                                                       40366000          
-         IF CURNAME1="3000EOF" OR                 % "EOF"/"EOLN"        40367000          
-            CURNAME1="400EOLN" THEN                                     40368000          
-         BEGIN                                                          40369000          
-           FIRST:=CURNAME1="3000EOF";                                   40370000          
-           FILEPARAM(INPUTFILE);                                        40371000          
-           PUTID("I",FILENAME,5);                                       40372000          
-           PUTTEXT(IF FIRST THEN "  .EOF" ELSE " .EOLN");               40373000          
-           IF LPARFOUND THEN                                            40374000          
-           BEGIN                                                        40375000          
-             IF CURSY!RPAR THEN BEGIN ERROR(46); SKIP(RPAR) END;        40376000          
-             IF CURSY=RPAR THEN INSYMBOL;                               40377000          
-           END;                                                         40378000          
-           CURTYPE:=BOOLTYPE;                                           40379000          
-         END ELSE                                                       40380000          
-         IF CURNAME1="3000ODD" THEN              % "ODD"                40381000          
-         BEGIN                                                          40382000          
-           PUTTEXT("   ODD");  PARAMETER;                               40383000          
-           IF CURTYPE!INTTYPE THEN ERROR(67);                           40384000          
-           CURTYPE:=BOOLTYPE;  CURMODE:=BITPATTERN;                     40385000          
-         END ELSE                                                       40386000          
-         IF CURNAME1="3000ORD" THEN              % "ORD"                40387000          
-         BEGIN                                                          40388000          
-             PUTSYM("("); INSYMBOL;                                     40389000          
-             IF CURSY=LPAR THEN                                         40390000          
-             BEGIN                                                      40391000          
-               INSYMBOL;  EXPRESSION;                                   40392000          
-               IF TYPETAB1[CURTYPE].FORM>CHAR THEN ERROR(67);           40393000          
-               IF CURSY!RPAR THEN BEGIN ERROR(46); SKIP(RPAR) END;      40394000          
-               INSYMBOL;                                                40395000          
-             END ELSE ERROR(58);                                        40396000          
-             CURTYPE:=INTTYPE;  PUTSYM(")");                            40397000          
-           END ELSE                                                     40398000          
-           IF CURNAME1="400PRED" OR              % "PRED"/"SUCC"        40399000          
-              CURNAME1="400SUCC" THEN                                   40400000          
-           BEGIN                                                        40401000          
+                    IF TYPETAB1[CURTYPE].FORM!NUMERIC THEN ERROR(67);   40361000          
+                    IF CURSY!RPAR THEN BEGIN ERROR(46); SKIP(RPAR) END; 40362000          
+                    IF CURSY=RPAR THEN INSYMBOL;                        40363000          
+              END ELSE ERROR(58);                                       40364000          
+              CURTYPE:=CHARTYPE;                                        40365000          
+            END ELSE                                                    40366000          
+            IF CURNAME1="3000EOF" OR              % "EOF"/"EOLN"        40367000          
+               CURNAME1="400EOLN" THEN                                  40368000          
+            BEGIN                                                       40369000          
+              FIRST:=CURNAME1="3000EOF";                                40370000          
+              FILEPARAM(INPUTFILE);                                     40371000          
+              PUTID("I",FILENAME,5);                                    40372000          
+              PUTTEXT(IF FIRST THEN "  .EOF" ELSE " .EOLN");            40373000          
+              IF LPARFOUND THEN                                         40374000          
+              BEGIN                                                     40375000          
+                IF CURSY!RPAR THEN BEGIN ERROR(46); SKIP(RPAR) END;     40376000          
+                IF CURSY=RPAR THEN INSYMBOL;                            40377000          
+              END;                                                      40378000          
+              CURTYPE:=BOOLTYPE;                                        40379000          
+            END ELSE                                                    40380000          
+            IF CURNAME1="3000ODD" THEN            % "ODD"               40381000          
+            BEGIN                                                       40382000          
+              PUTTEXT("   ODD");  PARAMETER;                            40383000          
+              IF CURTYPE!INTTYPE THEN ERROR(67);                        40384000          
+              CURTYPE:=BOOLTYPE;  CURMODE:=BITPATTERN;                  40385000          
+            END ELSE                                                    40386000          
+            IF CURNAME1="3000ORD" THEN            % "ORD"               40387000          
+            BEGIN                                                       40388000          
+              PUTSYM("(");  INSYMBOL;                                   40389000          
+              IF CURSY=LPAR THEN                                        40390000          
+              BEGIN                                                     40391000          
+                INSYMBOL;  EXPRESSION;                                  40392000          
+                IF TYPETAB1[CURTYPE].FORM>CHAR THEN ERROR(67);          40393000          
+                IF CURSY!RPAR THEN BEGIN ERROR(46); SKIP(RPAR) END;     40394000          
+                INSYMBOL;                                               40395000          
+              END ELSE ERROR(58);                                       40396000          
+              CURTYPE:=INTTYPE;  PUTSYM(")");                           40397000          
+            END ELSE                                                    40398000          
+            IF CURNAME1="400PRED" OR              % "PRED"/"SUCC"       40399000          
+               CURNAME1="400SUCC" THEN                                  40400000          
+            BEGIN                                                       40401000          
               FIRST:=CURNAME1="400PRED";                                40402000          
               PUTTEXT("CHECK(");  INSYMBOL;                             40403000          
               IF CURSY=LPAR THEN                                        40404000          
@@ -1474,7 +1474,7 @@ BEGIN                                            %**************        40294000
             END ELSE                                                    40416000          
             IF CURNAME1="50ROUND" THEN            % "ROUND"             40417000          
             BEGIN                                                       40418000          
-              PUTTEXT(" ROUND"); PARAMETER;                             40419000          
+              PUTTEXT(" ROUND");  PARAMETER;                            40419000          
               IF CURTYPE!REALTYPE THEN ERROR(67);                       40420000          
               NUMSYMS:=NUMSYMS-1;  PUTSYM(",");                         40421000          
               PUTCONST(CARDCNT);  PUTSYM(")");                          40422000          
@@ -1483,15 +1483,15 @@ BEGIN                                            %**************        40294000
             IF CURNAME1="3000SQR" THEN            % "SQR"               40425000          
             BEGIN                                                       40426000          
               PUTTEXT("   SQR");  PARAMETER;                            40427000          
-              NUMSYMS:=NUMSYMS-1; PUTSYM(",");                          40428000          
-              PUTCONST(CARDCNT); PUTSYM(")");                           40429000          
+              NUMSYMS:=NUMSYMS-1;  PUTSYM(",");                         40428000          
+              PUTCONST(CARDCNT);  PUTSYM(")");                          40429000          
               IF CURTYPE!REALTYPE AND CURTYPE!INTTYPE THEN ERROR(67);   40430000          
             END ELSE                                                    40431000          
             IF CURNAME1="50TRUNC" THEN            % "TRUNC"             40432000          
             BEGIN                                                       40433000          
               PUTTEXT(" TRUNC");  PARAMETER;                            40434000          
-              NUMSYMS:=NUMSYMS-1; PUTSYM(",");                          40435000          
-              PUTCONST(CARDCNT); PUTSYM(")");                           40436000          
+              NUMSYMS:=NUMSYMS-1;  PUTSYM(",");                         40435000          
+              PUTCONST(CARDCNT);  PUTSYM(")");                          40436000          
               IF CURTYPE!REALTYPE THEN ERROR(67);                       40437000          
               CURTYPE:=INTTYPE;                                         40438000          
             END ELSE                                                    40439000          
@@ -1499,7 +1499,7 @@ BEGIN                                            %**************        40294000
             CONCAT ELSE                                                 40441000          
             IF CURNAME1="400TIME" THEN            % "TIME"              40442000          
             BEGIN                                                       40443000          
-              PUTTEXT("(TIME(");  PUTTEXT("1)/60");                     40444000          
+              PUTTEXT("(TIME(");  PUTTEXT("1)/60)");                    40444000          
               CURTYPE:=REALTYPE;  INSYMBOL                              40445000          
             END ELSE                                                    40446000          
             IF CURNAME1="400DATE" THEN            % "DATE"              40447000          
@@ -1517,7 +1517,7 @@ BEGIN                                            %**************        40294000
               PUTTEXT("(TIME(");  PUTTEXT("3)/60)");                    40459000          
               CURTYPE:=REALTYPE;  INSYMBOL;                             40460000          
             END ELSE                                                    40461000          
-            IF CURNAME1="7WEEKDA" AND CURNAME2="Y" THEN  % "WEEKDAY"    40462000          
+            IF CURNAME1="7WEEKDA" AND CURNAME2="Y" THEN   % "WEEKDAY"   40462000          
             BEGIN                                                       40463000          
               PUTTEXT("WEEKDA");                                        40464000          
               CURTYPE:=ALFATYPE;  INSYMBOL;                             40465000          
@@ -1525,7 +1525,7 @@ BEGIN                                            %**************        40294000
             BEGIN                                                       40467000          
               PUTTEXT("  TIME");  PUTTEXT("  (-1)");                    40468000          
               CURTYPE:=ALFATYPE;  INSYMBOL;                             40469000          
-            END ELSE                              % "SIN", "COS" ETC.   40470000          
+            END ELSE                                  % "SIN","COS" ETC.40470000          
             BEGIN                                                       40471000          
               PUTTEXT(IF CURNAME1="3000SIN" THEN "   SIN" ELSE          40472000          
                       IF CURNAME1="3000COS" THEN "   COS" ELSE          40473000          
@@ -1537,88 +1537,88 @@ BEGIN                                            %**************        40294000
               IF CURTYPE!REALTYPE AND CURTYPE!INTTYPE THEN ERROR(67);   40479000          
               CURTYPE:=REALTYPE;                                        40480000          
             END;                                                        40481000          
-         END OF INTRINSIC FUNCTIONS ELSE                                40482000          
-         BEGIN                                                          40483000          
-           T:=THISID.TYPE;                                              40484000          
-           PASSPARAMS;                                                  40485000          
-           CURTYPE:=T;                                                  40486000          
-         END;                                                           40487000          
-       END OF FUNCTIONS  ELSE                                           40488000          
-       IF THISID.IDCLASS=PROC THEN                                      40489000          
-       BEGIN                                                            40490000          
-         ERROR(68);  PASSPARAMS;                                        40491000          
-         CURTYPE:=0;                                                    40492000          
-       END ELSE BEGIN ERROR(69); CURTYPE:=0; INSYMBOL END;              40493000          
-     END ELSE BEGIN ERROR(1); CURTYPE:=0; INSYMBOL END;                 40494000          
-   END OF IDENTIFIER ELSE                                               40495000          
-   IF CURSY{CHARCONST THEN                                              40496000          
-   BEGIN                                                                40497000          
-     CONSTANT(VAL,CURTYPE);  PUTCONST(VAL);                             40498000          
-   END ELSE                                                             40499000          
-   IF CURSY=NOTSY THEN                                                  40500000          
-   BEGIN                                                                40501000          
-     PUTTEXT("  NOT ");  PUTDUMMY;  STARTSYM:=NUMSYMS;                  40502000          
-     INSYMBOL;  FACTOR;                                                 40503000          
-     IF CURTYPE>0 THEN                                                  40504000          
-     IF CURTYPE!BOOLTYPE THEN BEGIN ERROR(17); CURTYPE:=0 END;          40505000          
-     IF CURMODE=NUMBER THEN                                             40506000          
-     BEGIN SYMTAB[STARTSYM]:="     B(";  PUTSYM(")");                   40507000          
-           CURMODE:=BITPATTERN;                                         40508000          
-     END;                                                               40509000          
-   END ELSE                                                             40510000          
-   IF CURSY=NILSY THEN                                                  40511000          
-   BEGIN                                                                40512000          
-     PUTCONST(0);  CURTYPE:=NILTYPE;                                    40513000          
-     INSYMBOL;                                                          40514000          
-   END ELSE                                                             40515000          
-   IF CURSY=LPAR THEN                                                   40516000          
-   BEGIN                                                                40517000          
-     PUTSYM("(");                                                       40518000          
-     INSYMBOL; EXPRESSION;                                              40519000          
-     IF CURSY!RPAR THEN BEGIN ERROR(46); SKIP(RPAR) END;                40520000          
-     PUTSYM(")");                                                       40521000          
-     INSYMBOL;                                                          40522000          
-   END ELSE                                                             40523000          
-   IF CURSY=LBRACKET THEN            %*** SET CONSTANT ***              40524000          
-   BEGIN                                                                40525000          
-     INSYMBOL;                                                          40526000          
-     IF CURSY=RBRACKET THEN                                             40527000          
-     BEGIN                                                              40528000          
-       PUTCONST(0);  CURTYPE:=EMPTYSET;  CURMODE:=NUMBER;               40529000          
-       INSYMBOL;                                                        40530000          
-     END ELSE                                                           40531000          
-     BEGIN                                                              40532000          
-       FIRST:=TRUE;                                                     40533000          
-       DO BEGIN                                                         40534000          
-         IF FIRST THEN FIRST:=FALSE ELSE INSYMBOL;                      40535000          
-         PUTTEXT("   BIT(");  STARTSYM:=NUMSYMS;                        40536000          
-         EXPRESSION;                                                    40537000          
-         IF STYPE=0 THEN                                                40538000          
-         BEGIN STYPE:=CURTYPE;                                          40539000          
-               IF TYPETAB1[CURTYPE].FORM>CHAR THEN ERROR(72);           40540000          
-         END ELSE CHECKTYPES(STYPE,CURTYPE);                            40541000          
-         IF CURSY=DOUBLEDOT THEN                                        40542000          
-         BEGIN                                                          40543000          
-           PUTSYM(",");  SYMTAB[STARTSYM]:=" BITS(";                    40544000          
-           INSYMBOL;  EXPRESSION;                                       40545000          
-           IF STYPE=0 THEN                                              40546000          
-           BEGIN STYPE:=CURTYPE;                                        40547000          
-                IF TYPETAB1[CURTYPE].FORM>CHAR THEN ERROR(72);          40548000          
-           END ELSE CHECKTYPES(STYPE,CURTYPE);                          40549000          
-         END;                                                           40550000          
-         PUTSYM(",");  PUTCONST(CARDCNT);  PUTSYM(")");                 40551000          
-         IF CURSY=COMMA THEN PUTTEXT("     OR");                        40552000          
-       END UNTIL CURSY!COMMA;                                           40553000          
-       IF CURSY!RBRACKET THEN                                           40554000          
-       BEGIN ERROR(59);  SKIP(RBRACKET);                                40555000          
-             IF CURSY=RBRACKET THEN INSYMBOL;                           40556000          
-       END ELSE INSYMBOL;                                               40557000          
-       NEWTYPE;  T1:=SET;  T1.SIZE:=1;  T1.STRUCT:=0;                   40558000          
-       T1.SETTYPE:=STYPE;  TYPETAB1[TYPEINDEX]:=T1;                     40559000          
-       CURTYPE:=TYPEINDEX;                                              40560000          
-       CURMODE:=BITPATTERN;                                             40561000          
-     END;                                                               40562000          
-   END OF SET CONSTANT ELSE BEGIN ERROR(99); INSYMBOL END;              40563000          
+          END OF INTRINSIC FUNCTIONS ELSE                               40482000          
+          BEGIN                                                         40483000          
+            T:=THISID.TYPE;                                             40484000          
+            PASSPARAMS;                                                 40485000          
+            CURTYPE:=T;                                                 40486000          
+          END;                                                          40487000          
+        END OF FUNCTIONS  ELSE                                          40488000          
+        IF THISID.IDCLASS=PROC THEN                                     40489000          
+        BEGIN                                                           40490000          
+          ERROR(68);  PASSPARAMS;                                       40491000          
+          CURTYPE:=0;                                                   40492000          
+        END ELSE BEGIN ERROR(69); CURTYPE:=0; INSYMBOL END;             40493000          
+      END ELSE BEGIN ERROR(1); CURTYPE:=0; INSYMBOL END;                40494000          
+    END OF IDENTIFIER ELSE                                              40495000          
+    IF CURSY{CHARCONST THEN                                             40496000          
+    BEGIN                                                               40497000          
+      CONSTANT(VAL,CURTYPE);  PUTCONST(VAL);                            40498000          
+    END ELSE                                                            40499000          
+    IF CURSY=NOTSY THEN                                                 40500000          
+    BEGIN                                                               40501000          
+      PUTTEXT("  NOT ");  PUTDUMMY;  STARTSYM:=NUMSYMS;                 40502000          
+      INSYMBOL;  FACTOR;                                                40503000          
+      IF CURTYPE>0 THEN                                                 40504000          
+      IF CURTYPE!BOOLTYPE THEN BEGIN ERROR(17); CURTYPE:=0 END;         40505000          
+      IF CURMODE=NUMBER THEN                                            40506000          
+      BEGIN SYMTAB[STARTSYM]:="    B(";  PUTSYM(")");                   40507000          
+            CURMODE:=BITPATTERN;                                        40508000          
+      END;                                                              40509000          
+    END ELSE                                                            40510000          
+    IF CURSY=NILSY THEN                                                 40511000          
+    BEGIN                                                               40512000          
+      PUTCONST(0);  CURTYPE:=NILTYPE;                                   40513000          
+      INSYMBOL;                                                         40514000          
+    END ELSE                                                            40515000          
+    IF CURSY=LPAR THEN                                                  40516000          
+    BEGIN                                                               40517000          
+      PUTSYM("(");                                                      40518000          
+      INSYMBOL; EXPRESSION;                                             40519000          
+      IF CURSY!RPAR THEN BEGIN ERROR(46); SKIP(RPAR) END;               40520000          
+      PUTSYM(")");                                                      40521000          
+      INSYMBOL;                                                         40522000          
+    END ELSE                                                            40523000          
+    IF CURSY=LBRACKET THEN              %*** SET CONSTANT ***           40524000          
+    BEGIN                                                               40525000          
+      INSYMBOL;                                                         40526000          
+      IF CURSY=RBRACKET THEN                                            40527000          
+      BEGIN                                                             40528000          
+        PUTCONST(0);  CURTYPE:=EMPTYSET;  CURMODE:=NUMBER;              40529000          
+        INSYMBOL;                                                       40530000          
+      END ELSE                                                          40531000          
+      BEGIN                                                             40532000          
+        FIRST:=TRUE;                                                    40533000          
+        DO BEGIN                                                        40534000          
+          IF FIRST THEN FIRST:=FALSE ELSE INSYMBOL;                     40535000          
+          PUTTEXT("  BIT(");  STARTSYM:=NUMSYMS;                        40536000          
+          EXPRESSION;                                                   40537000          
+          IF STYPE=0 THEN                                               40538000          
+          BEGIN STYPE:=CURTYPE;                                         40539000          
+                IF TYPETAB1[CURTYPE].FORM>CHAR THEN ERROR(72);          40540000          
+          END ELSE CHECKTYPES(STYPE,CURTYPE);                           40541000          
+          IF CURSY=DOUBLEDOT THEN                                       40542000          
+          BEGIN                                                         40543000          
+            PUTSYM(",");  SYMTAB[STARTSYM]:=" BITS(";                   40544000          
+            INSYMBOL;  EXPRESSION;                                      40545000          
+            IF STYPE=0 THEN                                             40546000          
+            BEGIN STYPE:=CURTYPE;                                       40547000          
+                 IF TYPETAB1[CURTYPE].FORM>CHAR THEN ERROR(72);         40548000          
+            END ELSE CHECKTYPES(STYPE,CURTYPE);                         40549000          
+          END;                                                          40550000          
+          PUTSYM(",");  PUTCONST(CARDCNT);  PUTSYM(")");                40551000          
+          IF CURSY=COMMA THEN PUTTEXT("    OR");                        40552000          
+        END UNTIL CURSY!COMMA;                                          40553000          
+        IF CURSY!RBRACKET THEN                                          40554000          
+        BEGIN ERROR(59);  SKIP(RBRACKET);                               40555000          
+              IF CURSY=RBRACKET THEN INSYMBOL;                          40556000          
+        END ELSE INSYMBOL;                                              40557000          
+        NEWTYPE;  T1:=SET;  T1.SIZE:=1;  T1.STRUCT:=0;                  40558000          
+        T1.SETTYPE:=STYPE;  TYPETAB1[TYPEINDEX]:=T1;                    40559000          
+        CURTYPE:=TYPEINDEX;                                             40560000          
+        CURMODE:=BITPATTERN;                                            40561000          
+      END;                                                              40562000          
+    END OF SET CONSTANT ELSE BEGIN ERROR(99); INSYMBOL END;             40563000          
 END OF FACTOR;                                                          40564000          
                                                                         40565000          
                                                                         40566000          
@@ -1671,8 +1671,8 @@ BEGIN                                   %************                   40568000
 END OF TERM;                                                            40613000          
                                                                         40614000          
                                                                         40615000          
-PROCEDURE SIMPLEEXPRESSION;         %*** SIMPLE EXPRESSION ***          40616000          
-BEGIN                               %*************************          40617000          
+PROCEDURE SIMPLEEXPRESSION;             %*** SIMPLE EXPRESSION ***      40616000          
+BEGIN                                   %*************************      40617000          
     INTEGER STARTSYM,MODE,TYPE1,F;                                      40618000          
     BOOLEAN SIGNED;                                                     40619000          
                                                                         40620000          
@@ -1731,8 +1731,8 @@ BEGIN                               %*************************          40617000
 END OF SIMPLEEXPRESSION;                                                40673000          
                                                                         40674000          
                                                                         40675000          
-PROCEDURE EXPRESSION;                 %*** EXPRESSION ***               40676000          
-BEGIN                                 %******************               40677000          
+PROCEDURE EXPRESSION;                   %*** EXPRESSION ***             40676000          
+BEGIN                                   %******************             40677000          
     INTEGER STARTSYM,FIRSTSYM,TYPE1,RELOPTR,F;                          40678000          
     BOOLEAN CALLGEN;                                                    40679000          
                                                                         40680000          
@@ -1745,7 +1745,7 @@ BEGIN                                 %******************               40677000
     PUTDUMMY;  STARTSYM:=NUMSYMS;                                       40687000          
     PUTDUMMY;                                                           40688000          
     SIMPLEEXPRESSION;                                                   40689000          
-    IF CURSY}LSSSY AND CURSY{INSY THEN   % "<","{","}",">","=","!","IN" 40690000          
+    IF CURSY}LSSSY AND CURSY{INSY THEN    % "<","{","}",">","=","!","IN"40690000          
     BEGIN                                                               40691000          
       TYPE1:=CURTYPE;  F:=TYPETAB1[TYPE1].FORM;                         40692000          
       RELOPTR:=CURSY;                                                   40693000          
@@ -1793,21 +1793,21 @@ BEGIN                                 %******************               40677000
           END ELSE                                                      40735000          
           IF TYPETAB1[CURTYPE].FORM!SET THEN ERROR(66)                  40736000          
                     ELSE CHECKTYPES(TYPE1,TYPETAB1[CURTYPE].SETTYPE);   40737000          
-       IF CURMODE=BITPATTERN THEN                                       40738000          
-       BEGIN SYMTAB[STARTSYM]:=" REAL("; PUTSYM(")") END;               40739000          
-       IF CALLGEN THEN PUTSYM(")");                                     40740000          
-       CURTYPE:=BOOLTYPE;  CURMODE:=BITPATTERN;                         40741000          
-     END;                                                               40742000          
-     EXPRLEVEL:=EXPRLEVEL-1;                                            40743000          
-     IF EXPRLEVEL=0 THEN                                                40744000          
-     BEGIN                                                              40745000          
-       IF CURMODE=BITPATTERN THEN                                       40746000          
-       BEGIN                                                            40747000          
-         SYMTAB[FIRSTSYM] := " REAL(";                                  40748000          
-         PUTSYM(")");                                                   40749000          
-       END;                                                             40750000          
-       WRITEEXPR;                                                       40751000          
-     END;                                                               40752000          
+      IF CURMODE=BITPATTERN THEN                                        40738000          
+      BEGIN SYMTAB[STARTSYM]:=" REAL("; PUTSYM(")") END;                40739000          
+      IF CALLGEN THEN PUTSYM(")");                                      40740000          
+      CURTYPE:=BOOLTYPE;  CURMODE:=BITPATTERN;                          40741000          
+    END;                                                                40742000          
+    EXPRLEVEL:=EXPRLEVEL-1;                                             40743000          
+    IF EXPRLEVEL=0 THEN                                                 40744000          
+    BEGIN                                                               40745000          
+      IF CURMODE=BITPATTERN THEN                                        40746000          
+      BEGIN                                                             40747000          
+        SYMTAB[FIRSTSYM] := " REAL(";                                   40748000          
+        PUTSYM(")");                                                    40749000          
+      END;                                                              40750000          
+      WRITEEXPR;                                                        40751000          
+    END;                                                                40752000          
 END OF EXPRESSION;                                                      40753000          
                                                                         40754000          
                                                                         40755000          
@@ -1819,13 +1819,13 @@ BEGIN                                                                   40757000
     BEGIN SYMTAB[1]:="    B(";  PUTSYM(")") END;                        40761000          
     EXPRLEVEL:=0;  WRITEEXPR;                                           40762000          
 END OF BOOLEAN#;                                                        40763000          
-$ PAGE                                                                  40764000          
+$ PAGE                                                                  50000000          
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%50001000          
 %                                                                      %50002000          
 %                                                                      %50003000          
 %                                                                      %50004000          
-%                  PART 5:  INTRINSIC ROUTINES.                        %50005000          
-%                           -------------------                        %50006000          
+%                  PART 5:   INTRINSIC ROUTINES.                       %50005000          
+%                            -------------------                       %50006000          
 %                                                                      %50007000          
 %                                                                      %50008000          
 %                                                                      %50009000          
@@ -1892,44 +1892,44 @@ BEGIN                                                                   50057000
           SEARCH;                                                       50070000          
           IF FOUND THEN                                                 50071000          
           BEGIN                                                         50072000          
-            IF THISID.IDCLASS=VAR OR                                    50073000          
-               THISID.IDCLASS=CONST AND BOOLEAN(THISID.FORMAL) THEN     50074000          
-            BEGIN                                                       50075000          
-             VARIABLE;  F:=TYPETAB1[CURTYPE].FORM;                      50076000          
-             IF F=NUMERIC OR F=FLOATING OR F=CHAR THEN                  50077000          
-             BEGIN                                                      50078000          
-               CHECK:=CHECKOPTION AND F!FLOATING;                       50079000          
-               WRITEEXPR;  GEN(":=",2,6);                               50080000          
-               IF CHECK THEN GEN("CHECK(",6,2);                         50081000          
-               GEN("PREAD(",6,2);  GENID("F",FILEID,5);  GEN(",",1,7);  50082000          
-               GENID("V",FILEID,5); GEN(",",1,7);                       50083000          
-               GENID("I",FILEID,5); GEN(",",1,7);                       50084000          
-               IF F=NUMERIC  THEN GENINT(2) ELSE                        50085000          
-               IF F=FLOATING THEN GENINT(3) ELSE GENINT(1);             50086000          
-               GEN(",",1,7);  GENINT(CARDCNT);  GEN(")",1,7);           50087000          
-               IF CHECK THEN                                            50088000          
-               BEGIN                                                    50089000          
-                 GEN(",",1,7);  GENINT(TYPETAB2[CURTYPE]); GEN(",",1,7);50090000          
-                 GENINT(TYPETAB3[CURTYPE]);  GEN(",",1,7);              50091000          
-                 GENINT(CARDCNT);  GEN(")",1,7);                        50092000          
-               END;                                                     50093000          
-             END ELSE BEGIN ERROR(82); INSYMBOL END;                    50094000          
-            END ELSE BEGIN ERROR(8); INSYMBOL END;                      50095000          
-           END ELSE BEGIN ERROR(1); INSYMBOL END;                       50096000          
-         END ELSE ERROR(9);                                             50097000          
-         GEN(";",1,7);                                                  50098000          
-       END UNTIL CURSY!COMMA;                                           50099000          
-       IF CURSY!RPAR THEN BEGIN ERROR(46); SKIP(RPAR) END;              50100000          
-       IF CURSY=RPAR THEN INSYMBOL;                                     50101000          
-     END;                                                               50102000          
-     IF CHANGELINE THEN                                                 50103000          
-     BEGIN                                                              50104000          
-       GEN("RLINE(",6,2);  GENID("F",FILEID,5);  GEN(",",1,7);          50105000          
-       GENID("V",FILEID,5);  GEN(",",1,7);                              50106000          
-       GENID("I",FILEID,5);  GEN(")",1,7);                              50107000          
-     END;                                                               50108000          
-     GEN("END",4,5);                                                    50109000          
- END OF PREAD;                                                          50110000          
+           IF THISID.IDCLASS=VAR OR                                     50073000          
+              THISID.IDCLASS=CONST AND BOOLEAN(THISID.FORMAL) THEN      50074000          
+           BEGIN                                                        50075000          
+            VARIABLE;  F:=TYPETAB1[CURTYPE].FORM;                       50076000          
+            IF F=NUMERIC OR F=FLOATING OR F=CHAR THEN                   50077000          
+            BEGIN                                                       50078000          
+              CHECK:=CHECKOPTION AND F!FLOATING;                        50079000          
+              WRITEEXPR;  GEN(":=",2,6);                                50080000          
+              IF CHECK THEN GEN("CHECK(",6,2);                          50081000          
+              GEN("PREAD(",6,2);  GENID("F",FILEID,5);  GEN(",",1,7);   50082000          
+              GENID("V",FILEID,5); GEN(",",1,7);                        50083000          
+              GENID("I",FILEID,5); GEN(",",1,7);                        50084000          
+              IF F=NUMERIC  THEN GENINT(2) ELSE                         50085000          
+              IF F=FLOATING THEN GENINT(3) ELSE GENINT(1);              50086000          
+              GEN(",",1,7);  GENINT(CARDCNT);  GEN(")",1,7);            50087000          
+              IF CHECK THEN                                             50088000          
+              BEGIN                                                     50089000          
+                GEN(",",1,7);  GENINT(TYPETAB2[CURTYPE]); GEN(",",1,7); 50090000          
+                GENINT(TYPETAB3[CURTYPE]);  GEN(",",1,7);               50091000          
+                GENINT(CARDCNT);  GEN(")",1,7);                         50092000          
+              END;                                                      50093000          
+            END ELSE BEGIN ERROR(82); INSYMBOL END;                     50094000          
+           END ELSE BEGIN ERROR(8); INSYMBOL END;                       50095000          
+          END ELSE BEGIN ERROR(1); INSYMBOL END;                        50096000          
+        END ELSE ERROR(9);                                              50097000          
+        GEN(";",1,7);                                                   50098000          
+      END UNTIL CURSY!COMMA;                                            50099000          
+      IF CURSY!RPAR THEN BEGIN ERROR(46); SKIP(RPAR) END;               50100000          
+      IF CURSY=RPAR THEN INSYMBOL;                                      50101000          
+    END;                                                                50102000          
+    IF CHANGELINE THEN                                                  50103000          
+    BEGIN                                                               50104000          
+      GEN("RLINE(",6,2);  GENID("F",FILEID,5);  GEN(",",1,7);           50105000          
+      GENID("V",FILEID,5);  GEN(",",1,7);                               50106000          
+      GENID("I",FILEID,5);  GEN(")",1,7);                               50107000          
+    END;                                                                50108000          
+    GEN("END",4,5);                                                     50109000          
+END OF PREAD;                                                           50110000          
                                                                         50111000          
                                                                         50112000          
 PROCEDURE PWRITE(LINEFEED);                                             50113000          
@@ -1948,7 +1948,7 @@ BEGIN                                                                   50115000
         IF CURSY=ALFACONST AND CURLENGTH>7 THEN                         50126000          
         BEGIN                                                           50127000          
           GEN("WALFA(",6,2);  GENID("F",FILEID,5);  GEN(",",1,7);       50128000          
-          GENID("V",FILEID,6);  GEN(",",1,7);                           50129000          
+          GENID("V",FILEID,5);  GEN(",",1,7);                           50129000          
           GENID("I",FILEID,5);  GEN(",",1,7);                           50130000          
           P:=STRINGPNT;                                                 50131000          
           FOR I:=1 STEP 7 UNTIL 80 DO                                   50132000          
@@ -1995,7 +1995,7 @@ BEGIN                                                                   50115000
               IF F=ALFA AND LASTSY=ALFACONST THEN GENINT(CURLENGTH) ELSE50173000          
               IF F=ALFA     THEN GENINT(7)  ELSE                        50174000          
               IF F=CHAR     THEN GENINT(1) ELSE  GENINT(10);            50175000          
-              GEN(",-1",4,4);                                           50176000          
+              GEN(",-1,",4,4);                                          50176000          
             END;                                                        50177000          
           END ELSE ERROR(17);                                           50178000          
           GENINT(CARDCNT);  GEN(")",1,7);                               50179000          
@@ -2024,13 +2024,13 @@ BEGIN                                   %***   1) PUT                   50200000
     CASE PROCNUM OF                     %***   3) RESET                 50202000          
     BEGIN ;                             %***  4) REWRITE                50203000          
       GEN("PUT",3,5);                   %***  5) PAGE                   50204000          
-      GEN("GET",3,5);                                                   50205000          
-      GEN("RESET",5,3);                                                 50206000          
-      GEN("REWRITE",7,1);                                               50207000          
-      GEN("PAGE",4,4);                                                  50208000          
-    END;                                                                50209000          
-    GEN("(",1,7);   FILEPARAM(0);                                       50210000          
-    IF FILENAME=0 THEN ERROR(78);                                       50211000          
+      GEN("GET",3,5); %                                                 50205000          
+      GEN("RESET",5,3); %                                               50206000          
+      GEN("REWRITE",7,1); %                                             50207000          
+      GEN("PAGE",4,4); %                                                50208000          
+    END; %                                                              50209000          
+    GEN("(",1,7);   FILEPARAM(0); %                                     50210000          
+    IF FILENAME=0 THEN ERROR(78); %                                     50211000          
     F:=TYPETAB1[CURTYPE].FORM;                                          50212000          
     IF F=FILES AND PROCNUM=5 THEN ERROR(80);                            50213000          
     GENID("F",FILENAME,5);  GEN(",",1,7);                               50214000          
@@ -2098,7 +2098,7 @@ BEGIN                                                                   50224000
       IF CURSY!RPAR THEN BEGIN ERROR(46); SKIP(RPAR) END;               50276000          
       IF CURSY=RPAR THEN INSYMBOL;                                      50277000          
     END ELSE BEGIN ERROR(3); INSYMBOL END;                              50278000          
-    GEN(",",1,7);  GENINT(CARDCNT); GEN(")",1,7);                       50279000          
+    GEN(",",1,7);  GENINT(CARDCNT);  GEN(")",1,7);                      50279000          
 END OF PACK;                                                            50280000          
                                                                         50281000          
                                                                         50282000          
@@ -2127,8 +2127,8 @@ BEGIN                                                                   50284000
                 IF TYPETAB1[T.ARRTYPE].FORM!CHAR THEN ERROR(88);        50305000          
                 IF THISLEVEL>1 AND THISLEVEL!CURLEVEL THEN ERROR(5);    50306000          
                 GENID("V",1000|THISLEVEL+THISINDEX,5);                  50307000          
-                GEN(",",1,7); GENINT(TYPETAB2[THISID.TYPE]);            50308000          
-                GEN(",",1,7); GENINT(TYPETAB3[THISID.TYPE]);            50309000          
+                GEN(",",1,7);  GENINT(TYPETAB2[THISID.TYPE]);           50308000          
+                GEN(",",1,7);  GENINT(TYPETAB3[THISID.TYPE]);           50309000          
               END ELSE ERROR(88);                                       50310000          
             END ELSE ERROR(88);                                         50311000          
           END ELSE ERROR(1);                                            50312000          
@@ -2147,7 +2147,7 @@ BEGIN                                                                   50284000
 END OF UNPACK;                                                          50325000          
                                                                         50326000          
                                                                         50327000          
-PROCEDURE NEWDISP;                 %*** "NEW","DISPOSE"                 50328000          
+PROCEDURE NEWDISP;                      %*** "NEW","DISPOSE"            50328000          
 BEGIN                                                                   50329000          
     INTEGER T1;                                                         50330000          
     IF CURNAME1="3000NEW" THEN GEN("NEW(",4,4) ELSE                     50331000          
@@ -2181,13 +2181,13 @@ BEGIN                                                                   50329000
     IF CURSY!RPAR THEN BEGIN ERROR(46); SKIP(RPAR) END;                 50359000          
     IF CURSY=RPAR THEN INSYMBOL;                                        50360000          
 END OF NEWDISP;                                                         50361000          
-$ PAGE                                                                  50362000          
+$ PAGE                                                                  60000000          
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%60001000          
 %                                                                      %60002000          
 %                                                                      %60003000          
 %                                                                      %60004000          
-%                  PART 6:  THE STATEMENT PARSER.                      %60005000          
-%                           ---------------------                      %60006000          
+%                  PART 6:   THE STATEMENT PARSER.                     %60005000          
+%                            ---------------------                     %60006000          
 %                                                                      %60007000          
 %                                                                      %60008000          
 %                                                                      %60009000          
@@ -2195,7 +2195,7 @@ $ PAGE                                                                  50362000
                                                                         60011000          
                                                                         60012000          
                                                                         60013000          
-PROCEDURE STATEMENT;    FORWARD;                                        60014000          
+PROCEDURE STATEMENT;     FORWARD;                                       60014000          
                                                                         60015000          
 PROCEDURE ASSIGNMENT;                                                   60016000          
 BEGIN                                                                   60017000          
@@ -2273,11 +2273,11 @@ BEGIN                                                                   60128000
           IF CURSY!THENSY THEN                                          60135000          
           BEGIN IF CURTYPE=0 THEN ERROR(27);                            60136000          
                 IF SYMKIND[CURSY]=TERMINAL THEN GO TO EXIT;             60137000          
-          END;  END;                                                    60138000          
-          GEN(" THEN",6,3);                                             60139000          
-          INSYMBOL;  STATEMENT;                                         60140000          
-          IF CURSY=ELSESY THEN                                          60141000          
-          BEGIN GEN(" ELSE",6,3); INSYMBOL; STATEMENT END;              60142000          
+    END;  END;                                                          60138000          
+    GEN(" THEN",6,3);                                                   60139000          
+    INSYMBOL;  STATEMENT;                                               60140000          
+    IF CURSY=ELSESY THEN                                                60141000          
+    BEGIN GEN(" ELSE",6,3); INSYMBOL; STATEMENT END;                    60142000          
 EXIT:                                                                   60143000          
 END OF IFSTAT;                                                          60144000          
                                                                         60145000          
@@ -2292,7 +2292,7 @@ BEGIN                                                                   60148000
     CASENUM:=NUMCASES:=NUMCASES+1;  MARGIN("CB",CASENUM);               60154000          
     TEMPVARNUM:=NUMTEMPS:=NUMTEMPS+1;                                   60155000          
     IF TEMPVARNUM>MAXTEMPS THEN ERROR(16);                              60156000          
-    GEN("BEGIN",6,3);   GENID("T",TEMPVARNUM,2);  GEN(":=",2,6);        60157000          
+    GEN("BEGIN",6,3);  GENID("T",TEMPVARNUM,2);  GEN(":=",2,6);         60157000          
     INSYMBOL;  EXPRESSION;                                              60158000          
     GEN(";",1,7);  CASETYPE:=CURTYPE;                                   60159000          
     IF TYPETAB1[CASETYPE].FORM}FLOATING THEN                            60160000          
@@ -2316,12 +2316,12 @@ BEGIN                                                                   60148000
           BEGIN                                                         60178000          
             IF CASETYPE=0 THEN CASETYPE:=CONTYPE ELSE                   60179000          
             CHECKTYPES(CASETYPE,CONTYPE);                               60180000          
-            GENID("T",TEMPVARNUM,2); GEN("=",1,7); GENINT(CONVAL);      60181000          
+            GENID("T",TEMPVARNUM,2);  GEN("=",1,7);  GENINT(CONVAL);    60181000          
             NCASELABS:=NCASELABS+1;                                     60182000          
             IF NCASELABS<MAXCASES THEN                                  60183000          
             BEGIN                                                       60184000          
               IF CONVAL=0 THEN                                          60185000          
-                IF ZEROLAB THEN ERROR(31) ELSE ZEROLAB:=TRUE  ELSE      60186000          
+                IF ZEROLAB THEN ERROR(31) ELSE ZEROLAB:=TRUE   ELSE     60186000          
               BEGIN                                                     60187000          
                 T:=CASEHASH(CONVAL);                                    60188000          
                 FOR C:=CASETAB[T] WHILE C!CONVAL AND C!0 DO             60189000          
@@ -2390,7 +2390,7 @@ NEWTRY: STATEMENT;                                                      60242000
       IF CURSY!UNTILSY THEN GO TO NEWTRY;                               60252000          
     END;                                                                60253000          
     GEN(" END",5,4);  GEN("UNTIL",6,3);  MARGIN(" U",REPNUM);           60254000          
-    INSYMBOL; BOOLEXPR;                                                 60255000          
+    INSYMBOL;  BOOLEXPR;                                                60255000          
 END OF REPEATSTAT;                                                      60256000          
                                                                         60257000          
                                                                         60258000          
@@ -2533,7 +2533,7 @@ BEGIN                                                                   60394000
     INTEGER I;                                                          60395000          
     LABEL LABFOUND;                                                     60396000          
                                                                         60397000          
-    IF CURSY=INTCONST THEN            % *** LABELED STATEMENT ***       60398000          
+    IF CURSY=INTCONST THEN              % *** LABELED STATEMENT ***     60398000          
     BEGIN                                                               60399000          
       FOR I:=FIRSTLAB STEP 1 UNTIL NUMLABS DO                           60400000          
       IF LABTAB[I].LABVAL=CURVAL THEN                                   60401000          
@@ -2596,13 +2596,13 @@ LABFOUND: GENID("L",CURVAL,4);  GEN(":",1,7);                           60407000
     IF SYMKIND[CURSY]!TERMINAL THEN                                     60458000          
     BEGIN ERROR(13); INSYMBOL; SKIP(SEMICOLON) END;                     60459000          
 END OF STATEMENT;                                                       60460000          
-$ PAGE                                                                  60461000          
+$ PAGE                                                                  70000000          
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%70001000          
 %                                                                      %70002000          
 %                                                                      %70003000          
 %                                                                      %70004000          
-%                  PART 7:  TYPE DECLARATIONS.                         %70005000          
-%                           ------------------                         %70006000          
+%                  PART 7:   TYPE DECLARATIONS.                        %70005000          
+%                            ------------------                        %70006000          
 %                                                                      %70007000          
 %                                                                      %70008000          
 %                                                                      %70009000          
@@ -2618,8 +2618,8 @@ VALUE RECTAB,FIRSTADDR;                                                 70018000
 INTEGER RECTAB,FIRSTADDR,LASTADDR;                                      70019000          
 FORWARD;                                                                70020000          
                                                                         70021000          
-DEFINE SUBRANGE=                       %*** SUBRANGE DECLARATION***     70022000          
-BEGIN                                  %***************************     70023000          
+DEFINE SUBRANGE=                        %*** SUBRANGE DECLARATION***    70022000          
+BEGIN                                   %***************************    70023000          
     CONSTANT(VALX1,TYPEX1);                                             70024000          
     IF TYPETAB1[TYPEX1].FORM>CHAR THEN ERROR(11);                       70025000          
     IF CURSY!DOUBLEDOT THEN ERROR(53);                                  70026000          
@@ -2630,7 +2630,7 @@ BEGIN                                  %***************************     70023000
       IF VALX1>VALX2 THEN ERROR(54);                                    70031000          
     T1:=TYPETAB1[TYPEX1].FORM;  IF T1=SYMBOLIC THEN T1:=SUBTYPE;        70032000          
     NEWTYPE;  TTYPE:=TYPEINDEX;                                         70033000          
-    T1.SIZE:=TSIZE:=1;  T1.STRUCT:=0;   T1.MAINTYPE:=TYPEX1;            70034000          
+    T1.SIZE:=TSIZE:=1;  T1.STRUCT:=0;  T1.MAINTYPE:=TYPEX1;             70034000          
     TYPETAB1[TYPEINDEX]:=T1;                                            70035000          
     TYPETAB2[TYPEINDEX]:=VALX1;  TYPETAB3[TYPEINDEX]:=VALX2;            70036000          
 END OF SUBRANGE#;                                                       70037000          
@@ -2650,8 +2650,8 @@ BEGIN                                                                   70042000
     BOOLEAN FIRST;                                                      70051000          
                                                                         70052000          
     PACKED:=FALSE;                                                      70080000          
-    IF CURSY=IDENTIFIER THEN          %*** SIMPLE TYPE DECLARATION ***  70081000          
-    BEGIN                             %*******************************  70082000          
+    IF CURSY=IDENTIFIER THEN            %*** SIMPLE TYPE DECLARATION ***70081000          
+    BEGIN                               %*******************************70082000          
       SEARCH;                                                           70083000          
       IF FOUND THEN                                                     70084000          
       BEGIN                                                             70085000          
@@ -2667,7 +2667,7 @@ BEGIN                                                                   70042000
     IF CURSY=LPAR THEN                                                  70095000          
     BEGIN                                                               70096000          
       N:=0;                                                             70097000          
-      NEWTYPE; T3.IDCLASS:=CONST;  T3.TYPE:=TYPEINDEX;                  70098000          
+      NEWTYPE;  T3.IDCLASS:=CONST;  T3.TYPE:=TYPEINDEX;                 70098000          
       DO BEGIN                                                          70099000          
         INSYMBOL;                                                       70100000          
         IF CURSY=IDENTIFIER THEN                                        70101000          
@@ -2685,8 +2685,8 @@ BEGIN                                                                   70042000
       IF CURSY=RPAR THEN INSYMBOL;                                      70113000          
     END ELSE                                                            70114000          
                                                                         70115000          
-    IF CURSY=ARROW THEN                %*** POINTER DECLARATION ***     70116000          
-    BEGIN                              %***************************     70117000          
+    IF CURSY=ARROW THEN                 %*** POINTER DECLARATION ***    70116000          
+    BEGIN                               %***************************    70117000          
       INSYMBOL;                                                         70118000          
       IF CURSY=IDENTIFIER THEN                                          70119000          
       BEGIN                                                             70120000          
@@ -2711,8 +2711,8 @@ BEGIN                                                                   70042000
     BEGIN                                                               70139000          
       IF CURSY=PACKEDSY THEN BEGIN PACKED:=TRUE; INSYMBOL END;          70140000          
                                                                         70141000          
-      IF CURSY=ARRAYSY THEN           %*** ARRAY DECLARATION ***        70142000          
-      BEGIN                           %*************************        70143000          
+      IF CURSY=ARRAYSY THEN             %*** ARRAY DECLARATION ***      70142000          
+      BEGIN                             %*************************      70143000          
         INSYMBOL;                                                       70144000          
         IF CURSY!LBRACKET THEN ERROR(47) ELSE INSYMBOL;                 70145000          
         T1:=0;  FIRST:=TRUE;                                            70146000          
@@ -2728,7 +2728,7 @@ BEGIN                                                                   70042000
             T1.SIZE:=MIN(1023,T3-T2+1);                                 70156000          
             NEWTYPE;                                                    70157000          
             TYPETAB1[TYPEINDEX]:=T1;                                    70158000          
-            TYPETAB2[TYPEINDEX]:=T2;   TYPETAB3[TYPEINDEX]:=T3;         70159000          
+            TYPETAB2[TYPEINDEX]:=T2;  TYPETAB3[TYPEINDEX]:=T3;          70159000          
             T:=TYPEINDEX;                                               70160000          
           END;                                                          70161000          
         END UNTIL CURSY!COMMA;                                          70162000          
@@ -2812,7 +2812,7 @@ VALUE RECTAB,FIRSTADDR;                                                 70239000
 INTEGER RECTAB,FIRSTADDR,LASTADDR;                                      70240000          
 BEGIN                                                                   70241000          
     INTEGER ARRAY ILIST[0:LISTLENGTH];                                  70242000          
-     INTEGER LISTINX;                                                   70243000          
+      INTEGER LISTINX;                                                  70243000          
     INTEGER CASETYPE,ADDR,MAXADDR,INDEX,CTYPE,TX,SX,T1,T3,LLIM,ULIM,I;  70244000          
     BOOLEAN FIRST;                                                      70245000          
     REAL CVAL;                                                          70246000          
@@ -2824,7 +2824,7 @@ BEGIN                                                                   70241000
       IF CURSY=CASESY THEN GO TO CASEPART;                              70252000          
       IF CURSY=IDENTIFIER THEN                                          70253000          
       BEGIN                                                             70254000          
-        LISTINX:=0;   FIRST:=TRUE;                                      70255000          
+        LISTINX:=0;  FIRST:=TRUE;                                       70255000          
         DO BEGIN                                                        70256000          
           IF FIRST THEN FIRST:=FALSE ELSE INSYMBOL;                     70257000          
           IF CURSY=IDENTIFIER THEN                                      70258000          
@@ -2846,7 +2846,7 @@ BEGIN                                                                   70241000
         T3.IDCLASS:=VAR;  T3.TYPE:=TX;                                  70274000          
         FOR I:=1 STEP 1 UNTIL LISTINX DO                                70275000          
         BEGIN                                                           70276000          
-          T3.INFO:=ADDR;  ADDR:=MIN(ADDR+SX|1024);                      70277000          
+          T3.INFO:=ADDR;  ADDR:=MIN(ADDR+SX,1024);                      70277000          
           NAMETAB3[RECTAB,ILIST[I]]:=T3;                                70278000          
         END;                                                            70279000          
       END;                                                              70280000          
@@ -2918,16 +2918,16 @@ CASETYPEID: CASETYPE:=THISID.TYPE;  T1:=TYPETAB1[CASETYPE];             70303000
           INSYMBOL;                                                     70346000          
         END ELSE ERROR(58);                                             70347000          
       END;                                                              70348000          
-    END UNTIL CURSY NEQ SEMICOLON;                                      70349000          
+    END UNTIL CURSY NEQ SEMICOLON; %                                    70349000          
 EXIT:                                                                   70350000          
 END OF FIELDLIST;                                                       70351000          
-$ PAGE                                                                  70352000          
+$ PAGE                                                                  80000000          
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%80001000          
 %                                                                      %80002000          
 %                                                                      %80003000          
 %                                                                      %80004000          
-%                  PART 8:  THE PROCEDURE BLOCK.                       %80005000          
-%                           --------------------                       %80006000          
+%                  PART 8:   THE PROCEDURE BLOCK.                      %80005000          
+%                            --------------------                      %80006000          
 %                                                                      %80007000          
 %                                                                      %80008000          
 %                                                                      %80009000          
@@ -2944,7 +2944,7 @@ BEGIN                                                                   80019000
     INTEGER LEVEL1000,TYP,NAM,NAMTAB,T1,I,J,RECSIZE;                    80020000          
     BOOLEAN REALVAR,ARRAYVAR,FIRSTDIM,EXTFILE;                          80021000          
     ALPHA FNAME;                                                        80022000          
-    INTEGER FNLENGTH,FNSTART;                                           80023000          
+    INTEGER FNLENGTH,FNSTART; %                                         80023000          
                                                                         80024000          
     LEVEL1000:=LEVEL|1000;                                              80025000          
     FOR I:=FIRST STEP 1 UNTIL LAST DO                                   80026000          
@@ -2962,7 +2962,7 @@ BEGIN                                                                   80019000
         GEN("PROCEDU",8,1);                                             80038000          
         GENID("V",LEVEL1000+NAM,5); GEN(";",1,7);                       80039000          
       END ELSE                                                          80040000          
-      IF T1.STRUCT=0 THEN              %*** SIMPLE TYPE ***             80041000          
+      IF T1.STRUCT=0 THEN               %*** SIMPLE TYPE ***            80041000          
       BEGIN                                                             80042000          
         IF ARRAYVAR THEN BEGIN GEN(";",1,7); ARRAYVAR:=FALSE END;       80043000          
         IF REALVAR THEN GEN(",",1,7) ELSE                               80044000          
@@ -2971,7 +2971,7 @@ BEGIN                                                                   80019000
       END ELSE                                                          80047000          
       BEGIN                                                             80048000          
         IF REALVAR THEN BEGIN GEN(";",1,7); REALVAR:=FALSE END;         80049000          
-        IF T1.FORM<FILES THEN          %*** ARRAY/RECORD ***            80050000          
+        IF T1.FORM<FILES THEN           %*** ARRAY/RECORD ***           80050000          
         BEGIN                                                           80051000          
           IF ARRAYVAR THEN GEN(",",1,7) ELSE                            80052000          
               BEGIN GEN("ARRAY",6,3); ARRAYVAR:=TRUE END;               80053000          
@@ -2981,7 +2981,7 @@ BEGIN                                                                   80019000
             IF FIRSTDIM THEN FIRSTDIM:=FALSE ELSE GEN(",",1,7);         80057000          
             GENINT(TYPETAB2[TYP]);                                      80058000          
             IF NOT PARAM THEN                                           80059000          
-            BEGIN GEN(";",1,7); GENINT(TYPETAB3[TYP]) END;              80060000          
+            BEGIN GEN(":",1,7); GENINT(TYPETAB3[TYP]) END;              80060000          
             TYP:=IF T1.FORM=ARRAYS THEN T1.ARRTYPE ELSE REALTYPE;       80061000          
             T1:=TYPETAB1[TYP];                                          80062000          
           END UNTIL T1.STRUCT=0;                                        80063000          
@@ -2998,8 +2998,8 @@ BEGIN                                                                   80019000
           END;                                                          80074000          
           EXTFILE:=FALSE;                                               80075000          
           FNAME:=NAMETAB1[LEVEL,NAM];                                   80076000          
-          FNLENGTH := FNAME.NAMELENGTH;  FNSTART := 8-FNLENGTH;         80077000          
-          IF FNLENGTH LEQ 6 THEN                                        80078000          
+          FNLENGTH := FNAME.NAMELENGTH;  FNSTART := 8-FNLENGTH; %       80077000          
+          IF FNLENGTH LEQ 6 THEN %                                      80078000          
           BEGIN                                                         80079000          
             FOR J:=1 STEP 1 UNTIL NUMEXTFILES DO                        80080000          
             IF FNAME=EXTFILETAB[J] THEN EXTFILE:=TRUE;                  80081000          
@@ -3012,9 +3012,9 @@ BEGIN                                                                   80019000
              FILETAB[NUMFILES] := -NAM - 1;                             80088000          
             GEN("DEFINE",7,2);  GENID("F",LEVEL1000+NAM,5);             80089000          
             GEN("=",1,7);                                               80090000          
-            GEN(FNAME,FNLENGTH,FNSTART);                                80091000          
-            GEN("#;",2,6);  GEN("SAVE",5,4);  GEN("FILE",5,4);          80092000          
-            GEN(FNAME,FNLENGTH,FNSTART);                                80093000          
+            GEN(FNAME,FNLENGTH,FNSTART); %                              80091000          
+            GEN("#;",2,6);   GEN("SAVE",5,4);   GEN("FILE",5,4);        80092000          
+            GEN(FNAME,FNLENGTH,FNSTART); %                              80093000          
           END ELSE                                                      80094000          
           BEGIN                                                         80095000          
             GEN("FILE",5,4);  GENID("F",LEVEL1000+NAM,5);               80096000          
@@ -3027,7 +3027,7 @@ BEGIN                                                                   80019000
               IF ALGOLCNT LSS 13 THEN WRITEALGOL;                       80103000          
                GEN("[0:0]",5,3);                                        80104000          
               GEN(""",1,7);                                             80105000          
-              GEN(FNAME,FNLENGTH,FNSTART);                              80106000          
+              GEN(FNAME,FNLENGTH,FNSTART); %                            80106000          
               GEN(""",1,7);     GEN("/",1,7);                           80107000          
               IF ALGOLCNT<9 THEN WRITEALGOL;                            80108000          
               GEN(""",1,7);     GEN(USER,7,1);     GEN(""",1,7);        80109000          
@@ -3046,7 +3046,7 @@ BEGIN                                                                   80019000
             GEN(",SAVE",6,3);   GEN("30",2,6);                          80122000          
             GEN(");",2,6);                                              80123000          
           END ELSE GEN(";",1,7);                                        80124000          
-          GEN("ARRAY",6,3);    GENID("V",LEVEL1000+NAM,5);              80125000          
+          GEN("ARRAY",6,3);     GENID("V",LEVEL1000+NAM,5);             80125000          
           GEN("[",1,7);                                                 80126000          
           IF TYPETAB1[T1.FILETYPE].STRUCT=0 THEN                        80127000          
           BEGIN                                                         80128000          
@@ -3058,7 +3058,7 @@ BEGIN                                                                   80019000
             BEGIN GEN(":",1,7); GENINT(TYPETAB3[T1.FILETYPE]) END;      80134000          
           END;                                                          80135000          
           GEN("];",2,6);                                                80136000          
-          GEN("INTEGER",8,1);  GENID("I",LEVEL1000+NAM,5);              80137000          
+          GEN("INTEGER",8,1);   GENID("I",LEVEL1000+NAM,5);             80137000          
           GEN(";",1,7);                                                 80138000          
         END;                                                            80139000          
       END;                                                              80140000          
@@ -3140,7 +3140,7 @@ BEGIN                                                                   80147000
       IF CURSY!RPAR THEN                                                80216000          
       BEGIN ERROR(49);  SKIP(RPAR);                                     80217000          
             IF CURSY=RPAR THEN INSYMBOL;                                80218000          
-      END ELSE INSYMBOL                                                 80219000          
+      END ELSE INSYMBOL;                                                80219000          
     END;                                                                80220000          
     PARAMTAB[FIRSTPARAM]:=NUMPARAMS-FIRSTPARAM;                         80221000          
 END OF PARAMETERLIST;                                                   80222000          
@@ -3197,7 +3197,7 @@ START:                                                                  80422000
         DO BEGIN                                                        80449000          
           IF CURSY=IDENTIFIER THEN                                      80450000          
           BEGIN                                                         80451000          
-            NEWNAME(CURNAME1,CURNAME2,CURLEVEL);   INDEX:=THISINDEX;    80452000          
+            NEWNAME(CURNAME1,CURNAME2,CURLEVEL);  INDEX:=THISINDEX;     80452000          
             INSYMBOL;                                                   80453000          
             IF CURSY=EQLSY THEN                                         80454000          
             BEGIN                                                       80455000          
@@ -3219,8 +3219,8 @@ START:                                                                  80422000
         END UNTIL CURSY!IDENTIFIER;                                     80471000          
     END OF CONSTANT DECLARATION;                                        80472000          
                                                                         80473000          
-    IF CURSY=TYPESY THEN            %*** TYPE DECLARATION ****          80474000          
-    BEGIN                           %*************************          80475000          
+    IF CURSY=TYPESY THEN                %*** TYPE DECLARATION ****      80474000          
+    BEGIN                               %*************************      80475000          
         INSYMBOL;                                                       80476000          
         DO BEGIN                                                        80477000          
           IF CURSY=IDENTIFIER THEN                                      80478000          
@@ -3235,13 +3235,13 @@ START:                                                                  80422000
               NAMETAB3[CURLEVEL,INDEX]:=T3;                             80487000          
             END ELSE BEGIN ERROR(36); SKIP(SEMICOLON) END;              80488000          
           END ELSE BEGIN ERROR(9); SKIP(SEMICOLON) END;                 80489000          
-       IF CURSY!SEMICOLON THEN BEGIN ERROR(25); SKIP(SEMICOLON) END;    80490000          
+          IF CURSY!SEMICOLON THEN BEGIN ERROR(25); SKIP(SEMICOLON) END; 80490000          
         IF SYMKIND[CURSY]!INITIAL THEN INSYMBOL;                        80491000          
         END UNTIL CURSY!IDENTIFIER;                                     80492000          
     END OF TYPE DECLARATION;                                            80493000          
                                                                         80494000          
-    IF CURSY=VARSY THEN                %*** VARIABLE DECLARATION ***    80495000          
-    BEGIN                              %****************************    80496000          
+    IF CURSY=VARSY THEN                 %*** VARIABLE DECLARATION ***   80495000          
+    BEGIN                               %****************************   80496000          
         VARINDEX:=0;                                                    80497000          
         DO BEGIN                                                        80498000          
           FIRSTVAR:=VARINDEX+1;                                         80499000          
@@ -3264,9 +3264,9 @@ START:                                                                  80422000
             TYPEDECL(CTYPE,TX);                                         80516000          
             T3:=CTYPE;  T3.IDCLASS:=VAR;                                80517000          
             FOR I:=FIRSTVAR STEP 1 UNTIL VARINDEX DO                    80518000          
-               NAMETAB3[CURLEVEL,VARLIST[I]]:=T3;                       80519000          
+              NAMETAB3[CURLEVEL,VARLIST[I]]:=T3;                        80519000          
           END ELSE BEGIN ERROR(26); SKIP(SEMICOLON) END;                80520000          
-       IF CURSY!SEMICOLON THEN BEGIN ERROR(25); SKIP(SEMICOLON) END;    80521000          
+          IF CURSY!SEMICOLON THEN BEGIN ERROR(25); SKIP(SEMICOLON) END; 80521000          
         IF SYMKIND[CURSY]!INITIAL THEN INSYMBOL;                        80522000          
         END UNTIL CURSY!IDENTIFIER;                                     80523000          
         DECLAREVARS(FALSE,VARLIST,1,VARINDEX,CURLEVEL);                 80524000          
@@ -3384,7 +3384,7 @@ START:                                                                  80422000
           BLOCK;   %*** COMPILE PROCEDURE BODY ***                      80646000          
           REPLACE POINTER(NAMETAB1[CURLEVEL,*]) BY 0                    80647000          
                                         FOR MAXNAMES+1 WORDS;           80648000          
-          CURLEVEL:=CURLEVEL-1;   CURFUNC:=T;                           80649000          
+          CURLEVEL:=CURLEVEL-1;  CURFUNC:=T;                            80649000          
           TOPLEVEL:=CURLEVEL;                                           80650000          
         END;                                                            80651000          
         IF CURSY!SEMICOLON THEN BEGIN ERROR(25); SKIP(SEMICOLON) END;   80652000          
@@ -3440,13 +3440,13 @@ START:                                                                  80422000
     NUMPARAMS:=PARAMTABTOP;                                             80702000          
     IF CURLEVEL>1 THEN GEN("END",4,5);                                  80703000          
 END OF BLOCK;                                                           80704000          
-$PAGE                                                                   80705000          
+$PAGE                                                                   90000000          
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%90001000          
 %                                                                      %90002000          
 %                                                                      %90003000          
 %                                                                      %90004000          
-%                  PART 9:  THE MAIN PROGRAM.                          %90005000          
-%                           -----------------                          %90006000          
+%                  PART 9:   THE MAIN PROGRAM.                         %90005000          
+%                            -----------------                         %90006000          
 %                                                                      %90007000          
 %                                                                      %90008000          
 %                                                                      %90009000          
@@ -3513,7 +3513,7 @@ CURLEVEL:=1;                                                            90069000
 LASTREC:=MAXTABLES+1;                                                   90070000          
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%90071000          
 %                                                                      %90072000          
-%          BLOCK;                COMPILE USER PROGRAM.                 %90073000          
+          BLOCK;             %   COMPILE USER PROGRAM.                 %90073000          
 %                                                                      %90074000          
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%90075000          
 IF CURSY!DOT THEN                                                       90076000          
@@ -3565,7 +3565,7 @@ BEGIN                                                                   90091000
     ZIPTEXT(" SERIAL",7);     ZIPTEXT(";",1);                           90122000          
     IF SAVEFACTOR>0 THEN                                                90123000          
     BEGIN                                                               90124000          
-      ZIPTEXT("SAVE=",5);     ZIPNUM(SAVEFACTOR);                       90125000          
+      ZIPTEXT("SAVE=",5);  ZIPNUM(SAVEFACTOR);                          90125000          
       ZIPTEXT(";",1);                                                   90126000          
     END;                                                                90127000          
     ZIPTEXT("END.",4);                                                  90128000          
@@ -3574,110 +3574,110 @@ END OF COMPILER ZIP ELSE                                                90130000
 BEGIN                                                                   91001000          
     INTEGER I;                                                          91002000          
     SWITCH FORMAT ERRORMESS1 :=                                         91003000          
-    ("  0  *** COMPILER ERROR *** CONTACT THE COMPUTER CENTRE."),       91004000          
-    ("  1  IDENTIFIER NOT DEFINED."),                                   91005000          
-    ("  2  IDENTIFIER ALREADY DEFINED."),                               91006000          
-    ("  3  WRONG NUMBER OF PARAMETERS."),                               91007000          
-    ("  4  SYNTAX ERROR."),                                             91008000          
-    ("  5  VARIABLE NOT ACCESSIBLE (HARDWARE RESTRICTION)."),           91009000          
-    ("  6  STRINGS MAY NOT BE CONTINUED FROM ONE CARD TO ANOTHER."),    91010000          
-    ("  7  A TYPE EXPECTED."),                                          91011000          
-    ("  8  VARIABLE EXPECTED."),                                        91012000          
-    ("  9  IDENTIFIER EXPECTED."),                                      91013000          
-    (" 10  INTEGER CONSTANT EXPECTED."),                                91014000          
-    (" 11  CONSTANT OF OTHER TYPE THAN EXPECTED."),                     91015000          
-    (" 12  VARIABLE OF ILLEGAL TYPE."),                                 91016000          
-    (" 13  UNRECOGNIZABLE STATEMENT."),                                 91017000          
-    (" 14  CONSTANT TOO BIG OR TO SMALL."),                             91018000          
-    (" 15  UNDEFINED LABEL."),                                          91019000          
-    (" 16  FOR- AND CASE-STATEMENTS NESTED TOO DEEP."),                 91020000          
-    (" 17  EXPRESSION IS OF WRONG TYPE."),                              91021000          
-    (" 18  """OF""" EXPECTED."),                                        91022000          
-    (" 19  """DO""" EXPECTED."),                                        91023000          
-    (" 20  """ELSE""" WITHOUT CORRESPONDING """THEN"""."),              91024000          
-    (" 21  ILLEGAL TERMINATION OF STATEMENT."),                         91025000          
-    (" 22  """UNTIL""" EXPECTED."),                                     91026000          
-    (" 23  """TO""" EXPECTED."),                                        91027000          
-    (" 24  """END""" EXPECTED."),                                       91028000          
-    (" 25  """;""" EXPECTED."),                                         91029000          
-    (" 26  """:""" EXPECTED."),                                         91030000          
-    (" 27  """THEN""" EXPECTED."),                                      91031000          
-    (" 28  """:=""" EXPECTED."),                                        91032000          
-    (" 29  ONLY NUMBERS MAY BE SIGNED."),                               91033000          
-    (" 30  TOO MANY CASES."),                                           91034000          
-    (" 31  LABEL USED MORE THAN ONCE."),                                91035000          
-    (" 32  CONSTANT EXPECTED."),                                        91036000          
-    (" 33  LABEL NOT IN RANGE 0..9999."),                               91037000          
-    (" 34  TOO MANY LABELS DECLARED."),                                 91038000          
-    (" 35  TOO MANY CONSTANTS DECLARED."),                              91039000          
-    (" 36  """=""" EXPECTED."),                                         91040000          
-    (" 37  THE LIST IS TOO LONG."),                                     91041000          
-    (" 38  INVALID TYPE FOR A FUNCTION."),                              91042000          
-    (" 39  """BEGIN""" EXPECTED."),                                     91043000          
-    (" 40  TOO MANY IDENTIFIERS DECLARED."),                            91044000          
-    (" 41  ALFA CONSTANTS MAY NOT BE LONGER THAN 7 CHARACTERS."),       91045000          
-    (" 42  EXPRESSION IS NOT OF TYPE BOOLEAN."),                        91046000          
-    (" 43  NOT PROPER FORWARD DECLARATION."),                           91047000          
-    (" 44  UNSATISFIED FORWARD DECLARATION."),                          91048000          
-    (" 45  TOO MANY DIFFERENT TYPES DECLARED."),                        91049000          
-    (" 46  """)""" EXPECTED."),                                         91050000          
-    (" 47  """[""" EXPECTED."),                                         91051000          
-    (" 48  A SIMPLE TYPE EXPECTED."),                                   91052000          
-    (" 49  """ARRAY OF ARRAY""" AND """ARRAY OF RECORD""" ILLEGAL",     91053000          
-           " AS FILE TYPE."),                                           91054000          
-    (" 50  """FILE OF FILE""" IS ILLEGAL."),                            91055000          
-    (" 51  SET BOUNDRY IS TOO BIG OR TOO SMALL."),                      91056000          
-    (" 52  TOO MANY UNDECLARED POINTERS."),                             91057000          
-    (" 53  """..""" EXPECTED."),                                        91058000          
-    (" 54  FIRST VALUE IS GREATER THAN SECOND VALUE."),                 91059000          
-    (" 55  TOO MANY RECORDS DECLARED AT ONE TIME."),                    91060000          
-    (" 56  THE RECORD CONTAINS MORE THEN 1023 WORDS."),                 91061000          
-    (" 57  FILES NOT ALLOWED IN RECORDS."),                             91062000          
-    (" 58  """(""" EXPECTED."),                                         91063000          
-    (" 59  """]""" EXPECTED.");                                         91064000          
+      ("  0  *** COMPILER ERROR *** CONTACT THE COMPUTER CENTRE."),     91004000          
+      ("  1  IDENTIFIER NOT DEFINED."),                                 91005000          
+      ("  2  IDENTIFIER ALREADY DEFINED."),                             91006000          
+      ("  3  WRONG NUMBER OF PARAMETERS."),                             91007000          
+      ("  4  SYNTAX ERROR."),                                           91008000          
+      ("  5  VARIABLE NOT ACCESSIBLE (HARDWARE RESTRICTION)."),         91009000          
+      ("  6  STRINGS MAY NOT BE CONTINUED FROM ONE CARD TO ANOTHER."),  91010000          
+      ("  7  A TYPE EXPECTED."),                                        91011000          
+      ("  8  VARIABLE EXPECTED."),                                      91012000          
+      ("  9  IDENTIFIER EXPECTED."),                                    91013000          
+      (" 10  INTEGER CONSTANT EXPECTED."),                              91014000          
+      (" 11  CONSTANT OF OTHER TYPE THAN EXPECTED."),                   91015000          
+      (" 12  VARIABLE OF ILLEGAL TYPE."),                               91016000          
+      (" 13  UNRECOGNIZABLE STATEMENT."),                               91017000          
+      (" 14  CONSTANT TOO BIG OR TO SMALL."),                           91018000          
+      (" 15  UNDEFINED LABEL."),                                        91019000          
+      (" 16  FOR- AND CASE-STATEMENTS NESTED TOO DEEP."),               91020000          
+      (" 17  EXPRESSION IS OF WRONG TYPE."),                            91021000          
+      (" 18  """OF""" EXPECTED."),                                      91022000          
+      (" 19  """DO""" EXPECTED."),                                      91023000          
+      (" 20  """ELSE""" WITHOUT CORRESPONDING """THEN"""."),            91024000          
+      (" 21  ILLEGAL TERMINATION OF STATEMENT."),                       91025000          
+      (" 22  """UNTIL""" EXPECTED."),                                   91026000          
+      (" 23  """TO"""/"""DOWNTO""" EXPECTED."),                         91027000          
+      (" 24  """END""" EXPECTED."),                                     91028000          
+      (" 25  """;""" EXPECTED."),                                       91029000          
+      (" 26  """:""" EXPECTED."),                                       91030000          
+      (" 27  """THEN""" EXPECTED."),                                    91031000          
+      (" 28  """:=""" EXPECTED."),                                      91032000          
+      (" 29  ONLY NUMBERS MAY BE SIGNED."),                             91033000          
+      (" 30  TOO MANY CASES."),                                         91034000          
+      (" 31  LABEL USED MORE THAN ONCE."),                              91035000          
+      (" 32  CONSTANT EXPECTED."),                                      91036000          
+      (" 33  LABEL NOT IN RANGE 0..9999."),                             91037000          
+      (" 34  TOO MANY LABELS DECLARED."),                               91038000          
+      (" 35  TOO MANY CONSTANTS DECLARED."),                            91039000          
+      (" 36  """=""" EXPECTED."),                                       91040000          
+      (" 37  THE LIST IS TOO LONG."),                                   91041000          
+      (" 38  INVALID TYPE FOR A FUNCTION."),                            91042000          
+      (" 39  """BEGIN""" EXPECTED."),                                   91043000          
+      (" 40  TOO MANY IDENTIFIERS DECLARED."),                          91044000          
+      (" 41  ALFA CONSTANTS MAY NOT BE LONGER THAN 7 CHARACTERS."),     91045000          
+      (" 42  EXPRESSION IS NOT OF TYPE BOOLEAN."),                      91046000          
+      (" 43  NOT PROPER FORWARD DECLARATION."),                         91047000          
+      (" 44  UNSATISFIED FORWARD DECLARATION."),                        91048000          
+      (" 45  TOO MANY DIFFERENT TYPES DECLARED."),                      91049000          
+      (" 46  """)""" EXPECTED."),                                       91050000          
+      (" 47  """[""" EXPECTED."),                                       91051000          
+      (" 48  A SIMPLE TYPE EXPECTED."),                                 91052000          
+      (" 49  """ARRAY OF ARRAY""" AND """ARRAY OF RECORD""" ILLEGAL",   91053000          
+             " AS FILE TYPE."),                                         91054000          
+      (" 50  """FILE OF FILE""" IS ILLEGAL."),                          91055000          
+      (" 51  SET BOUNDRY IS TOO BIG OR TOO SMALL."),                    91056000          
+      (" 52  TOO MANY UNDECLARED POINTERS."),                           91057000          
+      (" 53  """..""" EXPECTED."),                                      91058000          
+      (" 54  FIRST VALUE IS GREATER THAN SECOND VALUE."),               91059000          
+      (" 55  TOO MANY RECORDS DECLARED AT ONE TIME."),                  91060000          
+      (" 56  THE RECORD CONTAINS MORE THEN 1023 WORDS."),               91061000          
+      (" 57  FILES NOT ALLOWED IN RECORDS."),                           91062000          
+      (" 58  """(""" EXPECTED."),                                       91063000          
+      (" 59  """]""" EXPECTED.");                                       91064000          
                                                                         91065000          
     SWITCH FORMAT ERRORMESS2 :=                                         91066000          
-    (" 60  """ARRAY OF FILE""" NOT ALLOWED."),                          91067000          
-    (" 61  RANGE OF INDEX IS GREATER THAN 1023."),                      91068000          
-    (" 62  UNSATISFIED POINTER DECLARATION."),                          91069000          
-    (" 63  EXPRESSION IS TOO LONG."),                                   91070000          
-    (" 64  ILLEGAL OPERATOR FOR THIS TYPE OF EXPRESSION."),             91071000          
-    (" 65  INTEGER EXPRESSION EXPECTED."),                              91072000          
-    (" 66  A SET EXPECTED."),                                           91073000          
-    (" 67  PARAMETER OF ILLEGAL TYPE."),                                91074000          
-    (" 68  PROCEDURES NOT ALLOWED IN THIS CONTEXT."),                   91075000          
-    (" 69  ILLEGAL USE OF THIS TYPE OF IDENTIFIER."),                   91076000          
-    (" 70  TOO MANY PARAMETERS DECLARED IN THE PROGRAM."),              91077000          
-    (" 71  """ARRAY OF CHAR""" EXPECTED."),                             91078000          
-    (" 72  WRONG TYPE OF SET EXPRESSION."),                             91079000          
-    (" 73  TOO MANY EXTERNAL FILES."),                                  91080000          
-    (" 74  ILLEGAL IDENTIFIER FOR EXTERNAL FILE."),                     91081000          
-    (" 75  """PROGRAM""" EXPECTED."),                                   91082000          
-    (" 76  """.""" EXPECTED."),                                         91083000          
-    (" 77  EXTERNAL FILE IDENTIFIER MAY NOT EXCEED 6 CHARACTERS."),     91084000          
-    (" 78  ILLEGAL FILE PARAMETER."),                                   91085000          
-    (" 79  ILLEGAL USE OF FILE HANDLING PROCEDURE."),                   91086000          
-    (" 80  TEXT-FILE EXPECTED."),                                       91087000          
-    (" 81  POINTER VARIABLE EXPECTED."),                                91088000          
-    (" 82  ONLY VALUES OF TYPE REAL, INTEGER OR CHAR MAY BE READ."),    91089000          
-    (" 83  VARIABLES IN RECORDS ILLEGAL IN THIS CONTEXT."),             91090000          
-    (" 84  DISPLAY OVERFLOW."),                                         91091000          
-    (" 85  READ AND WRITE MAY ONLY BE USED ON TEXT-FILES."),            91092000          
-    (" 86  REFERENCED OBJECT IS TOO BIG."),                             91093000          
-    (" 87  END-OF-INPUT DISCOVERED."),                                  91094000          
-    (" 88  CHARACTER ARRAY EXPECTED."),                                 91095000          
-    (" 89  """,""" EXPECTED."),                                         91096000          
-    (" 91  PROCEDURES MAY NOT HAVE ANY TYPE."),                         91097000          
-    (" 91  PARAMETERS OF WRONG KIND."),                                 91098000          
-    (" 92  ONLY COMPLETE ARRAYS AND RECORDS MAY BE TRANSMITTED."),      91099000          
-    (" 93  DECLARED LABEL NOT USED."),                                  91100000          
-    (" 94  PARAMETERS OF THIS TYPE SHOULD NOT BE VALUE PARAMETERS."),   91101000          
-    (" 95  ASSIGNMENT OF STRUCTURED VARIABLES NOT IMPLIMENTED."),       91102000          
-    (" 96  INPUT/OUPUT NOT DECLARED."),                                 91103000          
-    (" 97 TOO MANY FILES IN USE."),                                     91104000          
-    (" 98  RECORD IDENTIFIER EXPECTED."),                               91105000          
-    (" 99  UNRECOGNIZED ITEM."),                                        91106000          
-    ();                                                                 91107000          
+      (" 60  """ARRAY OF FILE""" NOT ALLOWED."),                        91067000          
+      (" 61  RANGE OF INDEX IS GREATER THAN 1023."),                    91068000          
+      (" 62  UNSATISFIED POINTER DECLARATION."),                        91069000          
+      (" 63  EXPRESSION IS TOO LONG."),                                 91070000          
+      (" 64  ILLEGAL OPERATOR FOR THIS TYPE OF EXPRESSION."),           91071000          
+      (" 65  INTEGER EXPRESSION EXPECTED."),                            91072000          
+      (" 66  A SET EXPECTED."),                                         91073000          
+      (" 67  PARAMETER OF ILLEGAL TYPE."),                              91074000          
+      (" 68  PROCEDURES NOT ALLOWED IN THIS CONTEXT."),                 91075000          
+      (" 69  ILLEGAL USE OF THIS TYPE OF IDENTIFIER."),                 91076000          
+      (" 70  TOO MANY PARAMETERS DECLARED IN THE PROGRAM."),            91077000          
+      (" 71  """ARRAY OF CHAR""" EXPECTED."),                           91078000          
+      (" 72  WRONG TYPE OF SET EXPRESSION."),                           91079000          
+      (" 73  TOO MANY EXTERNAL FILES."),                                91080000          
+      (" 74  ILLEGAL IDENTIFIER FOR EXTERNAL FILE."),                   91081000          
+      (" 75  """PROGRAM""" EXPECTED."),                                 91082000          
+      (" 76  """.""" EXPECTED AT END OF PROGRAM."),                     91083000          
+      (" 77  EXTERNAL FILE IDENTIFIER MAY NOT EXCEED 6 CHARACTERS."),   91084000          
+      (" 78  ILLEGAL FILE PARAMETER."),                                 91085000          
+      (" 79  ILLEGAL USE OF FILE HANDLING PROCEDURE."),                 91086000          
+      (" 80  TEXT-FILE EXPECTED."),                                     91087000          
+      (" 81  POINTER VARIABLE EXPECTED."),                              91088000          
+      (" 82  ONLY VALUES OF TYPE REAL, INTEGER OR CHAR MAY BE READ."),  91089000          
+      (" 83  VARIABLES IN RECORDS ILLEGAL IN THIS CONTEXT."),           91090000          
+      (" 84  DISPLAY OVERFLOW."),                                       91091000          
+      (" 85  READ AND WRITE MAY ONLY BE USED ON TEXT-FILES."),          91092000          
+      (" 86  REFERENCED OBJECT IS TOO BIG."),                           91093000          
+      (" 87  END-OF-INPUT DISCOVERED."),                                91094000          
+      (" 88  CHARACTER ARRAY EXPECTED."),                               91095000          
+      (" 89  """,""" EXPECTED."),                                       91096000          
+      (" 91  PROCEDURES MAY NOT HAVE ANY TYPE."),                       91097000          
+      (" 91  PARAMETER OF WRONG KIND."),                                91098000          
+      (" 92  ONLY COMPLETE ARRAYS AND RECORDS MAY BE TRANSMITTED."),    91099000          
+      (" 93  DECLARED LABEL NOT USED."),                                91100000          
+      (" 94  PARAMETERS OF THIS TYPE SHOULD NOT BE VALUE PARAMETERS."), 91101000          
+      (" 95  ASSIGNMENT OF STRUCTURED VARIABLES NOT IMPLIMENTED."),     91102000          
+      (" 96  INPUT/OUPUT NOT DECLARED."),                               91103000          
+      (" 97 TOO MANY FILES IN USE."),                                   91104000          
+      (" 98  RECORD IDENTIFIER EXPECTED."),                             91105000          
+      (" 99  UNRECOGNIZED ITEM."),                                      91106000          
+      ();                                                               91107000          
                                                                         91108000          
                                                                         91109000          
     WRITE(LINES,ERRORS,NUMERRS);                                        91110000          
@@ -3692,5 +3692,5 @@ BEGIN                                                                   92002000
     HEADING;                                                            92004000          
     SORT(PRINTXREF,XREFFILE,0,XREFMAX,XREFCOMPARE,3,1000,6000);         92005000          
 END;                                                                    92006000          
-END OF B5700 PASCAL COMPILER COMPILER.. ................................99001000          
+END OF B5700 PASCAL COMPILER COMPILER...................................99001000          
 END;END.        LAST CARD IMAGE ON SOURCE TAPE FILE                     99999999          
