@@ -1,7 +1,15 @@
-?EXECUTE OBJECT/READER
-?COMMON=3
-?FILE NEWTAPE = PATCH/PASCAL SERIAL
+?EXECUTE PATCH/MERGE
+?FILE LINE=LINE PRINT
 ?DATA CARD
+$. 39 PATCHES FOR PASCAL WITH CONFLICTS
+$*COMPILE PASCAL/NEW XALGOL LIBRARY
+$*XALGOL STACK=800
+$*XALGOL FILE TAPE=SYMBOL/PASCAL SERIAL
+$*XALGOL FILE NEWTAPE=SYMNEW/PASCAL SERIAL
+$*XALGOL FILE LINE=LINE PRINT
+$*DATA CARD
+$- DOLLAR CARDS FOR COMPILATION
+$ TAPE LIST SINGLE SEQXEQ NEW TAPE
 $# PATCH   1 FOR PASCAL.XVI.O CONTAINS 10 CARDS.  CORRECT SPELLING & TABULATION
 $: PATCH TO CORRECT SPELLING IN SOME ERROR MESSAGES, CURRECT TABULATION OF CODE
 $: OR COMMENTS, AND TO CORRECT THE CALL ON THE PROCEDURE TO GIVE A NEW PAGE.
@@ -9,18 +17,18 @@ $: *** NOTE THAT ERROR(71) IS NOW NO LONGER USED - SEE PATCH  513.
 $:     IS WAS USED ONCE, BUT INCORRECTLY. ERROR(63) IS CALLED IN ITS PLACE.
 $: *** NOTE THAT THE ALGOL CODE FILE "PASCRUN"/"DISK" HAS BEEN RENAMED
 $:     "PASCAL"/"PRELUDE".  IT IS NO LONGER REFERENCED DIRECTLY IN THIS COMPILER
-$:  NILS A OTTE,   UNIVERISTY OF NATAL, DURBAN.   AUG - NOV 1977.
+$:  NILS A OTTE,   UNIVERSITY OF NATAL, DURBAN.   AUG - NOV 1977.
 $:
     BEGIN     ; % NULL                  %***   4) REWRITE               50203000
       GEN("PUT",3,5);                   %***   5) PAGE                  50204000
-      GEN("PPAGE",5,3);    %                                            50208000
+      GEN("PPAGE",5,3);   %                                             50208000
           BLOCK;                       %*** COMPILE PROCEDURE BODY ***  80646000
     COMPSTAT;                          %*** COMPILE STATEMENT PART ***  80691000
       (" 41  ALFA CONSTANTS MAY NOT BE LONGER THAN 7 CHARACTERS."),     91045000
       (" 55  PROCEDURE NESTING DEPTH + NO OF RECORDS IS TOO GREAT."),   91060000
       (" 87  END-OF-INPUT ENCOUNTERED UNEXPECTEDLY."),                  91094000
       (" 97  TOO MANY FILES IN USE."),                                  91104000
-END OF B5700 PASCAL COMPILER.. .........................................99001000
+END OF B5700 PASCAL COMPILER............................................99001000
 $# PATCH 2 FOR PASCAL CONTAINS 171 CARDS.
 $:    PATCH TO MERGE DAG LANGMYHRS PPP10 TO PPP11 COSY PATCHES
 $:    WITH NILS OTTES MODIFIED PPP10 SOURCE.
@@ -28,24 +36,24 @@ $:    DAVID A COOPER , HERIOT-WATT UNIVERSITY,  JANUARY 1978.
 $:
 FILE CARD "SOURCE" (1,10,30);                  % SOURCE CODE FILE       10035000
 FILE LINES 1 (1,17);                           % PRINT FILE             10036000
-FILE PASCALGOL DISK SERIAL [20:600] (1,10,30,SAVE 0); % CODE            10037000
+FILE PASCALGOL DISK SERIAL [20:600] (1,10,30,SAVE 0); % CODE FILE       10037000
 ARRAY PARAMTAB, FORWPARAM1, FORWPARAM2[0:MAXPARAMS];                    10109000
 FILE XREFFILE DISK SERIAL [20:3000] (1,3,30);                           10137000
 ALPHA ARRAY XBUFF[0:2];                                                 10138500
 BOOLEAN XINB;                                                           10138550
 INTEGER ARRAY SYMKIND[0:62];            %USED IN ERROR RECOVERY.        10149000
        ERROR100MESS (//"100  ILLEGAL SAVE CONSTANT IN """""S""""" OPTION10188500
-  THE VALUE 07 IS SUBSTITUTED"/"     SO THIS ERROR DOES NOT INCREMENT TH10188600
+. THE VALUE 07 IS SUBSTITUTED"/"     SO THIS ERROR DOES NOT INCREMENT TH10188600
 E COMPILATION ERRORS COUNT."//),%                                       10188700
-          PACKEDSY=61#,   ASSERTSY=62#;                                 10211000
+          PACKEDSY=61#,  ASSERTSY=62#;                                  10211000
 %                                                                       20181500
 %                                                                       20181550
     IF ERRNUM=100                                                       20181600
-    THEN NUMERRS:=NUMERRS-1;%    * ERROR NUMBER 100 ALONE SHOULD NOT    20181650
-%                                * PREVENT THE XALGOL COMPILATION BEING 20181700
-%                                * ZIPPED AS THE VALUE 7 IS SUBSTITUTED 20181750
-%                                * FOR A BAD SAVE CONSTANT IN AN "S"    20181800
-%                                * OPTION.                              20181850
+    THEN NUMERRS:=NUMERRS-1;%   * ERROR NUMBER 100 ALONE SHOULD NOT     20181650
+%                               * PREVENT THE XALGOL COMPILATION BEING  20181700
+%                               * ZIPPED AS THE VALUE 7 IS SUBSTITUTED  20181750
+%                               * FOR A BAD SAVE CONSTANT IN AN "S"     20181800
+%                               * OPTION.                               20181850
 %                                                                       20181900
 %                                                                       20181950
       7(INITIAL),MIDDLE,INITIAL;                                        20308000
@@ -76,9 +84,9 @@ END OF XREFINPUT;                                                       20541960
 BOOLEAN LPARFOUND,SAVEXREFOPT;                                          20842000
     SAVEXREFOPT := XREFOPTION;   XREFOPTION := FALSE;                   20847500
               IF SAVEXREFOPT THEN NEWXREF(CURNAME1,CURNAME2,THISLEVEL,  20861500
-                                         FALSE);                        20861550
+                                          FALSE);                       20861550
     XREFOPTION := SAVEXREFOPT;                                          20868500
-%        ASSERT            62       ASSERTSY            INITIAL         30075500
+%        ASSERT            62        ASSERTSY            INITIAL        30075500
                  IF CURNAME1="6ASSERT" THEN ASSERTSY ELSE               30165500
               END%                                                      30280000
 %                                                                       30280025
@@ -128,26 +136,26 @@ INTEGER EXPRLEVEL,TX,EXPINVARCNT;%                                      40018000
     SIMPLEVARIABLE := SIMPLEVAR;                                        40199500
       IF EXPINVARCNT=0 THEN WRITEEXPR; %                                40751000
     LABEL EFH;                                                          50201500
-                                     %*** 6) OPEN & CLOSE (INPUT) FOR   50204500
-                                           % CUMULATIVE FREQUENCY COUNT 50204550
+                                     %***  6) OPEN & CLOSE (INPUT) FOR  50204500
+                                            % CUMULATIVE FREQUENCY COUNT50204550
       BEGIN                                                             50208100
           GEN("QQJZXL",6,2);                                            50208200
           INSYMBOL;                                                     50208300
           GO TO EFH; %                                                  50208400
       END;                                                              50208500
- EFH:                                                                   50219500
-     EXPRLEVEL := 1;                                                    60346500
-           IF THISID.IDCLASS=VAR OR                                     60354000
-              THISID.IDCLASS=CONST AND BOOLEAN(THISID.FORMAL) THEN %    60354500
-     EXPRLEVEL := 0;                                                    60383500
+EFH:                                                                    50219500
+    EXPRLEVEL := 1;                                                     60346500
+          IF THISID.IDCLASS=VAR OR                                      60354000
+             THISID.IDCLASS=CONST AND BOOLEAN(THISID.FORMAL) THEN %     60354500
+    EXPRLEVEL := 0;                                                     60383500
 PROCEDURE ASSERTSTAT;                                                   60391100
 BEGIN                                                                   60391200
     GEN("IF NOT(",7,1);                                                 60391400
     INSYMBOL;   BOOLEXPR;                                               60391500
     GEN(") THEN",7,2);   GEN("RUNERR(",7,1);   GEN("7,",2,6);           60391600
-    GENINT(CARDCNT);     GEN(";",1,7);                                  60391700
+    GENINT(CARDCNT);     GEN(")",1,7);                                  60391700
 END OF ASSERTSTAT;                                                      60391800
-            IF CURNAME1="6QQJZXL" THEN FILEHANDLING(6)   ELSE           60443500
+            IF CURNAME1="6QQJZXL" THEN FILEHANDLING(6)  ELSE            60443500
     IF CURSY=ASSERTSY THEN ASSERTSTAT ELSE                              60457500
             IF PARAM THEN GEN("0",1,7) ELSE BEGIN                       80129000
                                                 GEN("0:",2,6);          80129100
@@ -189,7 +197,7 @@ BEGIN%                                                                  90090400
      IF ERR[100]%                                                       90090600
      THEN WRITE(LINE ,ERROR100MESS);%                                   90090700
      IF SAVEFACTOR}0 THEN%   *A ZIP IS REQUIRED                         90090800
-%VOIDT                                                                  90111000
+$VOIDT                                                                  90111000
 END%                                                                    90129500
      ("100  ILLEGAL SAVE CONSTANT IN """""S""""" OPTION. THE VALUE 07 IS91106500
 SUBSTITUTED"/"     SO THIS ERROR DOES NOT INCREMENT THE COMPILATION ERRO91106600
@@ -200,9 +208,9 @@ RS COUNT."),%                                                           91106700
 $# PATCH 500 FOR PASCAL.XVI.O CONTAINS  5 CARDS.  PRT CELLS 25 TO 30
 $: THIS PATCH CORRECTS THE DOCUMENTATION FOR THE COMPILERS PRT CELLS 25 TO 27
 $: (NOT 21 TO 23). FURTHERMORE. IT USES PRT CELL 30 FOR THE CARD COUNT (IN PLACE
-$: OF 27) TO BE CONSISTANT WITH THE OTHER SYSTEM COMPILERS. PRT CELLS 27 IS USED
+$: OF 27) TO BE CONSISTANT WITH THE OTHER SYSTEM COMPILERS.  PRT CELL 27 IS USED
 $: FOR THE PAGE COUNT FORMERLY AT SEQUENCE 10134000.
-$:  NILS OTTE,     UNIVERISTY OF NATAL, DURBAN.   AUG - NOV 1977.
+$:  NILS OTTE,     UNIVERISTY OF NATAL, DURBAN.    AUG - NOV 1977.
 $:
 INTEGER NUMERRS,        % @R+25: NUMBER OF ERRORS IN PROGRAM.           10029000
         SAVEFACTOR,     % @R+26: SAVEFACTOR FOR CODE FILE.              10030000
@@ -220,14 +228,14 @@ $:
     NEWNAME("50PRT25",0,0);                       %*** "PRT25" ***      20369100
     T3:=INTTYPE;  T3.IDCLASS:=VAR;     % GLOBAL INTEGER VARIABLE        20369200
     NAMETAB3[0,THISINDEX] := T3;                                        20369300
-$# PATCH 502 FOR PASCAL.XVI.O CONTAINS 3 CARDS.   LINE COUNT WHEN DEBUGGING
+$# PATCH 502 FOR PASCAL.XVI.O CONTAINS  3 CARDS.  LINE COUNT WHEN DEBUGGING
 $: TO CORRECT THE LINE COUNT WHEN THE DEBUGGING OPTION TO LIST THE ALGOL
 $: CODE GENERATED IS SET (*$D+ *), OTHERWISE LINES PER PAGE GOES WRONG.
 $:  NILS A OTTE,   UNIVERSITY OF NATAL, DURBAN.    AUG - NOV 1977.
 $:
 DEFINE LINESPERPAGE = 60 #,                                             10038000
-  IF DUMPOPTION THEN BEGIN  IF (LINECNT:=LINECNT+1)}LINESPERPAGE        20149000
-       THEN HEADING;  WRITE(LINE,10,ALGOLCARD[*])   END;                20149100
+    IF DUMPOPTION THEN BEGIN  IF (LINECNT:=LINECNT+1)}LINESPERPAGE      20149000
+         THEN HEADING;  WRITE(LINE,10,ALGOLCARD[*])   END;              20149100
 $# PATCH 503 FOR PASCAL.XVI.O CONTAINS  9 CARDS.  INTEGER TO REAL FOR TYPETAB1
 $: WHEN MORE THAN 63 ENTRIES WERE ENTERED IN THE "TYPETAB*" ARRAYS, THE
 $: PASCAL COMPILER WAS DISCONTINUED DUE TO INTEGER OVERFLOW, WHICH COULD OCCUR
@@ -237,6 +245,7 @@ $: [43:10] AND HAS THE 4 HIGH ORDER BITS IN THE EXPONENT FIELD.  THIS PATCH
 $: ALTERS THE DECLARATIONS OF ALL IDENTIFIER TO WHICH "TYPETAB1" MAY BE
 $: ASSIGNED FROM INTEGER TO REAL TO CORRECT THIS ERROR.
 $:  NILS A OTTE,   UNIVERSITY OF NATAL, DURBAN.    AUG - NOV 1977.
+$:
     INTEGER  IT;   REAL  T;                                             50225000
     INTEGER  IT;   REAL  T;                                             50285000
     INTEGER CASETYPE,ADDR,MAXADDR,INDEX,CTYPE,TX,SX, T3,LLIM,ULIM,I;    70244000
@@ -258,7 +267,7 @@ $: FORWARD PROCEDURES AND FUNCTIONS, SETTING TO ZERO ONLY THOSE ELEMENTS WHICH
 $: ARE NOT SO MARKED ON EXIT FROM A BLOCK, AND UNMARKING THE RELEVANT PARAMETERS
 $: WHEN THE PROCEDURE OR FUNCTION IS DEFINED.  THE MARKING OF THE PARAMETERS
 $: IS DONE IN SUCH A WAY THAT THE SAME IDENTIFIER NAME MAY BE USED AT THE SAME
-$: LEVEL WITHOUT SYNTAX ERROR X TO REPORT THAT THE IDENTIFIER IS ALREADY DEFINED
+$: LEVEL WITHOUT SYNTAX ERROR 2 TO REPORT THAT THE IDENTIFIER IS ALREADY DEFINED
 $: THE UNMARKING REPLACES THE IDENTIFIER NAME IN "NAMETAB*" TO ALLOW FOR THE
 $: SAME NAME OR ONE THAT HASHES TO THE SAME PLACE TO HAVE BEEN USED PREVIOUSLY
 $: AND NOW DELETED.
@@ -270,29 +279,30 @@ $:  NILS A OTTE,   UNIVERSITY OF NATAL, DURBAN.    AUG - NOV 1977.
               FOR I:=T+1 STEP 1 UNTIL TX DO      %  TO ALLOW REFERENCE  80557000
               BEGIN  T3:=PARAMTAB[I].PARAMNAME;                         80558000
                 CURNAME1:=ABS(NAMETAB1[CURLEVEL+1,T3]);                 80559000
-                CURNAME2:=    NAMETAB1[CURLEVEL+1,T3];                  80560000
+                CURNAME2:=    NAMETAB2[CURLEVEL+1,T3];                  80560000
                 NAMETAB1[CURLEVEL+1,T3]:=0;                             80561000
                 NEWNAME(CURNAME1,CURNAME2,CURLEVEL+1);                  80562000
                 IF T3!THISINDEX THEN BEGIN                              80563000
                    PARAMTAB[I].PARAMNAME:=THISINDEX;                    80564000
                    NAMETAB3[CURLEVEL+1,THISINDEX] :=                    80565000
                    NAMETAB3[CURLEVEL+1,T3];                             80565010
-             END   END; % OF UNMARKING FORWARD PARAMETERS.              80566000
-         TX:=(T:=NAMETAB3[CURLEVEL,INDEX].INFO)+PARAMTAB[T];            80636100
-         FOR I:=T+1 STEP 1 UNTIL TX DO     % MARK FORWARD PARAMETERS    80636200
-             NAMETAB1[CURLEVEL+1,PARAMTAB[I].PARAMNAME].[46:1] := 1;    80636210
-         TX:=CURFUNC;   CURFUNC:=IF FUN THEN INDEX ELSE -1;             80645000
-         FOR I:=0 STEP 1 UNTIL MAXNAMES DO % LEAVE FORWARD PARAMETERS   80647000
-             IF NAMETAB1[CURLEVEL,I]>0 THEN NAMETAB1[CURLEVEL,I]:=0;    80648000
-         CURLEVEL:=CURLEVEL-1;  CURFUNC:=TX;                            80649000
-   FOR I:=LASTREC STEP 1 UNTIL TOPREC-1 DO % CLEAR RECORD DECS          80693000
+              END  END; % OF UNMARKING FORWARD PARAMETERS.              80566000
+          TX:=(T:=NAMETAB3[CURLEVEL,INDEX].INFO)+PARAMTAB[T];           80636100
+          FOR I:=T+1 STEP 1 UNTIL TX DO     % MARK FORWARD PARAMETERS   80636200
+              NAMETAB1[CURLEVEL+1,PARAMTAB[I].PARAMNAME].[46:1] := 1;   80636210
+          TX:=CURFUNC;  CURFUNC:=IF FUN THEN INDEX ELSE -1;             80645000
+          FOR I:=0 STEP 1 UNTIL MAXNAMES DO % LEAVE FORWARD PARAMETERS  80647000
+              IF NAMETAB1[CURLEVEL,I]>0 THEN NAMETAB1[CURLEVEL,I]:=0;   80648000
+          CURLEVEL:=CURLEVEL-1;  CURFUNC:=TX;                           80649000
+    FOR I:=LASTREC STEP 1 UNTIL TOPREC-1 DO % CLEAR RECORD DECS         80693000
 $# PATCH 505 FOR PASCAL.XVI.O CONTAINS  9 CARDS.  CHECK FOR HASH TABLE FULL
-$: WHEN THER ARE "MAXNAMES" IDENTIFIERS AT ONE LEVEL, THE "NAMETAB*" ROWS
+$: WHEN THERe ARE "MAXNAMES" IDENTIFIERS AT ONE LEVEL, THE "NAMETAB*" ROWS
 $: BECOME FULL AND THIS USED TO PUT THE COMPILER INTO AN INFINITE LOOP,
 $: EITHER IN "NEWNAME" OR "SEARCHTAB".  THIS PATCH INSERTS TEST FOR WRAP AROUND
 $: LEADING BACK TO THE HASHED STARTING POINT, FOR WHICH IT GIVES SYNTAX ERROR
 $: 40, TOO MANY IDENTIFIERS DECLARED.
 $:  NILS A OTTE,   UNIVERSITY OF NATAL, DURBAN.    AUG - NOV 1977.
+$:
 DEFINE  HASH(HASH1) = ENTIER((HASH1) MOD MAXNAMES) #;                   20202000
 BEGIN  ALPHA TNAME;  INTEGER WRAPAROUND;                                20209000
       WRAPAROUND:=THISINDEX:=HASH(CURNAME1);                            20210000
@@ -308,6 +318,7 @@ $: RESERVED WORDS OPTION IS SET (*$R+ *), AN INVALID INDEX OCCURRED IN THE
 $: SCANNER "INSYMBOL".  THE PROBLEM IS CURED BY CORRECTLY COMPUTING THE STARTING
 $: AND ENDING POINT OF THE RESERVED WORDS.
 $:  NILS A OTTE,   UNIVERSITY OF NATAL, DURBAN.    AUG - NOV 1977.
+$:
         BEGIN T1 := CARDLENGTH-CHARCNT-CURLENGTH-1;                     30178000
                       FOR CURLENGTH+REAL(CHARCNT=0);                    30181000
 $# PATCH 507 FOR PASCAL.XVI.O CONTAINS  5 CARDS.  "VARIABLE", "SIMPLEVARIABLE"
@@ -349,14 +360,14 @@ $:  NILS A OTTE,   UNIVERSITY OF NATAL, DURBAN.    AUG - NOV 1977.
 $:
     IF ERRNUM<0 THEN ERRNUM:=ABS(ERRNUM) ELSE                           20180900
 $  %IF THISLEVEL>1 AND THISLEVEL<CURLEVEL THEN ERROR5;                  40103000
-$            %IF THISLEVEL>1 ND THISLEVEL!CURLEVEL THEN ERROR5;         50244000
-$              %IF THISLEVEL.1 AND THISLEVEL!CURLEVEL THEN ERROR5;      50306000
+$            %IF THISLEVEL>1 AND THISLEVEL!CURLEVEL THEN ERROR5;        50244000
+$              %IF THISLEVEL>1 AND THISLEVEL!CURLEVEL THEN ERROR5;      50306000
         IF THISLEVEL!CURLEVEL-1 OR THISINDEX!CURFUNC THEN ERROR(5);     60091000
           IF THISLEVEL>1 AND THISLEVEL<CURLEVEL THEN ERROR(-5);         60276000
       ("  5  FUNCTION NAME NOT ACCESSIBLE AT THIS LEVEL."),             91009000
 $# PATCH 512 FOR PASCAL.XVI.O CONTAINS 24 CARDS. IMPLEMENT STRUCTURED ASSIGNMENT
 $: TO ALLOW STRUCTURED ASSIGNMENT.  FORMERLY, AN ASSIGNMENT OF A STRUCTURE
-$: WAS NOT IMPLEMENTED, EG  A, B: RECORD ... END;  A := B;
+$: WAS NOT IMPLEMENTED, EG  A, B: RECORD ... END;  A := B;.
 $: THIS PATCH ATTEMPTS TO IMPLEMENT ASSIGNMENT OF STRUCTURES OF ANY KIND,
 $: BUT IT WOULD FAIL IF THE STRUCTURE WERE TRANSLATED INTO A MULTI-DIMENSIONAL
 $: ALGOL ARRAY.    THIS IMPLEMENTATION DOES WORK FOR ARRAYS, RECORDS,
@@ -382,7 +393,7 @@ $:
       WRITEEXPR;  GEN( ",", 1,7 );                                      60032000
     END  WRITESEXPR;                                                    60033000
                                                                         60034000
-          %ERROR(95);  % STRUCTURED ASSIGNEMENT NOT IMPLEMENTED.        60063000
+          %ERROR(95);  % STRUCTURED ASSIGNMENT NOT IMPLEMENTED.         60063000
           GEN("ASSIGN(",7,1);  WRITESEXPR;                              60064000
           EXPRESSION;          WRITESEXPR;                              60065000
           GENINT(TYPETAB1[LEFTTYPE].SIZE);          GEN(")",1,7);       60066000
@@ -406,7 +417,7 @@ $:  NILS A OTTE,  UNIVERSITY OF NATAL, DURBAN.   1977-11-14
 $:
             IF NUMSYMS+6 { MAXSYMS THEN                                 40175000
               NUMSYMS := NUMSYMS+2;                                     40180400
-              IF NUMPOINTERS > 0      % POINTER VIA POINTER             40180500
+              IF NUMPOINTERS > 0       % POINTER VIA POINTER            40180500
               THEN BEGIN  REPLACE POINTER(SYMTAB[NUMSYMS+1]) BY         40180600
                    "00-1)DIV00 1022,00 T MOD00 1022]";                  40180700
                    NUMSYMS := NUMSYMS+4;                                40180800
@@ -417,7 +428,7 @@ $:
               IF NUMSYMS+4 { MAXSYMS                                    40194000
               THEN BEGIN  REPLACE POINTER(SYMTAB[NUMSYMS+1]) BY         40194100
                    "00-1)DIV00 1022,00 T MOD00 1022]";                  40194200
-                   NUMSYMS := NUMSYMS+4;                                40194308
+                   NUMSYMS := NUMSYMS+4;                                40194300
                    END                                                  40194400
               ELSE ERROR(63);  % EXPRESSION IS TOO LONG FOR SYMTAB[*]   40195000
 $# PATCH 514 FOR PASCAL.XVI.O CONTAINS  2 CARDS.  PROCESS TIME FUNCTION FOR RUN
@@ -427,20 +438,20 @@ $: WHICH MEANS PLATFORM TIME, TO "CPUTIME" WHICH IS THE WIDELY ACCEPTED TERM
 $: FOR THIS QUANTITY.
 $:  NILS A OTTE,   UNIVERSITY OF NATAL, DURBAN.    AUG - NOV 1977.
 $:
-   NEWNAME("7CPUTIM","E",0);  NAMETAB3[0,THISINDEX]:=T3;                20390000
-           IF CURNAME1="7CPUTIM" AND CURNAME2="E" THEN    % "CPUTIME"   40452000
-$# PATCH 516 FOR PASCAL.XVI.O CONTAINS  2 CARDS.  CORRECT "NO LISTING" ERROR
+    NEWNAME("7CPUTIM","E",0);  NAMETAB3[0,THISINDEX]:=T3;               20390000
+            IF CURNAME1="7CPUTIM" AND CURNAME2="E" THEN   % "CPUTIME"   40452000
+$# PATCH 516 FOR PASCAL.XVI.O. CONTAINS 2 CARDS. CORRECT "NO LISTING" ERROR
 $: THIS PATCH CORRECTS AN ERROR WHEREBY IF LISTING WAS TURNED OFF
 $: AND PAGE THROW WAS INVOKED, A HEADING WAS  PRINTED REGARDLESS.
-$: DAVID A COOPER, HERIOT-WATT UNIVERSITY.....JUNE, 1978
+$: DAVID A COOPER, HERIOT-WATT UNIVERSITY.....JUNE, 1978.
 $:
               IF CX="L" THEN IF C=1 THEN                                30264000
                  IF LISTOPTION THEN HEADING ELSE                        30264500
-$# PATCH 517 FOR PASCAL.XVI.O CONTAINS  2 CARDS.
+$# PATCH 517 FOR PASCAL.XVI.O. CONTAINS 2 CARD.
 $: THIS PATCH CORRECTS AN ERROR THAT CAUSED A FILE DECLARATION
 $: TO HAVE ITS NAME STRING SPLIT OVER TWO LINES IN THE GENERATED XALGOL.
-$:   ALSO CHANGES SYMTAB FROM TYPE REAL TO TYPE ALPHA.
-$: DAVID A COOPER, HERIOT-WATT UNIVERSITY.....JUNE, 1978
+$:   ALSO CHANGES SYMTAB FORM TYPE REAL TO TYPE ALPHA.
+$: DAVID A COOPER, HERIOT-WATT UNIVERSITY.....JUNE, 1978.
 $:
 ALPHA ARRAY SYMTAB[0:MAXSYMS];     % USED BY "EXPRESSION".              10144000
              IF ALGOLCNT LSS 14 THEN WRITEALGOL;                        80103000
@@ -551,8 +562,8 @@ $POP VOIDT                                                              80064000
              END                                                        80064365
              ELSE                                                       80064370
              BEGIN                                                      80064375
-                 IF   SUBDIFF } ARRSUBSCRIPTRANGE[HISUBS,PASSSUBRANGE] -80064380
-                                ARRSUBSCRIPTRANGE[LOWSUBS,PASSSUBRANGE] 80064385
+                 IF  SUBDIFF } ARRSUBSCRIPTRANGE[HISUBS,PASSSUBRANGE] - 80064380
+                               ARRSUBSCRIPTRANGE[LOWSUBS,PASSSUBRANGE]  80064385
                                 THEN                                    80064390
                  BEGIN                                                  80064395
                     ARRSUBSCRIPTRANGE[NEXTSUBS,PASSSUBRANGE] :=         80064400
@@ -594,7 +605,7 @@ $POP VOIDT                                                              80064000
          IF  MAXPERMTAB  LEQ  MAXTOTALSUBSCRS AND PARAM  THEN           80064585
          BEGIN                                                          80064590
              ARRSUBPERMTAB[ARRNAM,MAXPERMTAB] :=                        80064595
-                    IF   FIRSTDIM  THEN NAM ELSE -1;                    80064600
+                    IF  FIRSTDIM  THEN NAM ELSE -1;                     80064600
              ARRSUBPERMTAB[PERMSUB,MAXPERMTAB] := PASSSUBRANGE;         80064605
              MAXPERMTAB := MAXPERMTAB + 1;                              80064610
          END                                                            80064615
@@ -653,8 +664,8 @@ $                                                                       80421000
                           100 ELSE 10)+DIFF,(IF DIFF>9 THEN 7 ELSE 6)); 80421420
                     PASSPERMTAB := PASSPERMTAB +1;                      80421430
                 END                                                     80421440
-                UNTIL   PASSPERMTAB = MAXPERMTAB  OR                    80421450
-                        ARRSUBPERMTAB[ARRNAM,PASSPERMTAB] ! -1;         80421460
+                UNTIL  PASSPERMTAB = MAXPERMTAB  OR                     80421450
+                       ARRSUBPERMTAB[ARRNAM,PASSPERMTAB] ! -1;          80421460
                 GEN("]#;",3,5);                                         80421470
              END                                                        80421480
              UNTIL  PASSPERMTAB = MAXPERMTAB;                           80421490
@@ -691,14 +702,14 @@ $:
           (F2 NEQ POINTERS OR LT NEQ NILTYPE) THEN %                    20814100
     BEGIN ERROR(63); %                                                  40023000
 $                                                                       50059000
-              GEN("PREAD(",6,2);  WRITEEXPR;  GEN(",",1,7); %           50079000
+              GEN("PREAD(",6,2);   WRITEEXPR;   GEN(",",1,7); %         50079000
 $                                                                       50080000
 $                                                                       50081000
               GENID("F",FILEID,5); GEN(",",1,7); %                      50082000
               IF F=NUMERIC THEN %                                       50086010
               BEGIN %                                                   50086050
-                  GEN(",",1,7);  GENINT(TYPETAB2[CURTYPE]); %           50086100
-                  GEN(",",1,7);  GENINT(TYPETAB3[CURTYPE]); %           50086150
+                  GEN(",",1,7);   GENINT(TYPETAB2[CURTYPE]); %          50086100
+                  GEN(",",1,7);   GENINT(TYPETAB3[CURTYPE]); %          50086150
               END ELSE GEN(",0,0,",4,4); %                              50086200
 $                  SET VOIDT                                            50088000
 $                  POP VOIDT                                            50093000
@@ -716,7 +727,7 @@ $:     --- --- ---- ------ ---- -- ------- ----------------
 %                                                                       40052055
 PROCEDURE SPLIT(SPLITINX,WIDTH); %                                      40052100
 VALUE SPLITINX, WIDTH; %                                                40052150
-INTEGER SPLITINX, WIDTH; %                                              40052200
+INTEGER SPLITINX, WIDTH ; %                                             40052200
 BEGIN %                                                                 40052250
     INTEGER I; %                                                        40052300
 %                                                                       40052350
@@ -751,7 +762,7 @@ BEGIN %                                    --- --- ---------            40188025
     IF INBRACKET AND NOT INRECORD THEN %                                40188275
     BEGIN %                                                             40188300
         PUTSYM(",");   THISSYML := NUMSYMS; %                           40188325
-        PUTCONST(0);   PUTSYM(" ");  PUTSYM(","); %                     40188350
+        PUTCONST(0);   PUTSYM(" ");   PUTSYM(","); %                    40188350
         FOR I:=STARTSYM+1 STEP 1 UNTIL THISSYML DO %                    40188375
         PUTTEXT(SYMTAB[I]);                                             40188400
         PUTTEXT("  1]  "); %                                            40188425
@@ -777,80 +788,80 @@ BEGIN %                                    --- --- ---------            40188025
         END; %                                                          40188930
         NUMPOINTERS := 0; %                                             40188945
     END;                                                                40188960
-    PUTSYM(",");  PUTCONST(CARDCNT);    PUTSYM(")"); %                  40188975
+    PUTSYM(",");   PUTCONST(CARDCNT);   PUTSYM(")"); %                  40188975
 END OF SET VARIABLES; %                                                 40188990
 $                                                                       40198000
               IF TYPETAB1[THISID.TYPE].FORM=SET THEN                    40274200
               BEGIN %                                                   40274220
                   GEN(",",1,7); %                                       40274240
                   GENID("W",1000|THISLEVEL+THISINDEX,5); %              40274260
-              END; %                                                    40274280
+             END; %                                                     40274280
     BOOLEAN FIRST, SPLITTED; %                                          40296000
-        PUTTEXT("SETBS(");   PUTTEXT("   3,2,");  PUTCONST(CARDCNT); %  40529000
+        PUTTEXT("SETBS(");   PUTTEXT("  3,2,");   PUTCONST(CARDCNT); %  40529000
         PUTSYM(")"); %                                                  40529300
         CURTYPE := EMPTYSET;   CURMODE := NUMBER; %                     40529600
          STARTSYM := NUMSYMS + 1; %                                     40533500
           PUTTEXT(" SETB("); %                                          40536000
             PUTSYM(",");   SYMTAB[STARTSYM] := "SETBS("; %              40544000
-        IF SPLITTED THEN PUTSYM(")"); %                                 40551500
-        IF CURSY=COMMA THEN %                                           40552000
-        BEGIN %                                                         40552200
-            SPLIT(STARTSYM,1);   SYMTAB[STARTSYM] := "SUNIO("; %        40552400
-            PUTSYM(","); %                                              40552600
-            SPLITTED := TRUE; %                                         40552800
-        END; %                                                          40552850
-       NEWTYPE;  T1 := SET;   T1.SIZE := 2;   T1.STRUCT := 0; %         40558000
-       CURMODE := NUMBER; %                                             40561000
-       IF CURTYPE=BOOLTYPE THEN %                                       40587000
-       IF CURSY NEQ ANDSY THEN ERROR(64);                               40593000
-   END ELSE %                                                           40593100
-   IF F=SET THEN %                                                      40593200
-   BEGIN %                                                              40593300
-       IF CURSY=ASTERISK THEN %                                         40593400
-       BEGIN %                                                          40593500
-           SPLIT(STARTSYM,1);   SYMTAB[STARTSYM] := "SINTS("; %         40593600
-           PUTSYM(","); %                                               40593700
-       END ELSE ERROR(64); %                                            40593800
-       MODE := NUMBER; %                                                40593900
-     IF F=SET THEN PUTSYM(")"); %                                       40608500
-       SPLIT(STARTSYM,1); %                                             40650000
-       IF CURSY=PLUS THEN SYMTAB[STARTSYM] := "SUNIO(" ELSE %           40651000
-       IF CURSY=MINUS THEN SYMTAB[STARTSYM] := "SDIFF(" ELSE %          40652000
-          ERROR(64); %                                                  40653000
-       PUTSYM(",");   MODE := NUMBER; %                                 40654000
+          IF SPLITTED THEN PUTSYM(")"); %                               40551500
+          IF CURSY=COMMA THEN %                                         40552000
+          BEGIN %                                                       40552200
+              SPLIT(STARTSYM,1);   SYMTAB[STARTSYM] := "SUNIO("; %      40552400
+              PUTSYM(","); %                                            40552600
+              SPLITTED := TRUE; %                                       40552800
+         END; %                                                         40552850
+        NEWTYPE;   T1 := SET;   T1.SIZE := 2;   T1.STRUCT := 0; %       40558000
+        CURMODE := NUMBER; %                                            40561000
+        IF CURTYPE=BOOLTYPE THEN %                                      40587000
+        IF CURSY NEQ ANDSY THEN ERROR(64);                              40593000
+    END ELSE %                                                          40593100
+    IF F=SET THEN %                                                     40593200
+    BEGIN %                                                             40593300
+        IF CURSY=ASTERISK THEN %                                        40593400
+        BEGIN %                                                         40593500
+            SPLIT(STARTSYM,1);   SYMTAB[STARTSYM] := "SINTS("; %        40593600
+            PUTSYM(","); %                                              40593700
+        END ELSE ERROR(64); %                                           40593800
+        MODE := NUMBER; %                                               40593900
+      IF F=SET THEN PUTSYM(")"); %                                      40608500
+        SPLIT(STARTSYM,1); %                                            40650000
+        IF CURSY=PLUS THEN SYMTAB[STARTSYM] := "SUNIO(" ELSE %          40651000
+        IF CURSY=MINUS THEN SYMTAB[STARTSYM] := "SDIFF(" ELSE %         40652000
+           ERROR(64); %                                                 40653000
+        PUTSYM(",");   MODE := NUMBER; %                                40654000
 $                                                                       40655000
-     IF F=SET THEN PUTSYM(")"); %                                       40668500
+      IF F=SET THEN PUTSYM(")"); %                                      40668500
 $                                                                       40688000
-       IF CURSY=EQLSY THEN SYMTAB[STARTSYM] := "SEQUA(" %               40713000
-       ELSE                                                             40713150
-       IF CURSY=NEQSY THEN %                                            40713300
-       BEGIN %                                                          40714000
-           SPLIT(STARTSYM,1);   SYMTAB[STARTSYM]:= " NOT  "; %          40714150
-           SYMTAB[STARTSYM+1] := "SEQUA("; %                            40714300
-       IF TYPETAB1[LEFTTYPE].FORM=SET THEN %                            60080100
-       BEGIN %                                                          60080200
-          SYMTAB[1] := "SSTOR(";    NUMSYMS := NUMSYMS - 3; %           60080300
-          EXPRESSION; %                                                 60080400
-          PUTSYM(")");   CHECKTYPES(LEFTTYPE,CURTYPE); %                60080500
-          WRITEEXPR; %                                                  60080600
-       END ELSE %                                                       60080700
-         IF TYPETAB2[TX] LSS 0 OR TYPETAB3[TX] GTR 93 THEN ERROR(51);   70210000
-       T1.SIZE := TSIZE := 2;   TYPETAB1[TYPEINDEX] := T1; %            70214000
-       IF T1.FORM=SET THEN %                                            80046200
-       BEGIN %                                                          80046400
-           GEN(",",1,7);   GENID("W",LEVEL1000+NAM,5); %                80046600
-       END; %                                                           80046800
-         IF T1.FORM=SET THEN %                                          80064700
-         BEGIN %                                                        80064750
-             GEN(",0",2,6); %                                           80064800
-             IF NOT PARAM THEN GEN(":1",2,6); %                         80064850
-         END; %                                                         80064900
-               BEGIN %                                                  80608105
-              IF T1.FORM=SET THEN %                                     80608111
-               BEGIN %                                                  80608113
-                   GEN(",",1,7); %                                      80608115
-                   GENID("W",1000|(CURLEVEL+1)+NAM,5); %                80608117
-               END;                                                     80608118
+        IF CURSY=EQLSY THEN SYMTAB[STARTSYM] := "SEQUA(" %              40713000
+        ELSE                                                            40713150
+        IF CURSY=NEQSY THEN %                                           40713300
+        BEGIN %                                                         40714000
+            SPLIT(STARTSYM,1);   SYMTAB[STARTSYM]:= " NOT  "; %         40714150
+            SYMTAB[STARTSYM+1] := "SEQUA("; %                           40714300
+        IF TYPETAB1[LEFTTYPE].FORM=SET THEN %                           60080100
+        BEGIN %                                                         60080200
+            SYMTAB[1] := "SSTOR(";   NUMSYMS := NUMSYMS - 3; %          60080300
+            EXPRESSION; %                                               60080400
+            PUTSYM(")");   CHECKTYPES(LEFTTYPE,CURTYPE); %              60080500
+            WRITEEXPR; %                                                60080600
+        END ELSE %                                                      60080700
+          IF TYPETAB2[TX] LSS 0 OR TYPETAB3[TX] GTR 93 THEN ERROR(51);  70210000
+        T1.SIZE := TSIZE := 2;   TYPETAB1[TYPEINDEX] := T1; %           70214000
+        IF T1.FORM=SET THEN %                                           80046200
+        BEGIN %                                                         80046400
+            GEN(",",1,7);   GENID("W",LEVEL1000+NAM,5); %               80046600
+        END; %                                                          80046800
+          IF T1.FORM=SET THEN %                                         80064700
+          BEGIN %                                                       80064750
+              GEN(",0",2,6); %                                          80064800
+              IF NOT PARAM THEN GEN(":1",2,6); %                        80064850
+          END; %                                                        80064900
+              BEGIN %                                                   80608105
+             IF T1.FORM=SET THEN %                                      80608111
+              BEGIN %                                                   80608113
+                  GEN(",",1,7); %                                       80608115
+                  GENID("W",1000|(CURLEVEL+1)+NAM,5); %                 80608117
+              END;                                                      80608118
              END; %                                                     80608119
              IF TYPETAB1[NAMETAB3[CURLEVEL+1,PARAMTAB[I].PARAMNAME].TYPE80627200
                          ].FORM=SET                                     80627205
@@ -858,14 +869,14 @@ $                                                                       40688000
                       GEN(",",1,7); %                                   80627600
                       GENID("W",1000|(CURLEVEL+1)+PARAMTAB[I].PARAMNAME 80627800
                             ,5); %                                      80627801
-                 END;                                                   80627850
+                  END;                                                  80627850
 $#PATCH 602 FOR PASCAL.XVI./ CONTAINS 5 CARDS. CORRECT REPRESENTATION OF "NIL".
 $: RECEIVED FROM DAG LANGHYMR ON 6/07/78.
 $: DAVID A COOPER , HERIOT-WATT UNIVERSITY... JULY 1978.
 NILTYPE := 6;             %*** TYPE OF "NIL" ***                        20363000
 T1.FORM := POINTERS;    TYPETAB1[6] := T1;                              20364000
 EMPTYSET := 7; %                                                        20364500
-T1.FORM := SET;   TYPETAB1[7] := T1;                                    20365000
+T1.FORM := SET;    TYPETAB1[7] := T1;                                   20365000
 NUMTYPES := 7; %                                                        20365500
 $# PATCH 603 FOR PASCAL XVI.O CONTAINS 6 CARDS. CORRECT TO PATCH 601
 $:   DAVID A COOPER & S O ANDERSON, HERIOT-WATT UNIVERSITY.   UST AUGUST 1978
@@ -876,7 +887,7 @@ $:
         IF CURSY = PLUS THEN SYMTAB[FIRSTSYM] := "SUNIO(" ELSE          40651000
         IF CURSY = MINUS THEN SYMTAB[FIRSTSYM] := "SDIFF(" ELSE         40652000
          ERROR(64);                                                     40653000
-$# PATCH 614 FOR PASCAL.XVI.O. CONTAINS 7 CARDS.
+$# PATCH 615 FOR PASCAL.XVI.O. CONTAINS 7 CARDS.
 $                                                                       40105100
 $                                                                       40105200
 $                                                                       40105300
@@ -888,7 +899,7 @@ $# PATCH 700 FOR PASCAL.XVI.O  HAS  179 CARDS.   REDUCE THRASHING BY CODE CHANGE
 $: TO IMPROVE RUN TIME EFFICIENCY BY REAARRANGING THE THE COMPILERS CODE.
 $: THE COMPILER HAD A HIGH OVERLAY I/O TIME AND HIGH ELAPSED TIME IN RELATION
 $: TO THE PROCESS TIME, AND OBSERVATION OF THE B5700 CONFIRMED THAT IT WAS
-$: THRASHING IN 32K.  THIS PATCH ATTEMPTS TO REDUCE THE CORE REQUIREMENTS BY
+$: THRASHING IN 32K.  THIS PATCH ATTEMPTS TO REDUCE THE CORE REQUIREMENT BY
 $: REARRANGING THE SEGMENTATION OF THE CODE.  LARGE SEGMENTS ARE ELIMINATED
 $: SO AS TO AVOID PULLING CODE THAT WILL NOT BE EXECUTED INTO CORE AND TO
 $: RELEASE CODE SEGMENTS AS SO AS EXECUTION HAS PASSED. FOR EXAMPLE, THE
@@ -906,9 +917,9 @@ $:
 $                                                                       10167000
 $                                                                       10168000
 $                                                                       10169000
-  VALUE       NAME1,NAME2,TABLE,DECL;                                   20016000
-  REAL        NAME1,NAME2;                                              20017000
-  INTEGER                 TABLE;  BOOLEAN DECL;                         20018000
+  VALUE           NAME1,NAME2,TABLE,DECL;                               20016000
+  REAL            NAME1,NAME2;                                          20017000
+  INTEGER                     TABLE;  BOOLEAN DECL;                     20018000
   FORWARD;                                                              20019000
 PROCEDURE  PRINTERRORS;  FORWARD;                                       20020000
 PROCEDURE  HEADING;          %*** PRINTS A HEADING AT START OF NEW PAGE.20026000
@@ -917,7 +928,7 @@ END OF HEADING;                                                         20033000
 PROCEDURE  PRINTLINE;        %*** PRINTS A PASCAL SOURCE CODE LINE      20036000
 BEGIN                        DEFINE NEWSEGMENT = HERE #;                20037000
 END OF PRINTLINE;                                                       20047000
-PROCEDURE  NEWCARD;          %*** READS A NEW PASCSAL SOURCE CODE CARD  20050000
+PROCEDURE  NEWCARD;          %*** READS A NEW PASCAL SOURCE CODE CARD   20050000
 BEGIN                        DEFINE RESULT = ICARD[*], ETC #;           20051000
     REPLACE XLINEPNT BY " " FOR 16 WORDS;                               20056000
     REPLACE LINEPNT  BY CARDPNT FOR 10 WORDS, XLINEPNT FOR 6 WORDS;     20057000
@@ -925,7 +936,7 @@ END OF NEWCARD;                                                         20061000
 DEFINE GEN(GEN1,GEN2,GEN3) = GENI(TRUE,GEN1,GEN3,GEN2) #,               20063100
 GENID(GENID1,GENID2,GENID3)= GENI(FALSE,GENID1,GENID2,GENID3) #;        20063200
                                                                         20063300
-PROCEDURE  GENI(GENT, TXT, NUM, N);                                     20063400
+PROCEDURE  GENI(GENT, TXT, NUM, N );                                    20063400
 VALUE GENT, TXT, NUM, N;                                                20063500
 BOOLEAN GENT;  ALPHA TXT;  INTEGER NUM, N;                              20063600
 BEGIN                        DEFINE START = NUM #, NDIG = N #;          20063700
@@ -933,34 +944,34 @@ BEGIN                        DEFINE START = NUM #, NDIG = N #;          20063700
     IF GENT THEN              %*** GENERATE A TEXT "TXT", CONSISTING OF 20064000
     TEXT[0] := TXT;                                                     20067000
 END                                                                     20070000
-ELSE                        %*** GENERATE AN ALGOL IDENTIFIER.          20073000
+ELSE                         %*** GENERATE AN ALGOL IDENTIFIER.         20073000
     CH[0] := TXT;                                                       20076000
 END END  GENI;                                                          20079000
 PROCEDURE  GENINT( N );                                                 20082000
 VALUE N;  INTEGER N;                                                    20083000
-BEGIN                       DEFINE RESULT = ALGOL CODE #;               20084000
+BEGIN                        DEFINE RESULT = ALGOL CODE #;              20084000
     INTEGER NABS, NSIZE;                                                20085000
 END OF GENINT;                                                          20097000
-PROCEDURE WRITEALGOL;       %*** WRITES A COMPLETED ALGOL CARD TO       20145000
+PROCEDURE WRITEALGOL;         %*** WRITES A COMPLETED ALGOL CARD TO     20145000
     DEFINE NEWSEGMENT = HERE #;                                         20146100
     DEFINE NEWSEGMENT = HERE #;                                         20168100
     DEFINE NEWSEGMENT = HERE #;                                         20180100
     DEFINE NEWSEGMENT = HERE #;                                         20193100
-ALPHA THISID, CURNAME1, CURNAME2, TNAME;  % USED IN SCANNER             20205000
+ALPHA THISID, CURNAME1, CURNAME2;  % USED IN SCANNER                    20205000 TNAME?
 PROCEDURE  SEARCHTAB( TAB ); %*** SEARCH NAME TABLE "TAB" FOR THE       20208000
 VALUE TAB;  INTEGER TAB;     %***  IDENTIFIER JUST READ.                20208100
 END OF SEARCHTAB;                                                       20221000
 PROCEDURE  SEARCH;           %*** SEARCH ALL TABLES CURRENTLY IN USE.   20223000
 BEGIN                        DEFINE RESULT = THISID #;                  20224000
 END OF SEARCH;                                                          20233000
-PROCEDURE  NEWNAME( NAME1, NAME2, TAB );                                20236000
+PROCEDURE  NEWNAME( NAME1,NAME2, TAB );                                 20236000
 VALUE NAME1, NAME2, TAB;                                                20236100
 ALPHA NAME1, NAME2;  INTEGER TAB;                                       20236200
 END OF NEWNAME;                                                         20250000
     DEFINE NEWSEGMENT = HERE #;                                         20515100
     DEFINE NEWSEGMENT = HERE #;                                         20533100
     DEFINE NEWSEGMENT = HERE #;                                         20546100
-PROCEDURE  CHECKTYPES(LEFTTYPE, RIGHTTYPE );                            20802000
+PROCEDURE  CHECKTYPES( LEFTTYPE, RIGHTTYPE );                           20802000
 VALUE LEFTTYPE, RIGHTTYPE;  INTEGER LEFTTYPE, RIGHTTYPE;                20803000
 BEGIN                                                                   20804000
     REAL TT1, TT2;  INTEGER F1, F2, LT, RT;                             20805000
@@ -971,7 +982,7 @@ BEGIN              DEFINE RESULTS = FILENAME & LPARFOUND #;             20845000
 END OF FILEPARAM;                                                       20869000
 REAL CURVAL;  INTEGER CURLENGTH;                                        20872000
                                                                         20873000
-PROCEDURE CONSTANT( CVAL, CTYPE );                                      20874000
+PROCEDURE  CONSTANT( CVAL, CTYPE );                                     20874000
 REAL CVAL;  INTEGER CTYPE;                                              20875000
 BEGIN                                                                   20876000
     INTEGER TFORM;  BOOLEAN SIGNED, NEGATIVE;                           20876100
@@ -982,10 +993,10 @@ INTEGER LASTCHARPOS;  %( CURVAL, CURLENGTH MOVED TO 20872000 )          30084000
 PROCEDURE  INSYMBOL;         %*** IDENTIFIES THE NEXT SYMBOL ******     30087000
 BEGIN                                                                   30087100
                                                                         30087200
-    PROCEDURE   NEXTCHAR;    %*** GETS THE NEXT CHARACTER.              30088000
+    PROCEDURE  NEXTCHAR;     %*** GETS THE NEXT CHARACTER.              30088000
     END OF NEXTCHAR;                                                    30093000
-$                                                           SET VOIDT   30095000
-$                                                           POP VOIDT   30098000
+$                                                          SET VOIDT    30095000
+$                                                          POP VOIDT    30098000
     DEFINE  T1 = EXP #;      % USED AT 30178000                         30099100
             BEGIN                 DEFINE NEWSEGMENT = HERE #;           30261100
             END NEWSEGEMENT;                                            30282200
@@ -993,24 +1004,24 @@ $                                                                       40016000
 $                                                                       40017000
 INTEGER  EXPRLEVEL;                                                     40018000
 DEFINE PUTSYM(S) = PUTTEXT( (S)&1[41:5:6] ) #;                          40029000
-$                                                           SET VOIDT   40029900
-$                                                           POP VOIDT   40033000
+$                                                          SET VOIDT    40029900
+$                                                          POP VOIDT    40033000
 DEFINE PUTDUMMY = PUTTEXT("3000000") #;                                 40041000
-$                                                           SET VOIDT   40042000
-$                                                           POP VOIDT   40044000
-PROCEDURE  WRITEEXPR;       %*** WRITE GENERATED ALGOL EXPRESSION       40053000
+$                                                          SET VOIDT    40042000
+$                                                          POP VOIDT    40044000
+PROCEDURE  WRITEEXPR;        %*** WRITE GENERATED ALGOL EXPRESSION      40053000
     REAL SX;  INTEGER T1, TX;                                           40054100
 END OF WRITEEXPR;                                                       40066000
-PROCEDURE  CHECKEXPR( LLIM, ULIM );   %*** WRITE CODE TO CHECK VALUE    40069000
+PROCEDURE  CHECKEXPR( LLIM, ULIM );    %*** WRITE CODE TO CHECK VALUE   40069000
     VALUE LLIM, ULIM;  INTEGER LLIM, ULIM;                              40069100
-BEGIN                                 DEFINE CHECK = VALUE #;           40070000
+BEGIN                                  DEFINE CHECK = VALUE #;          40070000
 END OF CHECKEXPR;                                                       40077000
     INTEGER T1, T5;          % USED ONCE EACH                           40086100
       T1:=T.FIRSTWITHSYM;  T5:=T.LASTWITHSYM;                           40094000
       FOR T1:=T1 STEP 1 UNTIL T5 DO PUTTEXT(WITHTAB[T1]);               40095000
-    DEFINE  T1 = T #;      % USED AT 405558000                          40298000
-$                                                           SET VOIDT   40299000
-$                                                           POP VOIDT   40309000
+    DEFINE  T1 = T #;   % USED AT 40558000                              40298000
+$                                                          SET VOIDT    40299000
+$                                                          POP VOIDT    40309000
                                                                         40331000
          PROCEDURE PARAMETER;  %*** CHECK THAT THE FUNCTION HAS 1 PARAM.40332000
             BEGIN                                                       40333000
@@ -1029,15 +1040,15 @@ $                                                                       60396000
            THISID.IDCLASS=CONST AND BOOLEAN(THISID.FORMAL) OR           60423000
            THISID.IDCLASS=FUNC                                          60423200
         THEN  ASSIGNMENT  ELSE                                          60424000
-$                                                           SET VOIDT   70013000
-$                                                           POP VOIDT   70016000
-   VALUE            RECTAB,FIRSTADDR;                                   70018000
-   INTEGER          RECTAB,FIRSTADDR,LASTADDR;                          70019000
-$                                                           SET VOIDT   70022000
-$                                                           POP VOIDT   70034000
+$                                                          SET VOIDT    70013000
+$                                                          POP VOIDT    70016000
+  VALUE             RECTAB,FIRSTADDR;                                   70018000
+  INTEGER           RECTAB,FIRSTADDR,LASTADDR;                          70019000
+$                                                          SET VOIDT    70022000
+$                                                          POP VOIDT    70034000
                                                                         70035000
-PROCEDURE   TYPEDECL(  TTYPE, TSIZE );  %***** TYPE DECLARATION *****   70036000
-  INTEGER              TTYPE, TSIZE;    %****************************   70037000
+PROCEDURE  TYPEDECL( TTYPE, TSIZE );    %***** TYPE DECLARATION *****   70036000
+  INTEGER            TTYPE, TSIZE;      %****************************   70037000
 BEGIN                                                                   70038000
     INTEGER RECINX, ARRSTRUCT, TX, SX, T, N;  REAL T1, T2, T3;          70039000
     BOOLEAN  FIRST, PACKED;                                             70040000
@@ -1081,42 +1092,42 @@ $                                                                       70042000
                                         DEFINE DEC = VAR #;             80496100
     IF    CURSY=FUNCSY OR CURSY=PROCSY    %                             80540900
     THEN BEGIN                            DEFINE DEC = CODE #;          80540910
-    END OF SEGMENT FOR PROCEDURE DECLARATIONS;                          80648100
+    END OF SEGMENT FOR PROCEDURE DECLARATIONS;                          80658100
 $# PATCH 701 FOR PASCAL.XVI.O CONTAINS 14 CARDS.  REDUCE THRASHING BY ARRAY CUTS
 $: TO IMPROVE RUN TIME EFFICIENCY BY REDUCING ARRAY SIZES.  THE MOST SIGNIFICANT
 $: CONTRIBUTION TO THE COMPILERS THRASHING BEHAVIOUR WAS THE EXCESSIVELY LARGE
 $: DATA ARRAYS. THIS PATCH SUCCEEDS IN DRASTICALLY REDUCING THE CORE REQUIREMENT
 $: OF THE COMPILER BY MAKING MOST OF THE LARGE ARRAYS MUCH SMALLER WITHOUT
 $: IMPOSING UNREASONABLE RESTRICTIONS.  IN PARTICULAR, THE THREE ARRAYS,
-$: NAMETAB1, NAMETAB2, NAMETAB3 WRE EHACH [0:50, 0:1022], AND HAVE BEEN REDUCED
+$: NAMETAB1, NAMETAB2, NAMETAB3 WeRE EACH [0:50, 0:1022], AND HAVE BEEN REDUCED
 $: TO [0:30, 0:307].  THESE REDUCTIONS HAVE NOT PREVENTED THE COMPILATION OF
 $: A LARGE PASCAL PROGRAM OF ABOUT 4000 LINES, NAMELY THE P4 PASCAL COMPILER
-$: FROM ZURICH.  IN FACT, PRIOT TO THE CHANGES INTRODUCED BY PATCHES 700 & 701,
+$: FROM ZURICH.  IN FACT, PRIOR TO THE CHANGES INTRODUCED BY PATCHES 700 & 701,
 $: THE P4 PASCAL COMPILER TOOK 60 MINUTES ELAPSED TIME TO COMPILE, WHICH WAS
 $: REDUCED TO 9 MINUTES BY THESE PATCHES, WHILE THE PROCESS TIME HAS REMAINED
 $: CONSTANT AT 9 MINUTES.
 $:**** NOTE THAT IF "MAXNAMES" IS CHANGED THEN THERE ARE 7 DEFINES IN THE FILE
 $:     PASCAL/PRELUDE THAT MUST ALSO BE CHANGED.
-$: "MAXNAMES" WAS CHOSEN AS A PRIME NUMBER AS IT IS USED AS A MODULUS FOR A HASH
+$: "MAXNAMES" IS CHOSEN AS A PRIME NUMBER AS IT IS USED AS A MODULUS FOR A HASH
 $: FUNCTION.  THE PASCAL IDENTIFIERS ARE TRANSLATED TO ALGOL NAMES USING LEVEL
 $: AND HASH INDEX.  HENCE CHANGING "MAXNAMES" CHANGES THE ALGOL NAMES FOR
 $: "INPUT", "OUTPUT", & "PRT25".
 $:  NILS A OTTE,   UNIVERSITY OF NATAL, DURBAN     AUG - NOV 1977.
 $:
 DEFINE MAXTABLES  = 30 #,    %MAX NUMBER OF LEVELS  IN IDENTIFIER TABLE.10042000
-       MAXNAMES   =307 #,    %MAX NAMES IN EACH ROE OF IDENTIFIER TABLE.10043000
+       MAXNAMES   =307 #,    %MAX NAMES IN EACH ROW OF IDENTIFIER TABLE.10043000
                              % ONLY USED IN WITH STATEMENT TO TEST      10044001
        MAXCASES   =64 #,     %MAX LABELS IN A CASE-STATEMENT.           10045000
-       MAXLABS    =50 #,     %MAX NUMBER OF LABELS.                     10046000
+       MAXLABS    =50 #,     %MAX NUMBER OF IN PROGRAM LABELS.          10046000
        MAXPARAMS  =200 #,    %MAX NUMBER OF PARAMETERS IN WHOLE PROGRAM.10047000
        MAXTYPES   =250 #,    %MAX NUMBER OF DIFFERENT TYPES.            10048000
-       MAXCONSTS  =100 #,    %SIZE OF CONSTANT TABLE.                   10049000
+       MAXCONSTS  =100 #,    %SIZE OF TABLE FOR CONSTANTS.              10049000
        MAXWITHSYMS= 70 #,    %MAX NUMBER OF SYMBOLS USED BY WITH-STATMS.10051000
        MAXSYMS    =200 #,    %MAX NUMBER OF SYMBOLS IN ONE EXPRESSION.  10052000
        LISTLENGTH =100 #,    %MAX LENGTH OF VAR AND PARAM LISTS.        10053000
        MAXEXTFILES=10 #,     %MAX NUMBER OF EXTERNAL FILES.             10054000
        MAXFILES   =10 #,     %MAX NUMBER OF FILES DECLARED AT ONE TIME. 10055000
-       MAXPNTRS   =10 #;     %MAX NUMBER OF UNDECLARED POINTERS.        10056000
+       MAXPNTRS   =10 #;     %MAX NUMBER OF UNDECLARED POINTERS (FORWD).10056000
 $# PATCH 702 FOR PASCAL.XVI.O CONTAINS  4 CARDS.  BOOLEAN ARRAY "ERR" 120 TO 4
 $: TO EXTEND THE REDUCTIONS OF PATCH 701 TO THE BOOLEAN ARRAY "ERR" FOR NOTING
 $: THE SYNTAX ERRORS THAT HAVE OCCURRED.  THIS PATCH COMPRESSES THE ARRAY FROM
@@ -1126,7 +1137,7 @@ $: WHICH REPORTS THE SYNTAX ERRORS.
 $:  NILS A OTTE,   UNIVERSITY OF NATAL, DURBAN.    AUG - NOV 1977.
 $:
 ARRAY ERRP[0:3];   % HOLDS 128 BITS     % RECORDS ERROR MESSAGES USED.  10156000
-DEFINE ERR[ERR1] = BOOLEAN(0&ERRP[ERR1.[6:2]][0:ERR1.[4:5]:1]) #;       10156108
+DEFINE ERR[ERR1] = BOOLEAN(0&ERRP[ERR1.[6:2]][0:ERR1.[4:5]:1]) #;       10156100
     ERRP[ERRNUM.[6:2]]:=ERRP[ERRNUM.[6:2]] & 1[ERRNUM.[4:5]:0:1];       20182000
     REPLACE POINTER(ERRLINE[0])+4 BY NUMERRS FOR 4 DIGITS;              20194900
 $# PATCH 703 FOR PASCAL.XVI.O CONTAINS  6 CARDS.  REDUCE THRASHING BY SAVE CORE
@@ -1134,17 +1145,17 @@ $: TO IMPROVE RUN-TIME EFFICIENCY BY REDUCING NON-OVERLAYABLE AREAS.
 $: THIS PATCH REDUCES THE SAVE CORE REQUIREMENTS BY DECREASING THE FILE BLOCK
 $: SIZES AND ALSO THE NUMBER OF BUFFERS WITHOUT UNDULY RETARDING THE COMPILATION
 $: SPEED.  THE SIZE OF THE DISK AREAS IS KEPT A MULTIPLE OF THE ORIGINAL BLOCK
-$: SIZE WHERE RELEVANT TO AVOID INCOMPATIBILITY PROBLEMES. COMPARABLE REDUCTIONS
+$: SIZE WHERE RELEVANT TO AVOID INCOMPATIBILITY PROBLEMS.  COMPARABLE REDUCTIONS
 $: IN BLOCK SIZES OF THE OBJECT PROGRAM ARE ALSO MADE.
 $:  NILS A OTTE,   UNIVERSITY OF NATAL, DURBAN.    AUG - NOV 1977.
 $:
-FILE CARD "SOURCE" (1,10,38);      % PASCAL SOURCE CODE INPUT FILE      10035000
+FILE CARD "SOURCE" (1,10,30);      % PASCAL SOURCE CODE INPUT FILE      10035000
 FILE PASCALGOL DISK SERIAL [20:300] (1,10,30,SAVE 0);  % ALGOL CODE FILE10037000
 FILE XREFFILE DISK SERIAL [20:3000] (1,3,30);    % FOR CROSS REFERENCE  10137000
             IF RECSIZE=1 OR RECSIZE=10 THEN GENINT(30)                  80119000
             GEN(",SAVE",6,3);                                           80122000
             GEN("30);", 4,4);                                           80123000
-$# PATCH 704 FOR PASCAL.XVI.O HAS  8 CARDS.     REDUCE OVERHEADS IN COPYING FILE
+$# PATCH 704 FOR PASCAL.XVI.O  HAS  8 CARDS.    REDUCE OVERHEADS IN COPYING FILE
 $: TO REDUCE THE COMPILER-S OVERHEADS.  FIRSTLY, THE ALGOL CODE FILE
 $: PASCRUN/DISK  IS RENAMED  PASCAL/PRELUDE.  ORIGINALLY, THE COMPILER COPIED
 $: THE PASCAL/PRELUDE FILE INTO THE GENERATED CODE FILE BEFORE STARTING TO
@@ -1159,12 +1170,12 @@ $:  NILS A OTTE,   UNIVERSITY OF NATAL, DURBAN.    AUG - NOV 1977.
 $:
        ERRORS   (I5," ERRORS DETECTED ",20("#") /),                     10188000
        ALIST    ("$ SET LIST "),                                        10189000
-       MERGE    ("$ SET TAPE RESET $" /                                 10190100
+       MERGE    ("$ SET TAPE  RESET $" /                                10190100
                  "$ RESET TAPE", T73,"99000000" ),                      10190200
        TERMMESS ("****    COMPILATION TERMINATED.");                    10192000
 WRITE(PASCALGOL,MERGE);  % ALGOL MUST COMPILE PRELUDE FIRST             90022000
-$                                                           SET VOIDT   90023000
-$                                                           POP VOIDT   90032000
+$                                                          SET VOIDT    90023000
+$                                                          POP VOIDT    90032000
 $:       "; ALGOL FILE TAPE= PASCAL/PRELUDE SERIAL; ALGOL FILE CARD=",  90119000
 $# PATCH 705 FOR PASCAL.XVI.O CONTAINS 21 CARDS.  GENERATE A BETTER ZIP
 $: THIS PATCH TIDIES UP THE CODE THAT GENERATES THE ZIP TO PASS CONTROL TO THE
@@ -1179,10 +1190,10 @@ $:  ARRAY ZIPARRAY[0:16];                                               90092000
     DEFINE PPROGNAME = 13 #,   PALGOLNAME = 14 #,                       90095000
            PLIBRARY  = 15 #,   PUSER      = 16 #,                       90096000
            P(P1)     = POINTER(ZIPARRAY[P1])+1 FOR 7 #;                 90097000
-$                                                           SET VOIDT   90098000
-$                                                           POP VOIDT   90104000
+$                                                          SET VOIDT    90098000
+$                                                          POP VOIDT    90104000
 $                                                                       90109000
-    ZIPARRAY[PPROGNAME]:=PROGNAME;   ZIPARRAY[PALGOLNAME]:=ALGOLNAME;   90112000
+    ZIPARRAY[PPROGNAME]:=PROGNAME;  ZIPARRAY[PALGOLNAME]:=ALGOLNAME;    90112000
     ZIPARRAY[PLIBRARY]:= IF SAVEFACTOR>0 THEN "LIBRARY" ELSE            90113000
                          IF SAVEFACTOR<0 THEN " SYNTAX" ELSE " & RUN "; 90114000
     ZIPARRAY[PUSER]:=USER;                                              90115000
@@ -1191,17 +1202,17 @@ $                                                                       90109000
          " XALGOL ", P(PLIBRARY),                                       90118000
          "; ALGOL FILE TAPE= PASCAL/PRELUDE SERIAL; ALGOL FILE CARD=",  90119000
          P(PALGOLNAME), "/", P(PUSER), " SERIAL; END.";                 90120000
-$                                                           SET VOIDT   90121000
-$                                                           POP VOIDT   90128000
-$# PATCH 708 FOR PASCAL.XVI.O CONTAINS 25 CARDS. LINE PRINT FILE MAY BE DISK
+$                                                          SET VOIDT    90121000
+$                                                          POP VOIDT    90128000
+$# PATCH 708 FOR PASCAL.XVI.O CONTAINS 25 CARDS.  LINE PRINT FILE MAY BE DISK
 $: TO ENABLE THE COMPILER-S PRINT FILE TO BE LABEL EQUATED TO DISK AS FOR OTHER
 $: B5700 COMPILERS.  IN PARTICULAR, THIS PATCH CHANGES THE NAME TO LINE TO BE
-$: CONSISTENT WITH ALL THE SYSTEM COMPILERS.  THE ABILITY TO LABEL EQUATED FILE
+$: CONSISTENT WITH ALL THE SYSTEM COMPILERS.  THE ABILITY TO LABEL EQUATE FILE
 $: "LINE" TO DISK IS NECESSARY IF THE COMPILER IS TO BE USED FROM A TERMINAL.
 $: NOTE THAT A BLOCKED FILE SHOULD NOT HAVE VARIABLE LENGTH RECORDS IF IT IS
 $: TO BE LABEL EQUATED TO A PRINTER.  IF LESS THAN A THE MAX NUMBER OF WORDS PER
 $: RECORD IS WRITTEN, THE BALANCE OF THE RECORD REMAINS UNCHANGED FROM WHAT WAS
-$: LAST IN THE FILE BUFFER, SO THAT ON BEING PRINTED "GARBAGE" APPEARS AT THE
+$: LAST IN THE FILE BUFFER, SO THAT ON BEING PRINTED "GARBAGE", APPEARS AT THE
 $: END OF SUCH LINES.
 $:  NILS A OTTE,   UNIVERSITY OF NATAL, DURBAN.    AUG - NOV 1977.
 $:
@@ -1210,14 +1221,14 @@ SAVE FILE OUT LINE DISK SERIAL [20:1200] (1,17,90,SAVE 1); % PRINT FILE 10036000
 ARRAY ICARD, ALGOLCARD[0:9], LINES, XLINE[0:16];                        10130000
                              % AVOID BLOCKING VARIABLE LENGTH RECORDS   10130001
 ARRAY HEADTEXT, ERRLINE[0:16];                                          10133000
-      WRITE( LINE[NO], 17,XLINE[*]);                                    20042000
-      WRITE( LINE[NO], 17,ERRLINE[*]);                                  20043000
-    WRITE( LINE[NO], 17,XLINE[*]);                                      20045000
-    WRITE( LINE[NO], 17,ERRLINE[*]);                                    20195000
+      WRITE( LINE[NO],17,XLINE[*]);                                     20042000
+      WRITE( LINE[NO],17,XLINE[*]);                                     20043000
+    WRITE(LINE, 17,LINES[*]);                                           20045000
+    WRITE(LINE, 17,ERRLINE[*]);                                         20195000
     LINEPNT :=POINTER(LINES[1]);                                        20315000
     REPLACE LINEPNT-8 BY " " FOR 17 WORDS;                              20317000
-    REPLACE XLINEPNT-8 BY LINEPNT-8 FOR 17 WORDS;                       20318000
-    REPLACE POINTER(ERRLINE[*]) BY "****   ", LINEPNT FOR 16 WORDS;     20319000
+    REPLACE XLINEPNT-8 BY LINEPNT-8  FOR 17 WORDS;                      20318000
+    REPLACE POINTER(ERRLINE[*]) BY "****    ", LINEPNT FOR 16 WORDS;    20319000
     REPLACE ALGOLPNT BY LINEPNT FOR 9 WORDS;                            20321000
     REPLACE POINTER(HEADTEXT[*]) BY LINEPNT FOR 10 WORDS, "PAGE 1  ",   20326000
                                     LINEPNT FOR  6 WORDS;               20326100
@@ -1226,7 +1237,7 @@ ARRAY HEADTEXT, ERRLINE[0:16];                                          10133000
           WRITE(LINE, 17,XREFLINE[*]);  LINECNT:=LINECNT+1;             20560000
         WRITE(LINE, 17,XREFLINE[*]);  LINECNT:=LINECNT+1;               20571000
             WRITE(LINE, TERMMESS);                                      90084000
-     WRITE(LINE, NOERRORS);                                             90111000
+      WRITE(LINE, NOERRORS);                                            90111000
     WRITE(LINE, ERRORS,NUMERRS);                                        91110000
     WRITE(LINE, ERRORMESS1[I]);                                         91112000
     WRITE(LINE, ERRORMESS2[I-60]);                                      91114000
@@ -1241,15 +1252,15 @@ $: THE LIST OPTION IS SET AFTER THE FIRST CARD OR EXPLICITLY THEREAFTER, OR
 $: IN THE "PRINTERRORS" ROUTINE.
 $:  NILS A OTTE,   UNIVERSITY OF NATAL, DURBAN.    AUG - NOV 1977.
 $:
-    IF PAGECNT=1 THEN WRITE(LINE[NO],17,HEADTEXT[*]) ELSE               20029000
+    IF PAGECNT=1 THEN WRITE(LINE[NO],17,HEADTEXT[*]) ELSE               20029900
     WRITE( LINE[PAGE]);                                                 20030000
     WRITE( LINE[DBL],17,HEADTEXT[*]);                                   20031000
     IF NOT LISTOPTION THEN                                              20194000
          BEGIN IF PAGECNT=0 THEN HEADING;  PRINTLINE  END;              20194100
-    REPLACE POINTER(HEADTEXT[*])+45 BY TEXTPNT+3 FOR 2,"/",             20329000
+    REPLACE POINTER(HEADTEXT[*])+45 BY TEXTPNT+5 FOR 2,"/",             20329000
             TEXTPNT+1 FOR 2, "/", TEXTPNT+3 FOR 2;                      20330000
-    NEWCARD; LISTOPTION:=CHECKOPTION:=TRUE;  % DEFAULT                  20402100
-    INSYMBOL;     % ANALYSING FIRST CARD MAY CHANGE DEFAULT LIST OPTN   20402200
+    NEWCARD;  LISTOPTION:=CHECKOPTION:=TRUE;  % DEFAULT                 20402100
+    INSYMBOL;      % ANALYSING FIRST CARD MAY CHANGE DEFAULT LIST OPTN  20402200
     IF LISTOPTION AND PAGECNT=0 THEN HEADING;  % ON FIRST PAGE.         20402300
            IF LISTOPTION THEN IF PAGECNT=0 THEN HEADING; % ON FIRST PAGE30282100
 C := " ";     % TO INITIALIZE "INSYMBOL"                                90034000
@@ -1258,14 +1269,26 @@ $                                                                       90036000
 IF PAGECNT > 0     % THERE HAS BEEN SOME LISTING                        90088000
 THEN BEGIN  WRITE( LINE[DBL] );  WRITE( LINE[DBL] )  END;               90089000
     IF PAGECNT>0 THEN   % THERE HAS BEEN LISTING                        90110000
-$# PATCH 711 FOR PASCAL.XVI.O CONTAINS 10 CARDS. PASC001/USERCODE UNIQUE NAME
+$# PATCH 710 FOR PASCAL.XVI.0 CONTAINS 4 CARDS.  NO OVERPRINTING WITH BLANK LINE
+$: TO PREVENT OVERPRINTING WITH BLANK LINES.  IF THE OPTION FOR "BOLDFACE"
+$: PRINTING OF RESERVED WORDS IS SET (*$R+ *) THEN EACH LINE IS CONSTRUCTED BY
+$: 2 OVERPRINTS FOR THE RESERVED WORDS ONLY, THEN ONE PRINT OF THE FULL TEXT.
+$: THE AIM OF THIS PATCH IS TO SKIP THE OVERPRINTING FOR ALL THOSE LINES IN
+$: WHICH NO RESERVED WORDS OCCUR.
+$:  NILS A OTTE,   UNIVERSITY OF NATAL, DURBAN.    AUG - NOV 1977.
+$:
+DEFINE  RESWORDPRESENT = RESWORDOPTION.[1:1] #;                         10159100
+    IF REAL(RESWORDOPTION) = 3 THEN  % RESERVED WORD IS PRESENT         20040000
+    RESWORDOPTION := RESWORDOPTION AND TRUE;   % RESET RESWORDPRESENT   20057100
+              RESWORDOPTION := BOOLEAN(3);  % SET RESWORDPRESENT BIT    30179000
+$# PATCH 711 FOR PASCAL.XVI.O CONTAINS 10 CARDS.  PASC001/USERCODE UNIQUE NAME
 $: TO GENERATE A UNIQUE FILE NAME IN THE DISK DIRECTORY.  THIS PATCH CHANGES THE
 $: METHOD FOR GENERATING A UNIQUE FILE NAME FOR THE ALGOL SOURCE CODE OUTPUT OF
 $: THE COMPILER.  FORMERLY, THIS WAS DONE USING THE TIME FUNCTION TO OBTAIN
 $: SOME RANDOM DIGITS.  THE METHOD USED IN PATCH/MERGE IS ADOPTED HERE, NAMELY
-$: STARTING WITH THE PREFIX (MFID) "PASC001", A SEARCH IS PREFORMED TO DETERMINE
+$: STARTING WITH THE PREFIX (MFID) "PASC001", A SEARCH IS PERFORMED TO DETERMINE
 $: WHETHER SUCH A FILE NAME IS ALREADY CATALOGUED.  IF SO, 1 IS ADDED AND THE
-$: SEARCH REPEATED. IN ADDITION, THE FILE IS CREATED WITH A SAVE FACTOR
+$: SEARCH REPEATED.  IN ADDITION, THE FILE IS CREATED WITH A SAVE FACTOR
 $: (RETENTION PERIOD) OF ZERO DAYS SO THAT A HALT-LOAD WILL REMOVE THE FILE
 $: AUTOMATICALLY.
 $: SEE PATCH 704.
@@ -1286,10 +1309,10 @@ $: PATCH TO MARK THE START AND END OF PROCEDURES AND FUNCTIONS BY ANNOTATING THE
 $: MARGIN WITH THE SYMBOLS "+P" & "-P" FOLLOWED BY THE LEVEL NUMBER.
 $:  NILS A OTTE,   UNIVERSITY OF NATAL, DURBAN.    AUG - NOV 1977.
 $:
-    MARGIN("+P",CURLEVEL);    % MARK PROCEDURE LEVEL                    80420100
-    MARGIN("-P",CURLEVEL);    % MARK END OF PROCEDURE                   80702100
-$# PATCH 713 FOR PASCAL.XVI.O CONTAINS 14 CARDS.CORRECTS ERROR MESSAGE ETC.
-$:   CORRECTS THE DOUBLE "NO ERROS" MESSAGE AND THE OUTPUT OF HEADINGS
+    MARGIN("+P",CURLEVEL);   % MARK PROCEDURE LEVEL                     80420100
+    MARGIN("-P",CURLEVEL);   % MARK END OF PROCEDURE                    80702100
+$# PATCH 713 FOR PASCAL.XVI.O. CONTAINS 14 CARDS.CORRECTS ERROR MESSAGE ETC.
+$:   CORRECTS THE DOUBLE "NO ERRORS" MESSAGE AND THE OUTPUT OF HEADINGS
 $:   WHEN L1 IS SET AFTER L-.
 $:   ALSO CORRECTS THE SCANNING PROBLEM WHEN COMPILER OPTIONS ARE INCORRECT.
 $:   DAVID A COOPER, HERIOT-WATT UNIVERISTY ...... AUGUST 1978
@@ -1307,38 +1330,37 @@ $:
           WRITE(LINE,ERROR102MESS);                                     90090720
 $                                                                       90110000
 $                                                                       90111000
-    ("102   ***WARNING ONLY, ILLEGAL DOLLAR OPTION."),                  91106900
+     ("102  ***WARNING ONLY, ILLEGAL DOLLAR OPTION."),                  91106900
 $# PATCH 800 FOR PASCAL.XVI.O.CONTAINS 10 CARDS.
 $: TO REMOVE CONFLICTS BETWEEN HERIOT-WATT & NATAL EXISTING PATCHES.
 $:
        MAXSYMS    = 800#,    %MAX NUMBER OF SYMBOLS IN ONE EXPRESSION.  10052000
        MAXPNTRS   = 25#;     %MAX NUMBER OF UNDECLARED POINTERS(FORWD). 10056000
-DEFINE ERR(ERR1) = BOOLEAN(0&ERRP[(ERR1).[6:2]][0:((ERR1).[4:5]):1])#;  10156108
+DEFINE ERR(ERR1) = BOOLEAN(0&ERRP[(ERR1).[6:2]][0:((ERR1).[4:5]):1])#;  10156100
 INTEGER EXPRLEVEL, EXPINVARCNT; %                                       40018000
- INTEGER INDEX, CTYPE, NUMFORWARDS, TX, I; %                            80403000
+ INTEGER INDEX, CTYPE, NUMFORWARDS,TX, I; %                             80403000
 INTEGER PROGNAMELENGTH; %                                               90013900
      IF ERR(100) %                                                      90090600
        "; ALGOL FILE TAPE=PASCRUN/DISK SERIAL; ALGOL FILE CARD=",       90119000
        P(PALGOLNAME),"/",P(PUSER)," SERIAL;", %                         90120000
        " XALGOL STACK = 2048; END."; %                                  90120500
 $# PATCH 998 FOR PASCAL.XVI.O CONTAINS 10 CARDS.  INSERT PAGE THROWS AT DESIRED
-$: PATCH TO INSERT PAGE THROWS AT DESIRED POINTES IN THE SOURCE TO PRODUCE A
+$: PATCH TO INSERT PAGE THROWS AT DESIRED POINTS IN THE SOURCE TO PRODUCE A
 $: NICELY LAID OUT LISTING.
 $:
-$                                                           PAGE        19000000
-$                                                           PAGE        20290000
-$                                                           PAGE        29000000
-$                                                           PAGE        39000000
-$                                                           PAGE        49000000
-$                                                           PAGE        59000000
-$                                                           PAGE        69000000
-$                                                           PAGE        79000000
-$                                                           PAGE        89000000
-$                                                           PAGE        90070999
+$                                                          PAGE         19000000
+$                                                          PAGE         20290000
+$                                                          PAGE         29000000
+$                                                          PAGE         39000000
+$                                                          PAGE         49000000
+$                                                          PAGE         59000000
+$                                                          PAGE         69000000
+$                                                          PAGE         79000000
+$                                                          PAGE         89000000
+$                                                          PAGE         90070999
 $:  NILS A OTTE,   UNIVERSITY OF NATAL, DURBAN.    AUG - NOV 1977.
 $:
-$# PATCH 999 FOR PASCAL.XVI.O CONTAINS 1 CARDS.  VERISON NUMBER.
+$# PATCH 999 FOR PASCAL.XVI.O. CONTAINS 1 CARDS. VERISON NUMBER.
 $:
-DEFINE EDITION = "4.4"#;%AUGUST   1978...DAVID A COOPER...              10028000
-
+DEFINE EDITION = "4.4"#;%AUGUST    1978...DAVID A COOPER...             10028000
 ?END
