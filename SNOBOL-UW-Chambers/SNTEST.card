@@ -1,0 +1,381 @@
+?execute snobol/disk
+?file print = print back up disk
+?common=3
+?data program
+-list
+*      example 2, differentiation of algebraic expression
+*
+*         this program differentiates a fully parenthesized
+*      algebraic expression with respect to x. the exponentiation
+*      operator is indicated by a dollar sign.
+-      space 2
+       define("d(d)","do","u,v,n")
+       define("simplify(exp)","s0","u")
+       trace("d,simplify")
+-      space
+*      READ In the expression.
+-      space
+read   exp       =  trim(syspit)                    /f(end)
+-      space
+       mode("anchor")
+       syspot    = 
+       syspot    =  "the derivative of " exp " is " simplify(d(exp))
+.                                                    /(end)
+-      space 2
+*      the function "d"
+-      space
+do     d         "(" *(u)* "+" *(v)* ")" = "(" d(u) "+" d(v) ")"
+.                                                    /s(return)
+-      space
+       D         "(" *(u)* "-" *(v)* ")" = "(" d(u) "-" d(v) ")"
+.                                                    /s(return)
+-      space
+       D         "(" *(u)* "*" *(v)* ")" = "((" u "*" d(v) ")+("
+.                          v "*" d(u) "))"           /s(return)
+-      space
+       D         "(" *(u)* "/" *(v)* ")" = "(((" v "*" d(u) ")-("
+.                      u "*" d(v) "))/(" v "$2))"    /s(return)
+-      space
+       D         "(" *(u)* "$" *(v)* ")" = 
+.                       "((" n "*(" U "$" n - "1" "))*" d(U) ")"
+.                                                    /s(return)
+-      space
+       d         =   equals(d,"x")   "1"             /s(return)
+       d         =  "0"                              /(return)
+
+*      the function "simplify"
+-      space
+s0     mode("unanch")
+s1     exp       "(" *(u)* "*0)"  =  "0"             /s(s1)
+       exp       "(0*" *(u)* ")"  =  "0"             /s(s1)
+s2     exp       "(" *(u)* "$1)"  =  u               /s(s2)
+s3     exp       "(" *(u)* "*1)"  =  u               /s(s3)
+s4     exp       "(1*" *(u)* ")"  =  u               /s(s4)
+s5     exp       "(0+" *(u)* ")"  =  u               /s(s5)
+s6     exp       "(" *(u)* "+0)"  =  U               /S(S6)
+s7     exp       "(" *(u)* "-0)"  =  u               /s(s7)
+       simplify  =  exp                              /(return)
+end
+?data card
+(((a*(x$2))+(b*x))+c)
+?end
+?execute snobol/disk
+?file print = print back up disk
+?common=3
+?data program
+-list
+*       example 1.  the wang algorithm
+*
+*             this program is the algorithm by hao want (cf. "toward
+*        mechanical mathematics", ibm journal be research and
+*        development for the propositional calculus.,  it prints out a
+*        PRoof or disproof according as a given formula is a theorem
+*        or not.  thealogrithm uses sequents which consist of two
+*        lists of formulas seperated by an arrow (--*). INITIALLY, for
+*        a given formula p the sequent
+*
+*                 --* f
+*
+*        is formed.  wang has defined rules for simplifying a formula
+*        IN a sequent by removing the main connective and then
+*        generating a new sequent or sequents.  there is a terminal
+*        test for a sequent consisting of only atomic formulas:
+*
+*              two sequent consisting of only atomic formulas is valid if
+*              the two lists of formulas have a formula in common.
+*
+*         by repeated application of the rules one is led to a set of
+*         sequents consisting of atomic formulas. if each one of these
+*         sequents is valid then so is the original formula.
+-         space   5
+          define("wang(ante,conseq)" , "wang","phi,psi")
+*         read in the expression
+-         space
+read      exp       =  trim(syspit)               /f(end)
+          syspot    =
+          syspot    =  "formula: "  exp
+          syspot    =
+          wang(," "  exp)                         /f(invalid)
+          syspot    =  "valid"                    /(read)
+invalid   syspot    =  "not valid"                /(read)
+wang      syspot    =  ante " --* " conseq 
+          ante      " not(" *(phi)* ")"  =        /s(anot)
+          ante      " and(" *(phi)* "," *(psi)* ")" =   /s(aand)
+          ante      " imp(" *(phi)* "," *(psi)* ")" =   /s(aimp)
+          ante      " or(" *(phi)* "," *(psi)* ")" =    /s(aor)
+          ante      " equ(" *(phi)* "," *(psi)* ")" =   /s(aequ)
+-  space
+          conseq    " not(" *(phi)* ")" =                /s(cnot)
+          conseq    " and(" *(phi)* "," *(psi)* ")" =    /s(cand)
+          conseq    " imp(" *(phi)* "," *(psi)* ")" =    /s(cimp)
+          conseq    " or(" *(phi)* "," *(psi)* ")" =     /s(cor)
+          conseq    " equ(" *(phi)* "," *(psi)* ")" =    /s(cequ)
+- space
+          (ante " :" conseq " ") " " *(p)* " " ** ":" ** " " p " "
+.                                               /s(return)f(freturn)
+anot      wang(ante,conseq  " " phi)            /s(return)f(freturn)
+-
+AAND      wang(ante " " phi " " psi, conseq)    /s(return)f(freturn)
+-
+aor       wang(ante " " phi,conseq)             /f(freturn)
+          wang(ante " " psi,conseq)             /s(return)f(freturn)
+-
+aimp      wang(ante " " psi,conseq)             /f(freturn)
+          wang(ante,conseq " " phi)             /s(return)f(freturn)
+-
+aequ      wang(ante " " phi " " psi,conseq)     /f(freturn)
+          wang(ante,conseq " " phi " " psi)     /S(return)F(FREturn)
+-
+cnot      wang(ante " " phi,conseq)             /s(return)f(freturn)
+-
+cand      wang(ante,conseq " " phi)             /f(freturn)
+          wang(ante,conseq " " psi)             /s(return)f(freturn)
+-
+cor       wang(ante,conseq " " phi " " psi)     /s(return)F(FRETURN)
+-
+CIMP      WANG(ANTE " " PHI,CONSEQ " " PSI)     /s(return)f(freturn)
+-
+cequ      wang(ante " " phi,conseq " " psi)     /f(freturn)
+          wang(ante " " psi,conseq " " phi)     /s(RETURN)f(freturn)
+end
+imp(not(or(p,q)),not(p))
+imp(and(not(p),not(q)),equ(p,q))
+imp(imp(OR(P,Q),or(p,r)),OR(P,imp(q,r)))
+stop
+?end
+?execute snobol/disk
+?file print = print back up disk
+?common=3
+?data program
+-list
+* BLANK IS A CONCATENATION OPERATOR!
+        FIRST = "HORACE"
+        SECOND = "GREELEY"
+        NAME = FIRST " " SECOND
+        SYSPOT = NAME
+        INT = 12 div 2 * 3
+* MULTIPLICATION HAS HIGHER PRECEDENCE THAN DIVISION
+* ARITHMETIC HAS HIGHER PRECENCE THAN CONCATENATION
+        SYSPOT = "12 / 2 * 3 = " INT
+* CONCATENATE A STRING AND A NUMBER
+        ROW = "K"
+        NO. = 23
+        SEAT = ROW NO.
+        SYSPOT = SEAT
+* GET AN INPUT STRING
+        STUFF = SYSPIT
+* CHANGE ALL INSTANCES OF "CAT" TO "DOG"
+LOOP    STUFF "CAT" = "DOG"                /S(LOOP)
+        SYSPOT = STUFF
+* IS IT A NUMBER OR A STRING?
+        X = 1234
+        X "2" = 5
+        SYSPOT = X
+END
+THE CAT JUMPED OVER THE DOG.
+THE DOG JUMPED OVER THE CAT.
+?end
+?execute snobol/disk
+?file print = print back up disk
+?common=3
+?data program
+-list
+*     ID       START
+*     DATA
+READ     LINE  =  SYSPIT                                                        
+         LINE  "STOP"                                 /S(QUIT)                  
+         NLINE  =  LINE                                                         
+         NLINE  *LAST* "," *FIRST* "-" *TITLE*                                  
+         AUTHOR  =  FIRST " " LAST                                              
+         TITLE  =  " " TITLE "  "                                               
+         TITLE  " THE " = " "                                                   
+         TITLE  " A " = " "                                                     
+         TITLE " AN " = " "                                                     
+         STITLE  =  TITLE                                                       
+DEBLANK  TITLE  "  "  =  " "                          /S(DEBLANK)               
+LOOP     TITLE  " "  =  ","                           /S(LOOP)                  
+         TITLE  *FIRSTCHAR/"1"*  =                                              
+         WORDLIST  =  WORDLIST TITLE                                            
+         SYSPOT  =  LINE                                                        
+         SYSPOT  =  AUTHOR "-" STITLE                                           
+         SYSPOT  =  TITLE "$" WORDLIST                                          
+                                                      /(READ)                   
+QUIT     SIZE  =  "14"                                                          
+REDEFINE ALPHABET  =  "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789. "                  
+DECR     SIZE  =  SIZE - "1"                                                    
+         SIZE "-"                                     /S(DONE)                  
+BACK     WORDLIST  *WORD* "," =                       /F(LAST)                  
+         WORD  *HEAD/SIZE* *PIT/"1"*                  /F(ALL)                   
+         $PIT  =  $PIT WORD ","                       /(BACK)                   
+ALL      BIN  =  BIN WORD ","                         /(BACK)                   
+LAST     BIN  *WORDLIST*  =                                                     
+AGAIN    ALPHABET  *PIT/"1"*  =                       /F(REDEFINE)              
+         WORDLIST  =  WORDLIST $PIT                                             
+         $PIT  =                                      /(AGAIN)                  
+DONE     SYSPOT  = "WORDLIST" WORDLIST                                          
+END      READ                                                                   
+STURGEON,THEODORE-MORE THAN HUMAN                                               
+SMITH,E.E.-GRAY LENSMAN                                                         
+SMITH,E.E.-TRIPLANETARY                                                         
+RAGAN,RICHARD-TEST THE PROGRAM                                                  
+STOP
+?end
+?execute snobol/disk
+?file print = print back up disk
+?common=3
+?data program
+-list
+           DEFINE("PERM(NAME,RENAME)","ENT")                                    
+READ1      CARD1  =  SYSPIT                                                     
+           CARD1  "STOP"                              /S(END)                   
+           CARD2  =  SYSPIT                                                     
+           CARD1   *NUMCOD1/"6"*  =                                             
+           CARD2   *NUMCOD2/"4"*  =                                             
+           CARD1   *Y/"2"*  =                                                   
+           CARD2   *Y/"4"*  =                                                   
+           EQUALS(CARD1,CARD2)                        /S(SAME)                  
+           NUM1  =  PERM(CARD1,"FIRST")                                         
+           NUM2  =  PERM(CARD2,"LAST")                                          
+           .EQ(NUM1,NUM2)                             /S(ASET)                  
+           .LT(NUM1,NUM2)                             /S(FILL1)F(FILL2)         
+FILL1      A  =  NUM1                                                           
+ADD        A  =  A  +  "1"                                                      
+           $("FIRST" A )  =                                                     
+           .EQ(A,NUM2)                                /F(ADD)S(CONT)            
+FILL2      A  =  NUM2                                                           
+INCR       A  =  A  +  "1"                                                      
+           $("LAST" A)  =                                                       
+           .EQ(A,NUM1)                                /F(INCR)S(CONT)           
+ASET       A  =  NUM1                                                           
+CONT       COUNT  =  "0"                                                        
+MORE       COUNT  =  COUNT  +  "1"                                              
+           SYSPOT  =  NUMCOD1 " " NUMCOD2 " " $("FIRST" COUNT)                  
+           SYSPOT  =  NUMCOD1 " " NUMCOD2 " " $("LAST" COUNT)                   
+           .EQ(COUNT,A)                               /F(MORE)S(READ1)          
+SAME       SYSPOT  =  NUMCOD1 " " NUMCOD2 " " CARD1   /(READ1)                  
+ENT        NAME  =  TRIM(NAME) " "                                              
+DEBLANK    NAME   "  "  =  " "                        /S(DEBLANK)               
+           NAME  *WORD1* " "  =                                                 
+           NAME  =  NAME "$" WORD1 " "                                          
+           PERM  =  "0"                                                         
+LOOP       PERM  =  PERM  +  "1"                                                
+           NAME   *WORD* " "  =                                                 
+           NAME  =  NAME WORD " "                                               
+           NAME   ANCHOR(X) "$"  =                    /S(RETURN)                
+           $(RENAME PERM )  =  NAME                                             
+CLEAN      $(RENAME PERM )  "$"  =                    /S(CLEAN)F(LOOP)          
+END                                                                             
+STURGEON,THEODORE-MORE THAN HUMAN                                               
+SMITH,E.E.-GRAY LENSMAN                                                         
+SMITH,E.E.-TRIPLANETARY                                                         
+RAGAN,RICHARD-TEST THE PROGRAM                                                  
+STOP
+?end
+?execute snobol/disk
+?file print = print back up disk
+?common=3
+?data program
+-list
+-     TITLE      PROCESS S A T   AND  1 2 T H G R A D E    CARDS.               
+*        THIS PROGRAM TAKES AN SAT CARD AND A 12TH GRADE SCHOOL CARD            
+*        AND ATTEMPTS TO GENERATE A SINGLE CARD COMBINING THE                   
+*        INFORMATION ON BOTH OF THESE.  IN PARTICULAR THE PROGRAM               
+*        SEARCHES OUT THE BEST SCHOOL NAME FROM THE TWO CARDS.                  
+*        WHEN A MATCH IS NOT OBTAINED MULTIPLE CARDS ARE GENERATED              
+*        CONTAINING CYCLIC PERMUTATIONS OF THE SCHOOL NAME FROM                 
+*        BOTH CARDS.  THE CHOICE OF THE ADDRESS CARD TO BE USED                 
+*        IS LEFT TO THE DISCRETION OF THE USER.  IN GENERAL                     
+*        ONLY ONE CARD WILL BE GENERATED SINCE CERTAIN KEYWORDS                 
+*        SUCH AS "HIGH" , "SCHOOL", "HS", "H S" ARE ELIMINATED                  
+*        FROM THE TEXT BEFORE COMPARISON OF SCHOOL NAMES IS                     
+*        ATTEMPTED.  THIS RESULTS IN A MUCH HIGHER PERCENTAGE OF                
+*        MATCHES THAN WOULD OTHERWISE BE OBTAINED.                              
+*                                                                               
+*                                                RICHARD RAGAN                  
+*                                                FSU COMPUTING CNTR.            
+*                                                5-1-66                         
+           DEFINE("EXCERPT(STRING,WORD1,WORD2)","ENTRY")                        
+           DEFINE("PERM(NAME,RENAME)","ENT")                                    
+           DEFINE("HSGET(SNAME,SLOC)","Z")                                      
+           DEFINE("RESTOR(QUAL,QUAN)","104")                                    
+           BLANK  =  "                           "                              
+READ       SAT  =  SYSPIT                                                       
+           SAT   "STOP"                               /S(END)                   
+           12TH  =  SYSPIT                                                      
+           12TH  *12CODE/"4"* *FILLER/"3"* *12NAME/"27"* *COUNTY/"4"*           
+.          *FILLER/"3"* *CTYCODE/"2"* *FILLER/"3"* *12LOC*                      
+           SAT  *FILLER/"2"* *SATCODE/"4"* *FILLER/"2"* *SATNAME/"21"*          
+.          *FILLER/"22"* *SATLOC*                                               
+           12NAME  =  TRIM(12NAME) " "                                          
+           SATNAME  =  TRIM(SATNAME) " "                                        
+DEMIN      12NAME  "-" = " "                          /S(DEMIN)                 
+DEMINUS    SATNAME  "-"  =  " "                       /S(DEMINUS)               
+           SATNAME  =  HSGET(SATNAME,12LOC)                                     
+           S12NAME  =  12NAME                                                   
+           SSATNAME  =  SATNAME                                                 
+           12NAME  =  EXCERPT(12NAME," SCHOOL "," SCH ")                        
+           12NAME  =  EXCERPT(12NAME," H "," S ")                               
+           12NAME  =  EXCERPT(12NAME," HS "," HIGH ")                           
+           SATNAME  =  EXCERPT(SATNAME," SCHOOL "," SCH ")                      
+           SATNAME  =  EXCERPT(SATNAME," H "," S ")                             
+           SATNAME  =  EXCERPT(SATNAME," HS "," HIGH ")                         
+           12NAME  =  EXCERPT(12NAME," SR "," JR ")                             
+           SATNAME  =  EXCERPT(SATNAME," SR "," JR ")                           
+           EQUALS(12NAME,SATNAME)                     /S(LUCK)                  
+           OFF  =  RESTOR(12NAME,S12NAME)                                       
+           ON  =  RESTOR(SATNAME,SSATNAME)                                      
+           P12  =  PERM(12NAME,"12.")                                           
+           PSAT  =  PERM(SATNAME,"SAT.")                                        
+           COUNT  =  "0"                                                        
+MORE       COUNT  =  COUNT  +  "1"                                              
+           ALL  =  $("12." COUNT) OFF                                           
+           ALL  =  ALL BLANK                                                    
+           ALL   *FIXFLD/"27"*                                                  
+           SYSPPT  =  12CODE SATCODE CTYCODE COUNTY FIXFLD TRIM(12LOC)          
+           .EQ(P12,COUNT)                             /F(MORE)                  
+           COUNT  =  "0"                                                        
+AGAIN      COUNT  =  COUNT  +  "1"                                              
+           NONE  =  $("SAT." COUNT) ON                                          
+           NONE  =  NONE BLANK                                                  
+           NONE   *FLD/"27"*                                                    
+           SYSPPT = 12CODE SATCODE CTYCODE COUNTY FLD TRIM(12LOC)               
+           .EQ(PSAT,COUNT)                            /F(AGAIN)S(READ)          
+LUCK       .GE(SIZE(S12NAME),SIZE(SSATNAME))          /S(S12)F(SSAT)            
+S12        S12NAME  =  S12NAME BLANK                                            
+           S12NAME   *SAVE/"27"*                                                
+           SYSPPT = 12CODE SATCODE CTYCODE COUNTY SAVE TRIM(12LOC)              
+.                                                     /(READ)                   
+SSAT       SSATNAME  =  SSATNAME BLANK                                          
+           SSATNAME   *KEEP/"27"*                                               
+           SYSPPT = 12CODE SATCODE CTYCODE COUNTY KEEP TRIM(12LOC)              
+.                                                     /(READ)                   
+-          EJECT                                                                
+ENTRY      STRING   WORD1  =  " "                                               
+           STRING   WORD2  =  " "                                               
+           EXCERPT  =  STRING                         /(RETURN)                 
+-          EJECT                                                                
+Z          SNAME  ANCHOR(X)  "HIGH SCHOOL"            /F(FRETURN)               
+           SLOC   *TNAME* "FLORIDA"                   /S(ROTAT)                 
+           SLOC   *TNAME* "FLA"                       /F(FRETURN)               
+ROTAT      HSGET  =  TNAME SNAME                      /(RETURN)                 
+-          EJECT                                                                
+ENT        NAME  =  TRIM(NAME) " "                                              
+           PERM  =  "1"                                                         
+DEBLANK    NAME  "  " = " "                           /S(DEBLANK)               
+           $(RENAME PERM) = NAME                                                
+           NAME  *WORD1* " " =                                                  
+           NAME  =  NAME "$" WORD1 " "                                          
+           NAME   ANCHOR(X) "$" =                     /S(RETURN)                
+LOOP       PERM  =  PERM  +  "1"                                                
+           $(RENAME PERM)  =  NAME                                              
+           NAME  *WORD* " " =                                                   
+           NAME   ANCHOR(X)  "$" =                    /S(OKAY)                  
+           NAME  =  NAME WORD " "                                               
+CLEAN      $(RENAME PERM)    "$" =                    /S(CLEAN)                 
+BL         $(RENAME PERM)   "  "  =  " "              /S(BL)F(LOOP)             
+OKAY       $(RENAME PERM)   "$" =                     /(RETURN)                 
+-          EJECT                                                                
+104        QUAN   QUAL  *CODE*                                                  
+           RESTOR  =  TRIM(CODE) " "                  /(RETURN)                 
+END                                                                             
+?end
