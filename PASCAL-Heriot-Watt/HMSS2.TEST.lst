@@ -1,10 +1,10 @@
- LABEL  000000000LINES  00186197?RUN PASCAL/DISK                                                         PASCAL /DISK
+ LABEL  000000000LINES  00186226?RUN PASCAL/DISK                                                         PASCAL /DISK
 
 
 
 
 
-PASCAL(2.3)/B-5700                           16/07/86    12:57                  PAGE 1
+PASCAL(2.3)/B-5700                           14/08/86    17:57                  PAGE 1
 
 00001=> (*$L+,C-,A+*)
 00002=> PROGRAM HMSS2 (OUTPUT);
@@ -64,7 +64,7 @@
 00056=> (*--------------------------------------------------------------------*)
 
 
-PASCAL(2.3)/B-5700                           16/07/86    12:57                  PAGE 2
+PASCAL(2.3)/B-5700                           14/08/86    17:57                  PAGE 2
 
 00057=> BEGIN (*HMSS*)                                                                        B2
 00058=> ET:= TIME;
@@ -124,7 +124,7 @@
 00112=>         (XNUTAIR + 0.5 * (2.0 * T[I,1] + T[I+1,0] + T[I-1,0])) /
 
 
-PASCAL(2.3)/B-5700                           16/07/86    12:57                  PAGE 3
+PASCAL(2.3)/B-5700                           14/08/86    17:57                  PAGE 3
 
 00113=>         (XNU + 2.0));
 00114=>
@@ -184,7 +184,7 @@
 00168=>   BEGIN                                                                               B7
 
 
-PASCAL(2.3)/B-5700                           16/07/86    12:57                  PAGE 4
+PASCAL(2.3)/B-5700                           14/08/86    17:57                  PAGE 4
 
 00169=>   WRITE (J:4, " ");
 00170=>   FOR I:= 0 TO XMAX DO
@@ -208,19 +208,25 @@ NO ERRORS DETECTED.
 
 
 
- LABEL  000000000LINES  00186197?RUN PASCAL/DISK                                                         PASCAL /DISK
+ LABEL  000000000LINES  00186226?RUN PASCAL/DISK                                                         PASCAL /DISK
 
 
 
 
 
- LABEL  0XALGOL 0COMPILE00186197CC USER=0000000;   COMPILE HMSS2/0000000 XALGOL ;XALGOL FILE CARD=PASC00 XALGOL /HMSS2
+
 
 
 
 
 
-                      BURROUGHS B-5700 XALGOL COMPILER MARK XV.3.00  WEDNESDAY, 07/16/86,  12:57 PM.
+ LABEL  000000000LINE   00186226?RUN OBJECT/LISTER;COMMON=1;FILE DISK=0000000/LINE SERIAL;END~           OBJECT /LISTER
+
+
+
+
+
+                      BURROUGHS B-5700 XALGOL COMPILER MARK XV.3.00   THURSDAY, 08/14/86,   5:58 PM.
 
 
 
@@ -340,69 +346,75 @@ NUMBER OF CARD-IMAGES PROCESSED =    573.
 
 
 
-LABEL  0XALGOL 0COMPILE00186197CC USER=0000000;   COMPILE HMSS2/0000000 XALGOL ;XALGOL FILE CARD=PASC00 XALGOL /HMSS2
+ LABEL  000000000LINE   00186226?RUN OBJECT/LISTER;COMMON=1;FILE DISK=0000000/LINE SERIAL;END~           OBJECT /LISTER
 
 
 
 
 
- LABEL  000000000OUTPUT 00186197CC USER=0000000;   COMPILE HMSS2/0000000 XALGOL ;XALGOL FILE CARD=PASC00 HMSS2  /0000000
+
 
 
 
 
 
- PASS    1: RMAX =  230.0000
+ LABEL  000000000OUTPUT 00186226CC USER=0000000;   COMPILE HMSS2/0000000 XALGOL ;XALGOL FILE CARD=PASC63 HMSS2  /0000000
+
+
+
+
+
+ PASS    1: RMAX =  231.0000
  PASS    2: RMAX =  106.9839
  PASS    3: RMAX =  30.0786
  PASS    4: RMAX =  23.8685
  PASS    5: RMAX =  15.8328
  PASS    6: RMAX =  12.3433
  PASS    7: RMAX =  10.9879
- PASS    8: RMAX =   9.0:98
+ PASS    8: RMAX =   9.1398
  PASS    9: RMAX =   8.5020
  PASS   10: RMAX =   7.3267
- PASS   10: RMAX =   6.9743
- PASS   12: RMAX =   6.0>73
+ PASS   11: RMAX =   6.9743
+ PASS   12: RMAX =   6.1473
  PASS   13: RMAX =   5.9338
- PASS   14: RMAX =   5.30:6
+ PASS   14: RMAX =   5.3136
  PASS   15: RMAX =   5.1764
  PASS   16: RMAX =   4.6904
  PASS   17: RMAX =   4.5987
  PASS   18: RMAX =   4.2054
- PASS   19: RMAX =   4.0>24
+ PASS   19: RMAX =   4.1424
  PASS   20: RMAX =   3.8467
- PASS   20: RMAX =   3.7723
+ PASS   21: RMAX =   3.7723
  PASS   22: RMAX =   3.5496
  PASS   23: RMAX =   3.4656
  PASS   24: RMAX =   3.2966
- PASS   25: RMAX =   3.20:5
+ PASS   25: RMAX =   3.2135
  PASS   26: RMAX =   3.0785
  PASS   27: RMAX =   3.0047
  PASS   28: RMAX =   2.8883
  PASS   29: RMAX =   2.8223
- PASS   30: RMAX =   2.720#
- PASS   30: RMAX =   2.6616
+ PASS   30: RMAX =   2.7210
+ PASS   31: RMAX =   2.6616
  PASS   32: RMAX =   2.5726
  PASS   33: RMAX =   2.5187
  PASS   34: RMAX =   2.4400
  PASS   35: RMAX =   2.3909
  PASS   36: RMAX =   2.3207
  PASS   37: RMAX =   2.2759
- PASS   38: RMAX =   2.20?9
+ PASS   38: RMAX =   2.2129
  PASS   39: RMAX =   2.1717
- PASS   40: RMAX =   2.0@49
- PASS   40: RMAX =   2.0769
+ PASS   40: RMAX =   2.1149
+ PASS   41: RMAX =   2.0769
  PASS   42: RMAX =   2.0254
  PASS   43: RMAX =   1.9902
  PASS   44: RMAX =   1.9434
- PASS   45: RMAX =   1.90#7
+ PASS   45: RMAX =   1.9107
  PASS   46: RMAX =   1.8678
  PASS   47: RMAX =   1.8374
- PASS   48: RMAX =   1.7980
+ PASS   48: RMAX =   1.7981
  PASS   49: RMAX =   1.7696
  PASS   50: RMAX =   1.7334
- PASS   50: RMAX =   1.7068
+ PASS   51: RMAX =   1.7068
  PASS   52: RMAX =   1.6733
  PASS   53: RMAX =   1.6483
  PASS   54: RMAX =   1.6173
@@ -410,40 +422,40 @@ LABEL  0XALGOL 0COMPILE00186197CC USER=0000000;   COMPILE HMSS2/0000000 XALGOL ;
  PASS   56: RMAX =   1.5650
  PASS   57: RMAX =   1.5428
  PASS   58: RMAX =   1.5160
- PASS   59: RMAX =   0.>950
- PASS   60: RMAX =   0.>700
- PASS   60: RMAX =   0.>502
- PASS   62: RMAX =   0.>267
- PASS   63: RMAX =   0.>079
- PASS   64: RMAX =   0.:869
- PASS   65: RMAX =   0.:681
- PASS   66: RMAX =   0.:504
- PASS   67: RMAX =   0.:305
- PASS   68: RMAX =   0.:159
- PASS   69: RMAX =   0.?949
- PASS   70: RMAX =   0.?830
- PASS   70: RMAX =   0.?60?
- PASS   72: RMAX =   0.?518
- PASS   73: RMAX =   0.?297
- PASS   74: RMAX =   0.?220
- PASS   75: RMAX =   0.?00#
- PASS   76: RMAX =   0.@937
- PASS   77: RMAX =   0.@737
- PASS   78: RMAX =   0.@666
- PASS   79: RMAX =   0.@475
- PASS   80: RMAX =   0.@407
- PASS   80: RMAX =   0.@225
- PASS   82: RMAX =   0.@159
- PASS   83: RMAX =   0.#985
- PASS   84: RMAX =   0.#922
- PASS   85: RMAX =   0.#755
- PASS   86: RMAX =   0.#694
- PASS   87: RMAX =   0.#534
- PASS   88: RMAX =   0.#476
- PASS   89: RMAX =   0.#323
- PASS   90: RMAX =   0.#266
- PASS   90: RMAX =   0.#0@9
- PASS   92: RMAX =   0.#064
+ PASS   59: RMAX =   1.4950
+ PASS   60: RMAX =   1.4700
+ PASS   61: RMAX =   1.4502
+ PASS   62: RMAX =   1.4267
+ PASS   63: RMAX =   1.4079
+ PASS   64: RMAX =   1.3869
+ PASS   65: RMAX =   1.3681
+ PASS   66: RMAX =   1.3504
+ PASS   67: RMAX =   1.3305
+ PASS   68: RMAX =   1.3159
+ PASS   69: RMAX =   1.2949
+ PASS   70: RMAX =   1.2831
+ PASS   71: RMAX =   1.2612
+ PASS   72: RMAX =   1.2518
+ PASS   73: RMAX =   1.2297
+ PASS   74: RMAX =   1.2221
+ PASS   75: RMAX =   1.2010
+ PASS   76: RMAX =   1.1937
+ PASS   77: RMAX =   1.1737
+ PASS   78: RMAX =   1.1666
+ PASS   79: RMAX =   1.1475
+ PASS   80: RMAX =   1.1407
+ PASS   81: RMAX =   1.1225
+ PASS   82: RMAX =   1.1159
+ PASS   83: RMAX =   1.0985
+ PASS   84: RMAX =   1.0922
+ PASS   85: RMAX =   1.0755
+ PASS   86: RMAX =   1.0694
+ PASS   87: RMAX =   1.0534
+ PASS   88: RMAX =   1.0476
+ PASS   89: RMAX =   1.0323
+ PASS   90: RMAX =   1.0266
+ PASS   91: RMAX =   1.0119
+ PASS   92: RMAX =   1.0064
  PASS   93: RMAX =   0.9923
  PASS   94: RMAX =   0.9870
  PASS   95: RMAX =   0.9734
@@ -452,7 +464,7 @@ LABEL  0XALGOL 0COMPILE00186197CC USER=0000000;   COMPILE HMSS2/0000000 XALGOL ;
  PASS   98: RMAX =   0.9503
  PASS   99: RMAX =   0.9377
  PASS  100: RMAX =   0.9329
- PASS  100: RMAX =   0.9208
+ PASS  101: RMAX =   0.9208
  PASS  102: RMAX =   0.9161
  PASS  103: RMAX =   0.9045
  PASS  104: RMAX =   0.8999
@@ -461,39 +473,39 @@ LABEL  0XALGOL 0COMPILE00186197CC USER=0000000;   COMPILE HMSS2/0000000 XALGOL ;
  PASS  107: RMAX =   0.8735
  PASS  108: RMAX =   0.8692
  PASS  109: RMAX =   0.8587
- PASS  100: RMAX =   0.8545
- PASS  100: RMAX =   0.8444
- PASS  102: RMAX =   0.8404
- PASS  103: RMAX =   0.830#
- PASS  104: RMAX =   0.8267
- PASS  105: RMAX =   0.8183
- PASS  106: RMAX =   0.80:4
- PASS  107: RMAX =   0.8059
- PASS  108: RMAX =   0.8005
- PASS  109: RMAX =   0.7939
+ PASS  110: RMAX =   0.8545
+ PASS  111: RMAX =   0.8444
+ PASS  112: RMAX =   0.8404
+ PASS  113: RMAX =   0.8310
+ PASS  114: RMAX =   0.8267
+ PASS  115: RMAX =   0.8183
+ PASS  116: RMAX =   0.8134
+ PASS  117: RMAX =   0.8059
+ PASS  118: RMAX =   0.8005
+ PASS  119: RMAX =   0.7939
  PASS  120: RMAX =   0.7880
- PASS  120: RMAX =   0.7822
+ PASS  121: RMAX =   0.7822
  PASS  122: RMAX =   0.7758
  PASS  123: RMAX =   0.7708
- PASS  124: RMAX =   0.7640
+ PASS  124: RMAX =   0.7641
  PASS  125: RMAX =   0.7597
  PASS  126: RMAX =   0.7526
  PASS  127: RMAX =   0.7490
  PASS  128: RMAX =   0.7415
  PASS  129: RMAX =   0.7385
  PASS  130: RMAX =   0.7307
- PASS  130: RMAX =   0.7283
+ PASS  131: RMAX =   0.7283
  PASS  132: RMAX =   0.7204
  PASS  133: RMAX =   0.7183
- PASS  134: RMAX =   0.70#7
+ PASS  134: RMAX =   0.7107
  PASS  135: RMAX =   0.7086
- PASS  136: RMAX =   0.700?
+ PASS  136: RMAX =   0.7012
  PASS  137: RMAX =   0.6992
  PASS  138: RMAX =   0.6919
  PASS  139: RMAX =   0.6899
  PASS  140: RMAX =   0.6829
- PASS  140: RMAX =   0.6809
- PASS  142: RMAX =   0.6740
+ PASS  141: RMAX =   0.6809
+ PASS  142: RMAX =   0.6741
  PASS  143: RMAX =   0.6721
  PASS  144: RMAX =   0.6654
  PASS  145: RMAX =   0.6636
@@ -502,27 +514,27 @@ LABEL  0XALGOL 0COMPILE00186197CC USER=0000000;   COMPILE HMSS2/0000000 XALGOL ;
  PASS  148: RMAX =   0.6488
  PASS  149: RMAX =   0.6470
  PASS  150: RMAX =   0.6408
- PASS  150: RMAX =   0.6390
+ PASS  151: RMAX =   0.6390
  PASS  152: RMAX =   0.6329
- PASS  153: RMAX =   0.630?
+ PASS  153: RMAX =   0.6312
  PASS  154: RMAX =   0.6252
  PASS  155: RMAX =   0.6235
  PASS  156: RMAX =   0.6177
  PASS  157: RMAX =   0.6160
- PASS  158: RMAX =   0.60#4
+ PASS  158: RMAX =   0.6104
  PASS  159: RMAX =   0.6087
  PASS  160: RMAX =   0.6032
- PASS  160: RMAX =   0.6016
+ PASS  161: RMAX =   0.6016
  PASS  162: RMAX =   0.5962
  PASS  163: RMAX =   0.5946
  PASS  164: RMAX =   0.5893
  PASS  165: RMAX =   0.5877
  PASS  166: RMAX =   0.5825
- PASS  167: RMAX =   0.580#
+ PASS  167: RMAX =   0.5810
  PASS  168: RMAX =   0.5759
  PASS  169: RMAX =   0.5744
  PASS  170: RMAX =   0.5696
- PASS  170: RMAX =   0.5680
+ PASS  171: RMAX =   0.5680
  PASS  172: RMAX =   0.5635
  PASS  173: RMAX =   0.5617
  PASS  174: RMAX =   0.5576
@@ -532,7 +544,7 @@ LABEL  0XALGOL 0COMPILE00186197CC USER=0000000;   COMPILE HMSS2/0000000 XALGOL ;
  PASS  178: RMAX =   0.5460
  PASS  179: RMAX =   0.5434
  PASS  180: RMAX =   0.5403
- PASS  180: RMAX =   0.5376
+ PASS  181: RMAX =   0.5376
  PASS  182: RMAX =   0.5348
  PASS  183: RMAX =   0.5319
  PASS  184: RMAX =   0.5293
@@ -541,16 +553,16 @@ LABEL  0XALGOL 0COMPILE00186197CC USER=0000000;   COMPILE HMSS2/0000000 XALGOL ;
  PASS  187: RMAX =   0.5207
  PASS  188: RMAX =   0.5187
  PASS  189: RMAX =   0.5153
- PASS  190: RMAX =   0.50:6
- PASS  190: RMAX =   0.50#0
+ PASS  190: RMAX =   0.5136
+ PASS  191: RMAX =   0.5100
  PASS  192: RMAX =   0.5085
  PASS  193: RMAX =   0.5048
  PASS  194: RMAX =   0.5035
  PASS  195: RMAX =   0.4997
 
- FINAL RMAX =   4.99680577E-00
+ FINAL RMAX =   4.99680577E-01
 
- TIMES: ET=  503.98, PT=  502.57, IO=   10.28
+ TIMES: ET=  514.65, PT=  504.07, IO=   15.77
 
  TEMPERATURE PROFILE
  KEY   A =  21- 40
@@ -574,7 +586,7 @@ LABEL  0XALGOL 0COMPILE00186197CC USER=0000000;   COMPILE HMSS2/0000000 XALGOL ;
    8     BBBBB    CCCC    DDD    EEE    FFFFF      GGGGGGGGG      FFFFF    EEE    DDD    CCCC    BBBBB
    9    BBBBBB    CCCC   DDDD   EEEE   FFFFF     GGGGGGGGGGGGG     FFFFF   EEEE   DDDD   CCCC    BBBBBB
   10    BBBBBB    CCC    DDD    EEE    FFFF    GGGGGGGGGGGGGGGGG    FFFF    EEE    DDD    CCC    BBBBBB
-  10    BBBBB    CCCC   DDDD   EEEE   FFFF    GGGGGGGGG GGGGGGGGG    FFFF   EEEE   DDDD   CCCC    BBBBB
+  11    BBBBB    CCCC   DDDD   EEEE   FFFF    GGGGGGGGG GGGGGGGGG    FFFF   EEEE   DDDD   CCCC    BBBBB
   12    BBBBB    CCCC   DDD    EEE    FFF    GGGGGG         GGGGGG    FFF    EEE    DDD   CCCC    BBBBB
   13   BBBBBB    CCC    DDD   EEEE   FFFF    GGGGG           GGGGG    FFFF   EEEE   DDD    CCC    BBBBBB
   14   BBBBBB    CCC   DDDD   EEE    FFF    GGGGG             GGGGG    FFF    EEE   DDDD   CCC    BBBBBB
@@ -584,7 +596,7 @@ LABEL  0XALGOL 0COMPILE00186197CC USER=0000000;   COMPILE HMSS2/0000000 XALGOL ;
   18   BBBBB    CCC   DDD   EEEE    FFF    GGGG     HHHHHHH     GGGG    FFF    EEEE   DDD   CCC    BBBBB
   19   BBBBB    CCC   DD    EEEE    FFF    GGG     HHHHHHHHH     GGG    FFF    EEEE    DD   CCC    BBBBB
   20   BBBBB    CCC  DDD   EEEE     FFF    GGG    HHHHHHHHHHH    GGG    FFF     EEEE   DDD  CCC    BBBBB
-  20   BBBBB   CCC   DD   EEEEE     FFF   GGGG    HHHHHHHHHHH    GGGG   FFF     EEEEE   DD   CCC   BBBBB
+  21   BBBBB   CCC   DD   EEEEE     FFF   GGGG    HHHHHHHHHHH    GGGG   FFF     EEEEE   DD   CCC   BBBBB
   22   BBBBB   CCC   DD  EEEE       FFF   GGGG   HHHHHH HHHHHH   GGGG   FFF       EEEE  DD   CCC   BBBBB
   23  BBBBBB   CCC  DD   EE         FFF   GGG    HHHH     HHHH    GGG   FFF         EE   DD  CCC   BBBBBB
   24  BBBBBB   CCC  DD  EE     E    FFF   GGG   HHHH       HHHH   GGG   FFF    E     EE  DD  CCC   BBBBBB
@@ -594,7 +606,7 @@ LABEL  0XALGOL 0COMPILE00186197CC USER=0000000;   COMPILE HMSS2/0000000 XALGOL ;
   28  BBBBB   CCC  DD E  F GH                                                     HG F  E DD  CCC   BBBBB
   29  BBBBB   CCC  D  E F G H                                                     H G F E  D  CCC   BBBBB
   30  BBBBB   CC  DD  E F G HI                                                   IH G F E  DD  CC   BBBBB
-  30  BBBBB   CC  DD EE F G HI                                                   IH G F EE DD  CC   BBBBB
+  31  BBBBB   CC  DD EE F G HI                                                   IH G F EE DD  CC   BBBBB
   32  BBBBB   CC  DD E  F G  I                                                   I  G F  E DD  CC   BBBBB
   33  BBBBB   CC  DD E  F G  I                                                   I  G F  E DD  CC   BBBBB
   34  BBBBB   CC  DD E FF  H I                                                   I H  FF E DD  CC   BBBBB
@@ -604,7 +616,7 @@ LABEL  0XALGOL 0COMPILE00186197CC USER=0000000;   COMPILE HMSS2/0000000 XALGOL ;
   38  BBBBB   CC  D  E F G H I                                                   I H G F E  D  CC   BBBBB
   39  BBBBB   CC  D  E F G H I                                                   I H G F E  D  CC   BBBBB
   40  BBBBB   CC  D  E F G H I                                                   I H G F E  D  CC   BBBBB
-  40  BBBBB   CC  D  E F G H I                                                   I H G F E  D  CC   BBBBB
+  41  BBBBB   CC  D  E F G H I                                                   I H G F E  D  CC   BBBBB
   42  BBBBB   CC  D  E F G H I                                                   I H G F E  D  CC   BBBBB
   43  BBBBB   CC  D  E F G H I                                                   I H G F E  D  CC   BBBBB
   44  BBBBB   CC  D  E F G H I                                                   I H G F E  D  CC   BBBBB
@@ -614,7 +626,7 @@ LABEL  0XALGOL 0COMPILE00186197CC USER=0000000;   COMPILE HMSS2/0000000 XALGOL ;
   48  BBBBB   CC  D  E F G H I                                                   I H G F E  D  CC   BBBBB
   49  BBBBB  CCC  D  E F G H I                                                   I H G F E  D  CCC  BBBBB
   50  BBBBB  CCC  D  E F G H I                                                   I H G F E  D  CCC  BBBBB
-  50  BBBBB  CCC  D  E F G H I                                                   I H G F E  D  CCC  BBBBB
+  51  BBBBB  CCC  D  E F G H I                                                   I H G F E  D  CCC  BBBBB
   52  BBBBB   CC  D  E F G H I                                                   I H G F E  D  CC   BBBBB
   53  BBBBB   CC  D  E F G H I                                                   I H G F E  D  CC   BBBBB
   54  BBBBB   CC  D  E F G H I                                                   I H G F E  D  CC   BBBBB
@@ -624,7 +636,7 @@ LABEL  0XALGOL 0COMPILE00186197CC USER=0000000;   COMPILE HMSS2/0000000 XALGOL ;
   58  BBBBB   CC  D  E F G H I                                                   I H G F E  D  CC   BBBBB
   59  BBBBB   CC  D  E F G H I                                                   I H G F E  D  CC   BBBBB
   60  BBBBB   CC  D  E F G H I                                                   I H G F E  D  CC   BBBBB
-  60  BBBBB   CC  D  E F G H I                                                   I H G F E  D  CC   BBBBB
+  61  BBBBB   CC  D  E F G H I                                                   I H G F E  D  CC   BBBBB
   62  BBBBB   CC  D  E F G H I                                                   I H G F E  D  CC   BBBBB
   63  BBBBB   CC  D  E F G H I                                                   I H G F E  D  CC   BBBBB
   64  BBBBB   CC  D  E F G H I                                                   I H G F E  D  CC   BBBBB
@@ -634,7 +646,7 @@ LABEL  0XALGOL 0COMPILE00186197CC USER=0000000;   COMPILE HMSS2/0000000 XALGOL ;
   68  BBBBB   CC  DD E  F G  I                                                   I  G F  E DD  CC   BBBBB
   69  BBBBB   CC  DD EE F G HI                                                   IH G F EE DD  CC   BBBBB
   70  BBBBB   CC  DD  E F G HI                                                   IH G F E  DD  CC   BBBBB
-  70  BBBBB   CCC  D  E F G H                                                     H G F E  D  CCC   BBBBB
+  71  BBBBB   CCC  D  E F G H                                                     H G F E  D  CCC   BBBBB
   72  BBBBB   CCC  DD E  F GH                                                     HG F  E DD  CCC   BBBBB
   73  BBBBB   CCC  DD EE F G                                                       G F EE DD  CCC   BBBBB
   74  BBBBB    CC  DD  E  F G                                                     G F  E  DD  CC    BBBBB
@@ -644,7 +656,7 @@ LABEL  0XALGOL 0COMPILE00186197CC USER=0000000;   COMPILE HMSS2/0000000 XALGOL ;
   78  BBBBBB   CCC  DDD  EEEE      FFFF   GGG    HHHHH   HHHHH    GGG   FFFF      EEEE  DDD  CCC   BBBBBB
   79   BBBBB   CCC   DD   EEEEE    FFFF   GGGG   HHHHHHHHHHHHH   GGGG   FFFF    EEEEE   DD   CCC   BBBBB
   80   BBBBB   CCC   DDD   EEEE    FFFF   GGGG    HHHHHHHHHHH    GGGG   FFFF    EEEE   DDD   CCC   BBBBB
-  80   BBBBB    CCC   DD   EEEE    FFFF   GGGG    HHHHHHHHHHH    GGGG   FFFF    EEEE   DD   CCC    BBBBB
+  81   BBBBB    CCC   DD   EEEE    FFFF   GGGG    HHHHHHHHHHH    GGGG   FFFF    EEEE   DD   CCC    BBBBB
   82   BBBBB    CCC   DDD   EEEE   FFFF   GGGG     HHHHHHHHH     GGGG   FFFF   EEEE   DDD   CCC    BBBBB
   83   BBBBB    CCC   DDD   EEEE   FFFF   GGGG     HHHHHHHHH     GGGG   FFFF   EEEE   DDD   CCC    BBBBB
   84   BBBBB    CCC   DDD    EEE    FFF   GGGG      HHHHHHH      GGGG   FFF    EEE    DDD   CCC    BBBBB
@@ -654,7 +666,7 @@ LABEL  0XALGOL 0COMPILE00186197CC USER=0000000;   COMPILE HMSS2/0000000 XALGOL ;
   88   BBBBB    CCCC   DDD   EEEE   FFF    GGGG       HHH       GGGG    FFF   EEEE   DDD   CCCC    BBBBB
   89   BBBBB    CCCC   DDD   EEEE   FFF    GGGG                 GGGG    FFF   EEEE   DDD   CCCC    BBBBB
   90   BBBBB    CCCC   DDD   EEEE   FFF    GGGG                 GGGG    FFF   EEEE   DDD   CCCC    BBBBB
-  90   BBBBB    CCCC   DDD    EEE   FFF    GGGG                 GGGG    FFF   EEE    DDD   CCCC    BBBBB
+  91   BBBBB    CCCC   DDD    EEE   FFF    GGGG                 GGGG    FFF   EEE    DDD   CCCC    BBBBB
   92   BBBBB    CCCC   DDD    EEE   FFF    GGGG                 GGGG    FFF   EEE    DDD   CCCC    BBBBB
   93   BBBBB    CCCC   DDD    EEE   FFF    GGGG                 GGGG    FFF   EEE    DDD   CCCC    BBBBB
   94   BBBBB     CCC   DDDD   EEE   FFF    GGGG                 GGGG    FFF   EEE   DDDD   CCC     BBBBB
@@ -665,9 +677,9 @@ LABEL  0XALGOL 0COMPILE00186197CC USER=0000000;   COMPILE HMSS2/0000000 XALGOL ;
   99  BBBBBB     CCC   DDDD   EEE   FFF    GGGG                 GGGG    FFF   EEE   DDDD   CCC     BBBBBB
  100  BBBBBB     CCC   DDDD   EEE   FFF    GGGG                 GGGG    FFF   EEE   DDDD   CCC     BBBBBB
 
- TIMES: ET=  542.65, PT=  540.17, IO=   10.88
+ TIMES: ET=  553.40, PT=  542.67, IO=   16.35
 
 
 
 
- LABEL  000000000OUTPUT 00186197CC USER=0000000;   COMPILE HMSS2/0000000 XALGOL ;XALGOL FILE CARD=PASC00 HMSS2  /0000000
+ LABEL  000000000OUTPUT 00186226CC USER=0000000;   COMPILE HMSS2/0000000 XALGOL ;XALGOL FILE CARD=PASC63 HMSS2  /0000000
