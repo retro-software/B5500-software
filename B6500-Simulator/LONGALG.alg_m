@@ -2015,6 +2015,7 @@ PROCEDURE SEQCOMPARE(TLCR,CLCR, LIB);                                   02196150
                         END                                             02196320          
                    ELSE READTAPE(TLCR,MAXTLCR,FALSE);                   02196330          
                    END                                                  02196340          
+     ELSE IF LIB THEN READTAPE(LTLCR,MAXTLCR,TRUE)               %-101  02196345          
               ELSE READTAPE(TLCR,MAXTLCR,FALSE)                         02196350          
               END;                                                      02196360          
          LCR:=CLCR;                                                     02196370          
