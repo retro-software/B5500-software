@@ -1,8 +1,8 @@
 %#######################################################################00001000          
 %                                                                       00001010          
-%                   B-5700 ALGOL COMPILER                               00001020          
+%           THE SECOND COMING OF THE B-5500 LONGALG COMPILER            00001020          
 %                        MARK XIII.0                                    00001030          
-%                       JULY 15, 1971                                   00001040          
+%                        3 JUNE 2017                                    00001040          
 %                                                                       00001050          
 %#######################################################################00001060          
 %                                                                       00001070          
@@ -410,7 +410,7 @@ ERROR NUMBER  ROUTINE:ERROR MESSAGE                                     00002000
  503     SEARCHLIB: SEPARATOR REQUIRED BETWEEN START POINT AND LENGTH.  00305040          
  504     SEARCHLIB: ILLEGAL LIBRARY LENGTH.                             00305050          
  505     SEARCHLIB: MISSING BRACKET.                                    00305060          
-                                                                        00305070          
+ 506     BLOCK: LONG APPEARS IMMEDIATELY BEFORE IDENTIFIER(NO TYPE).    00305070          
  507     SEARCHLIB: TAPE POSITIONING ERROR.                             00305080          
  509     IODEC:    NON-LITERAL FILE VALUE NOT GLOBAL TO FILE DECL.      00305100          
 ;                                                                       00306000          
@@ -599,6 +599,9 @@ COMMENT              INFO FORMAT                                        01028000
     EACH SUCCEEDING WORD CONTAINS INFORMATION ABOUT EACH LOWER          01104000          
     BOUND IN ORDER OF APPEARANCE,ONE WORD FOR EACH LOWER BOUND.         01105000          
     THESE WORDS ARE MADE UP AS FOLLOWS:                                 01106000          
+          [22:1]  =IF 1, THIS IS THE FINAL ROW OF A LONG ARRAY, WHICH   01106700          
+                   WILL REQUIRE DOUBLING OF THE RAW INDEX VALUE AND     01106800          
+                   AN EXTRA LEVEL OF INDEXING FOR LONGROWSZ-WORD ROWS.  01106900          
           [23:12] =ADD OPERATOR SYLLABLE (0101) OR                      01107000          
                    SUB OPERATOR SYLLABLE (0301) CORRESPONDING           01108000          
                    RESPECTIVELY TO WHETHER THE LOWER BOUND IS           01109000          
@@ -802,8 +805,10 @@ COMMENT              INFO FORMAT                                        01028000
          FORMATV        =16#,    COMMENT  20;                           01295000          
          FILEV          =17#,    COMMENT  21;                           01296000          
          STREAMV        =18#,    COMMENT  22;                           01297000          
-         DEFINEV        =19#;    COMMENT  23;                           01298000          
+         DEFINEV        =19#,    COMMENT  23;                           01298000          
+         LONGV          =20#;    COMMENT  24;                           01298100          
 DEFINE ADES=0#,LDES=2#,PDES=1#,CHAR=3#;                                 01299000          
+DEFINE LONGROWSZ=256#;  % SIZE OF LONG-ARRAY SEGMENTED ROWS             01299300          
  REAL TIME1;                                                            01300000          
  INTEGER SCRAM;                                                         01301000          
     COMMENT SCRAM CONTAINS THE SCRAMBLE INDEX FOR THE LAST IDENTIFIER   01302000          
@@ -1241,6 +1246,7 @@ INTEGER FILENO;                                                         01584000
                            FUNCTION;                                    01587000          
        P2,         COMMENT GENERALY TELLS WHETHER OWN WAS SEEN;         01588000          
        P3,         COMMENT TELLS WHETHER SAVE WAS SEEN;                 01589000          
+       P5,         COMMENT TELLS WHETHER LONG WAS SEEN;                 01589600          
        VONF,       COMMENT VALUE OR OWN FIELD OF ELBAT WORD;            01590000          
        FORMALF,    COMMENT FORMAL FIELD OF ELBAT WORD;                  01591000          
        PTOG,       COMMENT TELLS THAT FORMAL PARAPART IS BEING PROCESSD;01592000          
@@ -1489,7 +1495,7 @@ PROCEDURE DATIME;                                                       01820000
          END OF DATER;                                                  01827000          
     H:=TIME1 DIV 216000; MIN:=(TIME1 DIV 3600) MOD 60;                  01828000          
     WRITE(LINE[DBL],                                                    01829000          
-          <X22,"BURROUGHS B-5700 ALGOL COMPILER MARK ",                 01830000          
+          <X22,"RETRO-B5500 LONGALG COMPILER    MARK ",                 01830000          
 "XIII.0"                                                                01831000          
            ,"  ",A6,"DAY, ",O,",  ",I2,":",A2,X1,A1,"M."//>,            01832000          
           TIME(6),DATER(TIME(5)),12|REAL(Q:=H MOD 12=0)+Q,              01833000          
@@ -6921,12 +6927,13 @@ FILL INFO[2,*] WITH OCT0030000120000000, "2LB000",  % THESE ENTRIES ARE 09214105
     OCT0130000000040000, "5LNGAM",             OCT0000000012700000,%657 09214420          
     OCT0130000000040000, "3TAN00",             OCT0000000011100000,%660 09214425          
     OCT2000000000004050, COMMENT POWERS OF TEN ;                   %663 09214430          
-                      0, COMMENT SORTA ;                           %664 09214435          
-    "        " ;         COMMENT LASTSEQUENCE,LASTSEQROW ;         %665 09214440          
+    OCT0430000240000000, "4LONG0",                                 %664 09214432          
+                      0, COMMENT SORTA ;                           %666 09214435          
+    "        " ;         COMMENT LASTSEQUENCE,LASTSEQROW ;         %667 09214440          
  COMMENT NOW LINK THESE ENTRIES INTO STACKHEAD;                         09214500          
 FOR NEXTINFO~512 STEP 2 UNTIL 534,537 STEP 3 UNTIL 546                  09214510          
 ,567STEP 3UNTIL 603,607STEP 4UNTIL 615,618,621STEP 4UNTIL 629,632,635,  09214515          
-639STEP 3UNTIL 660                                                      09214516          
+639STEP 3UNTIL 660,664                                                  09214516          
 DO PUT(TAKE(NEXTINFO)&STACKHEAD[GT2~TAKE(NEXTINFO+1)MOD 125][35:35:13], 09214520          
               LASTINFO~STACKHEAD[GT2]~NEXTINFO);                        09214530          
  NEXTINFO ~ LASTINFO ~ LASTSEQROW | 256 + LASTSEQUENCE + 1;             09214980          
@@ -8590,7 +8597,7 @@ END DEFINEPARAM;                                                        12166000
         DO                                                              13078000          
          BEGIN                                                          13079000          
            STOPDEFINE := TRUE ;                                         13079500          
-           STEPIT; J~K;P2~P3~FALSE;GTA1[0]~0; GET7(ACCUM[1],FILID);     13080000          
+           STEPIT; J~K;P2~P3~P5~FALSE;GTA1[0]~0; GET7(ACCUM[1],FILID);  13080000          
            MULFID~0;TYPE~2; ENTER(FILEID);                              13081000          
            SAVADDRSF~ADDRSF ;                                           13081500          
            IF SPECTOG THEN GO TO START;                                 13082000          
@@ -9018,7 +9025,7 @@ COMMENT                                                                 13377000
                       DESC XITR ;                                       13447000          
    BEGIN                                                                13448000          
     REAL T1,T2,T3,K,LBJ,ARPROGS,SAVEDIM,T,T4,SAVEINFO,SAVEINFO2;        13449000          
-    BOOLEAN LLITOG,ULITOG;                                              13450000          
+    BOOLEAN LLITOG,ULITOG,LONGDIM;                                      13450000          
 REAL ADDCON;                                                            13451000          
     LABEL CSZ,BETA1,TWO,START,SLB,BETA2;                                13452000          
     ARRAYFLAG ~ TRUE;                                                   13452100          
@@ -9037,6 +9044,10 @@ REAL ADDCON;                                                            13451000
                                                        IF SPECTOG THEN  13465000          
                                                           FLAG(014)     13466000          
                                                       END               13467000          
+                                      ELSE IF T1=LONGV THEN             13467100          
+                                                      BEGIN             13467200          
+                                                       P5~TRUE;         13467300          
+                                                       END              13467400          
               ELSE                                                      13468000          
                    TYPEV ~REALID+T1;                                    13469000          
    IF NOT SPECTOG THEN EMITO(MKS); SAVEINFO~NEXTINFO;                   13470000          
@@ -9096,12 +9107,31 @@ TWO:IF STEPI=ADOP THEN                                                  13474000
      AEXP;                                                              13524000          
      EMITL(JUNK);                                                       13525000          
      EMITO(ISN);                                                        13526000          
-CSZ: IF LLITOG AND ULITOG THEN                                          13527000          
+CSZ:                                                                    13527000          
+     LONGDIM:= P5 AND TABLE(I)=RTBRKET; % LAST DIM OF LONG ARRAY        13527100          
+     IF LLITOG AND ULITOG THEN                                          13527200          
                             BEGIN                                       13528000          
                                L~ARPROGS;                               13529000          
-                               IF(T~IF ADDCON=ADDC THEN T4+T3+1 ELSE    13530000          
-                                    T4-T3+1){0 OR T>1023 THEN FLAG(59); 13531000          
-                               EMITL(T);                                13531100          
+                               T~IF ADDCON=ADDC THEN                    13529500          
+                                   T4+T3+1 ELSE T4-T3+1;                13529600          
+                               IF T{0 THEN FLAG(59);                    13529700          
+                               IF NOT LONGDIM THEN                      13529800          
+                                 BEGIN                                  13529900          
+                                 IF T>1023 THEN FLAG(59);               13530000          
+                                 EMITL(T);                              13530100          
+                                 END                                    13530200          
+                               ELSE                                     13530300          
+                                 BEGIN                                  13530400          
+                                 % FOR A LONG ARRAY, DOUBLE THE SIZE OF 13530500          
+                                 % THE LAST DIMENSION AND SPLIT IT INTO 13530600          
+                                 % LONGROWSZ-WORD ROWS.                 13530700          
+                                 T~(2|T+LONGROWSZ-1) DIV LONGROWSZ;     13530800          
+                                 EMITL(T);           % # ROWS           13530900          
+                                 EMITL(LONGROWSZ);   % FINAL ROW SIZE   13531000          
+                                 IF T>1023 THEN FLAG(59);               13531100          
+                                 IF T<LONGROWSZ THEN % CHOOSE MAX SIZE  13531200          
+                                   T~LONGROWSZ;                         13531300          
+                                 END;                                   13531400          
                               IF P3 THEN BEGIN SAVEDIM~SAVEDIM|T;       13532000          
                                                IF SAVEDIM>MAXSAVE       13533000          
                                                  THEN MAXSAVE~SAVEDIM   13534000          
@@ -9115,16 +9145,28 @@ CSZ: IF LLITOG AND ULITOG THEN                                          13527000
                                      THEN                               13542000          
                                        BEGIN                            13543000          
                                          EMITO(XCH);EMITO(SUB)          13544000          
-                                       END;EMITL(1);EMITO(ADD)          13545000          
+                                       END;EMITL(1);EMITO(ADD);         13545000          
+                                  IF LONGDIM THEN                       13545100          
+                                    BEGIN                               13545200          
+                                    EMITO(DUP);                         13545300          
+                                    EMITO(ADD); % DOUBLE THE SIZE       13545400          
+                                    EMITL(LONGROWSZ-1);                 13545500          
+                                    EMITO(ADD); % ROUND UP TO LONGROWSZ 13545550          
+                                    EMITL(LONGROWSZ);                   13545600          
+                                    EMITO(IDV); % # ROWS                13545650          
+                                    EMITL(LONGROWSZ); % FINAL ROW SIZE  13545700          
+                                    END;                                13545800          
                             END;                                        13546000          
-SLB:PUTNBUMP(T2);LBJ~LBJ+1;IF T~TABLE(I)=COMMA THEN GO TO TWO           13547000          
+SLB: % IF LAST DIM OF LONG ARRAY, SET BIT 22 IN INFO DIMENSION WORD     13547000          
+     PUTNBUMP(T2 & REAL(LONGDIM)[22:47:1]);                             13547100          
+     LBJ~LBJ+1;IF T~TABLE(I)=COMMA THEN GO TO TWO                       13547200          
                                                ELSE                     13548000          
                                IF T!RTBRKET THEN FLAG(018);             13549000          
   IF NOT SPECTOG THEN                                                   13550000          
                    BEGIN                                                13551000          
          COMMENT KEEP COUNT OF NO. OF ARRAYS DECLARED;                  13551400          
                         NOOFARRAYS~NOOFARRAYS + GTA1[0];                13551500          
-                     EMITL(LBJ);EMITL(GTA1[0]);                         13552000          
+                     EMITL(LBJ+REAL(LONGDIM));EMITL(GTA1[0]);           13552000          
 EMITL(REAL(P3) +2|REAL(P2));                                            13553000          
     EMITV(5)                                                            13554000          
                    END;                                                 13555000          
@@ -9285,6 +9327,9 @@ CNTR~0;                                                                 13689000
                          THEN G~GTA1[J~J-1];                            13724000          
               IF NOT P3                                                 13725000          
                  THEN IF P3~(G=SAVEV)                                   13726000          
+                         THEN G~GTA1[J~J-1];                            13726100          
+              IF NOT P5                                                 13726200          
+                 THEN IF P5~(G=LONGV)                                   13726300          
                          THEN G~GTA1[J~J-1]                             13727000          
             END;                                                        13728000          
         IF G!0 THEN FLAG(25) ELSE ENTRY(TYPE)                           13729000          
@@ -9443,11 +9488,11 @@ BEGIN                                                                   14012000
        LABELDEC,DUMPDEC,LISTDEC,OUTDEC,INDEC,MONITORDEC,                14014000          
        SWITCHDEC,PROCEDUREDEC,ARRAYDEC,FORMATDEC,FILEDEC,               14015000          
       GOTSCHK,                                                          14016000          
-       STREAMERR,DEFINEDEC,CALLSTATEMENT,HF,START;                      14017000          
+       STREAMERR,DEFINEDEC,LONGERR,CALLSTATEMENT,HF,START;              14017000          
 SWITCH DECLSW~ OWNERR,SAVERR,BOOLEANDEC,REALDEC,ALPHADEC,INTEGERDEC,    14018000          
                LABELDEC,DUMPDEC,LISTDEC,OUTDEC,INDEC,MONITORDEC,        14019000          
                SWITCHDEC,PROCEDUREDEC,ARRAYDEC,FORMATDEC,FILEDEC,       14020000          
-               STREAMERR,DEFINEDEC;                                     14021000          
+               STREAMERR,DEFINEDEC,LONGERR;                             14021000          
   DEFINE NLOCS=10#,LOCBEGIN=PRTI#;                                      14022000          
 DEFINE LBP=[36:12]#;                                                    14023000          
   ARRAY TEDOC[0:7,0:127],LOCALS[0:NLOCS];                               14024000          
@@ -9579,10 +9624,11 @@ START: IF TABLE(I)!SEMICOLON                                            14063000
                    GTA1[J]!DUMPV;ERRORTOG~TRUE;                         14130000          
      END;                                                               14131000          
 IF J =0 THEN GO TO CALLSTATEMENT;                                       14132000          
-    P2~P3~FALSE;                                                        14133000          
+    P2~P3~P5~FALSE;                                                     14133000          
     GO TO DECLSW[GTA1[J]];                                              14134000          
 OWNERR:FLAG(20);J~J+1;GO TO REALDEC;                                    14135000          
 SAVERR:FLAG(21);J~J+1;GO TO REALDEC;                                    14136000          
+LONGERR:FLAG(506);J~J+1;GO TO REALDEC;                                  14136200          
 STREAMERR:FLAG(22);J~J+1;GO TO PROCEDUREDEC;                            14137000          
 REALDEC:P3~TRUE;ENTER(REALID);GO TO START;                              14138000          
 ALPHADEC:P3~TRUE;ENTER(ALFAID);GO TO START;                             14139000          
@@ -10351,6 +10397,47 @@ COMMENT  201  VARIABLE- A PARTIAL WORD DESIGNATOR IS NOT THE          * 15122000
                                       IS SET TRUE IF THE VARIABLE IN    15212000          
                                       TALL IS SPECIAL MONITORED.        15213000          
 ;                                                                       15214000          
+PROCEDURE INDEXER(TALL,J,BYNAME);                                       15214020          
+       VALUE TALL,J,BYNAME;                                             15214040          
+       REAL TALL,J;                                                     15214060          
+       BOOLEAN BYNAME;                                                  15214080          
+       BEGIN COMMENT                                                    15214100          
+           INDEXER HANDLES THE COMPLEXITIES OF INITIAL AND FINAL        15214120          
+           INDEXING OF ARRAY DIMENSIONS WHERE DOUBLE-INDEXING OF THE    15214140          
+           LAST DIMENSION OF A LONG ARRAY MAY BE INVOLVED. ON ENTRY,    15214160          
+           ASSUMES THE RAW INDEX VALUE IS AT TOP OF STACK;              15214180          
+                                                                        15214200          
+       IF BOOLEAN(TAKE(GIT(TALL)+J).[22:1]) THEN                        15214220          
+         BEGIN % THIS IS THE LONG DIMENSION FOR A LONG ARRAY.           15214240          
+         EMITO(DUP);                                                    15214260          
+         EMITO(ADD);                   % DOUBLE THE INDEX               15214280          
+         EMITPAIR(JUNK,ISN);           % SAVE A COPY FOR THE COL INDEX  15214300          
+         EMITL(LONGROWSZ);                                              15214320          
+         EMITO(IDV);                   % COMPUTE THE SPLIT-ROW INDEX    15214340          
+         IF J=1 THEN                                                    15214360          
+           EMITN(TALL.ADDRESS)                                          15214380          
+         ELSE                                                           15214400          
+           EMITO(CDC);                                                  15214420          
+         EMITO(LOD);                   % LOAD THE DESTINATION DESCRIPTOR15214440          
+         EMITV(JUNK);                  % RETRIEVE THE SAVED INDEX VALUE 15214460          
+         EMITL(LONGROWSZ);                                              15214480          
+         EMITO(RDV);                   % COMPUTE THE SPLIT-COL INDEX    15214500          
+         IF BYNAME THEN                                                 15214520          
+           EMITO(CDC)                                                   15214540          
+         ELSE                                                           15214560          
+           EMITO(COC);                                                  15214580          
+         END                                                            15214600          
+       ELSE IF J=1 THEN                                                 15214620          
+         IF BYNAME THEN                                                 15214640          
+           EMITN(TALL.ADDRESS)                                          15214660          
+         ELSE                                                           15214680          
+           EMITV(TALL.ADDRESS)                                          15214700          
+       ELSE                                                             15214720          
+         IF BYNAME THEN                                                 15214740          
+           EMITO(CDC)                                                   15214760          
+         ELSE                                                           15214780          
+           EMITO(COC);                                                  15214800          
+       END INDEXER;                                                     15214820          
 PROCEDURE M4(TALL,J);                                                   15215000          
        VALUE TALL,J ;                                                   15216000          
        REAL TALL,J ;                                                    15217000          
@@ -10361,10 +10448,10 @@ PROCEDURE M4(TALL,J);                                                   15215000
                                   THEN BEGIN COMMENT TALL IS MONITORED; 15221000          
                                             EMITV(JUNK);   EMITO(XCH);  15222000          
                                        END;                             15223000          
-                                  EMITN(TALL.ADDRESS )                  15224000          
+                                  INDEXER(TALL,J,TRUE);                 15224000          
                              END                                        15225000          
                         ELSE BEGIN COMMENT NOT THE FIRST TIME AROUND;   15226000          
-                                  EMITO(CDC);                           15227000          
+                                  INDEXER(TALL,J,TRUE);                 15227000          
                                   IF TALL < 0                           15228000          
                                   THEN BEGIN COMMENT CALL SUBSCRIPT;    15229000          
                                             EMITV(JUNK);   EMITO(XCH);  15230000          
@@ -10502,19 +10589,13 @@ COMMENT  *****     MONITOR FUNCTION M6 GOES BEFORE EMITO(XCH);          15310000
                    IF DOTSYNTAX(T1,T2) THEN GO TO EXIT;                 15341000          
                    IF STEPI = ASSIGNOP THEN IF P1=FS THEN GO TO LAST    15342000          
                         ELSE BEGIN ERR(209); GO EXIT END;               15343000          
-                   IF J=1 THEN EMITV(TALL.ADDRESS)ELSE EMITO(COC);      15344000          
+                   INDEXER(TALL,J,FALSE);                               15344000          
                  END                                                    15345000          
               ELSE                                                      15346000          
 COMMENT  *****     MONITOR FUNCTION M10 GOES HERE   ;                   15347000          
                    BEGIN COMMENT MONITOR FUNCTION M10;                  15348000          
                         SPCLMON~P1 = FP OR ELCLASS } AMPERSAND;         15349000          
-                        IF J = 1                                        15350000          
-                        THEN IF SPCLMON                                 15351000          
-                             THEN EMITV(TALL.ADDRESS)                   15352000          
-                             ELSE EMITN(TALL.ADDRESS)                   15353000          
-                        ELSE EMITO(IF SPCLMON                           15354000          
-                                  THEN COC                              15355000          
-                                  ELSE CDC);                            15356000          
+                        INDEXER(TALL,J,NOT SPCLMON);                    15350000          
                         IF TALL < 0                                     15357000          
                         THEN BEGIN COMMENT DO NOT MONITOR AFTER ALL;    15358000          
                                   EMITL(5);                             15359000          
@@ -11052,4 +11133,4 @@ PROCEDURE JUMPS;                                                        16431000
  TIME1 ~ TIME(1); PROGRAM;                                              17000000          
 ENDOFITALL:END MAIN BLOCK                                               17000100          
               END.                                                      17001000          
-END;END.        LAST CARD ON 0CRDING TAPE                               99999999          
+END;END.        LAST CARD ON 0CRDIMG TAPE                               99999990          
