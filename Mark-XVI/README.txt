@@ -27,9 +27,13 @@ SYMBOL/KERNEL.esp_m
     Transcribed from B5700_Symbol_Kernel_May78.pdf by Paul Kimpel.
 
 SYMBOL/TSSINT.esp_m
-    Transcribed from B5700_TSS_Intrinsics_May77.pdf by Fausto Saporito
-    of Naples, Italy. Note that this transcription is presently
-    incomplete and does not contain sequence numbers.
+    Portions initially transcribed from B5700_TSS_Intrinsics_May77.pdf
+    by Fausto Saporito of Naples, Italy. Then a customized and very
+    impressive job of OCR conversion from the listing was done in
+    December 2013 by James Markevitch at the request of Nigel Williams,
+    which has replaced an earlier commit of Fausto's work. Note that the
+    OCR conversion, while very accurate, is not perfect, so this file
+    still needs to be proofed against the original listing.
 
 PATCHES/ESPOL-116.txt
     Patches to SYMBOL/ESPOL.esp_m transcribed from B5700_ESPOL_Aug77.pdf
@@ -39,4 +43,6 @@ PATCHES/ESPOL-PC-951.txt
     Patches to SYMBOL/ESPOL.esp_m by Paul Cumberworth of Adelaide,
     Australia that allow the compiler to be compiled under Mark XIII
     Algol.
+
+
 
