@@ -15,4 +15,7 @@ APL-IMAGE.alg_m
 
     Transcription was performed jointly by Hans Pufal of Angouleme,
     France and Fausto Saporito of Naples, Italy during August-September
-    2013.
+    2013. Proofreading, corrections, and application of original
+    sequence numbers was done in late 2016 by Richard Cornwell of
+    Durham, North Carolina US.
+
