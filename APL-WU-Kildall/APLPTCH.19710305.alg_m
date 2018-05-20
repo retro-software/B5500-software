@@ -1,0 +1,6 @@
+DEFINE VERSIONDATE="3-05-71 "#;                                         00000600          
+FILE TWXIN 19(2,30),TWXOUT 19(2,9);                                     00001415          
+    FILL JIGGLE[*] WITH OCT3636363636363636; %RUB OUTS                  00101430          
+$                                                                       00106100          
+                WRITE(TWXOUT[STOP],1,JIGGLE[*])[BREAKKEY:BREAKKEY];     03905206          
+    GO TO ERR1 ELSE;                                                    08017232          
