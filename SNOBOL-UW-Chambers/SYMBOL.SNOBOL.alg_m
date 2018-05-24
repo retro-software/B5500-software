@@ -243,7 +243,7 @@ DEFINE                                                                  02380000
    CIOUSE=[3:46:2]#,                                                    02430000          
    CLINK=[5:36:12]#,    % MOVE TO LINK FIELD                            02440000          
    CONCSTR = [36:44:4] #,                                               02450000          
-   COUTUS=[4:47:1]#,    %                                               02460000          
+   COUTUSE=[4:47:1]#,   %                                               02460000          
    CYCLE=[9:4]#,        % NUMBER TIMES FILE LOCATION USED               02470000          
    FILNO=[5:4]#,        % INDEX OF ASSOCIATED FILE                      02480000          
    INUSE=[3:1]#,        % = 1 IF INPUT STRING                           02490000          
@@ -1367,7 +1367,7 @@ INTEGER ERRNO, ERRPOINT, I, J, K, N;                                    13640000
 COMBINEGROUP ~ ARITH ~ FALSE;                                           13670000          
 FOR I ~ MKS STEP 1 UNTIL SP-1 DO IF PTYPE[I] ! 0 THEN                   13680000          
    CASE PTYPE[I] OF                                                     13690000          
-      BEGIN                                                             13700000          
+      BEGIN;                                                            13700000          
    % 1: STRING NAME                                                     13710000          
       ;                                                                 13720000          
    % 2: FUNCTION (INCOMPLETE)                                           13730000          
@@ -1410,16 +1410,16 @@ FOR I ~ MKS STEP 1 UNTIL SP-1 DO IF PTYPE[I] ! 0 THEN                   13680000
       ARITH ~ TRUE;     % MIGHT BE ARITH EXPR                           14100000          
       END;                                                              14110000          
    % 17: "*(" OF BAL VAR                                                14120000          
-       GO TO FAUT;                                                      14130000          
+      GO TO FAUT;                                                       14130000          
    % 18: STR REF & PATTERN                                              14140000          
-       GO TO FAUT;                                                      14150000          
+      GO TO FAUT;                                                       14150000          
    % 19: COMPLETE ARITH EXPR                                            14160000          
-       ARITH ~ TRUE;                                                    14170000          
+      ARITH ~ TRUE;                                                     14170000          
    % 20: "S(",, "F(", OR "(" OF GO-TO PART                              14180000          
-       GO TO FAUT;                                                      14190000          
+      GO TO FAUT;                                                       14190000          
    % 21: COMBINED GO-TO PART                                            14200000          
-       GO TO FAUT;                                                      14210000          
-       END CASES;                                                       14220000          
+      GO TO FAUT;                                                       14210000          
+      END CASES;                                                        14220000          
 N ~ J ~ 0;                                                              14230000          
 FOR I ~ MKS STEP 1 UNTIL SP-1 DO IF PTYPE[I] ! 0 THEN                   14240000          
    BEGIN                                                                14250000          
@@ -2807,7 +2807,7 @@ CREATE:                                                                 27900000
       IF K ! 0 THEN VALU[I] ~ 1 & K CLINK;                              28070000          
       END;                                                              28080000          
    IF TRACEALL THEN                                                     28090000          
-      BEGIN VALU[I].INUSE ~ (IF X="FCT" THEN 3 ELSE 1);                 28100000          
+      BEGIN VALU[I].IOUSE ~ (IF X="FCT" THEN 3 ELSE 1);                 28100000          
       IO[I] ~ 0 & 2 CIOTYPE & 3 CFILNO                                  28110000          
          & (IF X="FCT" THEN 3 ELSE 1) CIOUSE;                           28120000          
       END;                                                              28130000          
@@ -3263,7 +3263,7 @@ PSCAN:   % NEXT PATTERN ELEMENT                                         32580000
    RELATIVEPOINTER ~ 0;                                                 32630000          
    % CONTROLPOINT SHOULD NOW POINT TO THE NEXT PATTERN ELEMENT.         32640000          
    MV(3,CONTROLPOINT,AA,2);  % GET NEXT PIECE OF CODE.                  32650000          
-   % IF INFORM THEN INFORMAA(4,AA);                                     32660000          
+   % IF INFORM THEN INFORMA(4,AA);                                      32660000          
    CASE AA.C2 OF                                                        32670000          
       BEGIN                                                             32680000          
 %***************************************                                32690000          
@@ -5012,7 +5012,7 @@ GOTO:                                                                   50090000
    NEARPOINT ~ IF SUCCESS THEN SLOC ELSE FLOC;                          50120000          
    INSTRUCT ~ NEARPOINT.W;                                              50130000          
    NEARPOINT ~ NEARPOINT.C;                                             50140000          
-   RELATIVEPOINTER ~ SP + 0;                                            50150000          
+   RELATIVEPOINTER ~ SP ~ 0;                                            50150000          
    INGOTOPART ~ TRUE;                                                   50160000          
    GO TO PSCAN;                                                         50170000          
    END;                                                                 50180000          
@@ -7559,7 +7559,7 @@ ALPHA ARRAY USERS[0:31];                                                75490000
 %                                                                       75590000          
 FILL CONVERTVAL[*] WITH                                                 75600000          
     "0","1","2","3","4","5","6","7","8","9",                            75610000          
-    "=",""",""","{","%","[","<","A","B","C",                            75620000          
+    "=",""",":","{","%","[","<","A","B","C",                            75620000          
     "D","E","F","G","H","I",".",")","+","}",                            75630000          
     12, ";",12, "J","K","L","M","N","O","P",                            75640000          
     "Q","R","$","*","-",12, 12, ">"," ","/",                            75650000          
