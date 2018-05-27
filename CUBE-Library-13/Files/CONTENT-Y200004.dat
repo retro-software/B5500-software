@@ -1,0 +1,190 @@
+      BURROUGHS B 5500 UTILITY LIBRARY CONTENTS  7/18/68                00000100
+                                                                        00000200
+  WHAT FOLLOWS IS A LISTING AND BRIEF EXPLANATION OF THE                00000300
+  PROGRAMS CONTAINED IN THE B-5500 UTILITY LIBRARY AS OF                00000400
+  THE ABOVE DATE. EACH PROGRAM HAS A CODE CONSISTING OF A               00000500
+  SIX DIGIT NUMBER AND TWO LETTERS. THE FIRST OF THE TWO                00000600
+  LETTERS INDICATES WHAT LANGUAGE THE PROGRAM IS WRITTEN                00000700
+  IN ACCORDING TO THE FOLLOWING CODE:                                   00000800
+      A   ALGOL                                                         00000900
+      C   COBOL                                                         00001000
+      E   ESPOL                                                         00001100
+      F   FORTRAN                                                       00001200
+                                                                        00001300
+  THE SECOND LETTER INDICATES WHICH REVISION OF THE PROGRAM IS          00001400
+  CURRENTLY IN THE LIBRARY ACCORDING TO THE FOLLOWING CODE:             00001500
+      A   INITIALLY RELEASED VERSION                                    00001600
+      B   FIRST REVISION                                                00001700
+      C   SECOND REVISION                                               00001800
+       ETC.                                                             00001900
+                                                                        00002000
+  MOST OF THE UTILITY PROGRAMS ARE DOCUMENTED AT THE BEGINNING          00002100
+  OF THEIR SOURCE LISTINGS. THE USE OF THE REMAINING PROGRAMS           00002200
+  IS SELF-EVIDENT AFTER A PERUSAL OF THE SOURCE CODE.                   00002300
+                                                                        00002400
+************************************************************************00002500
+          PLEASE NOTE THAT THE BURROUGHS CORPORATION ASSUMES            00002600
+ NO RESPONSIBILITY FOR THE USE OR MAINTENANCE OF THESE PROGRAMS.        00002700
+************************************************************************00002800
+                                                                        00002900
+                                                                        00003000
+   000100AA   COPARE                                                    00003100
+   000101AA   DCMAP                                                     00003200
+   000102AA   DISKMAP                                                   00003300
+   000103AA   DECKSEQ                                                   00003400
+   000104AA   KRUNCH                                                    00003500
+   000105AA   SELECT                                                    00003600
+   000106AA   SORTGEN                                                   00003700
+   000107AA   UNKRUNCH                                                  00003800
+   000108AA   CARDPRINT                                                 00003900
+   000109AA   TAPEPRINT                                                 00004000
+   000110AA   CARDPUNCH                                                 00004100
+   000111AA   PARTCARD                                                  00004200
+   000112AA   PATCH                                                     00004300
+   000113AA   TAPEDUMP                                                  00004400
+   000114CA   DISCROSREF                                                00004500
+   000115CA   CARDCROSREF                                               00004600
+   000116AA   MULTIPLE                                                  00004700
+   000117CA   TAPEPUNCH                                                 00004800
+   000118CA   DISKPUNCH                                                 00004900
+   000119CA   DIRECTORY                                                 00005000
+   000120CA   DUMPLIST                                                  00005100
+   000121CA   MAKESOLT                                                  00005200
+   000122CA   PUNCHSOLT                                                 00005300
+   000123AA   PBDPBT                                                    00005400
+   000124AA   BICOMP                                                    00005500
+                                                                        00005600
+                                                                        00005700
+BICOMP      00124AA                                                     00005800
+      A BINARY CARD READ AND COMPARE PROGRAM. READS A BINARY            00005900
+      CARD AND THEN VERIFIES WHETHER ALL THE BINARY CARDS               00006000
+      FOLLOWING THE FIRST ARE DUPLICATES OF THE FIRST OR NOT.           00006100
+                                                                        00006200
+CARDCROSREF 000115CA                                                    00006300
+      CROSS-REFERENCES A COBOL PROGRAM WHICH IS ON CARDS                00006400
+      OR ON AN UNBLOCKED CARD-IMAGE TAPE.                               00006500
+                                                                        00006600
+CARDPRINT   000108AA                                                    00006700
+      PRINTS CARD-IMAGES ON A LINE-PRINTER, DOUBLE-SPACED.              00006800
+      INPUT MAY BE FROM A CARD-READER OR FROM A DISK FILE               00006900
+      BLOCKED (X,10,30). IF MORE THAN ONE COPY IS DESIRED,              00007000
+      THEN INCLUDE A COMMON CARD WITH COMMON EQUAL TO THE               00007100
+      NUMBER OF COPIES DESIRED.                                         00007200
+                                                                        00007300
+CARDPUNCH   000110AA                                                    00007400
+      PUNCHES A DECK OF CARDS USING AS INPUT EITHER THE CARD-           00007500
+      READER OR A DISK FILE BLOCKED (X,10,30). IF MORE THAN             00007600
+      ONE DECK NEEDS TO BE PUNCHED, THEN INCLUDE A COMMON               00007700
+      CARD WITH COMMON EQUAL TO THE NUMBER OF DECKS DESIRED.            00007800
+                                                                        00007900
+COPARE      000100AA                                                    00008000
+      COMPARES TWO MULTIFILE TAPES TO DETERMINE IF THEY ARE IDENTICAL.  00008100
+      OPTIONALLY, WILL DUPLICATE A MULTIFILE TAPE AND THEN COMPARE      00008200
+      THE ORIGINAL AND THE DUPLICATE.                                   00008300
+                                                                        00008400
+DCMAP       000101AA                                                    00008500
+      PRINTS ON A DATA-COMM TERMINAL THE DISK DIRECTORY INFORMATION     00008600
+      FOR A SPECIFIED DISK FILE.(SEE ALSO DISKMAP AND DIRECTORY)        00008700
+                                                                        00008800
+DECKSEQ     000103AA                                                    00008900
+      SEQUENCES AN ALGOL, COBOL, OR FORTRAN SOURCE DECK AND             00009000
+      GANG-PUNCHES THREE ID CHARACTERS PRECEDING THE                    00009100
+      SEQUENCE NUMBER.                                                  00009200
+                                                                        00009300
+DIRECTORY   000119CA                                                    00009400
+      LISTS FROM THE FILE DIRECTRY/DISK THE ENTIRE DIRECTORY            00009500
+      IN MFID/ID SEQUENCE AND IN DISK ADDRESS SEQUENCE. THE             00009600
+      LISTING IN ADDRESS SEQUENCE INDICATES THE SIZE AND ADDRESS        00009700
+      OF ALL IN-USE AREAS AND ALL AVAILABLE AREAS. AT THE END,          00009800
+      STATISTICS ARE PRINTED OF THE NUMBER OF FILES, THE                00009900
+      NUMBER OF AVAILABLE AREAS, AND THE TOTAL AVAILABLE                00010000
+      SEGMENTS. POTENTIAL USERS ARE ADVISED TO COMPILE THE              00010100
+      PROGRAM, READ THE DOCUMENTATION PRECEDING THE IDENTIFICATION      00010200
+      DIVISION, MAKE THE REQUIRED CHANGES, AND RECOMPILE.               00010300
+      (SEE ALSO DCMAP AND DISKMAP)                                      00010400
+                                                                        00010500
+DISKCROSREF 000114CA                                                    00010600
+      CROSS-REFERENCES A COBOL SOURCE DECK WHICH IS ON DISK.            00010700
+                                                                        00010800
+DISKMAP     000102AA                                                    00010900
+      PRINTS THE FILE NAME, CREATION DATE, SAVE FACTOR, DATE OF LAST    00011000
+      ACCESS, NUMBER OF RECORDS AND LENGTH, NUMBER OF ROWS AND LENGTH,  00011100
+      AND THE ADDRESS OF EACH ROW FOR EVERY FILE ON DISK, 6 FILES PER   00011200
+      PRINTED PAGE.(SEE ALSO DCMAP AND DIRECTORY)                       00011300
+                                                                        00011400
+DISKPUNCH   000118CA                                                    00011500
+      PUNCHES A DECK FROM A CARD-IMAGE DISK FILE.                       00011600
+                                                                        00011700
+DUMPLIST    000120CA                                                    00011800
+      LISTS INFORMATION FROM SYSTEM LOG BUT DOES NOT RESET              00011900
+      THE LOG POINTER (I.E., DOES NOT VOID THE LOG).                    00012000
+                                                                        00012100
+KRUNCH      000104AA                                                    00012200
+      PACKS AN ALGOL SOURCE PROGRAM, 72 COLUMNS PER RECORD SO           00012300
+      THAT ALL UNNECESSARY BLANK COLUMNS ARE REMOVED AND THE            00012400
+      PROGRAM OCCUPIES LESS STORAGE SPACE.                              00012500
+                                                                        00012600
+MAKESOLT    000121CA                                                    00012700
+      CREATES AN UNBLOCKED SOLT TAPE FROM CARDS OR FROM AN              00012800
+      AN UNBLOCKED CARD-IMAGE TAPE.                                     00012900
+                                                                        00013000
+MULTIPLE    000116AA                                                    00013100
+      MEDIUM TO MEDIUM CONVERSION PROGRAM. WILL USE AS INPUT            00013200
+      AND OUTPUT ANY COMBINATION OF CARD, TAPE, AND/OR DISK.            00013300
+      MAY BE EXECUTED FROM CARDS OR SPO.                                00013400
+                                                                        00013500
+PARTCARD    000111AA                                                    00013600
+      LISTS 72 COLUMNS OF A CARD INPUT FILE ON A LINE-PRINTER.          00013700
+      INPUT MAY BE FROM A CARD-READER OR FROM A DISK FILE WHICH         00013800
+      IS BLOCKED (X,10,30). A COMMON CARD DETERMINES HOW MANY           00013900
+      COPIES ARE PRINTED. LISTINGS ARE DOUBLE-SPACED.                   00014000
+                                                                        00014100
+PATCH       000112AA                                                    00014200
+      ELIMINATES THE NECESSITY OF MANIPULATING PATCH DECKS FOR          00014300
+      THE B 5500 WHICH ARE RECEIVED FROM BURROUGHS. WITH THIS           00014400
+      PROGRAM YOU SIMPLY INPUT THE PATCH DECK AND A NEW, UPDATED        00014500
+      SYMBOL TAPE IS PRODUCED. THE PATCH DECK NEED NEVER BE             00014600
+      INTERPRETED, SORTED, MERGED, OR MANIPULATED IN ANY WAY.           00014700
+                                                                        00014800
+PBDPBT      000123AA                                                    00014900
+      MAKES A PRINTER BACK-UP TAPE FROM A PRINTER BACK-UP               00015000
+      DISK FILE.                                                        00015100
+                                                                        00015200
+PUNCHSOLT   00122CA                                                     00015300
+      PUNCHES A CARD DECK USING AS INPUT A SOLT TAPE, AN                00015400
+      UNBLOCKED CARD-IMAGE TAPE, OR A DECK OF CARDS.                    00015500
+                                                                        00015600
+SELECT      000105AA                                                    00015700
+      FINDS AND PRINTS SELECTED RECORDS STORED ON A PRINTER BACKUP TAPE.00015800
+      SPO ENTRIES DETERMINE HOW MANY RECORDS ARE SKIPPED BEFORE PRINTING00015900
+      IS STARTED.                                                       00016000
+                                                                        00016100
+SORTGEN     000106AA                                                    00016200
+      GENERATES A B-5500 ALGOL SOURCE PROGRAM WHICH WILL PERFORM        00016300
+      THE DESIRED SORT. SPECIFICATION CARDS INPUTTED TO                 00016400
+      SORTGEN DETERMINE THE I/O AND SORT PARAMETERS OF THE              00016500
+      GENERATED PROGRAM.                                                00016600
+                                                                        00016700
+TAPEDUMP    000113AA                                                    00016800
+      DUMPS A TAPE TO PRINTER. IT PERMITS A FILE TO BE DUMPED           00016900
+      WHEN THE FORMAT IS NOT KNOWN OR PROBLEMS ARE SUSPECTED.           00017000
+      EACH LINE OF PRINT SHOWS THE CONTENTS OF THE TAPE IN BOTH         00017100
+      ALPHA AND OCTAL FORM.                                             00017200
+                                                                        00017300
+TAPEPRINT   000109AA                                                    00017400
+      LISTS ON A LINE-PRINTER, DOUBLE-SPACED, A SYMBOLIC TAPE           00017500
+      FILE BLOCKED (X,56,10).                                           00017600
+                                                                        00017700
+TAPEPUNCH   000117CA                                                    00017800
+      WILL PUNCH 80-CHARACTER RECORDS FROM A FILE OF CARDS              00017900
+      ON TAPE. THE FILE MUST BE MADE UP OF 80-CHARACTER                 00018000
+      RECORDS WITH NO MORE THAN FIFTEEN (15) RECORDS                    00018100
+      PER BLOCK.                                                        00018200
+                                                                        00018300
+UNKRUNCH    000107AA                                                    00018400
+      REFORMATS AN ALGOL SOURCE PROGRAM FOR READABILITY, WILL REFORMAT  00018500
+      NOT ONLY PROGRAMS COMPRESSED BY KRUNCH, BUT ALSO ANY              00018600
+      ALGOL SOURCE PROGRAM. I/O MEDIA ARE DESIGNATED AT RUN TIME.       00018700
+                                                                        00018800
+                                                                        00018900
+                         ++++++++++++++++++++++++++++                   00019000

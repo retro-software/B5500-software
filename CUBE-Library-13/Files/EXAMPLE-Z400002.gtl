@@ -1,0 +1,47 @@
+BEGIN COMMENT  FIND DOUBLE PRECISION ROOTS OF QUADRATIC EQUATIONS;      00000200
+FILE IN INCD (2,10);                                                    00000300
+STRING CRD(80);                                                         00000400
+FILE OUT PRINTER 16(2,15);                                              00000500
+STRING LIN (120);                                                       00000600
+REAL J,K;                                                               00000700
+PROCEDURE QUADSOLVE(A,B,C);                                             00000800
+      VALUE A,B,C;                                                      00000900
+      DOUBLE A,B,C;                                                     00001000
+      BEGIN                                                             00001100
+      DOUBLE D;                                                         00001200
+      PRINT A,B,C;                                                      00001300
+      IF D := B * 2 - 4 | A | C < 0 THEN                                00001400
+            PRINT SPACE(10) #COMPLEX ROOTS#                             00001500
+      ELSE                                                              00001600
+            BEGIN                                                       00001700
+            C := (D := SQRT(D) + B) / A := 2 | A ;                      00001800
+            B := (D - B) / A ;                                          00001900
+            PRINT #REAL ROOTS: # B, C;                                  00002000
+            END;                                                        00002100
+      END OF QUADSOLVE;                                                 00002200
+      INPUT(INCD,CRD,80);                                               00002300
+      OUTPUT(PRINTER,LIN,120);                                          00002400
+      PRINT #QUADSOLVE PROGRAM#;                                        00002500
+      COMMENT READ IN NUMBER OF TRIPLES TO BE READ IN;                  00002600
+      K := READN;                                                       00002700
+      FOR J:=1 STEP 1 UNTIL K DO QUADSOLVE(READN,READN,READN);          00002800
+END.                                                                    00002900
+                                                                        00003100
+      THE PROGRAM HAD THE FOLLOWING CARD INPUT:                         00003200
+                                                                        00003300
+5                                                                       00003400
+1 2 3  .002 3.14 .42  .001 .1 .1   .01 .01 .01  .08 .06 .07             00003500
+                                                                        00003700
+      AND THE OUTPUT LISTING WAS:                                       00003800
+                                                                        00003900
+QUADSOLVE PROGRAM                                                       00004000
+1 2 3                                                                   00004100
+          COMPLEX ROOTS                                                 00004200
+2@-3 3.14 .42                                                           00004300
+REAL ROOTS: 7.848662306406105022442@2 1.569866230640610502244@3         00004400
+1@-3 .1 .1                                                              00004500
+REAL ROOTS: 4.898979485566356196394@1 9.898979485566356196394@1         00004600
+1@-2 1@-2 1@-2                                                          00004700
+          COMPLEX ROOTS                                                 00004800
+8@-2 6@-2 7@-2                                                          00004900
+          COMPLEX ROOTS                                                 00005000

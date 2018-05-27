@@ -1,0 +1,243 @@
+ %..................  TWXPRT  .................                         01001000
+ %WRITTEN BY BILL MOIR,BURROUGHS TORONTO MAY 1970                       01002000
+ %THE FUNCTION OF THIS PROGRAM IS TO ALLOW TIMESHARE USERS              01003000
+ %TO PRINT ON THEIR TWX ALL OR PART OF ANY DISK FILE                    01003500
+% (IF SECURITY OK) CONTAINED ON THE B5500 DISK.                         01004000
+ BEGIN                                                                  01005000
+ INTEGER RECORDCOUNT,STARTINGRECORD,LASTRECORD,DISKRECORDSIZE,          01006000
+         BLOCKSIZE,CTR2,CTR3,CTR4,CTR1,CURRENTTIME,                     01007000
+       HOURS,MINUTES,YEAR,DAYS,MONTH,CTR5,RECORDSPRINTED;               01008000
+ ALPHA CURRENTDATE,REPLY;                                               01009000
+ ALPHA PREFIX,SUFFIX;                                                   01009500
+ FILE IN TWXUNIT REMOTE (1,10);                                         01010000
+ FILE OUT TWXPRNT REMOTE (5,10);                                        01011000
+ FILE IN DISKIN DISK SERIAL "ANYOLD"/"DISKFIL" (2,0,0);                 01012000
+ FORMAT REQUESTFILE("ENTER FILE TO BE PRINTED OR STOP/ ",               01015000
+         "TO END THE JOB");                                             01016000
+ FORMAT REQUESTFIRSTRECORD("ENTER STARTING RECORD NUMBER",              01017000
+     " * 5 DIGITS MAXIMUM * ");                                         01018000
+ FORMAT WANTFIRSTRECORD("DO YOU WANT TO START AT OTHER THAN "           01019000
+         "1ST RECORD");                                                 01020000
+ FORMAT REQUESTLASTRECORD("ENTER LAST RECORD TO BE PRINTED",            01021000
+     " * 5 DIGITS MAXIMUM * ");                                         01022000
+ FORMAT WANTLASTRECORD("DO YOU WANT TO PRINT TILL END OF FILE");        01023000
+ FORMAT NOTINDIRECTORY("FILE REQUESTED NOT ON DISK");                   01024000
+ FORMAT BADSECURITY("YOU ARE NOT A VALID USER OF THIS FILE");           01025000
+ FORMAT INVALIDSTARTRECORD("YOU MUST ENTER A 5 DIGIT STARTING"          01026000
+         "RECORD"/);                                                    01027000
+ FORMAT INVALIDLASTRECORD("YOU MUST ENTER A 5 DIGIT LAST RECORD");      01028000
+ FORMAT PARITYERRMESSAGE("PARITY ERROR OCCURED AT RECORD NUMBER"        01029000
+         I5," DO YOU WISH TO CONTINUE ********"/);                      01030000
+ FORMAT PRINTPOSITIONS(X7," 0........1.........2.........3"             01031000
+         ".........4.........5.........6...6"/                          01032000
+       X8,"1........0.........0.........0.........0.........0"          01033000
+        ".........0...4"/);                                             01034000
+ FORMAT PRINTLINE(I5,"  *");                                            01035000
+ FORMAT FILEHDG(X5,"LISTING OF FILE ",A6,A1,"/",A6,A1,                  01036000
+         " TAKEN AT ",I2,":",I2," ON ",A3,",",I2,",19",I2/              01037000
+         X5,"RECORD LENGTH IS ",I4," WORDS"/                            01038000
+         X5,"BLOCK LENGTH IS ",I4," WORDS"//);                          01039000
+ FORMAT MISSINGSLASH("YOU FORGOT SLASH IN FILE DECLARATION");           01040000
+ FORMAT FILEEND("RECORDS PRINTED ",I5//);                               01041000
+ FORMAT NOTYESORNO("YOU MUST REPLY YES OR NO");                         01042000
+ FORMAT DUMMYLINE("       *");                                          01043000
+ ARRAY DISKRECORD[0:1022];                                              01044000
+ ARRAY READIN[0:9];                                                     01045000
+ ARRAY PRINTRECORD[0:8];                                                01046000
+ ARRAY DIRECTORYREPLY[0:7];                                             01047000
+ ARRAY MONTHDAYS[0:11];                                                 01048000
+ ARRAY MONTHNAMES[0:11];                                                01049000
+ ARRAY NAMES[0:1];                                                      01050000
+ LABEL STARTPOINT,FINDFIRSTTOPRINT,FINDLASTTOPRINT;                     01051000
+ LABEL READNEWRECORD,READINSTRUCTION,ENDOFFILE,PARITYERROR;             01052000
+ LABEL TERMINATERUN,DATEKNOWN;                                          01053000
+ BOOLEAN YESREPLY;                                                      01054000
+ POINTER PTR1,PTR2,PTR3,PTR4;                                           01057000
+ PROCEDURE ANALYZEFILENAME;                                             01058000
+     BEGIN                                                              01059000
+       SCAN PTR1:POINTER(READIN[*]) FOR CTR1:10                         01060000
+        UNTIL = "/";                                                    01061000
+     IF CTR1 = 0 THEN                                                   01062000
+         BEGIN                                                          01063000
+         WRITE(TWXPRNT,MISSINGSLASH);                                   01064000
+         GO TO STARTPOINT;                                              01065000
+         END;                                                           01066000
+     SCAN PTR2:POINTER(READIN[*]) FOR CTR1:10 UNTIL NEQ " ";            01067000
+     REPLACE PTR3:POINTER(NAMES[*]) BY "0",                             01068000
+         PTR2:PTR2 FOR CTR3:7 UNTIL = "/"," " FOR CTR3;                 01069000
+     PTR1:=PTR1 + 1;                                                    01070000
+     REPLACE PTR3:PTR3 BY "0",PTR1:PTR1 FOR CTR3:7 WHILE IN             01071000
+          ALPHA," " FOR CTR3;                                           01072000
+     PREFIX:=NAMES[0];                                                  01072600
+     SUFFIX:=NAMES[1];                                                  01072700
+     IF PREFIX= "STOP   " THEN GO TO TERMINATERUN;                      01072800
+     END;                                                               01073000
+ PROCEDURE CHECKDIRECTORY;                                              01074000
+     BEGIN                                                              01075000
+     FILL DISKIN WITH PREFIX,SUFFIX;                                    01076000
+     SEARCH(DISKIN,DIRECTORYREPLY[*]);                                  01077000
+     IF DIRECTORYREPLY[0] = -1 THEN                                     01078000
+          BEGIN                                                         01079000
+          WRITE(TWXPRNT,NOTINDIRECTORY);                                01080000
+          GO TO STARTPOINT;                                             01081000
+          END;                                                          01082000
+     IF DIRECTORYREPLY[0] = 0 THEN                                      01083000
+          BEGIN                                                         01084000
+          WRITE(TWXPRNT,BADSECURITY);                                   01085000
+          GO TO STARTPOINT;                                             01086000
+          END;                                                          01087000
+     DISKRECORDSIZE:=DIRECTORYREPLY[3];                                 01088000
+    BLOCKSIZE:=DIRECTORYREPLY[4];                                       01089000
+     END;                                                               01090500
+ BOOLEAN PROCEDURE YES;                                                 01091000
+     BEGIN                                                              01092000
+     LABEL CHECKREPLY,REPLYOK,INVALIDREPLY,CHECKFORNO;                  01093000
+ CHECKREPLY:                                                            01094000
+     SCAN PTR1:POINTER(READIN[*]) FOR CTR1:4 UNTIL = "Y";               01095000
+     IF CTR1 = 0 THEN GO TO CHECKFORNO;                                 01096000
+     REPLY :=REAL(PTR1,3);                                              01097000
+     IF REPLY = "YES" THEN                                              01098000
+         BEGIN                                                          01099000
+         YESREPLY:=TRUE;                                                01100000
+         GO TO REPLYOK;                                                 01101000
+         END                                                            01102000
+         ELSE                                                           01103000
+         GO TO INVALIDREPLY;                                            01104000
+ CHECKFORNO:                                                            01105000
+     SCAN PTR1:POINTER(READIN[*]) FOR CTR1:4 UNTIL = "N";               01106000
+     IF CTR1= 0 THEN GO TO INVALIDREPLY;                                01107000
+     REPLY:=REAL(PTR1,2);                                               01108000
+     IF REPLY = "NO" THEN                                               01109000
+         BEGIN                                                          01110000
+         YESREPLY:=FALSE;                                               01111000
+         GO TO REPLYOK;                                                 01112000
+         END;                                                           01113000
+ INVALIDREPLY:                                                          01114000
+     WRITE(TWXPRNT,NOTYESORNO);                                         01115000
+     READ(TWXUNIT,10,READIN[*]);                                        01116000
+     GO TO CHECKREPLY;                                                  01117000
+ REPLYOK:                                                               01118000
+      END;                                                              01119000
+ PROCEDURE SETFIRSTRECORD;                                              01120000
+     BEGIN                                                              01121000
+     SCAN PTR1:POINTER(READIN[*]) FOR CTR3:4 UNTIL IN ALPHA;            01122000
+     IF CTR3 = 0 THEN                                                   01123000
+          BEGIN                                                         01124000
+          WRITE(TWXPRNT,INVALIDSTARTRECORD);                            01125000
+          GO TO FINDFIRSTTOPRINT;                                       01126000
+          END;                                                          01127000
+     SCAN PTR2:PTR1 FOR CTR3:5 WHILE IN ALPHA;                          01128000
+     STARTINGRECORD :=INTEGER(PTR1,5- CTR3);                            01129000
+     END;                                                               01130000
+ PROCEDURE SETLASTRECORD;                                               01131000
+     BEGIN                                                              01132000
+     SCAN PTR1:POINTER(READIN[*]) FOR CTR3:4 UNTIL IN ALPHA;            01133000
+     IF CTR3 = 0 THEN                                                   01134000
+         BEGIN                                                          01135000
+         WRITE(TWXPRNT,INVALIDLASTRECORD);                              01136000
+         GO TO FINDLASTTOPRINT;                                         01137000
+         END;                                                           01138000
+     SCAN PTR2:PTR1 FOR CTR3:5 WHILE IN ALPHA;                          01139000
+     LASTRECORD:=INTEGER(PTR1,5 - CTR3);                                01140000
+     END;                                                               01141000
+ PROCEDURE NOTONELINEPRINT;                                             01142000
+     BEGIN                                                              01143000
+     LABEL REPEATPRINT;                                                 01143500
+    PTR1:=POINTER(DISKRECORD[*]);                                       01145000
+     PTR1:=PTR1 + 64;                                                   01145500
+     CTR5:=DISKRECORDSIZE;                                              01145600
+ REPEATPRINT:                                                           01146000
+     CTR5:=CTR5 - 8;                                                    01146100
+     IF CTR5 GTR 8 THEN                                                 01146200
+         BEGIN                                                          01146300
+     REPLACE PTR2:POINTER(PRINTRECORD[*]) BY PTR1:PTR1                  01147000
+          FOR 8 WORDS;                                                  01148000
+     WRITE(TWXPRNT[STOP],DUMMYLINE);                                    01149000
+   WRITE(TWXPRNT,8,PRINTRECORD[*]);                                     01150000
+          END;                                                          01152000
+     IF CTR5 GTR 0 AND CTR5 LSS 8 THEN                                  01154000
+          BEGIN                                                         01155000
+          REPLACE PTR2:POINTER(PRINTRECORD[*])                          01156000
+               BY PTR1:PTR1 FOR CTR5 WORDS;                             01157000
+          REPLACE PTR2:PTR2 BY " " FOR 8 - CTR5 WORDS;                  01158000
+          WRITE(TWXPRNT[STOP],DUMMYLINE);                               01159000
+   WRITE(TWXPRNT,8,PRINTRECORD[*]);                                     01160000
+        END ELSE IF CTR5 GTR 8 THEN GO TO REPEATPRINT;                  01161000
+     END;                                                               01162000
+     FILL MONTHDAYS[*] WITH 31,28,31,30,31,30,31,31,30,31,              01163000
+          30,31;                                                        01164000
+    FILL MONTHNAMES[*] WITH "JAN","FEB","MAR","APR","MAY",              01165000
+          "JUN","JUL","AUG","SEP","OCT","NOV","DEC";                    01166000
+ STARTPOINT:                                                            01167000
+     CURRENTTIME:=TIME(1);                                              01168000
+     HOURS:=CURRENTTIME DIV 216000;                                     01169000
+     MINUTES:=(CURRENTTIME MOD 216000) DIV 3600;                        01170000
+     CURRENTDATE:=TIME(0);                                              01171000
+     YEAR:=CURRENTDATE.[29:6]|10 + CURRENTDATE.[23:6];                  01172000
+     IF YEAR MOD 4 = 0 THEN MONTHDAYS[1]:= 29;                          01173000
+     DAYS:=CURRENTDATE.[17:6]|100 + CURRENTDATE.[11:6]|10               01174000
+           + CURRENTDATE.[5:6];                                         01175000
+     FOR MONTH:=0 STEP 1 WHILE DAYS GTR MONTHDAYS[MONTH] DO             01176000
+          DAYS:=DAYS - MONTHDAYS[MONTH];                                01177000
+     RECORDCOUNT:=STARTINGRECORD:=LASTRECORD:= RECORDSPRINTED:=0;       01178000
+     WRITE(TWXPRNT,REQUESTFILE);                                        01180000
+     READ(TWXUNIT,10,READIN[*]);                                        01181000
+     ANALYZEFILENAME;                                                   01182000
+     CHECKDIRECTORY;                                                    01183000
+ FINDFIRSTTOPRINT:                                                      01184000
+      WRITE(TWXPRNT,WANTFIRSTRECORD);                                   01185000
+      READ(TWXUNIT,10,READIN[*]);                                       01186000
+     YES;                                                               01186500
+     IF YESREPLY THEN                                                   01187000
+           BEGIN                                                        01188000
+           WRITE(TWXPRNT,REQUESTFIRSTRECORD);                           01189000
+          READ(TWXUNIT,10,READIN[*]);                                   01190000
+           SETFIRSTRECORD;                                              01191000
+           END                                                          01192000
+           ELSE STARTINGRECORD:= 1;                                     01193000
+ FINDLASTTOPRINT:                                                       01194000
+      WRITE(TWXPRNT,WANTLASTRECORD);                                    01195000
+      READ(TWXUNIT,10,READIN[*]);                                       01196000
+     YES;                                                               01196500
+     IF YESREPLY THEN                                                   01197000
+          LASTRECORD:=99999                                             01198000
+          ELSE                                                          01199000
+           BEGIN                                                        01200000
+           WRITE(TWXPRNT,REQUESTLASTRECORD);                            01201000
+           READ(TWXUNIT,10,READIN[*]);                                  01202000
+            SETLASTRECORD;END;                                          01203000
+     WRITE(TWXPRNT,FILEHDG,PREFIX.[41:36],PREFIX,                       01204000
+         SUFFIX.[41:36],SUFFIX,HOURS,MINUTES,MONTHNAMES[MONTH],         01205000
+         DAYS,YEAR,DISKRECORDSIZE,BLOCKSIZE);                           01206000
+     WRITE(TWXPRNT,PRINTPOSITIONS);                                     01207000
+ READNEWRECORD:                                                         01208000
+      RECORDCOUNT:=RECORDCOUNT + 1;                                     01209000
+ READINSTRUCTION:                                                       01210000
+      READ(DISKIN,DISKRECORDSIZE,DISKRECORD[*])                         01211000
+          [ENDOFFILE:PARITYERROR];                                      01212000
+      PTR4:=POINTER(DISKRECORD[*]);                                     01213000
+      REPLACE PTR4:PTR4 + (DISKRECORDSIZE | 8) BY                       01214000
+           " " FOR 1023 - DISKRECORDSIZE WORDS;                         01215000
+      IF RECORDCOUNT LSS STARTINGRECORD THEN GO TO READNEWRECORD;       01216000
+   WRITE(TWXPRNT[STOP],PRINTLINE,RECORDCOUNT);                          01218000
+    RECORDSPRINTED:=RECORDSPRINTED + 1;                                 01218500
+      WRITE(TWXPRNT,8,DISKRECORD[*]);                                   01219000
+      IF DISKRECORDSIZE GTR 8 THEN NOTONELINEPRINT;                     01220000
+     IF RECORDCOUNT = LASTRECORD THEN GO TO ENDOFFILE;                  01220500
+      GO TO READNEWRECORD;                                              01221000
+ PARITYERROR:                                                           01222000
+      WRITE(TWXPRNT,PARITYERRMESSAGE,RECORDCOUNT);                      01223000
+      READ(TWXUNIT,10,READIN[*]);                                       01224000
+     YES;                                                               01224500
+     IF YESREPLY THEN                                                   01225000
+           BEGIN                                                        01226000
+           READ(DISKIN,DISKRECORDSIZE,DISKRECORD[*])                    01227000
+                [ENDOFFILE];                                            01228000
+            GO TO READNEWRECORD;                                        01229000
+           END;                                                         01230000
+ ENDOFFILE:                                                             01231000
+ WRITE(TWXPRNT,FILEEND,RECORDSPRINTED);                                 01232000
+       CLOSE(DISKIN,RELEASE);                                           01233000
+       GO TO STARTPOINT;                                                01234000
+ TERMINATERUN:                                                          01235000
+   END.                                                                 01236000

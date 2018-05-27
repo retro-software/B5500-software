@@ -1,0 +1,188 @@
+1  0000 TABLEXX                       L 004001003                               
+   0001    001002ELS$                                                           
+        C1  N  N                                                                
+        C2     N                                                                
+        C3     N                                                                
+        C4  Y  N                                                                
+        A1  X                                                                   
+      $                                                                         
+1  0000 TABLEXXX                      L 004001004                               
+   0001    001002003ELS$                                                        
+        C1  Y  Y  Y                                                             
+        C2     Y  N                                                             
+        C3     N  N                                                             
+        C4  Y  N  N                                                             
+        A1  X                                                                   
+      $                                                                         
+1  0000 TABLEXXXX                     L 006001004                               
+   0001    001002003ELS$                                                        
+        C1  Y  Y  Y                                                             
+        C2  Y     N                                                             
+        C3  N  N  N                                                             
+        C4  N     N                                                             
+        C5  N     N                                                             
+        C6  N  Y  N                                                             
+        A1  X  X  X                                                             
+      $                                                                         
+1  0000   TEST-001                    L 003001004                               
+   0001            001002003ELS$                                                
+            C-1     Y  Y  N                                                     
+            C-2     Y  Y  Y                                                     
+            C-3     Y  N  Y                                                     
+          ACTION-1  X  X  X  X                                                  
+      $                                                                         
+1  0000   TEST-002                    L 002001005                               
+   0001            001002003004ELS$                                             
+            C-1     Y  N  Y  N                                                  
+            C-2     N  Y  Y  N                                                  
+          ACTION-1  X  X  X  X  X                                               
+      $                                                                         
+1  0000   TEST-003                    L 003001009                               
+   0001            001002003004005006007008ELS$                                 
+            C-1     Y  Y  Y  N  Y  N  N  N                                      
+            C-2     Y  Y  N  Y  N  N  Y  N                                      
+            C-3     Y  N  Y  Y  N  Y  N  N                                      
+          ACTION-1  X  X  X  X  X  X  X  X  X                                   
+      $                                                                         
+1  0000   TEST-004                    L 004001017                               
+   0001            001002003004005006007008009010011012013014015016ELS$         
+            C-1     Y  Y  Y  Y  N  Y  Y  N  Y  N  N  Y  N  N  N  N              
+            C-2     Y  Y  Y  N  Y  Y  N  N  N  Y  Y  N  N  N  Y  N              
+            C-3     Y  Y  N  Y  Y  N  N  Y  Y  N  Y  N  N  Y  N  N              
+            C-4     Y  N  Y  Y  Y  N  Y  Y  N  Y  N  N  Y  N  N  N              
+          ACTION-1  X  X  X  X  X  X  X  X  X  X  X  X  X  X  X  X  X           
+      $                                                                         
+1  0000   TEST-005                    L 004001003                               
+   0001            001002ELS$                                                   
+            C-1     Y  Y                                                        
+            C-2     Y  Y                                                        
+            C-3     Y  Y                                                        
+            C-4     Y  N                                                        
+          ACTION-1  X  X  X                                                     
+      $                                                                         
+1  0000   TEST-006                    L 004001004                               
+   0001            001002003ELS$                                                
+            C-1     Y  Y  Y                                                     
+            C-2     Y  Y  Y                                                     
+            C-3     Y  Y  N                                                     
+            C-4     Y  N  Y                                                     
+          ACTION-1  X  X  X  X                                                  
+      $                                                                         
+1  0000   TEST-007                    L 004001005                               
+   0001            001002003004ELS$                                             
+            C-1     Y  Y  N  -                                                  
+            C-2     Y  Y  Y  Y                                                  
+            C-3     Y  Y  Y  N                                                  
+            C-4     Y  N  Y  Y                                                  
+          ACTION-1  X  X  X  X  X                                               
+      $                                                                         
+   0000   TEST-009                    L 003001009                               
+   0001            001002003004005006007008ELS$                                 
+            C-1     Y  Y  N  N  Y  N  N  Y                                      
+            C-2     Y  Y  Y  N  N  N  Y  N                                      
+            C-3     Y  N  Y  Y  Y  N  N  N                                      
+          ACTION-1  X  X  X  X  X  X  X  X  X  X                                
+      $                                                                         
+1  0000   TEST-010                    L 007001009                               
+   0001            001002003004005006007008ELS$                                 
+            C-1     Y  Y  Y  Y  N  N  N  N                                      
+            C-2     Y  Y  N  N  Y  N  Y  N                                      
+            C-3     Y  N  Y  N  N  Y  Y  N                                      
+          ACTION-1  X  X  X  X  X  X  X  X  X                                   
+      $                                                                         
+1  0000   TEST-011                    L 005001005                               
+   0001            001002003003ELS$                                             
+            C-1     Y  Y  Y  N                                                  
+            C-2     Y  Y  Y  Y                                                  
+            C-3     Y  Y  Y  Y                                                  
+            C-4     Y  Y  N  Y                                                  
+            C-5     Y  N  Y  Y                                                  
+          ACTION-1  X  X  X  X  X                                               
+      $                                                                         
+1  0000   TEST-012                    L 003001009                               
+   0001            001002003004005006007008ELS$                                 
+            C-1     N  N  N  N  Y  Y  Y  Y                                      
+            C-2     N  N  Y  N  Y  N  N  Y                                      
+            C-3     N  Y  N  Y  N  Y  N  Y                                      
+          ACTION-1  X  X  X  X  X  X  X  X  X                                   
+      $                                                                         
+1  0000   TEST-013                    L 005001005                               
+   0001            001002003004ELS$                                             
+            C-1     Y  Y  Y  Y                                                  
+            C-2     Y  Y  Y  N                                                  
+            C-3     Y  Y  Y  Y                                                  
+            C-4     Y  Y  N  Y                                                  
+            C-5     Y  N  Y  Y                                                  
+          ACTION-1  X  X  X  X  X                                               
+      $                                                                         
+1  0000   TEST-014                    L 010001010                               
+   0001            001002003004005006007008009ELS$                              
+            C-1     Y  N  Y  Y  N  Y  Y  N  N                                   
+            C-2     Y  Y  Y  Y  Y  -  Y  -  N                                   
+            C-3     Y  Y  Y  Y  Y  N  Y  N  Y                                   
+            C-4     Y  Y  Y  Y  Y  N  Y  N  Y                                   
+            C-5     Y  Y  Y  Y  Y  Y  Y  Y  Y                                   
+            C-6     Y  Y  -  Y  N  -  N  N  -                                   
+            C-7     Y  Y  -  Y  N  -  -  N  -                                   
+            C-8     Y  Y  N  Y  Y  Y  Y  N  Y                                   
+            C-9     Y  Y  Y  Y  Y  Y  Y  Y  Y                                   
+            C-10    Y  Y  Y  N  Y  Y  Y  Y  Y                                   
+          ACTION-1  X  X  X  X  X  X  X  X  X  X                                
+      $                                                                         
+1  0000   TEST-015                    L 010001010                               
+   0001            001002003004005006007008009ELS$                              
+            C-1     Y  Y  Y  N  Y  Y  Y  Y  Y                                   
+            C-2     Y  Y  Y  Y  Y  Y  Y  Y  Y                                   
+            C-3     Y  Y  N  Y  Y  Y  Y  N  Y                                   
+            C-4     Y  Y  -  Y  N  -  -  N  -                                   
+            C-5     Y  Y  -  Y  N  -  N  N  -                                   
+            C-6     Y  Y  Y  Y  Y  Y  Y  Y  Y                                   
+            C-7     Y  Y  Y  Y  Y  N  Y  N  Y                                   
+            C-8     Y  Y  Y  Y  Y  N  Y  N  Y                                   
+            C-9     Y  Y  Y  Y  Y  -  Y  -  N                                   
+            C-10    Y  N  Y  Y  N  Y  Y  N  N                                   
+          ACTION-1  X  X  X  X  X  X  X  X  X  X                                
+      $                                                                         
+1  0000   TEST-016                    L 005001005                               
+   0001            001002003004ELS$                                             
+            C-1     Y  Y  Y  Y                                                  
+            C-2     N  Y  Y  Y                                                  
+            C-3     -  N  Y  Y                                                  
+            C-4     -  -  N  Y                                                  
+            C-5     -  -  -  N                                                  
+          ACTION-1  X  X  X  X  X                                               
+      $                                                                         
+1  0000   TEST-017                    L 005001005                               
+   0001            001002003004ELS$                                             
+            C-1     Y  Y  Y  Y                                                  
+            C-2     Y  Y  Y  N                                                  
+            C-3     Y  Y  N  -                                                  
+            C-4     Y  N  -  -                                                  
+            C-5     N  -  -  -                                                  
+          ACTION-1  X  X  X  X  X                                               
+      $                                                                         
+1  0000 TEST-018 )CHOISE-PICK0        L 010011010                               
+   0001                           001002003004005006007008009ELS$               
+        C1                         Y  Y  Y  N  Y  Y  Y  Y  Y                    
+        C2                         Y  Y  Y  Y  Y  Y  Y  Y  Y                    
+        C3                         Y  Y  N  Y  Y  Y  Y  N  Y                    
+        C4                         Y  Y     Y  N        N                       
+        C5                         Y  Y     Y  N        N                       
+        C6                         Y  Y  Y  Y  Y  Y  Y  Y  Y                    
+        C7                         Y  Y  Y  Y  Y  N  Y  N  Y                    
+        C8                         Y  Y  Y  Y  Y  N  Y  N  Y                    
+        C9                         Y  Y  Y  Y  Y     Y     N                    
+        C10                        Y  N  Y  Y  N  Y  Y  N  N                    
+        A1                         X  X  X  X  X  X  X  X  X  X                 
+        A2                               X        X                             
+        A3                               X        X                             
+        A4                               X        X                             
+        A5                                     X           X                    
+        A6                                     X           X                    
+        A7                                     X           X                    
+        A8                         X  X              X  X                       
+        A9                         X  X              X  X                       
+        A10                        X  X              X  X                       
+        A11                                 X                 X                 
+      $                                                                         
+   999X                                                                         

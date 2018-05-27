@@ -1,0 +1,315 @@
+ RD THIS IS COURSE CORSWT.  IT IS DESIGNED TO TEACH INSTRUCTORS         00000100
+    HOW TO WRITE COURSES FOR THE TELETYPE.  THIS INVOLVES               00000200
+    LEARNING HOW TO USE THE COMPUTER PROGRAM TEACHER/DU WHICH           00000300
+    IS A PRELIMINARY VERSION OF THE COURSWRITER PROGRAM                 00000400
+    DEVELOPED BY IBM.  YOU WILL NEED NO KNOWLEDGE OF COMPUTER           00000500
+    PROGRAMING TO USE TEACHER/DU.                                       00000600
+                                                                        00000700
+    PLEASE READ ASSIGNMENT 1.  WHEN YOU ARE FINISHED, TYPE A            00000800
+    LEFT-POINTING ARROW.                                                00000900
+ QU EVERY COURSE SHOULD CARRY A UNIQUE COURSE NAME BEGINNING            00001000
+    WITH A LETTER AND CONSISTING OF NOT MORE THAN SEVEN                 00001100
+    CHARACTERS.                                                         00001200
+    WHAT IS THE NAME OF THIS COURSE.                                    00001300
+ CA CORSWT                                                              00001400
+ TY YOU ARE VERY OBSERVANT.                                             00001500
+ UN GUESS AGAIN                                                         00001600
+ UN COME ON ...                                                         00001700
+ UN YOU ARE JUST GIVING ME A BAD TIME.  TRY READING THE FIRST           00001800
+    LINE OF THIS COURSE.                                                00001900
+ QU HOW MANY CHARACTERS DOES IT HAVE.                                   00002000
+ CA 6                                                                   00002100
+ CB SIX                                                                 00002200
+ TY CORRECT.                                                            00002300
+ WA 5                                                                   00002400
+ WB FIVE                                                                00002500
+ WB 7                                                                   00002600
+ WB SEVEN                                                               00002700
+ TY TRY COUNTING ON YOUR FINGERS.                                       00002800
+ UN TRY 6                                                               00002900
+ QU EACH INSTRUCTION CONSISTS OF ONE OR MORE "OPERATIONS" WHICH         00003000
+    MUST BE USED IN A LOGICAL SEQUENCE TO PRODUCE MEANINGFUL            00003100
+    PROGRAMMED INSTRUCTION.  EACH OPERATION MUST BE PRECEDED BY         00003200
+    AN "OPERATION CODE" WHICH APPEARS AS TWO LETTERS IN THE LEFT        00003300
+    HAND COLUMN OF THE COURSE PREPARATION FORM.                         00003400
+    LOOK AT THE COURSE PREPARATION FORM WHICH MAY BE FOUND AT           00003500
+    THE END OF THE READING ASSIGNMENTS.                                 00003600
+    DO YOU SEE WHERE THE OPERATION CODES GO.                            00003700
+ CA YES                                                                 00003800
+ UN LOOK AGAIN                                                          00003900
+ UN ASK SOMEONE TO SHOW YOU SOMETIME.  YOU MUST TYPE "YES" TO           00004000
+    CONTINUE THIS COURSE.                                               00004100
+ RD THERE ARE 10 OPERATIONS AVAILABLE TO THE INSTRUCTOR.  READ          00004200
+    ASSIGNMENT 2 FOR BRIEF DESCRIPTIONS OF TWO OF THEM.  TYPE A         00004300
+    LEFT-POINTING ARROW WHEN YOU ARE FINISHED.                          00004400
+ QU                                                                     00004500
+    "RD" AND "QU" ARE TWO EXAMPLES OF AN ...                            00004600
+ CA OPERATION CODE                                                      00004700
+ TY VERY GOOD.  NOTICE THAT THEY EACH HAVE 2 CHARACTERS.                00004800
+ UN NO, TRY AGAIN.                                                      00004900
+ UN NO.  HINT:  THE ANSWER IS TWO WORDS.                                00005000
+ UN IF YOU GIVE UP TYPE "HELP".                                         00005100
+ QU                                                                     00005200
+    THE FIRST OPERATION OF EVERY COURSE MUST BE EITHER RD OR QU.        00005300
+    WHICH OF THESE OPERATIONS DO YOU THINK THIS COURSE STARTED          00005400
+    WITH.                                                               00005500
+ CA RD                                                                  00005600
+ TY YES.                                                                00005700
+ WA QU                                                                  00005800
+ TY NO.                                                                 00005900
+ UN PLEASE TYPE EITHER QU OR RD.                                        00006000
+ RD EVERY QU (QUESTION) MUST BE IMMEDIATLY FOLLOWED BY ONE OR           00006100
+    MORE CORRECT ANSWERS.  READ ASSIGNMENT 3 FOR DESCRIPTIONS OF        00006200
+    THE TWO OPERATIONS USED BY THE INSTRUCTOR FOR THIS PURPOSE.         00006300
+    WHEN YOU HAVE FINISHED, TYPE A LEFT-POINTING ARROW.                 00006400
+ QU HERE IS AN EXAMPLE OF A QUESTION FOLLOWED BY SOME POSSIBLE          00006500
+    CORRECT ANSWERS:                                                    00006600
+                                                                        00006700
+                                                                        00006800
+    QU WHO DISCOVERED AMERICA.                                          00006900
+    CA CHRISTOPHER COLUMBUS                                             00007000
+    CB COLUMBUS                                                         00007100
+    CB LEIF ERIKSON                                                     00007200
+    CB ERIKSON                                                          00007300
+    CB AMERIGO VESPUCCI                                                 00007400
+    CB VESPUCCI                                                         00007500
+                                                                        00007600
+                                                                        00007700
+    THE STUDENT, OF COURSE, WOULD NOT SEE THE OPERATION CODES OR        00007800
+    ANY OF THE CA-CB GROUP.  IT WOULD APPEAR TO THE STUDENT AS          00007900
+    FOLLOWS.                                                            00008000
+                                                                        00008100
+                                                                        00008200
+    WHO DISCOVERED AMERICA.                                             00008300
+ CA CHRISTOPHER COLUMBUS                                                00008400
+ CB COLUMBUS                                                            00008500
+ CB LEIF ERIKSON                                                        00008600
+ CB ERIKSON                                                             00008700
+ CB AMERIGO VESPUCCI                                                    00008800
+ CB VESPUCCI                                                            00008900
+ UN PLEASE TYPE A CORRECT ANSWER.                                       00009000
+ QU                                                                     00009100
+                                                                        00009200
+    THERE MAY BE AS MANY CA-CB GROUPS AS DESIRED, EACH WITH ITS         00009300
+    OWN SUBSEQUENT OPERATION.  ONE SUBSEQUENT OPERATION WHICH           00009400
+    IS OFTEN USED IS TY:                                                00009500
+                                                                        00009600
+                                                                        00009700
+    TY - TYPES TEXT IF PRIOR CONDITIONS HAVE BEEN MET.                  00009800
+                                                                        00009900
+                                                                        00010000
+    A TY MAY COME AFTER ANY CA-CB SET.  OFTEN, A TY WILL COME           00010100
+    AFTER EACH CA-CB SET BUT THIS IS NOT A REQUIREMENT.                 00010200
+    WOULD YOU LIKE TO SEE AN EXAMPLE ILLUSTRATING THE OPERATIONS        00010300
+    DISCUSSED SO FAR.                                                   00010400
+ CA NO                                                                  00010500
+ CB NOPE                                                                00010600
+ TY OK.  WE WILL SKIP THE EXAMPLE.                                      00010700
+ BR EXSKIP                                                      0000002400010800
+ CA YES                                                                 00010900
+ CB YA                                                                  00011000
+ CB OK                                                                  00011100
+ CB OK.                                                                 00011200
+ UN PLEASE TYPE YES OR NO.                                              00011300
+ QU FOLLOWING IS A PORTION OF A TYPICAL COURSE:                         00011400
+                                                                        00011500
+                                                                        00011600
+    QU WHAT IS 3+2.                                                     00011700
+    CA 5                                                                00011800
+    CB FIVE                                                             00011900
+    TY THAT IS RIGHT.                                                   00012000
+                                                                        00012100
+                                                                        00012200
+    THUS, IF THE STUDENT RESPONDS TO THE QUESTION WITH EITHER 5         00012300
+    OR FIVE, THE MESSAGE "THAT IS RIGHT" WILL BE TYPED OUT BY           00012400
+    THE TELETYPE.  THIS IS HOW IT WOULD APPEAR TO THE STUDENT.          00012500
+                                                                        00012600
+                                                                        00012700
+    WHAT IS 3+2.                                                        00012800
+ CA 5                                                                   00012900
+ CB FIVE                                                                00013000
+ TY THAT IS RIGHT.                                                      00013100
+ UN PLEASE TYPE EITHER 5 OR FIVE.                                       00013200
+ LA EXSKIP                                                              00013300
+ RD                                                                     00013400
+                                                                        00013500
+    WHAT ABOUT WRONG ANSWERS.  READ ASSIGNMENT 4 AND WHEN YOU           00013600
+    HAVE FINISHED, TYPE A LEFT-POINTING ARROW.                          00013700
+ QU                                                                     00013800
+    CONSIDER THE FOLLOWING COURSE SEGMENT:                              00013900
+                                                                        00014000
+                                                                        00014100
+    QU 9+8 =                                                            00014200
+    CA 17                                                               00014300
+    CB SEVENTEEN                                                        00014400
+    TY GOOD                                                             00014500
+    WA 16                                                               00014600
+    WB 15                                                               00014700
+    TY THAT IS TOO SMALL.  TRY AGAIN.                                   00014800
+    WA 18                                                               00014900
+    WB 19                                                               00015000
+    TY THAT IS TOO LARGE.  TRY AGAIN.                                   00015100
+    UN GUESS AGAIN                                                      00015200
+    UN TRY COUNTING ON YOUR FINGERS.                                    00015300
+                                                                        00015400
+                                                                        00015500
+    THIS SAME SEQUENCE OF OPERATIONS WILL NOW BE GIVEN TO YOU AS        00015600
+    THE STUDENT WOULD SEE THEM.  STUDY THE ABOVE SEQUENCE OF            00015700
+    OPERATIONS AS YOU ANSWER THE QUESTIONS.  DO ALL THE                 00015800
+    EXPERIMENTING YOU WANT.                                             00015900
+                                                                        00016000
+                                                                        00016100
+    9+8 =                                                               00016200
+ CA 17                                                                  00016300
+ CB SEVENTEEN                                                           00016400
+ TY GOOD                                                                00016500
+ WA 16                                                                  00016600
+ WB 15                                                                  00016700
+ TY THAT IS TOO SMALL.  TRY AGAIN.                                      00016800
+ WA 18                                                                  00016900
+ WB 19                                                                  00017000
+ TY THAT IS TOO LARGE.  TRY AGAIN.                                      00017100
+ UN GUESS AGAIN                                                         00017200
+ UN TRY COUNTING ON YOUR FINGERS                                        00017300
+ QU                                                                     00017400
+                                                                        00017500
+    WOULD YOU LIKE TO TRY THAT SAME SEQUENCE OF INSTRUCTIONS            00017600
+    AGAIN.                                                              00017700
+ CA YES                                                                 00017800
+ CB OK                                                                  00017900
+ CA NO                                                                  00018000
+ BR DUNN                                                        0000003>00018100
+ UN PLEASE TYPE YES OR NO.                                              00018200
+ LA TYEX                                                                00018300
+ QU                                                                     00018400
+                                                                        00018500
+    9+8 =                                                               00018600
+ CA 17                                                                  00018700
+ CB SEVENTEEN                                                           00018800
+ TY GOOD                                                                00018900
+ WA 16                                                                  00019000
+ WB 15                                                                  00019100
+ TY THAT IS TOO SMALL.  TRY AGAIN.                                      00019200
+ WA 18                                                                  00019300
+ WB 19                                                                  00019400
+ TY THAT IS TOO LARGE.  TRY AGAIN.                                      00019500
+ UN GUESS AGAIN                                                         00019600
+ UN TRY COUNTING ON YOUR FINGERS                                        00019700
+ QU                                                                     00019800
+                                                                        00019900
+    WOULD YOU LIKE TO TRY THAT SAME SEQUENCE OF INSTRUCTIONS            00020000
+    AGAIN.                                                              00020100
+ CA NO                                                                  00020200
+ CA YES                                                                 00020300
+ CB OK                                                                  00020400
+ BR TYEX                                                        0000002W00020500
+ UN PLEASE TYPE YES OR NO.                                              00020600
+ LA DUNN                                                                00020700
+ QU                                                                     00020800
+                                                                        00020900
+    THE ABOVE EXAMPLE COULD HAVE BEEN SHORTENED BY NOT USING AS         00021000
+    MANY OPERATIONS AFTER THE QU.  IN FACT, THE ONLY REQUIREMENT        00021100
+    PERTAINING TO THE NUMBER OF OPERATIONS FOLLOWING A QU IS            00021200
+    THAT THERE MUST BE AT LEAST ONE CA AND ONE UN.  THUS, THE           00021300
+    SAME QUESTION COULD HAVE BEEN WRITTEN AS                            00021400
+                                                                        00021500
+                                                                        00021600
+    QU 9+8 =                                                            00021700
+    CA 17                                                               00021800
+    UN GUESS AGAIN                                                      00021900
+                                                                        00022000
+                                                                        00022100
+    YOU NOW HAVE ALL OF THE NECESSARY OPERATIONS FOR                    00022200
+    CONSTRUCTING A "LINEAR PROGRAM".  THAT IS, YOU CAN USE THE          00022300
+    ABOVE OPERATIONS FOR WRITING COURSES IN WHICH EACH STEP IS          00022400
+    ENCOUNTERED SEQUENTIALLY BY EVERY STUDENT.                          00022500
+    IT IS SOMETIMES DESIRABLE TO "BRANCH" THE STUDENT FROM ONE          00022600
+    PART OF THE COURSE TO ANOTHER.  FOR EXAMPLE, JUST A FEW             00022700
+    LINES UP YOU WERE ASKED THE QUESTION "WOULD YOU LIKE TO TRY         00022800
+    THAT SAME SEQUENCE OF INSTRUCTIONS AGAIN".  WHAT WAS YOUR           00022900
+    RESPONSE.                                                           00023000
+ CA YES                                                                 00023100
+ TY SINCE YOUR RESPONSE WAS YES, YOU WERE AUTOMATICALLY                 00023200
+    "BRANCHED" TO AN EARLIER POINT IN THE COURSE WHERE THAT             00023300
+    PARTICULAR SEQUENCE OF INSTRUCTIONS BEGINS.                         00023400
+ CA NO                                                                  00023500
+ TY SINCE YOUR RESPONSE WAS NO, YOU WERE NOT BRANCHED.  IF YOU          00023600
+    HAD RESPONDED WITH A YES, HOWEVER, YOU WOULD HAVE BEEN              00023700
+    AUTOMATICALLY "BRANCHED" TO AN EARLIER POINT IN THE COURSE          00023800
+    WHERE THAT PARTICULAR SEQUENCE OF INSTRUCTIONS BEGINS.              00023900
+ UN PLEASE SAY YES OR NO.                                               00024000
+ RD READ ASSIGNMENT 5.  WHEN YOU ARE FINISHED, TYPE A                   00024100
+    LEFT-POINTING ARROW.                                                00024200
+ QU WOULD YOU LIKE TO SEE AN EXAMPLE USING THE BR AND LA                00024300
+    OPERATIONS.                                                         00024400
+ CA YES                                                                 00024500
+ WA NO                                                                  00024600
+ TY OK.  WE WILL SKIP THE EXAMPLE THRU THE USE OF A BR AND AN LA        00024700
+    AT A LATER POINT IN THIS COURSE.                                    00024800
+                                                                        00024900
+    BECAUSE OF CHARACTER SET RESTRICTIONS, SOME OF THE                  00025000
+    CHARACTERS ON THE TELETYPE KEYBOARD CANNOT BE USED IN               00025100
+    COURSES.                                                            00025200
+    FOLLOWING ARE THE CHARACTERS AVAILABLE FOR COURSES:                 00025300
+    ABCDEFGHIJKLMNOPQRSTUVWXYZ                                          00025400
+    0123456789                                                          00025500
+    .[(&$*);-/,%=]#@:+|                                                 00025600
+                                                                        00025700
+    THIS IS THE END OF CORSWT.  PLEASE READ ASSIGNMENT 6 AFTER          00025800
+    LOGGING-OUT.                                                        00025900
+ BR SKIPBRLA                                                    0000004Z00026000
+ UN PLEASE SAY YES OR NO.                                               00026100
+ RD CONSIDER THE FOLLOWING COURSE SEGMENT AS AN EXAMPLE.                00026200
+                                                                        00026300
+                                                                        00026400
+    LA ADD                                                              00026500
+    QU WHAT IS 4+3.                                                     00026600
+    CA 7                                                                00026700
+    TY VERY GOOD.                                                       00026800
+    UN TRY AGAIN                                                        00026900
+    QU WHAT IS 17+28.                                                   00027000
+    CA 45                                                               00027100
+    TY VERY GOOD                                                        00027200
+    UN TRY AGAIN.                                                       00027300
+    UN NO.  YOU HAVE ONE MORE CHANCE.                                   00027400
+    UN NO.  YOU WILL BE SENT BACK FOR REVIEW.                           00027500
+    BR ADD                                                              00027600
+                                                                        00027700
+                                                                        00027800
+    THIS COURSE SEGMENT WILL BE PRESENTED TO YOU AS IT WOULD            00027900
+    APPEAR TO THE STUDENT.  READ IT OVER AND WHEN YOU ARE READY,        00028000
+    PRESS THE LEFT-POINTING ARROW.                                      00028100
+                                                                        00028200
+                                                                        00028300
+ LA ADD                                                                 00028400
+ QU WHAT IS 4+3.                                                        00028500
+ CA 7                                                                   00028600
+ TY VERY GOOD.                                                          00028700
+ UN TRY AGAIN.                                                          00028800
+ QU WHAT IS 17+28.                                                      00028900
+ CA 45                                                                  00029000
+ TY VERY GOOD.                                                          00029100
+ UN TRY AGAIN.                                                          00029200
+ UN NO.  YOU HAVE ONE MORE CHANCE.                                      00029300
+ UN NO.  YOU WILL BE SENT BACK FOR REVIEW.                              00029400
+ BR ADD                                                         0000004[00029500
+ QU                                                                     00029600
+                                                                        00029700
+    WOULD YOU LIKE TO TRY THAT EXAMPLE AGAIN.                           00029800
+ CA YES                                                                 00029900
+ CB OK                                                                  00030000
+ BR ADD                                                         0000004[00030100
+ CA NO                                                                  00030200
+ TY OK.                                                                 00030300
+    BECAUSE OF CHARACTER SET RESTRICTIONS, SOME OF THE                  00030400
+    CHARACTERS ON THE TELETYPE KEYBOARD CANNOT BE USED IN               00030500
+    COURSES.                                                            00030600
+    FOLLOWING ARE THE CHARACTERS AVAILABLE FOR COURSES:                 00030700
+    ABCDEFGHIJKLMNOPQRSTUVWXYZ                                          00030800
+    0123456789                                                          00030900
+    .[(&$*);-/,%=]#@:+|                                                 00031000
+    THIS IS THE END OF CORSWT.  PLEASE READ ASSIGNMENT 6 AFTER          00031100
+    LOGGING-OUT.                                                        00031200
+ UN PLEASE TYPE YES OR NO.                                              00031300
+ LA SKIPBRLA                                                            00031400
+ 99                                                                     00031500

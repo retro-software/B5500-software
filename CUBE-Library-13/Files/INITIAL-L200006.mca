@@ -1,0 +1,75 @@
+$+STREAM                                                                00000000
+BEGIN % INITIAL MCALGOL LANGUAGE FILE LOADER                            00001000
+DEFINE NUD = 0#, LUD = 0#,                                              00002000
+        BLVL = 1#, RCCNT = -1#,                                         00003000
+        LANGLVL = 3#,                                                   00004000
+        BECT = 1#, OHM = 0#,                                            00005000
+        PT = 0#, DECP = 0#,                                             00006000
+        GALFBAS = 1279#, GINTBAS = 1791#, GPTRBAS = 2815#,              00007000
+        NPTCH = -2#;                                                    00008000
+    FILE CARD(2,150,10);                                                00009000
+    REAL P2;                                                            00010000
+    INTEGER ND,COUNT,I,SUB,CODEWORD,P1,CW,J,L,LD;                       00011000
+    ARRAY A,BFR,IDENT[0:9],DLIST[0:249],DICT[0:127,0:255];              00012000
+    LABEL START, EOF;                                                   00013000
+    STREAM PROCEDURE SCANNER(S,A,CW,SU,C);                              00014000
+    BEGIN                                                               00015000
+        LOCAL T, TT;                                                    00016000
+        LABEL DEBL1, DEBL2, DEBL3;                                      00017000
+        SI~S; DI~A; DI~DI+3;                                            00018000
+DEBL1:  IF SC=" " THEN BEGIN SI~SI+1; GO DEBL1; END;                    00019000
+        63(IF SC!" " THEN BEGIN DS~ CHR;TALLY~ TALLY+1;END ELSE JUMP    00020000
+          OUT);                                                         00021000
+        DS~7 LIT " "; TT~SI; T~TALLY;                                   00022000
+        SI~LOC T; DI~C; DS~WDS; SI~TT; DI~CW;                           00023000
+DEBL2:  IF SC=" " THEN BEGIN SI~SI+1; GO DEBL2; END;                    00024000
+        DS~2 OCT; DI~SU;                                                00025000
+DEBL3:  IF SC=" " THEN BEGIN SI~SI+1; GO DEBL3; END;                    00026000
+        DS~3 OCT;                                                       00027000
+    END SCANNER;                                                        00028000
+    STREAM PROCEDURE MOV(N1,N2,A,B); VALUE N1,N2; BEGIN                 00029000
+    SI~A; DI~B; N1(DS~32 WDS; DS~32 WDS); DS~N2 WDS END;                00030000
+    STREAM PROCEDURE MOVE(A,B,I,L,D); VALUE A,B,L; BEGIN                00031000
+        DI~D; SI~LOC A; DS~2 WDS; SI~I; DS~L WDS;                       00032000
+    END;                                                                00033000
+    DLIST[0] ~ -1;                                                      00034000
+    MOV(3,57,DLIST,DLIST[1]);                                           00035000
+START: READ(CARD,10,BFR[*])[EOF];                                       00036000
+    SCANNER(BFR,IDENT,CW,SUB,COUNT);                                    00037000
+    IDENT[0].[1:17]~ COUNT;                                             00038000
+    I~ IDENT[0] MOD 125;                                                00039000
+    IF ND.[40:8]+L~(COUNT+10) DIV 8>254 THEN                            00040000
+        ND~ 0&(ND+256)[33:33:7];                                        00041000
+    IF CODEWORD<CW THEN                                                 00042000
+        BEGIN                                                           00043000
+            A[J]~ ND;                                                   00044000
+            J~ J+1;                                                     00045000
+            CODEWORD~ CW;                                               00046000
+        END;                                                            00047000
+    IF CODEWORD=22 THEN                                                 00048000
+        BEGIN                                                           00049000
+            P1~ DLIST[I];                                               00050000
+            DLIST[I]~ ND;                                               00051000
+        END                                                             00052000
+    ELSE                                                                00053000
+        P1~ ND;                                                         00054000
+    P2 ~ (ND+2+L) & CW[27:42:6] & SUB[18:39:9] & (ND-LD)[1:40:8];       00055000
+    LD ~ ND;                                                            00056000
+    MOVE(P1,P2,IDENT,L,DICT[ND.[33:7],ND.[40:8]]);                      00057000
+    ND ~ ND + 2 + L;                                                    00058000
+    GO START;                                                           00059000
+EOF: BEGIN                                                              00060000
+    FILE LANGUAGE DISK SERIAL[1:2+(ND+255).[33:7]]                      00061000
+        (2,256,SAVE 780);                                               00062000
+    WRITE(LANGUAGE,*,FOR I~0 STEP 1 UNTIL J-1 DO A[I],                  00063000
+        ND,LD,NUD,LUD,                                                  00064000
+        BLVL,RCCNT,LANGLVL,BECT,OHM,PT,DECP,                            00065000
+        GALFBAS,GINTBAS,GPTRBAS,                                        00066000
+        NPTCH);                                                         00067000
+    WRITE(LANGUAGE,250,DLIST[*]); DICT[0,0] ~ -1;                       00068000
+    FOR I~ 0 STEP 256 UNTIL ND-1 DO                                     00069000
+        WRITE(LANGUAGE,256,DICT[I.[33:7],*]);                           00070000
+    LOCK(LANGUAGE)                                                      00071000
+END END.                                                                00072000
+                                                                        00073000
+                                                                        00074000

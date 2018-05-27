@@ -1,0 +1,1182 @@
+BEGIN SYMBOL PLEX;                                                      00000100
+%                                                                       00000200
+%     THIS A IS REMOTE TERMINAL PLOTTER PROGRAM.                        00000300
+%     ------------------------------------------                        00000400
+%                                                                       00000500
+%                                                                       00000600
+%     IT ACCEPTS ALGOL-LIKE FUNCTION DEFINITIONS FROM A REMOTE          00000700
+%     TERMINAL AND COMPILES THEM INTO A SIMPLE INTERPRETER              00000800
+%     LANGUAGE.  AFTER COMPILATION, A FUNCTION MAY THEN BE              00000900
+%     EVALUATED TO PRODUCE IT"S GRAPH ON THE REMOTE  TERMINAL.          00001000
+%     COMPILATION TAKES PLACE WHILE THE FUNCTION IS TYPED IN            00001100
+%     (LINE BY LINE); IF A SYNTAX ERROR IS DETECTED, THE                00001200
+%     COMPILER ATTEMPTS TO RECOVER SO THAT COMPILATION CAN              00001300
+%     CONTINUE.  THE SYNATX OF THE INTERPRETER LANGUAGE IS GIVEN        00001400
+%     IN BACKUS NORMAL FORM OR BNF, FOLLOWED BY AN OPTIONAL             00001500
+%     SEMANTIC DESCRIPTION.                                             00001600
+%                                                                       00001700
+%     IT IS ASSUMED THAT THE PERSON ATTEMPTING TO USE THIS              00001800
+%     PROGRAM KNOWS ALGOL WELL ENOUGH TO HAVE WRITTEN TWO OR            00001900
+%     THREE PROGRAMS ALREADY, THERFORE THE DESCRIPTION IS FOR           00002000
+%     RELATING THE SYNTAX OF THE PROGRAM TO THE USER.  A TOP-TO-        00002100
+%     BOTTOM APPROACH OF THE SYNTAX WAS CHOOSEN, SINCE THE              00002200
+%     INTERPRETER ITSELF IS WRITTEN TOP-TO-BOTTOM.                      00002300
+%                                                                       00002500
+%PLOTTER COMMAND LANGUAGE.                                              00002600
+%     SYNTAX.                                                           00002700
+%           <PLOTTER COMMAND LANGUAGE> ::= FUNCTION <FUNCTIONDEC>       00002800
+%                 / LIST / PLOT <PLOTTER> / DELETE / STOP               00002900
+%     SEMANTICS.                                                        00003000
+%           "FUNCTION" ALLOWS THE DECLARATION OF AN ALGOL-LIKE          00003100
+%           PROCEDURE DECLARATION, WHICH, WHEN PASSED PARAMETERS        00003200
+%           WILL RETURN VALUES TO BE PLOTTED.                           00003300
+%           THE DESCRIPTION OF THE FUNCTION IS THEN TYPED IN            00003400
+%           LINE BY LINE.  THE COMPILER WILL TYPE LINE NUMBERS          00003500
+%           AS COMPILATION PROCEDES.                                    00003600
+%           NOTE THAT FUNCTIONS MAY RECURSE, CALL EACH OTHER,           00003700
+%           ETC....                                                     00003800
+%                                                                       00003900
+%           "LIST" WILL LIST ALL FUNCTIONS DECLARED.                    00004000
+%                                                                       00004100
+%           "PLOT" PLOTS THE GIVEN FUNCTION, WHICH MAY INVOLVE          00004200
+%           CALLS ON OTHER FUNCTIONS.  SEE THE INFORMATION UNDER        00004300
+%           PLOTTER.                                                    00004400
+%                                                                       00004500
+%           "DELETE" DELETES THE FIRST PROCEDURE THAT THE "LIST"        00004600
+%           COMMAND LISTS.  THUS IF TWO OR MORE FUNCTIONS ARE TO        00004700
+%           BE DELETED, "DELETE" WILL HAVE TO ENTERED SEVERAL           00004800
+%           TIMES.  THE LIST IS STRUCTURED SO THAT THE MOST             00004900
+%           RECENT DECLARATION IS FIRST, WITH THE END OF THE            00005000
+%           LIST BEING THE FIRST FUNCTION ENTERED.                      00005100
+%           "STOP" CAUSES THE PROGRAM TO GO TO END-OF-JOB.              00005300
+%                                                                       00005400
+%           AFTER COMPLETING A COMMAND, EXCEPT THE "STOP" COMMAND,      00005500
+%           THE PROGRAM TYPES "GO AHEAD" TO SIGNIFY THAT IT IS          00005600
+%           READY FOR ANOTHER COMMAND.                                  00005700
+%                                                                       00005800
+%                                                                       00005900
+%FUNCTION DECLARATION.                                                  00006000
+%     SYNTAX.                                                           00006100
+%           <FUNCTIONDEC> ::= <FUNCTION HEADING> <FUNCTION BODY>        00006200
+%           <FUNCTION HEADING> ::= <FUNCTION IDENTIFIER>                00006300
+%                 <FORMAL PARAMTER PART>                                00006400
+%           <FORMAL PARAMETER PART> ::= <EMPTY> / ( <FORMAL             00006500
+%                 PARAMTER LIST> )                                      00006600
+%           <FORMAL PARAMETER LIST> ::= <IDENTIFIER> /                  00006700
+%                 <FORMAL PARAMETER LIST> , <IDENTIFIER>                00006800
+%           <PROCEDURE BODY> ::= BEGIN <DECLARATIONS>                   00006900
+%                 <COMPOUNDTAIL> / <STATEMENT>                          00007000
+%     SEMANTICS.                                                        00007100
+%           THE FUNCTION DECLARATION ALLOWS A "REAL" FUNCTION           00007200
+%           TO BE DECLARED WITH OPTIONAL FORMAL PARAMETERS, WHICH       00007300
+%           ARE BY DEFAULT OF TYPE "REAL", FOLLOWED BY EITHER A         00007400
+%           BLOCK OR A STATEMENT.                                       00007500
+%                                                                       00007600
+%DECLARATIONS.                                                          00007700
+%     SYNTAX.                                                           00007800
+%           <DECLARATION> ::= <TYPE DECLARATION> /                      00007900
+%                 <DECLARATION> ; <TYPE DECLARATION>                    00008000
+%           <TYPE DECLARATION> ::= <TYPE> <TYPE LIST>                   00008100
+%           <TYPE> ::= LABEL / REAL / INTEGER / BOOLEAN                 00008200
+%           <TYPE LIST> ::= <IDENTIFIER> / <TYPE LIST> , <IDENTIFIER>   00008300
+%     SEMANTICS.                                                        00008400
+%           DECLARATIONS ALLOW LOCAL VARIABLES TO BE DECLARED FOR       00008500
+%           USE IN THE CURRENT FUNCTION DECLARATION.  ONLY              00008600
+%           PREVIOUSLY DECLARED FUNCTIONS ARE ALLOWED AS                00008700
+%           GLOBAL QUANITIES.                                           00008800
+%                                                                       00008900
+%STATEMENT.                                                             00009000
+%     SYNTAX.                                                           00009100
+%           <STATEMENT>  ::= LABEL : <STATEMENT> /                      00009200
+%                 <ASSIGNMENT STATEMENT> / GO TO LABEL / <EMPTY> /      00009300
+%                 <CONDITIONAL STATEMENT> / <WHILE STATEMENT> /         00009400
+%                 <DO STATEMENT> / RETURN <AEXP> / BEGIN                00009500
+%                 <COMPOUNDTAIL>                                        00009600
+%           <COMPOUNDTAIL> ::= <STATEMENT> END /                        00009700
+%                 <STATEMENT> ; <COMPOUNDTAIL>                          00009800
+%     SEMANTICS.                                                        00009900
+%           THE BASIC CONSTITUENTS OF THE INTERPRETER                   00010000
+%           LANGUAGE ARE STATEMENTS.   THESE STATEMENTS ARE VERY        00010100
+%           SIMILAR TO ALGOL STATEMENTS.                                00010200
+%                                                                       00010300
+%ASSIGNMENT STATEMENT.                                                  00010400
+%     SYNTAX.                                                           00010500
+%           <ASSIGNMENT STATEMENT> ::= <LEFT PART LIST> <AEXP>          00010600
+%           <LEFT PART LIST> ::= <VARIABLE> := / <VARIABLE> :=          00010700
+%                 <LEFT PART LIST>                                      00010800
+%     SEMANTICS.                                                        00010900
+%           THE ASSIGNMENT STATEMENT CAUSES THE VAULE                   00011000
+%           REPRESENTED BY THE ARITHMETIC EXPRESSION (AEXP)             00011100
+%           TO BE ASSIGNED TO THE VARIABLES APPEARING ON THE            00011200
+%           LEFT OF EACH ASSIGNMENT SYMBOL.                             00011300
+%                                                                       00011400
+%CONDITIONAL STATEMENT.                                                 00011500
+%     SYNTAX.                                                           00011600
+%           <CONDITIONAL STATEMENT>  ::= <IF CLAUSE> <STATEMENT>  /     00011700
+%                 <IF CLAUSE> <STATEMENT> ELSE <STATEMENT>              00011800
+%           <IF CLAUSE> ::= IF <BEXP> THEN <STATEMENT>                  00011900
+%     SEMANTICS.                                                        00012000
+%           CONDITIONAL STATEMENTS PROVIDE A MEANS WHEREBY THE          00012100
+%           THE EXECTUTION OF A STATEMENT, OR A SERIES OF               00012200
+%           STATEMENTS, IS DEPENDENT UPON THE LOGICAL VALUE             00012300
+%           PRODUCED BY A "BOOLEAN" EXPRESSION (BEXP).                  00012400
+%                                                                       00012500
+%WHILE STATEMENT.                                                       00012600
+%     SYNTAX.                                                           00012700
+%           <WHILE STATEMENT> ::= WHILE <BEXP> DO <STATEMENT>           00012800
+%     SEMANTICS.                                                        00012900
+%           THE "WHILE" STATEMENT PROVIDES A METHOD OF CONTROLLING      00013000
+%           AN ITERATIVE PROCESS IN WHICH EXIT FROM THE LOOP            00013100
+%           DEPENDS ON EXCEEDING A LIMIT.  THE "BOOLEAN" EXPRESSION     00013200
+%           IS FIRST TESTED; THE FOLLOWING STATEMENT IS THEN            00013300
+%           EXECUTED AS LONG AS THE BOOLEAN EXPRESSION IS "TRUE".       00013400
+%                                                                       00013500
+%DO STATEMENT.                                                          00013600
+%     SYNTAX.                                                           00013700
+%           <DO STATEMENT> ::= DO <STATEMENT> UNTIL <BEXP>              00013800
+%     SEMANTICS.                                                        00013900
+%           THE "DO" STATEMENT PROVIDES A METHOD OF CONTROLLING         00014000
+%           AN ITERATIVE PROCESS IN WHICH EXIT FROM THE LOOP            00014100
+%           DEPENDS ON REACHING A LIMIT.  THE STATEMENT IS              00014200
+%           FIRST EXECUTED THEN THE TEST IS MADE, AND THE               00014300
+%           EXECUTION OF THE STATEMENT IS REPEATED AS LONG AS THE       00014400
+%           "BOOLEAN" EXPRESSION IS "FALSE".  THIS IS VERY              00014500
+%           SIMILAR TO A FORTRAN "DO" LOOP.                             00014600
+%                                                                       00014700
+%ARITHEMTIC EXPRESSIONS (AEXP) AND BOOLEAN EXPREXSIONS (BEXP).          00014800
+%     SEMANTICS.                                                        00014900
+%           THESE EXPRESSIONS ARE IDENTICAL TO THEIR ALGOL              00015000
+%           COUNTERPARTS, WITH THE RESTRICTION THAT STRINGS             00015100
+%           AREN"T ALLOWED.  CONSULT THE ALGOL MANUAL.                  00015200
+%                                                                       00015300
+%STANDARD FUNCTIONS.                                                    00015400
+%     THE STANDARD OR INTRINSIC FUNCTIONS ARE LISTED BELOW              00015500
+%     WITH APPROPRIATE DEFINITIONS.  GIVEN THAT AE IS AN <AEXP>, THEN:  00015600
+%                                                                       00015700
+%     ABS(AE)     PRODUCES ABSOLUTE VALUE OF AE                         00015800
+%     SIN(AE)     PRODUCES SINE OF AE                                   00015900
+%     COS(AE)     PRODUCES THE COSINE OF AE                             00016000
+%     EXP(AE)     PRODUCES THE EXPONENTIAL FUNCTION OF AE               00016100
+%     LN(AE)      PRODUCES THE NATURAL LOGARITHM OF AE                  00016300
+%     SQRT(AE)    PRODUCES THE SQUARE ROOT OF AE                        00016400
+%                                                                       00016500
+%TYPE TRANSFER FUNCTIONS.                                               00016600
+%     THE TYPE TRANSFER FUNCTIONS ARE LISTED BELOW:                     00016700
+%                                                                       00016800
+%     REAL.                                                             00016900
+%           THE FUNCTION "REAL(BE)" YIELDS A VALUE OF TYPE              00017000
+%           "REAL" FROM A BOOLEAN EXPRESSION.  THIS ALLOWS              00017100
+%           ARITHMETIC OPERATIONS TO BE CARRIED OUT ON                  00017200
+%           BOOLEAN QUANITITES BUT DOES NOT ALTER THEIR                 00017300
+%           INTERNAL SYSTEM REPRESENTATION.                             00017400
+%     BOOLEAN.                                                          00017500
+%           THE FUNCTION "BOOLEAN(AE)" YIELDS A VALUE OF TYPE           00017600
+%           "BOOLEAN" FROM AN ARITHMETIC EXPRESSION.  THIS ALLOWS       00017700
+%           BOOLEAN OPERATIONS TO BE CARRIED OUT ON ARITHMETIC          00017800
+%           QUANTITES BUT DOES NOT ALTER THEIR INTERNAL SYSTEM          00017900
+%           REPRESENTATION.                                             00018000
+%                                                                       00018100
+%                                                                       00018101
+%                                                                       00018102
+%                                                                       00018103
+%PLOTTER SECTION                                                        00018200
+%                                                                       00018300
+%     SEMANTICS.                                                        00018400
+%           THE "PLOT" COMMAND IS FOLLOWED BY THE FUNCTION              00018500
+%           IDENTIFIER TO BE PLOTTED.  IT MUST HAVE BEEN DECLARED       00018600
+%           WITH AT LEAST ONE PARAMETER  WHICH WILL BE USED IN THE      00018700
+%           PLOTTING.  IF THE FUNCTION HAS MORE THAN ONE PARAMETER THE  00018800
+%           PROGRAM WILL REQUEST THEIR VALUES.                          00018900
+%                                                                       00019300
+%           THE PROGRAM WILL THEN ASK FOR THE                           00019400
+%           BEGINNING POSITION, INCREMENT, AND FINAL VALUE FOR THE      00019500
+%           RANGE OF THE PLOT.                                          00019600
+%                                                                       00019700
+%           THE PLOT OF THE FUNCTION WILL BE TYPED ON THE               00019800
+%           TERMINAL AND THEN THE PROGRAM WILL RETURN                   00019900
+%           TO COMMAND MODE.                                            00020000
+%                                                                       00020100
+%                                                                       00020200
+%                                                                       00020300
+%  OUTLINE OF REMOTE PLOTTER PROGRAM                                    00020400
+%  ALL OF THE PROCEDURES USED AND THEIR FUNCTIONS ARE                   00020500
+%   DESCRIBED BELOW                                                     00020600
+%                                                                       00020601
+%  THE GETNEXT AND ERROR PROCEDURES                                     00020700
+%          GETNEXT       THE "GETNEXT" PROCEDURE                        00020800
+%          ERROR         THE "ERROR" PROCEDURE                          00020900
+%  MISC. ROUTINES FOR ACCESSING CODE STRING                             00021000
+%          PUT           PLACES CHARACTER IN CODE STRING                00021100
+%          PUTADR        PUTS ADDRESS IN CODE STRING                    00021200
+%          GET           GETS CHARACTER FROM CODE STRING                00021300
+%          GETADR        GETS ADDRESS FROM CODE STRING                  00021400
+%          EMIT          EMITS ONE INSTRUCTION                          00021500
+%          EMITADR       EMITS ADDRESS OF INSTRUCTION                   00021600
+%          EMITNUM       EMITS NUMBERS                                  00021700
+%  EXPRESSION SCANNERS                                                  00021800
+%          IFEXP         HANDLES CONDITIONAL EXPRESSIONS                00021900
+%          VARIABLE      COMPILES VARIABLES & ASSIGNMENTS               00022000
+%          PANA          PARENTHESIS AND ARITHMETIC EXPRES              00022100
+%          PRIMARY       COMPILES ARITHMETIC PRIMARIES                  00022200
+%          FACTOR        COMPILES ARITHMETIC FACTORS                    00022300
+%          TERM          COMPILES ARITHMETIC TERMS                      00022400
+%          AEXP          COMPILES ARITHMETIC EXPRESSIONS                00022500
+%          BOOPRIM       COMPILES BOOLEAN PRIMARIES                     00022600
+%          BOOSEC        COMPILES BOOLEAN TERMS                         00022700
+%          EXPRESS       COMPILES BOTH ARITHMETIC AND                   00022800
+%                        BOOLEAN EXPRESSIONS                            00022900
+%          BEXP          COMPILES BOOLEAN EXPRESSIONS                   00023000
+%  STATEMENT SCANNERS                                                   00023100
+%          COMPOUNDTAIL  TAIL END OF COMPOUND STATEMENT                 00023200
+%          STMT          SCANS SOME STATEMENT BEGINNERS                 00023300
+%          RESETLABELS   RESETS FORWARD LABEL REFERENCES                00023400
+%                        WHEN "UNCOMPILING" (RECOVERING                 00023500
+%                        FROM ERRORS)                                   00023600
+%          STATEMENT     COMPILES ALL STATEMENTS & HANDLES              00023700
+%                        RECOVERY FROM ERRORS IN STATEMENTS             00023800
+%  DECLARATION SCANNERS                                                 00023900
+%          ENTRY         RUN TIME SYNTAX CLASS ASSIGNMENT               00024000
+%          ENTER         APPLIES ENTRY TO LIST OF                       00024100
+%                        IDENTIFIERS                                    00024200
+%          DECLARATION   HANDLES DECLARATIONS                           00024300
+%          PURGE         REMOVES ATOMIC SYMBOLS FROM                    00024400
+%                        OBJECT LIST WHEN LEAVING THE                   00024500
+%                        BLOCK AND CHECKS FOR MISSING                   00024600
+%                        LABELS                                         00024700
+%          DECLARE       HANDLES SERIES OF DECLARATIONS                 00024800
+%                        AND PROVIDES FOR RECOVERY FROM                 00024900
+%                        SYNTAX ERRORS                                  00025000
+%                                                                       00025001
+%                                                                       00025002
+%          DUMPCODE      TRANSFERS CODE FROM CODE STRING                00025100
+%                        TO THE LISP "STACK" AT A POINT                 00025200
+%                        IMMEDIATELY FOLLOWING THE INFO                 00025300
+%                        WORD OF THE ATOMIC SYMBOL                      00025400
+%                        REPRESENTING THE FUNCTION                      00025500
+%          PROCEDUREDEC  HANDLES DECLARATIONS OF FUNCTIONS              00025600
+%                        TO BE PLOTTED                                  00025700
+%  INTERPRETER SECTION                                                  00025800
+%          MKADR         REMOVES 2 CHARACTERS FROM CODE                 00025900
+%                        STRING TO BE USED AS AN ADDRESS                00026000
+%          INTERPRET     INTERPRETS THE CODE STRING                     00026100
+%          EXECUTE       MAKES CALLS ON FUNCTIONS; USES                 00026200
+%                        INTERPRET                                      00026300
+%          PLOTTER       PLOTS FUNCTION EXECUTED BY                     00026400
+%                        INTERPRETER                                    00026500
+       %  REMOTE TERMINAL FILE DECLARATION                              00026600
+FILE REMOTE;                                                            00026700
+BOOLEAN                                                                 00026800
+      NEWLINE,        %  TELLS GETNEXT TO GET NEW LINE                  00026900
+                      %  WHEN TRUE                                      00027000
+      COMPILING,      %  TELLS GETNEXT TO PRINT LINE                    00027100
+                      %  NUMBERS                                        00027200
+      FORMTOG,        %  SET TO TRUE WHEN ASSIGNING                     00027300
+                      %  CLASSES TO FORMAL PARAMETERS OF                00027400
+                      %  A FUNCTION                                     00027500
+      NOLABEL,        %  IS SET TO TRUE BY PURGE IF A                   00027600
+                      %  DECLARED LABEL IS NOT USED                     00027700
+      INTERPRETING;   %  TELLS GETNEXT THAT NEXT "SYMBOL"               00027800
+                      %  IS TO COME FROM PRECOMPILED                    00027900
+                      %  CODE AND "CLASS" IS TO BE THE                  00028000
+                      %  NEXT INSTRUCTION                               00028100
+REAL                                                                    00028200
+      CMAX,           %  IS THE NUMBER OF NON-INTEGER                   00028300
+                      %  CONSTANTS OCCURING IN A FUNCTION               00028400
+                      %  DECLARATION                                    00028500
+      COUNT,          %  COUNTS NUMBER OF IDENTIFIERS                   00028600
+                      %  ENTERED BY ENTRY                               00028700
+      CLASS,          %  THE SYNTAX CLASS VARIABLE                      00028800
+      DL,             %  TEMP VARIABLE USED AT END OF                   00028900
+                      %  PROGRAM                                        00029000
+      FR,             %  USED LIKE B5500 "F" REGISTER                   00029100
+      SAVEI,          %  SAVES LOCATION IN "STACK" OF                   00029200
+                      %  POINT WHERE FUNCTION VALUE IS                  00029300
+                      %  TO BE RETURNED                                 00029400
+      I,              %  INDEX TO "STACK"                               00029500
+      WHL,            %  THE WHOLE INFORMATION WORD                     00029600
+                      %  ASSOCIATED WITH EACH DECLARED                  00029700
+                      %  IDENTIFIER - SET BY GETNEXT                    00029800
+      ADDRESS;        %  ADDRESS OF DECLARED IDENTIFIER -               00029900
+                      %  SET BY GETNEXT                                 00030000
+INTEGER                                                                 00030100
+      LINENO,         %  LINE NUMBER PRINTED BEFORE EACH                00030200
+                      %  LINE OF FUNCTION DECLARATION                   00030300
+      L,              %  RELATIVE LOCATION OF CHARACTER                 00030400
+                      %  IN CODE STRING                                 00030500
+      J;              %  TEMP VARIABLE                                  00030600
+SYMBOL                                                                  00030700
+      BASE,           %  POINTER TO FIRST WORD FOLLOWING INFO WORD      00030800
+                      %  ASSOCIATED WITH A FUNCTION IDENTIFIER          00030900
+                      %  START OF FUNCTION CODE STRING                  00031000
+      PLIST,          %  LIST OF IDENTIFIERS CREATED BY                 00031200
+                      %  ENTRY                                          00031300
+      INF,            %  POINTER TO INFO WORD CREATED BY                00031400
+                      %  ENTRY                                          00031500
+      INFO;           %  POINTER TO INFO WORD - SET BY                  00031600
+                      %  GETNEXT                                        00031700
+ARRAY                                                                   00031800
+      STACK[0:99],    %  THE "STACK" USED BY THE                        00031900
+                      %  INTERPRETER                                    00032000
+      CONSTANT,       %  TABLE OF NON-INTEGER CONSTANTS                 00032100
+                      %  APPEARING IN FUNCTION DECLARATION              00032200
+      CONSTADR[0:127];%  LINKS TO ADDRESS PART OF OF                    00032400
+                      %  "RCN" INSTRUCTION                              00032500
+STRING ARRAY STR[0:99](8);      % CODE STRING USED DURING COMPILATION   00032600
+LABEL START, RESTART, EXIT;                                             00032800
+DEFINE                                                                  00032900
+      BUMPL = L := L + 2#,                                              00033000
+      CLSS  =[33:15]#,                                                  00033100
+      ADRS  = [18:15]#,                                                 00033200
+      LINK  = [3:15]#,                                                  00033300
+      LINKF = NPAR#,                                                    00033400
+      CLASSF = CDRF#,                                                   00033500
+      NPARAM = LINK#,                                                   00033600
+      ATYPE = 1#,                                                       00033700
+      BTYPE = 2#;                                                       00033800
+STRING FIELD STRF [0:8];                                                00033900
+REAL FIELD CDRF [33:15],                                                00034000
+           ADDRESSF [18:15],                                            00034100
+           NPAR [3:15],                                                 00034200
+           WH;                                                          00034300
+SYMBOL FORMAT  % THE FOLLOWING ARE SYNTACTIC CLASS ASSIGNMENTS          00034400
+      * "RANDOM"   * "ABS"      * "SIN"      * "COS"                    00034600
+      * "EXP"      * "LN"       * "SQRT"     * "MAX"                    00034700
+      * "MIN"      * REALPROCID * REALID     * INTID                    00034800
+      * BOOID      * LABELID                                            00034900
+      = IDMAX      * "IF"       * "GO"       * "WHILE"                  00035000
+      * "DO"                    * "RETURN"   * "BEGIN"                  00035100
+      * "END"      * "ELSE"     * ";"        * "UNTIL"                  00035200
+      * "LABEL"    * "REAL"     * "INTEGER"  * "BOOLEAN"                00035300
+      * "FALSE"    * "TRUE"     * FCONSTANT  * RCONSTANT                00035400
+      * "FUNCTION" * "LIST"     * "PLOT"     * "DELETE"                 00035500
+      * "STOP"     = "QUIT"     * "RESET"                               00035600
+      * "TO"       * "THEN"     * "AND"      * "OR"                     00035700
+      * "NOT"      * "="        = "EQL"      * "NEQ"                    00035800
+      * "LSS"      * "LEQ"      * "GEQ"      * "GTR"                    00035900
+      * "("        * ")"        * ","        * ":"                      00036000
+      * "+"        * "-"        * "|"        * "/"                      00036100
+      * "*"        * "."        =  """       =  "&"                     00036200
+      =  "%"       =  "$"       = "#"        = "@"                      00036300
+      = "["        = "]"        = EOF        = NUMERR                   00036400
+      = CLASSMAX;                                                       00036500
+SYMBOL FORMAT    *      %  INTERPRETER INSTRUCTIONS                     00036600
+    1 = BOF     %    BRANCH ON FALSE                                    00036700
+      * BUN     %    BRANCH UNCONDITIONAL                               00036800
+      * CHS     %    CHANGE SIGN                                        00036900
+      * ADOP    %    ADD                                                00037000
+      * SBOP    %    SUBTRACT                                           00037100
+      * MULOP   %    MULTIPLY                                           00037200
+      * DVDOP   %    DIVIDE                                             00037300
+      * FACTOP  %    RAISE TO POWER                                     00037400
+      * LNG     %    LOGICAL NEGATE                                     00037500
+      * OROP    %    LOGICAL OR                                         00037600
+      * ANDOP   %    LOGICAL AND                                        00037700
+      * EQLF    %    =                                                  00037800
+      * NEQF    %    !                                                  00037900
+      * LSSF    %    <                                                  00038000
+      * LEQF    %    {                                                  00038100
+      * GEQF    %    }                                                  00038200
+      * GTRF    %    >                                                  00038300
+      * MKS     %    MARK THE STACK FOR RETURN                          00038400
+      * SBR     %    CALL FUNCTION                                      00038500
+      * RTN     %    RETURN FROM FUNCTION                               00038600
+      * ZRN     %    MAKE SPACE FOR VARIABLES IN STACK                  00038700
+      * LITC    %    USE ADDRESS AS CONSTANT                            00038800
+      * OPDC    %    "OPERAND CALL"                                     00038900
+      * STD     %    STORE DESTRUCTIVE                                  00039000
+      * ISD     %    INTEGER STORE DESTRUCTIVE                          00039100
+      * SND     %    STORE NONDESTRUCTIVE                               00039200
+      * ISN     %    INTEGER STORE NONDESTRUCTIVE                       00039300
+      * BLN     %    BOOLEAN VALUE                                      00039400
+      * MAXF    %    FIND MAX OF TWO NUMBERS                            00039500
+      * MINF    %    FIND MIN OF TWO NUMBERS                            00039600
+      * RAND    %    RANDOM NUMBER                                      00039700
+      * ABSF    %    ABSOLUTE VALUE                                     00039800
+      * SINF    %    SINE FUNCTION                                      00039900
+      * COSF    %    COSINE FUNCTION                                    00040000
+      * EXPF    %    EXP FUNCTION                                       00040100
+      * LNF     %    NATURAL LOG FUNCTION                               00040200
+      * SQRTF   %    SQUARE ROOT FUNCTION                               00040300
+      * RCN ;   %    NON INTEGER NUMBER                                 00040400
+%  THE GETNEXT AND ERROR PROCEDURES                                     00040500
+PROCEDURE GETNEXT;                                                      00040600
+BEGIN                                                                   00040700
+LABEL LS;                                                               00040800
+      IF INTERPRETING THEN                                              00040900
+            BEGIN                                                       00041000
+            J := L DIV 8;                                               00041100
+            CLASS := REAL(STRF(ATSM(J,BASE))(L.[45:3],1));              00041200
+            L := L + 1                                                  00041300
+            END                                                         00041400
+      ELSE                                                              00041500
+            BEGIN                                                       00041600
+            IF CLASS = EOF OR NEWLINE THEN                              00041700
+                  BEGIN                                                 00041800
+                  NEWLINE := FALSE;                                     00041900
+                  IF COMPILING THEN                                     00042000
+                        BEGIN                                           00042100
+LS:                     TWXS2 := FILL(LINENO,3) & ":";                  00042200
+                        TAB := 4; TERPRI;                               00042300
+                        LINENO := LINENO + 1                            00042400
+                        END;                                            00042500
+                  READ TWX;                                             00042600
+                  END;                                                  00042700
+            CASE READCON(FALSE) OF                                      00042800
+                  BEGIN                                                 00042900
+                        IF COMPILING THEN GO TO LS                      00043000
+                             ELSE CLASS := EOF;                         00043100
+                        CLASS := NUMERR; % ILLEGAL NUMBER               00043200
+                        BEGIN  % NUMBER                                 00043300
+                        CLASS := RCONSTANT;                             00043400
+                        IF INREAL < 4096 THEN                           00043500
+                        IF INREAL = J := INREAL THEN                    00043600
+                              BEGIN                                     00043700
+                              INREAL := J;                              00043800
+                              CLASS := FCONSTANT;                       00043900
+                              END;                                      00044000
+                        END;                                            00044100
+                        IF CLASS := CDRF(INSYM) { CLASSMAX              00044200
+                              THEN INFO := NIL                          00044300
+                        ELSE                                            00044400
+                              BEGIN                                     00044500
+                              WHL := WH(INFO:=ATSM(CLASS));             00044600
+                              CLASS := WHL.CLSS;                        00044700
+                              ADDRESS := WHL.ADRS;                      00044800
+                              END;                                      00044900
+                        CLASS := 0;                                     00045000
+                  END OF CASE STATEMENT;                                00045100
+            END                                                         00045200
+END OF GETNEXT;                                                         00045300
+                                                                        00045350
+PROCEDURE ERROR(X); VALUE X; REAL X;                                    00045400
+BEGIN                                                                   00045500
+      IF COL < 68 THEN PRINT SPACE(COL + 3) #*#;                        00045600
+      PRIN  #ERROR: MISSING #;                                          00045700
+      CASE X - 1 OF                                                     00045800
+            BEGIN                                                       00045900
+            PRINT #OR ILLEGAL IDENTIFIER IN DECLARATION#;               00046000
+            PRINT #; OR END#;                                           00046100
+            PRINT #LEFT PARENTHESIS#;                                   00046200
+            PRINT #RIGHT PARENTHESIS#;                                  00046300
+            PRINT #OR ILLEGAL STATEMENT#;                               00046400
+            PRINT #"UNTIL" IN DO STATEMENT#;                            00046500
+            PRINT #OR ILLEGAL USE OF LABEL#;                            00046600
+            PRINT #"THEN" IN CONDITIONAL EXPRESSION OR                  00046700
+                  STATEMENT#;                                           00046800
+            PRINT #"ELSE" IN CONDITIONAL EXPRESSION#;                   00046900
+            PRINT #COLON FOLLOWING LABEL#;                              00047000
+            PRINT #LABEL IN GO TO STATEMENT#;                           00047100
+            PRINT #"DO" IN WHILE STATEMENT#;                            00047200
+            PRINT #"=" FOLLOWING ":" IN ASSIGNMENT                      00047300
+                  STATEMENT#;                                           00047400
+            PRINT #,#;                                                  00047500
+            PRINT #OR ILLEGAL BOOLEAN EXPRESSION#;                      00047600
+            END                                                         00047700
+END OF ERR;                                                             00047800
+SYMBOL FORMAT *CLASS,GETNEXT,ERROR;                                     00047900
+%  MISC. ROUTINES FOR ACCESSING CODE STRING                             00048000
+%          PUT           PLACES CHARACTER IN CODE STRING                00048100
+PROCEDURE PUT(T,A); VALUE T,A; REAL T,A;                                00048200
+      STR[A DIV 8](A MOD 8,1) := STRING(T.[42:6],1);                    00048300
+%          PUTADR        PUTS ADDRESS IN CODE STRING                    00048400
+PROCEDURE PUTADR(T,A); VALUE T,A; REAL T,A;                             00048500
+      BEGIN                                                             00048600
+      PUT(T.[36:6],A);                                                  00048700
+      PUT(T, A + 1)                                                     00048800
+      END;                                                              00048900
+%          GET           GETS CHARACTER FROM CODE STRING                00049000
+REAL PROCEDURE GET(A); VALUE A; REAL A;                                 00049100
+      GET := REAL(STR[A DIV 8](A.[45:3],1));                            00049200
+%          GETADR        GETS ADDRESS FROM CODE STRING                  00049300
+REAL PROCEDURE GETADR(A); VALUE A; REAL A;                              00049400
+      GETADR := GET(A) | 64 + GET(A + 1);                               00049500
+%          EMIT          EMITS ONE INSTRUCTION                          00049600
+PROCEDURE EMIT(X); VALUE X; REAL X;                                     00049700
+      BEGIN                                                             00049800
+      PUT(X,L);                                                         00049900
+      IF L } 798 THEN                                                   00050000
+            BEGIN                                                       00050100
+            PRINT #CODE OVERFLOW#;                                      00050200
+            LINENO := 0                                                 00050300
+            END                                                         00050400
+      ELSE                                                              00050500
+            L := L + 1;                                                 00050600
+      END;                                                              00050700
+%          EMITADR       EMITS ADDRESS OF INSTRUCTION                   00050800
+PROCEDURE EMITADR(A); VALUE A; REAL A;                                  00050900
+      BEGIN                                                             00051000
+      EMIT(A.[36:6]);                                                   00051100
+      EMIT(A)                                                           00051200
+      END;                                                              00051300
+%          EMITNUM       EMITS NUMBERS                                  00051400
+PROCEDURE EMITNUM(C); VALUE C; REAL C;                                  00051500
+BEGIN                                                                   00051600
+LABEL FOUND;                                                            00051700
+      FOR J := 0 STEP 1 UNTIL CMAX DO                                   00051800
+      IF CONSTANT[J] = C THEN GO TO FOUND;                              00051900
+      CONSTANT[J := CMAX := CMAX + 1] := C;                             00052000
+FOUND: EMIT(RCN);                                                       00052100
+      EMITADR(CONSTADR[J]);                                             00052200
+      CONSTADR[J] := L - 2                                              00052300
+END OF EMITNUM;                                                         00052400
+%  FORWARD DECLARATIONS                                                 00052500
+SYMBOL FORMAT AEXP; FORWARD;                                            00052600
+SYMBOL FORMAT BEXP; FORWARD;                                            00052700
+REAL PROCEDURE EXPRESS; FORWARD;                                        00052800
+BOOLEAN PROCEDURE STATEMENT; FORWARD;                                   00052900
+PROCEDURE EXECUTE(CODE); VALUE CODE; SYMBOL CODE; FORWARD;              00053000
+%  EXPRESSION SCANNERS                                                  00053100
+%          IFEXP         HANDLES CONDITIONAL EXPRESSIONS                00053200
+SYMBOL FORMAT IFEXP(X); SYMBOL FORMAT X;                                00053300
+BEGIN                                                                   00053400
+REAL T, F;                                                              00053500
+      [*BEXP, "THEN":8; EMIT(BOF); F := BUMPL; *X, "ELSE":9;            00053600
+            EMIT(BUN); PUTADR(T := BUMPL,F-2);                          00053700
+      *X, PUTADR(L,T - 2);]                                             00053800
+END OF IFEXP;                                                           00053900
+%          VARIABLE      COMPILES VARIABLES & ASSIGNMENTS               00054000
+SYMBOL FORMAT VARIABLE(TYPE,ADDRESS,FROM);                              00054100
+      VALUE TYPE,ADDRESS,FROM;                                          00054200
+      REAL TYPE, ADDRESS, FROM;                                         00054300
+      [[":", "=":13; [*TYPE = BOOID, *BEXP ELSE *AEXP],                 00054400
+            EMIT(REAL(TYPE = INTID) + FROM + STD) ELSE                  00054500
+      *FROM = 2, EMIT(OPDC);],                                          00054600
+            EMITADR(ADDRESS);];                                         00054700
+%          PANA          PARENTHESIS AND ARITHMETIC EXPRES              00054800
+SYMBOL FORMAT PANA ;  ["(":3; *AEXP, ")":4];                            00054900
+%          PRIMARY       COMPILES ARITHMETIC PRIMARIES                  00055000
+SYMBOL FORMAT PRIMARY;                                                  00055100
+BEGIN                                                                   00055200
+REAL T, N;                                                              00055300
+      [REALID * INTID: T := CLASS; J := ADDRESS;                        00055400
+            *VARIABLE(T,J,2) ELSE                                       00055500
+      REALPROCID: EMIT(MKS);  N := (T := WHL).NPARAM;                   00055600
+            [*N = 0 ELSE                                                00055700
+            "(":3; *AEXP,                                               00055800
+                  [*N := N - 1 ! 0, ",":14; *AEXP,                      00055900
+                          RETURN ELSE                                   00056000
+                   ")":4]],                                             00056100
+            EMIT(SBR); EMITADR(T.[18:9]); EMIT(T.[27:6])                00056200
+                  ELSE                                                  00056300
+      FCONSTANT: EMIT(LITC); EMITADR(INREAL) ELSE                       00056400
+      RCONSTANT: EMITNUM(INREAL) ELSE                                   00056500
+      "ABS" * "SQRT": T := CLASS - (="ABS"); *PANA,                     00056600
+            EMIT(ABSF + T) ELSE                                         00056700
+      "MAX" * "MIN": T := CLASS - (="MAX");                             00056800
+            "(":3; *AEXP, ",":14; *AEXP, ")":4;                         00056900
+            EMIT(MAXF + T) ELSE                                         00057000
+      "REAL", "(":3; *BEXP, ")":4 ELSE                                  00057100
+      "RANDOM", EMIT(RAND) ELSE                                         00057200
+      *PANA]                                                            00057300
+END OF PRIMARY;                                                         00057400
+%          FACTOR        COMPILES ARITHMETIC FACTORS                    00057500
+SYMBOL FORMAT FACTOR;                                                   00057600
+      [*PRIMARY, ["*", *PRIMARY, EMIT(FACTOP); RETURN                   00057700
+            ELSE NIL]];                                                 00057800
+%          TERM          COMPILES ARITHMETIC TERMS                      00057900
+SYMBOL FORMAT TERM;                                                     00058000
+BEGIN                                                                   00058100
+REAL T;                                                                 00058200
+      [*FACTOR,["|" * "/": T := CLASS - (="|"); *FACTOR,                00058300
+            EMIT(MULOP + T); RETURN ELSE  NIL]]                         00058400
+END OF TERM;                                                            00058500
+%          AEXP          COMPILES ARITHMETIC EXPRESSIONS                00058600
+SYMBOL FORMAT AEXP;                                                     00058700
+BEGIN                                                                   00058800
+REAL T;                                                                 00058900
+      ["IF", *IFEXP(AEXP) ELSE                                          00059000
+      ["+" * "-": T := CLASS ELSE NIL],                                 00059100
+            *TERM, IF T = (="-") THEN EMIT(CHS);                        00059200
+            ["+" * "-": T := CLASS - (="+");                            00059300
+                  *TERM,                                                00059400
+                  EMIT(ADOP + T); RETURN ELSE                           00059500
+            NIL]]                                                       00059600
+END OF AEXP;                                                            00059700
+%          BOOPRIM       COMPILES BOOLEAN PRIMARIES                     00059800
+REAL PROCEDURE BOOPRIM;                                                 00059900
+BEGIN                                                                   00060000
+REAL T;                                                                 00060100
+BOOLEAN NOTFLAG;                                                        00060200
+LABEL LF, EXIT;                                                         00060300
+      [["NOT", NOTFLAG := TRUE ELSE NIL],                               00060400
+      [[BOOID: T := ADDRESS; *VARIABLE(BOOID,T,2) ELSE                  00060500
+        "FALSE" * "TRUE": EMIT(BLN);                                    00060600
+            EMIT(CLASS - (="FALSE")) ELSE                               00060700
+        "BOOLEAN", *PANA], T := BTYPE ELSE                              00060800
+      "(", T := EXPRESS; ")":4 ELSE                                     00060900
+      *AEXP, T := ATYPE;],                                              00061000
+                  [*T = ATYPE,                                          00061100
+                        ["EQL" * "GTR": T := CLASS-(="EQL");            00061200
+                              *AEXP, EMIT(EQLF+T);                      00061300
+                              T := BTYPE ELSE                           00061400
+                         NIL]  ELSE                                     00061500
+                  NIL],                                                 00061600
+                  [*T = BTYPE,                                          00061700
+                        [*NOTFLAG, EMIT(LNG) ELSE NIL] ELSE             00061800
+                  *T = ATYPE AND NOT NOTFLAG]]: LF;                     00061900
+      RETURN T;                                                         00062000
+LF:   BOOPRIM := 0                                                      00062100
+END OF BOOPRIM;                                                         00062200
+%          BOOSEC        COMPILES BOOLEAN TERMS                         00062300
+REAL PROCEDURE BOOSEC;                                                  00062400
+BEGIN                                                                   00062500
+REAL T;                                                                 00062600
+LABEL LF;                                                               00062700
+      [*T := BOOPRIM = BTYPE,                                           00062800
+            ["AND", *BOOPRIM = BTYPE, EMIT(ANDOP); RETURN               00062900
+             ELSE NIL] ELSE                                             00063000
+      *T = ATYPE] : LF;                                                 00063100
+      RETURN T;                                                         00063200
+LF:   BOOSEC := 0                                                       00063300
+END OF BOOSEC;                                                          00063400
+%          EXPRESS       COMPILES BOTH ARITHMETIC AND                   00063500
+%                        BOOLEAN EXPRESSIONS                            00063600
+REAL PROCEDURE EXPRESS;                                                 00063700
+BEGIN                                                                   00063800
+REAL T, R, S;                                                           00063900
+LABEL LF, EXIT;                                                         00064000
+      ["IF",*BEXP, "THEN":8; EMIT(BOF); R := BUMPL;                     00064100
+            T := EXPRESS; "ELSE":9; EMIT(BUN);                          00064200
+            PUTADR(S := BUMPL,  R - 2);                                 00064300
+            [*T = ATYPE, *AEXP ELSE *T = BTYPE, *BEXP],                 00064400
+            PUTADR(L,S-2) ELSE                                          00064500
+      *T := BOOSEC = BTYPE, ["OR", *BOOSEC = BTYPE,                     00064600
+            EMIT(OROP); RETURN ELSE NIL] ELSE                           00064700
+      *T = ATYPE] : LF;                                                 00064800
+      RETURN T;                                                         00064900
+LF:   EXPRESS := 0;                                                     00065000
+END OF EXPRESS;                                                         00065100
+%          BEXP          COMPILES BOOLEAN EXPRESSIONS                   00065200
+SYMBOL FORMAT BEXP;                                                     00065300
+      ["IF", *IFEXP(BEXP) ELSE *EXPRESS = BTYPE ELSE                    00065400
+            ERROR(15); *FALSE];                                         00065500
+%  STATEMENT SCANNERS                                                   00065600
+%          COMPOUNDTAIL  TAIL END OF COMPOUND STATEMENT                 00065700
+SYMBOL FORMAT COMPOUNDTAIL;                                             00065800
+      [*STATEMENT, [";", RETURN START ELSE "END":2]];                   00065900
+%          STMT          SCANS SOME STATEMENT BEGINNERS                 00066000
+SYMBOL FORMAT STMT;                                                     00066100
+BEGIN                                                                   00066200
+REAL T,A;                                                               00066300
+      [SWITCH                                                           00066400
+      REALID * INTID * BOOID: T := CLASS; A := ADDRESS;                 00066500
+            *VARIABLE(T,A,0) ELSE                                       00066600
+      LABELID: T := WHL; WHL.ADRS := L;                                 00066700
+            WH(INFO) := ABS(WHL); *T < 0,                               00066800
+            ":":10; RETURN ELSE                                         00066900
+      "IF", *BEXP, "THEN":8; EMIT(BOF); A := BUMPL;                     00067000
+            *STATEMENT,                                                 00067100
+            ["ELSE", EMIT(BUN); T := BUMPL;                             00067200
+                  PUTADR(L,A-2);                                        00067300
+                  *STATEMENT, PUTADR(L,T-2) ELSE                        00067400
+            PUTADR(L,A-2);] ELSE                                        00067500
+      "GO", ["TO" ELSE NIL], LABELID:11; EMIT(BUN);                     00067600
+            EMITADR(WHL.LINK); LINKF(INFO) := L - 2 ELSE                00067700
+      "WHILE", A := L; *BEXP, "DO":12; EMIT(BOF); T := BUMPL;           00067800
+            *STATEMENT, EMIT(BUN); EMITADR(A);                          00067900
+            PUTADR(L,T - 2) ELSE                                        00068000
+      "DO", T := L; *STATEMENT, "UNTIL":6; *BEXP,                       00068100
+            EMIT(BOF); EMITADR(T) ELSE                                  00068200
+      "RETURN", *AEXP, EMIT(RTN) ELSE                                   00068300
+      "BEGIN", *COMPOUNDTAIL]                                           00068400
+END OF STMT;                                                            00068500
+%          RESETLABELS   RESETS FORWARD LABEL REFERENCES                00068600
+%                        WHEN "UNCOMPILING" (RECOVERING                 00068700
+%                        FROM ERRORS)                                   00068800
+PROCEDURE RESETLABELS;                                                  00068900
+BEGIN                                                                   00069000
+REAL T, A;                                                              00069100
+SYMBOL S;                                                               00069200
+      NEWLINE := TRUE;                                                  00069300
+      GETNEXT;                                                          00069400
+      FOR S IN PLIST DO                                                 00069500
+      IF (T := WH(CDR S)).CLSS = LABELID THEN                           00069600
+            BEGIN                                                       00069700
+            A := T.LINK;                                                00069800
+            WHILE A ! 4095 AND A > L DO A := GETADR(A);                 00069900
+            T.LINK := A;                                                00070000
+            IF T > 0 THEN                                               00070100
+            IF T.ADRS > L THEN                                          00070200
+                  BEGIN                                                 00070300
+                  T := - T;                                             00070400
+                  T.ADRS := 0;                                          00070500
+                  END;                                                  00070600
+            WH(CDR S) := T;                                             00070700
+            END;                                                        00070800
+      FOR J := 0 STEP 1 UNTIL CMAX DO                                   00070900
+            BEGIN                                                       00071000
+            A := CONSTADR[J];                                           00071100
+            WHILE A ! 0 AND A } L DO A := GETADR(A);                    00071200
+            CONSTADR[J] := A                                            00071300
+            END;                                                        00071400
+END OF RESETLABELS;                                                     00071500
+%          STATEMENT     COMPILES ALL STATEMENTS & HANDLES              00071600
+%                        RECOVERY FROM ERRORS IN STATEMENTS             00071700
+BOOLEAN PROCEDURE STATEMENT;                                            00071800
+BEGIN                                                                   00071900
+LABEL RECOV, START;                                                     00072000
+REAL LNR, LO;                                                           00072100
+      LNR := LINENO - 1;                                                00072200
+      LO := L;                                                          00072300
+START: [*STMT ELSE                                                      00072400
+        *CLASS } (="END") AND CLASS { (="UNTIL") ELSE                   00072500
+        "RESET":5; LINENO := INTEGER(READN(TWX));                       00072600
+            GO TO RECOV;] : RECOV;                                      00072700
+      RETURN TRUE;                                                      00072800
+RECOV:IF LINENO } LNR THEN                                              00072900
+            BEGIN                                                       00073000
+            L := LO;                                                    00073100
+            PRINT #RETYPE STARTING AT LINE # LINENO := LNR;             00073200
+            RESETLABELS;                                                00073300
+            GO TO START                                                 00073400
+            END;                                                        00073500
+      STATEMENT := BOOLEAN(2);                                          00073600
+END OF STATEMENT;                                                       00073700
+%  DECLARATION SCANNERS                                                 00073800
+%          ENTRY         RUN TIME SYNTAX CLASS ASSIGNMENT               00073900
+BOOLEAN PROCEDURE ENTRY(TYPE); VALUE TYPE; REAL TYPE;                   00074000
+BEGIN                                                                   00074100
+      IF CLASS > 0 THEN                                                 00074200
+            BEGIN                                                       00074300
+            ERROR(1);                                                   00074400
+            RETURN FALSE                                                00074500
+            END;                                                        00074600
+      PLIST := (INSYM := MKATOM) . PLIST;                               00074700
+      CDR(INSYM) := INF := CONS[CLASSF: TYPE,                           00074800
+            ADDRESSF: IF TYPE = LABELID OR FORMTOG THEN 0               00074900
+                                ELSE                                    00075000
+                  IF TYPE = REALPROCID THEN                             00075100
+                              NEXTAVL(SYMBOL) + 2 ELSE                  00075200
+                            COUNT := COUNT + 1];                        00075300
+      IF TYPE = LABELID THEN                                            00075400
+            BEGIN                                                       00075500
+            WH(INF) := -WH(INF);                                        00075600
+            LINKF(INF) := 4095;                                         00075700
+            END                                                         00075800
+      ELSE                                                              00075900
+      IF FORMTOG THEN COUNT := COUNT + 1;                               00076000
+      GETNEXT;                                                          00076100
+      ENTRY := TRUE;                                                    00076200
+END OF ENTRY;                                                           00076300
+%          ENTER         APPLIES ENTRY TO LIST OF                       00076400
+%                        IDENTIFIERS                                    00076500
+SYMBOL FORMAT ENTER(X); VALUE X; REAL X;                                00076600
+      [*ENTRY(X), [",", RETURN START ELSE NIL]];                        00076700
+%          DECLARATION   HANDLES DECLARATIONS                           00076800
+SYMBOL FORMAT DECLARATION;                                              00076900
+      [SWITCH                                                           00077000
+            "LABEL",    *ENTER(LABELID) ELSE                            00077100
+            "REAL",     *ENTER(REALID) ELSE                             00077200
+            "INTEGER",  *ENTER(INTID) ELSE                              00077300
+            "BOOLEAN",  *ENTER(BOOID) ];                                00077400
+%          PURGE         REMOVES ATOMIC SYMBOLS FROM                    00077500
+%                        OBJECT LIST WHEN LEAVING THE                   00077600
+%                        BLOCK AND CHECKS FOR MISSING                   00077700
+%                        LABELS                                         00077800
+PROCEDURE PURGE(L); VALUE L; SYMBOL L;                                  00077900
+BEGIN                                                                   00078000
+SYMBOL R;                                                               00078100
+REAL T,A;                                                               00078200
+      COUNT := 0;                                                       00078300
+      NOLABEL := FALSE;                                                 00078400
+      FOR R IN L DO                                                     00078500
+            BEGIN                                                       00078600
+            IF (T := WH(CDR R)).CLSS = LABELID THEN                     00078700
+                  IF T < 0 THEN NOLABEL := TRUE                         00078800
+                  ELSE                                                  00078900
+                        BEGIN                                           00079000
+                        A := T.LINK;                                    00079100
+                        T := T.ADRS;                                    00079200
+                        WHILE A ! 4095 DO                               00079300
+                              BEGIN                                     00079400
+                              J := GETADR(A);                           00079500
+                              PUTADR(T,A);                              00079600
+                              A := J                                    00079700
+                              END;                                      00079800
+                        END;                                            00079900
+            IF SMTA(R) > 64 THEN                                        00080000
+                  REMOB(R)                                              00080100
+            ELSE CDR R := NIL;                                          00080200
+            COUNT := COUNT + 1                                          00080300
+            END;                                                        00080400
+END OF PURGE;                                                           00080500
+%          DECLARE       HANDLES SERIES OF DECLARATIONS                 00080600
+%                        AND PROVIDES FOR RECOVERY FROM                 00080700
+%                        SYNTAX ERRORS                                  00080800
+BOOLEAN PROCEDURE DECLARE;                                              00080900
+BEGIN                                                                   00081000
+LABEL START,RECOV;                                                      00081100
+REAL T, LNR, CO;                                                        00081200
+SYMBOL PLISTO;                                                          00081300
+START: CO := COUNT;                                                     00081400
+      T := NEXTAVL(SYMBOL);                                             00081500
+      PLIST := NIL;                                                     00081600
+      LNR := LINENO;                                                    00081700
+      [*DECLARATION, ";",                                               00081800
+            PLISTO := NCONC(PLIST,PLISTO); GO TO START ELSE             00081900
+       "RESET": LINENO := INTEGER(READN(TWX));                          00082000
+            GO TO RECOV ELSE                                            00082100
+       NIL] : RECOV;                                                    00082200
+      PLIST := PLISTO;                                                  00082300
+      RETURN TRUE;                                                      00082400
+RECOV:PURGE(PLIST); NEXTAVL(SYMBOL) := T;                               00082500
+      IF LINENO } LNR THEN                                              00082600
+            BEGIN                                                       00082700
+            COUNT := CO;                                                00082800
+            PRINT #RETYPE STARTING AT LINE # LINENO := LNR;             00082900
+            GO TO START                                                 00083000
+            END;                                                        00083100
+      DECLARE := BOOLEAN(2);                                            00083200
+      PLIST := PLISTO;                                                  00083300
+END OF DECLARE;                                                         00083400
+%          DUMPCODE      TRANSFERS CODE FROM CODE STRING                00083500
+%                        TO THE LISP "STACK" AT A POINT                 00083600
+%                        WORD OF THE ATOMIC SYMBOL                      00083700
+%                        REPRESENTING THE FUNCTION                      00083800
+PROCEDURE DUMPCODE;                                                     00083900
+BEGIN                                                                   00084000
+INTEGER LMAX;                                                           00084100
+REAL T;                                                                 00084200
+      LMAX := (L + 7) DIV 8;                                            00084300
+      FOR J := 0 STEP 1 UNTIL CMAX DO                                   00084400
+            WHILE T := CONSTADR[J] ! 0 DO                               00084500
+                  BEGIN                                                 00084600
+                  CONSTADR[J] := GETADR(T);                             00084700
+                  PUTADR(J + LMAX, T);                                  00084800
+                  END;                                                  00084900
+      FOR J := 0 STEP 1 UNTIL LMAX - 1 DO                               00085000
+            STRF(CONS) := STR[J];                                       00085100
+      FOR J := 0 STEP 1 UNTIL  CMAX DO                                  00085200
+            WH(CONS) := CONSTANT[J];                                    00085300
+END OF DUMPCODE;                                                        00085400
+%          PROCEDUREDEC  HANDLES DECLARATIONS OF FUNCTIONS              00085500
+%                        TO BE PLOTTED                                  00085600
+PROCEDURE PROCEDUREDEC;                                                 00085700
+BEGIN                                                                   00085800
+REAL R, T, P, FA, LNR;                                                  00085900
+LABEL START, NOGO, RECOV, EXIT;                                         00086000
+SYMBOL PLISTO, FN, S, PINFO, PARAM;                                     00086100
+      LINENO := 1;                                                      00086200
+      CMAX := -1;                                                       00086300
+      PLISTO := PLIST;                                                  00086400
+      R := NEXTAVL(SYMBOL);                                             00086500
+      PLIST := NIL;                                                     00086600
+      [*ENTRY(REALPROCID), FN := PLIST; PLIST := NIL;                   00086700
+                  CTR FN := ATSM(R);                                    00086800
+                  PINFO := INF; P := NEXTAVL(SYMBOL);                   00086900
+                  COUNT := 0; FORMTOG := TRUE;                          00087000
+            ["(", *ENTER(REALID), ")":4; FA := 2048;                    00087100
+                  FOR S IN PLIST DO                                     00087200
+                        ADDRESSF(CDR S) := FA := FA + 1 ELSE            00087300
+             NIL]]:NOGO;                                                00087400
+      NPAR(PINFO) := COUNT;                                             00087500
+      PARAM := PLIST;                                                   00087600
+      PLIST := NIL;                                                     00087700
+      T := NEXTAVL(SYMBOL);                                             00087800
+      FORMTOG := FALSE;                                                 00087900
+      INPUT(TWXF1,TWXS1,136,/FALSE);                                    00088000
+      COMPILING := TRUE;                                                00088100
+      GETNEXT;                                                          00088200
+      LNR := LINENO - 1;                                                00088300
+START:COUNT := L := 0;                                                  00088400
+      ["BEGIN", *DECLARE,                                               00088500
+            IF COUNT ! 0 THEN                                           00088600
+                  BEGIN                                                 00088700
+                  EMIT(ZRN); EMIT(COUNT)                                00088800
+                  END;                                                  00088900
+            *COMPOUNDTAIL ELSE                                          00089000
+       *STATEMENT] : RECOV;                                             00089100
+      EMIT(BLN); EMIT(0); EMIT(RTN);                                    00089200
+      PURGE(PLIST);                                                     00089300
+      IF NOLABEL THEN                                                   00089400
+            BEGIN                                                       00089500
+            PRINT #DECLARED LABELS DID NOT OCCUR#;                      00089600
+            GO TO NOGO                                                  00089700
+            END;                                                        00089800
+      PURGE(PARAM);                                                     00089900
+      NEXTAVL(SYMBOL) := P;                                             00090000
+      DUMPCODE;                                                         00090100
+      PLISTO := NCONC(FN, PLISTO);                                      00090200
+      GO EXIT;                                                          00090300
+RECOV:IF LINENO } LNR THEN                                              00090400
+            BEGIN                                                       00090500
+            PURGE(PLIST);                                               00090600
+            NEXTAVL(SYMBOL) := T;                                       00090700
+            PRINT #RETYPE STARTING AT LINE # LINENO := LNR;             00090800
+            NEWLINE := TRUE;                                            00090900
+            GETNEXT;                                                    00091000
+            GO TO START                                                 00091100
+            END;                                                        00091200
+NOGO: PURGE(PARAM);                                                     00091300
+      PURGE(PLIST);                                                     00091400
+      FORMTOG := FALSE;                                                 00091500
+      PURGE(FN);                                                        00091600
+      NEXTAVL(SYMBOL) := R;                                             00091700
+EXIT: COMPILING := FALSE; PLIST := PLISTO;                              00091800
+      INPUT(TWXF1,TWXS1,136,/TRUE);                                     00091900
+END OF PROCEDUREDEC;                                                    00092000
+%  INTERPRETER SECTION                                                  00092100
+%          MKADR         REMOVES 2 CHARACTERS FROM CODE                 00092200
+%                        STRING TO BE USED AS AN ADDRESS                00092300
+INTEGER PROCEDURE MKADR(A); VALUE A; BOOLEAN A;                         00092400
+BEGIN                                                                   00092500
+REAL T;                                                                 00092600
+      T := CLASS;                                                       00092700
+      GETNEXT;                                                          00092800
+      T := T | 64 + CLASS;                                              00092900
+      GETNEXT;                                                          00093000
+      MKADR := IF A THEN                                                00093100
+                  IF T > 2048 THEN FR + 2048 - T                        00093200
+                        ELSE FR + T                                     00093300
+                  ELSE T;                                               00093400
+END OF MKADR;                                                           00093500
+%          INTERPRET     INTERPRETS THE CODE STRING                     00093600
+SYMBOL FORMAT INTERPRET;                                                00093700
+BEGIN                                                                   00093800
+DEFINE                                                                  00093900
+      SA = STACK[I := I - 1]#,                                          00094000
+      SB = STACK[I]#,                                                   00094100
+      SC = STACK[I + 1]#,                                               00094200
+      SD = STACK[I := I + 1]#;                                          00094300
+ALPHA W;                                                                00094400
+REAL T;                                                                 00094500
+      [SWITCH                                                           00094600
+            BOF, I := I - 1;                                            00094700
+                  IF BOOLEAN(SC) THEN                                   00094800
+                        BEGIN                                           00094900
+                        L := L + 1;                                     00095000
+                        GETNEXT                                         00095100
+                        END                                             00095200
+                  ELSE                                                  00095300
+                        BEGIN                                           00095400
+                        L := MKADR(FALSE);                              00095500
+                        GETNEXT                                         00095600
+                        END ELSE                                        00095700
+            BUN, L := MKADR(FALSE); GETNEXT ELSE                        00095800
+            CHS, SB := - SB ELSE                                        00095900
+            ADOP, SA := SB + SC ELSE                                    00096000
+            SBOP, SA := SB - SC ELSE                                    00096100
+            MULOP, SA := SB | SC ELSE                                   00096200
+            DVDOP, SA := SB / SC ELSE                                   00096300
+            FACTOP, SA := SB * SC ELSE                                  00096400
+            LNG, SB := REAL(NOT BOOLEAN(SB)) ELSE                       00096500
+            OROP, SA := REAL(BOOLEAN(SB) OR BOOLEAN(SC))ELSE            00096600
+            ANDOP, SA := REAL(BOOLEAN(SB) AND BOOLEAN(SC))              00096700
+                  ELSE                                                  00096800
+            EQLF, SA := REAL(SB = SC) ELSE                              00096900
+            NEQF, SA := REAL(SB ! SC) ELSE                              00097000
+            LSSF, SA := REAL(SB < SC) ELSE                              00097100
+            LEQF, SA := REAL(SB { SC) ELSE                              00097200
+            GEQF, SA := REAL(SB } SC) ELSE                              00097300
+            GTRF, SA := REAL(SB > SC) ELSE                              00097400
+            MKS, SD := SAVEI; SAVEI := I ELSE                           00097500
+            SBR, SD := FR; FR := I;                                     00097600
+                  EXECUTE(ATSM(MKADR(FALSE)|64 + CLASS));               00097700
+                  GETNEXT ELSE                                          00097800
+            RTN, T := SB; FR := STACK[FR];                              00097900
+                  SAVEI := STACK[I := SAVEI]; SB := T;                  00098000
+                  *FALSE ELSE                                           00098100
+            ZRN, FOR CLASS DO SD := 0; GETNEXT ELSE                     00098200
+            LITC, SD := MKADR(FALSE) ELSE                               00098300
+            OPDC, SD := STACK[MKADR(TRUE)] ELSE                         00098400
+            STD * ISD * SND * ISN:                                      00098500
+                  IF BOOLEAN(T := CLASS - STD) THEN                     00098600
+                        SB := INTEGER(SB);                              00098700
+                  NIL, STACK[MKADR(TRUE)] := SB;                        00098800
+                  IF T < 2 THEN I := I - 1;  ELSE                       00098900
+            BLN, SD := CLASS; GETNEXT ELSE                              00099000
+            MAXF, SA := MAX(SB,SC) ELSE                                 00099100
+            MINF, SA := MIN(SB,SC) ELSE                                 00099200
+            RAND, SD := CONVAL(0) ELSE                                  00099300
+            ABSF, SB := ABS(SB) ELSE                                    00099400
+            SINF, SB := SIN(SB) ELSE                                    00099500
+            COSF, SB := COS(SB) ELSE                                    00099600
+            EXPF, SB := EXP(SB) ELSE                                    00099700
+            LNF, SB := LN(SB) ELSE                                      00099800
+            SQRTF, SB := SQRT(SB) ELSE                                  00099900
+            RCN, SD := WH(ATSM(MKADR(FALSE),BASE));]                    00100000
+END OF INTERPRET;                                                       00100100
+%          EXECUTE       MAKES CALLS ON FUNCTIONS; USES                 00100200
+%                        INTERPRET                                      00100300
+PROCEDURE EXECUTE(CODE); VALUE CODE; SYMBOL CODE;                       00100400
+BEGIN                                                                   00100500
+SYMBOL OLDCODE;                                                         00100600
+REAL OLDL;                                                              00100700
+      OLDCODE := BASE;                                                  00100800
+      BASE := CODE;                                                     00100900
+      OLDL := L;                                                        00101000
+      L := 0;                                                           00101100
+      GETNEXT;                                                          00101200
+      WHILE INTERPRET DO;                                               00101300
+      BASE := OLDCODE;                                                  00101400
+      L := OLDL;                                                        00101500
+END OF EXECUTE;                                                         00101600
+%          PLOTTER       PLOTS FUNCTION EXECUTED BY                     00101700
+%                        INTERPRETER                                    00101800
+PROCEDURE PLOTTER;                                                      00101900
+BEGIN                                                                   00102000
+REAL X, Y, Z, N, V, TMAX, TMIN, T, J, K;                                00102100
+SYMBOL CODE, SYM;                                                       00102200
+LABEL EXIT;                                                             00102300
+      IF CLASS ! REALPROCID OR K := WHL.NPARAM = 0 THEN                 00102400
+            BEGIN PRINT #MISSING OR ILLEGAL FUNCTION#;                  00102500
+                  GO TO EXIT END;                                       00102600
+      SYM := INSYM;                                                     00102700
+      CODE := ATSM(1,INFO);                                             00102800
+      IF K ! 1 THEN                                                     00102900
+            BEGIN                                                       00103000
+            PRINT #TYPE # K-1 # PARAMETER#                              00103100
+                  IF K = 2 THEN # # ELSE #S#;                           00103200
+            J := 1;                                                     00103300
+            DO STACK[J := J + 1] := READN(TWX)                          00103400
+                   UNTIL J = K;                                         00103500
+            END;                                                        00103600
+      K := K + 1;                                                       00103700
+      PRINT #ENTER BEGINNING VALUE, INCREMENT, AND FINAL VALUE FOR#,    00103800
+            #THE PLOT#;                                                 00103900
+      X := READN(TWX); Y := READN(TWX); Z := READN(TWX);                00104000
+      N := (Z - X) / Y + 1;                                             00104100
+      J := -1; INTERPRETING := TRUE;                                    00104200
+      BEGIN                                                             00104300
+      ARRAY VALUES[0:N];                                                00104400
+            TMAX := -(TMIN := TEN[68]);                                 00104500
+            FOR V := X STEP Y UNTIL Z DO                                00104600
+                  BEGIN                                                 00104700
+                  SAVEI := 0;                                           00104800
+                  FR := I := K;                                         00104900
+                  STACK[1] := V;                                        00105000
+                  EXECUTE(CODE);                                        00105100
+                  VALUES[J := J + 1] := T := STACK[0];                  00105200
+                  TMAX := MAX(TMAX,T);                                  00105300
+                  TMIN := MIN(TMIN,T);                                  00105400
+                  END;                                                  00105500
+            PRINT ,/,/,/,/,/ SPACE(8) #PLOT OF # SYM                    00105600
+                   #(X),  X = # X # TO # Z # IN STEPS OF #              00105700
+                  Y,/SPACE(16) #RANGE OF # SYM # IS #                   00105800
+                  TMIN # TO # TMAX ,/,/,/;                              00105900
+            IF TMAX ! TMIN THEN                                         00106000
+            TMAX := 50/(TMAX - TMIN);                                   00106100
+            J := -1;                                                    00106200
+            FOR V := X STEP Y UNTIL Z DO                                00106300
+                  BEGIN                                                 00106400
+                  TWXS2 := SPACE;                                       00106500
+                  PRIN V;                                               00106600
+                  T := (VALUES[J:=J+1] - TMIN) | TMAX + 8;              00106700
+                  IF J MOD 10 = 0 THEN                                  00106800
+                        TWXS2(8) := [2:"...."] & TWXS2(8,42)            00106900
+                  ELSE TWXS2(8) := ".";                                 00107000
+                  TWXS2(T,1) := "*";                                    00107100
+                  WRITE TWX;                                            00107200
+                  END;                                                  00107300
+            END;                                                        00107400
+      PRIN ,/,/,/,/,/;                                                  00107500
+EXIT: NEWLINE := TRUE;                                                  00107600
+      INTERPRETING := FALSE;                                            00107700
+END OF PLOTTER;                                                         00107800
+%  MAIN PROGRAM SECTION                                                 00107900
+      PRINT #RECC FUNCTION PLOTTER#;                                    00108000
+START:                                                                  00108100
+      PRINT #GO AHEAD.#,/;                                              00108200
+           NEWLINE := TRUE; GETNEXT;                                    00108300
+[SWITCH                                                                 00108400
+      "FUNCTION", PROCEDUREDEC ELSE                                     00108500
+      "LIST", PRINT PLIST ELSE                                          00108600
+      "PLOT", PLOTTER ELSE                                              00108700
+      "DELETE", IF NULL PLIST THEN                                      00108800
+                       PRINT #FUNCTION LIST EMPTY#                      00108900
+                ELSE                                                    00109000
+                       BEGIN                                            00109100
+                       DL := SMTA(CTR(INF := PLIST));                   00109200
+                       PLIST := CDR PLIST; CDR INF := NIL;              00109300
+                       PRINT CAR INF, #DELETED#;                        00109400
+                       PURGE(INF);                                      00109500
+                       NEXTAVL(SYMBOL) := DL;                           00109600
+                       END ELSE                                         00109700
+      "STOP", GO TO EXIT;] : RESTART;                                   00109800
+      GO TO START;                                                      00109900
+RESTART:  PRINT #PLEASE RETYPE#; GO TO START;                           00110000
+EXIT: PRINT #END OF PROGRAM.# ,/,/,/;                                   00110100
+END.                                                                    00110200
+                                                                        00110300
+                                                                        00110400
+                                                                        00110500
+                                                                        00110501
+CALL REMPLOT                                                            00110502
+                                                                        00110503
+RECC FUNCTION PLOTTER                                                   00110504
+GO AHEAD.                                                               00110505
+FUNCTION F(X);                                                          00110506
+  1:RETURN SIN(X)|COS(X)/(X+1);                                         00110507
+GO AHEAD.                                                               00110508
+PLOT F                                                                  00110509
+ENTER BEGINNING, INCREMENT, AND LAST VALUES FOR PLOT                    00110510
+?0,.2 10                                                                00110511
+                                                                        00110512
+                                                                        00110513
+                                                                        00110514
+                                                                        00110515
+                                                                        00110516
+        PLOT OF F(X), X = 0 TO 10 IN STEPS OF .2                        00110517
+                RANGE OF F IS -.14869 TO .29126                         00110518
+                                                                        00110519
+                                                                        00110520
+                                                                        00110521
+0       ................*...............................                00110522
+.2      .                                 *                             00110523
+.4      .                                           *                   00110524
+.6      .                                               *               00110525
+.8      .                                              *                00110526
+1       .                                        *                      00110527
+1.2     .                                *                              00110528
+1.4     .                       *                                       00110529
+1.6     .              *                                                00110530
+1.8     .       *                                                       00110531
+2       ..*.............................................                00110532
+2.2     *                                                               00110533
+2.4     *                                                               00110534
+2.6     .  *                                                            00110535
+2.8     .      *                                                        00110536
+3       .           *                                                   00110537
+3.2     .                 *                                             00110538
+3.4     .                     *                                         00110539
+3.6     .                         *                                     00110540
+3.8     .                          *                                    00110541
+4       ...........................*....................                00110542
+4.2     .                        *                                      00110543
+4.4     .                     *                                         00110544
+4.6     .                 *                                             00110545
+4.8     .              *                                                00110546
+5       .          *                                                    00110547
+5.2     .        *                                                      00110548
+5.4     .       *                                                       00110549
+5.6     .       *                                                       00110550
+5.8     .         *                                                     00110551
+6       ............*...................................                00110552
+6.2     .              *                                                00110553
+6.4     .                 *                                             00110554
+6.6     .                   *                                           00110555
+6.8     .                     *                                         00110556
+7       .                      *                                        00110557
+7.2     .                      *                                        00110558
+7.4     .                    *                                          00110559
+7.6     .                  *                                            00110560
+7.8     .                *                                              00110561
+8       ..............*.................................                00110562
+8.2     .           *                                                   00110563
+8.4     .          *                                                    00110564
+8.6     .          *                                                    00110565
+8.8     .          *                                                    00110566
+9       .           *                                                   00110567
+9.2     .             *                                                 00110568
+9.4     .               *                                               00110569
+9.6     .                 *                                             00110570
+9.8     .                   *                                           00110571
+10      .....................*..........................                00110572
+                                                                        00110573
+                                                                        00110574
+                                                                        00110575
+                                                                        00110576
+                                                                        00110577
+GO AHEAD.                                                               00110578
+STOP                                                                    00110579
+END OF PROGRAM.                                                         00110580

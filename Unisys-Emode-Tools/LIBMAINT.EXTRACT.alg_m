@@ -1,0 +1,756 @@
+ $ SET LINEINFO                                                         00000100          
+ $ SET LISTOMITTED                                                      00000200          
+ $ SET OMIT                                                             00001000          
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%00002000          
+%%                                                                    %%00003000          
+%%  B5500/LIBMAINT/EXTRACT                                            %%00004000          
+%%                                                                    %%00005000          
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%00006000          
+%%                                                                    %%00007000          
+%%  COPYRIGHT (C) 2018:                                               %%00008000          
+%%      Paradigm Corporation                                          %%00009000          
+%%      9747 Businesspark Ave., Suite 220                             %%00010000          
+%%      San Diego CA  92131-1653                                      %%00011000          
+%%      voice 858-536-5533,   http://www.digm.com                     %%00012000          
+%%                                                                    %%00013000          
+%%  Licensed under the Simple Public License (SimPL) 2.0              %%00013100          
+%%                                                                    %%00013200          
+%%  This material may be copied and used under the terms of           %%00013300          
+%%  that license. This copyright notice must be preserved and         %%00013400          
+%%  appropriate credit given in any derivative materials.             %%00013500          
+%%                                                                    %%00013600          
+%%  This material is offered AS-IS WITH NO WARRANTY. Paradigm hereby  %%00013700          
+%%  disclaims all warranties respecting this material, expressed or   %%00013800          
+%%  implied, including without limitation warranty of design,         %%00013900          
+%%  merchantability, fitness for a particular purpose and against     %%00014000          
+%%  infringement.                                                     %%00014100          
+%%                                                                    %%00016000          
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%00017000          
+%%           >>>> DO NOT RESEQUENCE THIS SOURCE FILE! <<<<            %%00017100          
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%00017200          
+%%       Maintenance updates will be applied using the sequence       %%00017300          
+%%      number configuration in the file. Mass resequencing will      %%00017400          
+%%  destroy the ability to apply source-level patches to this file.   %%00017500          
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%00017600          
+                                                                        00020000          
+    THIS PROGRAM EXTRACTS ALL FILES FROM A BURROUGHS B5500 LIBRARY/     00020100          
+    MAINTENANCE TAPE IMAGE, TRANSLATES THE DATA FROM BIC (B5500         00020200          
+    INTERNAL CODE) TO EBCDIC, AND CREATES A SEPARATE DISK FILE FROM     00020300          
+    EACH FILE ON THE LIB/MAINT TAPE. THE TAPE IMAGE IS ASSUMED TO BE IN 00020400          
+    PAUL PIERCE'S ".bcd" FORMAT:                                        00020500          
+                                                                        00020600          
+    http://www.piercefuller.com/oldibm-shadow/tool.html                 00020700          
+                                                                        00040000          
+    TO RUN THIS PROGRAM, EQUATE THESE FILES:                            00040100          
+                                                                        00040200          
+    BCD     LIB/MAINT TAPE IMAGE                                        00040300          
+                                                                        00040400          
+    DISK    OUTPUT FILE FOR INDIVIDUALLY EXTRACTED FILES. THE FILENAME  00040500          
+            ATTRIBUTE FOR THIS FILE IS USED AS A DIRECTORY PREFIX FOR   00040600          
+            THE EXTRACTED FILES, FOR WHICH A FILE NODE OF /MFID.FID     00040700          
+            WILL BE SUFFIXED TO THE FILENAME.                           00040800          
+                                                                        00040900          
+    LINE    PRINTER FILE THAT LISTS THE FILES CONVERTED.                00041000          
+                                                                        00041100          
+    EXAMPLE:                                                            00041200          
+                                                                        00041300          
+        RUN OBJECT/B5500/LIBMAINT/EXTRACT;                              00041400          
+            FILE BCD="SYMBOL2-XV3.BCD" ON PACK;                         00041500          
+            FILE DISK=XV3/SYMBOL2 ON PACK;                              00041600          
+                                                                        00900000          
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%00900010          
+MODIFICATION LOG.                                                       00900020          
+-----------------                                                       00900030          
+2018-05-07  P.KIMPEL, PARADIGM CORPORATION, SAN DIEGO, CA.              00900040          
+    CLONED FROM TAPUT/TAPBCD.                                           00900041          
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%00998000          
+ $ POP OMIT                                                             00999000          
+                                                                        01000000          
+BEGIN                                                                   01002000          
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%01003000          
+%% GENERAL DEFINES                                                    %%01004000          
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%01005000          
+                                                                        01100000          
+DEFINE                                                                  01101000          
+  CPW =                 6 #,            % CHAR PER WORD                 01102000          
+  BPW =                 48 #,           % BITS PER WORD                 01103000          
+  SECTORSIZE =          30 #,           % WORDS PER SECTOR              01104000          
+  TICK =                (2.4@-6) #,     % CPU CLOCK PERIOD [SEC]        01105000          
+  TICKSPERDAY =         (24*3600/TICK) #,                               01106000          
+  ALL1 =                (REAL(NOT FALSE)) #,                            01107000          
+  UNITSOF(V,BASE) =     (((V)+((BASE)-1)) DIV (BASE)) #,                01108000          
+  INCREMENTSOF(V,BASE)= (UNITSOF((V),(BASE))*(BASE)) #,                 01109000          
+  P0(A) =               POINTER(A,0) #,                                 01110000          
+  P8(A) =               POINTER(A,8) #,                                 01111000          
+  WDS(BYTES) =          UNITSOF(BYTES, CPW) #,                          01112000          
+  SECTORS(WDS) =        UNITSOF(WDS, SECTORSIZE) #,                     01113000          
+  LOG10(X) =            (((FIRSTONE(SCALERIGHTF(X,12))-1).[5:4])+1) #,  01114000          
+  BIT(X) =              (X) DIV BPW].[(BPW-1) - (X) MOD BPW : 1 #,      01115000          
+  CORRECTLY(V,B) =      ((V).[(B)*(BPW DIV CPW)-1:BPW]) FOR (B) #,      01116000          
+  LOGICAL(A,OP,B) =     (REAL(BOOLEAN(A) OP BOOLEAN(B))) #,             01117000          
+  CAND(A,B) =           (IF (A) THEN (B) ELSE FALSE) #,                 01118000          
+  COR(A,B) =            (IF (A) THEN TRUE ELSE (B)) #,                  01119000          
+                                                                        01200000          
+  %----- EBCDIC CHARACTER DEFINES -----                                 01200100          
+  NUL =                 48"00" #,                                       01200200          
+  SP =                  " " #,                                          01202400          
+                                                                        01210000          
+  %----- TIME(6) WORD LAYOUT -----                                      01210100          
+  T6DATEF =             [47:16] #,      % JULIAN DATE - 1970000         01210200          
+    T6JULIANBIASV =     1970000 #,                                      01210300          
+  T6TIMEF =             [31:32] #,      % TIME OF DAY, TICKS DIV 16     01210400          
+  T6SECONDS(T) =        ((T).T6TIMEF*(16*TICK)) #,                      01210500          
+                                                                        01220000          
+  %----- TIME(7) WORD LAYOUT -----                                      01220100          
+  T7YEARF =             [47:12] #,      % CCYY                          01220200          
+  T7MONTHF =            [35:6] #,                                       01220300          
+  T7DAYF =              [29:6] #,                                       01220400          
+  T7HOURF =             [23:6] #,                                       01220500          
+  T7MINUTEF =           [17:6] #,                                       01220600          
+  T7SECONDF =           [11:6] #,                                       01220700          
+  T7WEEKDAYF =          [5:6] #,        % 0=SUNDAY, 1=MONDAY, ...       01220800          
+  T7YYYYMMDD(T) =       ((T.T7YEARF*100 + T.T7MONTHF)*100 + T.T7DAYF) #,01220900          
+                                                                        01250000          
+  %----- LOGICAL I/O RESULT WORD (STATE ATTRIBUTE) LAYOUT -----         01251000          
+  LIOSIZEF =            [47:20] #,      % ACTUAL DATA TRANSFER LENGTH   01252000          
+  LIORESULTLISTF =      [27:1] #,       % RESULT LIST VALID             01253000          
+  LIOENUMRESULTF =      [26:10] #,      % ENUMERATED I/O RESULT VALUE   01254000          
+  LIOTIMEOUTF =         [15:1] #,       % I/O TIMED OUT                 01255000          
+  LIOBREAKF =           [13:1] #,       % BREAK ON OUTPUT               01256000          
+  LIOSHORTBLOCKF =      [10:1] #,       % SHORT BLOCK OR STREAM CHUNK   01257000          
+  LIOEOFF =             [9:1] #,        % END OF FILE                   01258000          
+  LIOPARITYF =          [7:1] #,        % PARITY ERROR                  01259000          
+  LIOLENGTHERRORF =     [4:1] #,        % RECORD LENGTH ERROR           01260000          
+  LIOCANCELEDF =        [2:1] #,        % I/O CANCELED                  01261000          
+  LIOATTENTIONF =       [1:1] #,        % ENUMERATED RESULT NOT VALID   01262000          
+  LIOERRORF =           [0:1] #,        % SOME ERROR OCCURRED           01263000          
+                                                                        01500000          
+  %----- TAPE CONVERSION DEFINES -----                                  01500100          
+  TAPEMAXRECSIZE =      4"4000" #,                                      01500200          
+  TAPEMARK =            48"8F" #,       % EVEN PARITY >= CHARACTER CODE 01500300          
+                                                                        01899900          
+  ZZGENERAL =           #;                                              01900000          
+                                                                        02000000          
+FILE                                                                    02000100          
+  BCD(KIND=DISK, FILESTRUCTURE=STREAM, FILEUSE=IN,                      02000200          
+      MAXRECSIZE=1, FRAMESIZE=8, ANYSIZEIO, DEPENDENTINTMODE),          02000300          
+  LINE(KIND=PRINTER, FILEUSE=OUT, MAXRECSIZE=132, FRAMESIZE=8);         02000500          
+                                                                        02100000          
+EBCDIC ARRAY                                                            02100100          
+  BUF[0:TAPEMAXRECSIZE-1];              % BCD IMAGE BUFFER              02100200          
+                                                                        02300000          
+INTEGER                                                                 02300100          
+  BUFLEN,                               % BUFFER ACTIVE LENGTH          02300200          
+  BUFX;                                 % BUFFER INDEX                  02300300          
+                                                                        02400000          
+BOOLEAN                                                                 02400100          
+  BUFEOF;                               % EOF SENSED ON BCD FILE        02400200          
+                                                                        02900000          
+TRANSLATETABLE                                                          02900100          
+  BCDODDTOEBCDIC(                                                       02900200          
+      EBCDIC TO 8"^",                                                   02900300          
+      48"400102430445460708494A0B4C0D0E4F" TO "0123456789#@?:>}",       02900400          
+      48"105152135415165758191A5B1C5D5E1F" TO "+ABCDEFGHI.[&(<~",       02900500          
+      48"206162236425266768292A6B2C6D6E2F" TO "|JKLMNOPQR$*-);{",       02900600          
+      48"703132733475763738797A3B7C3D3E7F" TO " /STUVWXYZ,%!=]" """);   02900700          
+                                                                        09700000          
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%09700100          
+%%  MESSAGE MECHANISM                                                 %%09700200          
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%09700300          
+                                                                        09700400          
+DEFINE                                                                  09700500          
+  %----- MLSDISPLAY MESSAGE NUMBERS -----                               09700600          
+  MSG_VERSION =         1 #,                                            09700700          
+  MSG_FILEWRITEERR =    2 #,                                            09701000          
+  MSG_TAPEEOF =         3 #,                                            09701400          
+  MSG_TAPEERROR =       4 #,                                            09701500          
+  MSG_INVALIDTAPELABEL =5 #,                                            09701600          
+  MSG_INVALIDENDLABEL = 6 #,                                            09701700          
+  MSG_INVALIDTAPEDIR =  7 #,                                            09701800          
+  MSG_TAPEMARKEXPECTED =8 #,                                            09701900          
+  MSG_HEADERREADERROR = 9 #,                                            09702000          
+  MSG_HEADERSIZEERROR =10 #,                                            09702100          
+  MSG_MFIDMISMATCH=    11 #,                                            09702200          
+                                                                        09749000          
+  MSG_INVALIDMESSAGE =  0 #,                                            09749100          
+                                                                        09749200          
+  MSG_DISPLAYID =       "LIBMAIN/EXTRACT: " #;                          09749300          
+                                                                        09750000          
+OUTPUTMESSAGE ARRAY                                                     09750100          
+  MSGS(ENGLISH(                                                         09750200          
+    MSG_VERSION = MSG_DISPLAYID                                         09750300          
+        "TAP-BCD version " <1>,                                         09750400          
+    MSG_FILEWRITEERR = MSG_DISPLAYID                                    09750900          
+        "Error writing output file @ " <1> ": " <2>,                    09751000          
+    MSG_TAPEEOF = MSG_DISPLAYID                                         09751700          
+        "BCD file EOF encountered @ " <1> "(" <2> ")",                  09751800          
+    MSG_TAPEERROR = MSG_DISPLAYID                                       09751900          
+        "BCD file error block @ " <1> "(" <2> ")",                      09752000          
+    MSG_INVALIDTAPELABEL = MSG_DISPLAYID                                09752100          
+        "Invalid tape label: " <1> " """" <2> """,                      09752200          
+    MSG_INVALIDENDLABEL = MSG_DISPLAYID                                 09752300          
+        "Invalid tape ending label: " <1> " """" <2> """,               09752400          
+    MSG_INVALIDTAPEDIR = MSG_DISPLAYID                                  09752500          
+        "Invalid tape directory: " <1> " """" <2> """,                  09752600          
+    MSG_TAPEMARKEXPECTED = MSG_DISPLAYID                                09752700          
+        "BCD tapemark block expected @ " <1>,                           09752800          
+    MSG_HEADERREADERROR = MSG_DISPLAYID                                 09752900          
+        "Error reading disk header block @ " <1> ": " <2>,              09753000          
+    MSG_HEADERSIZEERROR = MSG_DISPLAYID                                 09753100          
+        "Disk header block size error @ " <1> ": " <2>,                 09753200          
+    MSG_MFIDMISMATCH = MSG_DISPLAYID                                    09753300          
+        "MFID mismatch @ " <1> " """" <2> """,                          09753400          
+                                                                        09799000          
+    MSG_INVALIDMESSAGE = MSG_DISPLAYID                                  09799100          
+        "Invalid message 0"                                             09799200          
+  ));                                                                   09799300          
+                                                                        09800000          
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%09800100          
+PROCEDURE DISPLAY1N(MSGX, V1);                                          09800200          
+  VALUE MSGX, V1;                                                       09800300          
+  INTEGER MSGX;                                                         09800400          
+  REAL V1;                                                              09800500          
+  BEGIN COMMENT                                                         09800600          
+      DISPLAYS A MESSAGE WITH ONE NUMERIC PARAMETER.                    09800700          
+      ;                                                                 09800800          
+  MLSDISPLAY(MSGS[MSGX], STRING(V1,*));                                 09800900          
+  END DISPLAY1N;                                                        09801000          
+                                                                        09801100          
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%09801200          
+PROCEDURE DISPLAY1N1H(MSGX, V1, V2);                                    09801300          
+  VALUE MSGX, V1, V2;                                                   09801400          
+  INTEGER MSGX, V1;                                                     09801500          
+  REAL V2;                                                              09801600          
+  BEGIN COMMENT                                                         09801700          
+      DISPLAYS A MESSAGE WITH ONE NUMERIC AND ONE HEX PARAMETER.        09801800          
+      ;                                                                 09801900          
+  EBCDIC ARRAY                                                          09802000          
+    A[0:CPW*2];                                                         09802100          
+  HEX ARRAY                                                             09802200          
+    H[0] = A;                                                           09802300          
+                                                                        09802400          
+  REPLACE H[CPW*2] BY V2 FOR CPW*2;                                     09802500          
+  REPLACE A[0] BY H[CPW*2] FOR CPW*2 WITH HEXTOEBCDIC;                  09802600          
+  MLSDISPLAY(MSGS[MSGX], STRING(V1,*), STRING(A[0], CPW*2));            09802700          
+  END DISPLAY1N1H;                                                      09802800          
+                                                                        09802900          
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%09803000          
+PROCEDURE DISPLAY1N1S(MSGX, V1, P, LEN);                                09803100          
+  VALUE MSGX, V1, P, LEN;                                               09803200          
+  INTEGER MSGX, LEN;                                                    09803300          
+  REAL V1;                                                              09803400          
+  POINTER P;                                                            09803500          
+  BEGIN COMMENT                                                         09803600          
+      DISPLAYS A MESSAGE WITH ONE NUMERIC AND ONE STRING PARAMETER.     09803700          
+      ;                                                                 09803800          
+  MLSDISPLAY(MSGS[MSGX], STRING(V1,*), STRING(P,LEN));                  09803900          
+  END DISPLAY1N1S;                                                      09804000          
+                                                                        09804100          
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%09804200          
+PROCEDURE DISPLAY2N(MSGX, V1, V2);                                      09804300          
+  VALUE MSGX, V1, V2;                                                   09804400          
+  INTEGER MSGX;                                                         09804500          
+  REAL V1, V2;                                                          09804600          
+  BEGIN COMMENT                                                         09804700          
+      DISPLAYS A MESSAGE WITH TWO NUMERIC PARAMETERS.                   09804800          
+      ;                                                                 09804900          
+  MLSDISPLAY(MSGS[MSGX], STRING(V1,*), STRING(V2,*));                   09805000          
+  END DISPLAY2N;                                                        09805100          
+                                                                        80000000          
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%80000100          
+REAL PROCEDURE BIGENDIAN(V, BYTES);                                     80000200          
+  VALUE V, BYTES;                                                       80000300          
+  REAL V;                                                               80000400          
+  INTEGER BYTES;                                                        80000500          
+  BEGIN COMMENT                                                         80000600          
+      CONVERTS THE LOW-ORDER "BYTES" OF A WORD (UP TO 6) FROM           80000700          
+      LITTLE-ENDIAN TO BIG-ENDIAN BYTE ORDER.                           80000800          
+      ;                                                                 80000900          
+                                                                        80001000          
+  BIGENDIAN:= (V.[47:8] & V[15:39:8] & V[23:31:8] &                     80001100          
+               V[31:23:8] & V[39:15:8] & V[47:7:8]).[47:BYTES*8];       80001200          
+  END BIGENDIAN;                                                        80001300          
+                                                                        81000000          
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%81000100          
+BOOLEAN PROCEDURE READBCD();                                            81000200          
+  BEGIN COMMENT                                                         81000300          
+      FILLS THE "BUF" BUFFER FROM THE INPUT .BCD FILE, SLIDING ANY      81000400          
+      EXISTING BUFFER CONTENT TO THE FRONT OF THE BUFFER AND ATTEMPTING 81000500          
+      TO FILL THE REST OF THE BUFFER FROM THE FILE. RETURNS TRUE IF     81000600          
+      A LOGICAL I/O ERROR IS DETECTED.                                  81000700          
+      ;                                                                 81000800          
+  BOOLEAN                                                               81000900          
+    IORESULT;                           % LOGICAL I/O RESULT WORD       81001000          
+  INTEGER                                                               81001100          
+    BUFBYTES;                           % CURRENT ACTIVE BUFFER LENGTH  81001200          
+                                                                        81001300          
+  BUFBYTES:= BUFLEN-BUFX;                                               81001400          
+  IF BUFBYTES > 0 THEN                  % SLIDE ACTIVE BUFFER DOWN      81001500          
+    REPLACE BUF[0] BY BUF[BUFX] FOR BUFBYTES;                           81001600          
+                                                                        81001700          
+  BUFX:= 0;                                                             81001800          
+  BUFLEN:= BUFBYTES;                                                    81001900          
+  BUFBYTES:= TAPEMAXRECSIZE-BUFLEN;                                     81002000          
+  IORESULT:= READ(BCD, BUFBYTES, BUF[BUFLEN]);                          81002100          
+  IF NOT IORESULT THEN                                                  81002200          
+    BEGIN                                                               81002300          
+    BUFBYTES:= REAL(IORESULT).LIOSIZEF;                                 81002400          
+    BUFLEN:= *+ BUFBYTES;                                               81002500          
+    END                                                                 81002600          
+  ELSE                                                                  81002700          
+    BEGIN                                                               81002800          
+    IF NOT IORESULT.LIOEOFF THEN                                        81002900          
+      DISPLAY1N1H(MSG_TAPEERROR, BCD.NEXTRECORD, REAL(IORESULT))        81003000          
+    ELSE                                                                81003100          
+      BEGIN                                                             81003200          
+      IF BUFEOF THEN                                                    81003300          
+        DISPLAY1N(MSG_TAPEEOF, BCD.NEXTRECORD)                          81003400          
+      ELSE                                                              81003500          
+        BEGIN                                                           81003600          
+        BUFEOF:= TRUE;                                                  81003700          
+        IORESULT:= FALSE;                                               81003800          
+        END;                                                            81003900          
+      END                                                               81004000          
+    END;                                                                81004100          
+                                                                        81004200          
+  READBCD:= IORESULT;                                                   81004300          
+  END READBCD;                                                          81004400          
+                                                                        83000000          
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%83000100          
+BOOLEAN PROCEDURE READTEXTBLOCK(BLOCK, BLOCKLEN);                       83000200          
+  EBCDIC ARRAY BLOCK[0];                                                83000300          
+  INTEGER BLOCKLEN;                                                     83000400          
+  BEGIN COMMENT                                                         83000500          
+      READS THE NEXT BLOCK OF DATA FROM THE BCD IMAGE AS EBCDIC TEXT.   83000600          
+      RETURNS THE IORESULT FROM A FILE READ OR FALSE IF NO FILE READ    83000700          
+      WAS DONE. IF BLOCKLEN = -1, AN EOF WAS DETECTED IN THE IMAGE.     83000800          
+      ;                                                                 83000900          
+  INTEGER                                                               83001000          
+    LEFT;                               % CHARS LEFT IN BCD IMAGE BUFFER83001100          
+  BOOLEAN                                                               83001200          
+    IORESULT;                           % LOGICAL I/O RESULT WORD       83001300          
+                                                                        83001400          
+  SCAN BUF[BUFX+1] FOR LEFT:BUFLEN-BUFX-1 UNTIL >= 48"80";              83001500          
+  IF LEFT <= 0 THEN                                                     83001600          
+    BEGIN                                                               83001700          
+    IORESULT:= READBCD();                                               83001800          
+    IF IORESULT THEN                                                    83001900          
+      LEFT:= BUFX:= BUFLEN:= 0                                          83002000          
+    ELSE                                                                83002100          
+      SCAN BUF[BUFX+1] FOR LEFT:BUFLEN-BUFX-1 UNTIL >= 48"80";          83002200          
+    END;                                                                83002300          
+                                                                        83002400          
+  BLOCKLEN:= BUFLEN-BUFX-LEFT;                                          83002500          
+  IF BLOCKLEN > 0 THEN                                                  83002600          
+    BEGIN                                                               83002700          
+    IF SIZE(BLOCK) < BLOCKLEN THEN                                      83002800          
+      RESIZE(BLOCK, (WDS(BLOCKLEN)+30)*CPW);                            83002900          
+                                                                        83003000          
+    LEFT:= REAL(BUF[BUFX],1);                                           83003100          
+    IF BLOCKLEN = 1 AND LEFT = TAPEMARK THEN                            83003200          
+      BEGIN                                                             83003300          
+      BLOCKLEN:= -1;                                                    83003400          
+      BUFX:= *+1;                                                       83003500          
+      END                                                               83003600          
+    ELSE                                                                83003700          
+      BEGIN                                                             83003800          
+      REPLACE BLOCK[0] BY (LEFT.[6:7]).[7:48] FOR 1;                    83003900          
+      REPLACE BLOCK[0] BY BLOCK[0] FOR 1 WITH BCDODDTOEBCDIC,           83004000          
+          BUF[BUFX+1] FOR BLOCKLEN-1 WITH BCDODDTOEBCDIC;               83004100          
+      BUFX:= *+BLOCKLEN;                                                83004200          
+      END;                                                              83004300          
+    END;                                                                83004400          
+                                                                        83004500          
+  READTEXTBLOCK:= IORESULT;                                             83004600          
+  END READTEXTBLOCK;                                                    83004700          
+                                                                        84000000          
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%84000100          
+BOOLEAN PROCEDURE READWORDBLOCK(BLOCK, BLOCKLEN);                       84000200          
+  ARRAY BLOCK[0];                                                       84000300          
+  INTEGER BLOCKLEN;                                                     84000400          
+  BEGIN COMMENT                                                         84000500          
+      READS THE NEXT BLOCK OF DATA FROM THE BCD IMAGE AS BINARY 48-BIT  84000600          
+      WORDS. RETURNS THE IORESULT FROM A FILE READ OR FALSE IF NO FILE  84000700          
+      READ WAS DONE. IF BLOCKLEN = -1, AN EOF WAS DETECTED IN THE IMAGE.84000800          
+      ;                                                                 84000900          
+  INTEGER                                                               84001000          
+    LEFT,                               % CHARS LEFT IN BCD IMAGE BUFFER84001100          
+    X,                                  % INDEX INTO BCD IMAGE          84001200          
+    W,                                  % WORD BEING ASSEMBLED          84001300          
+    WX;                                 % WORD INDEX INTO TAPE BLOCK    84001400          
+  BOOLEAN                                                               84001500          
+    IORESULT;                           % LOGICAL I/O RESULT WORD       84001600          
+                                                                        84001700          
+  SCAN BUF[BUFX+1] FOR LEFT:BUFLEN-BUFX-1 UNTIL >= 48"80";              84001800          
+  IF LEFT <= 0 THEN                                                     84001900          
+    BEGIN                                                               84002000          
+    IORESULT:= READBCD();                                               84002100          
+    IF IORESULT THEN                                                    84002200          
+      LEFT:= BUFX:= BUFLEN:= 0                                          84002300          
+    ELSE                                                                84002400          
+      SCAN BUF[BUFX+1] FOR LEFT:BUFLEN-BUFX-1 UNTIL >= 48"80";          84002500          
+    END;                                                                84002600          
+                                                                        84002700          
+  BLOCKLEN:= BUFLEN-BUFX-LEFT;                                          84002800          
+  IF BLOCKLEN > 0 THEN                                                  84002900          
+    BEGIN                                                               84003000          
+    IF SIZE(BLOCK)*CPW < BLOCKLEN THEN                                  84003100          
+      RESIZE(BLOCK, WDS(BLOCKLEN)+30);                                  84003200          
+                                                                        84003300          
+    LEFT:= REAL(BUF[BUFX],1);                                           84003400          
+    IF BLOCKLEN = 1 AND LEFT = TAPEMARK THEN                            84003500          
+      BEGIN                                                             84003600          
+      BLOCKLEN:= -1;                                                    84003700          
+      BUFX:= *+1;                                                       84003800          
+      END                                                               84003900          
+    ELSE                                                                84004000          
+      BEGIN                                                             84004100          
+      % CONVERT WHOLE WORDS                                             84004200          
+      WHILE BLOCKLEN-X >= 8 DO                                          84004300          
+        BEGIN                                                           84004400          
+        BLOCK[WX]:= REAL(BUF[BUFX+X+7], 1)                              84004500          
+                  & REAL(BUF[BUFX+X+6], 1)[11:6]                        84004600          
+                  & REAL(BUF[BUFX+X+5], 1)[17:6]                        84004700          
+                  & REAL(BUF[BUFX+X+4], 1)[23:6]                        84004800          
+                  & REAL(BUF[BUFX+X+3], 1)[29:6]                        84004900          
+                  & REAL(BUF[BUFX+X+2], 1)[35:6]                        84005000          
+                  & REAL(BUF[BUFX+X+1], 1)[41:6]                        84005100          
+                  & REAL(BUF[BUFX+X],   1)[47:6];                       84005200          
+        X:= *+8;                                                        84005300          
+        WX:= *+1;                                                       84005400          
+        END WHILE;                                                      84005500          
+                                                                        84005600          
+      % CONVERT LAST PARTIAL WORD                                       84005700          
+      IF X < BLOCKLEN THEN                                              84005800          
+        BEGIN                                                           84005900          
+        W:= 0;                                                          84006000          
+        DO BEGIN                                                        84006100          
+          W.[47-(X MOD 8)*6:6]:= REAL(BUF[BUFX], 1);                    84006200          
+          X:= *+1;                                                      84006300          
+          END                                                           84006400          
+        UNTIL X >= BLOCKLEN;                                            84006500          
+                                                                        84006600          
+        BLOCK[WX]:= W;                                                  84006700          
+        WX:= *+1;                                                       84006800          
+        END;                                                            84006900          
+                                                                        84007000          
+      BUFX:= *+BLOCKLEN;                                                84007100          
+      END;                                                              84007200          
+    END;                                                                84007300          
+                                                                        84007400          
+  READWORDBLOCK:= IORESULT;                                             84007500          
+  END READWORDBLOCK;                                                    84007600          
+                                                                        85000000          
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%85000100          
+BOOLEAN PROCEDURE READTAPELABEL(LABELREC, BLOCKLEN, MFID, FID);         85000200          
+  EBCDIC ARRAY LABELREC, MFID, FID[0];                                  85000300          
+  INTEGER BLOCKLEN;                                                     85000400          
+  BEGIN COMMENT                                                         85000500          
+      READS THE NEXT BLOCK AS A TAPE LABEL, RETURNING THE MFID AND FID. 85000600          
+      RETURNS TRUE IF THIS IS NOT A VALID LABEL RECORD. BLOCKLEN WILL   85000700          
+      BE -1 IF IMAGE EOF WAS ENCOUNTERED.                               85000800          
+      ;                                                                 85000900          
+  BOOLEAN                                                               85001000          
+    INVALID,                            % TRUE IF INVALID TAPE LABEL    85001100          
+    IORESULT;                           % LOGICAL I/O RESULT WORD       85001200          
+                                                                        85001300          
+  REPLACE MFID BY " " FOR SIZE(MFID);                                   85001400          
+  REPLACE FID BY " " FOR SIZE(FID);                                     85001500          
+  IORESULT:= READTEXTBLOCK(LABELREC, BLOCKLEN);                         85001600          
+  IF IORESULT THEN                                                      85001700          
+    INVALID:= TRUE                                                      85001800          
+  ELSE IF BLOCKLEN ^= 80 THEN                                           85001900          
+    INVALID:= TRUE                                                      85002000          
+  ELSE IF LABELREC ^= " LABEL  " THEN                                   85002100          
+    INVALID:= TRUE                                                      85002200          
+  ELSE                                                                  85002300          
+    BEGIN                                                               85002400          
+    REPLACE MFID BY LABELREC[9] FOR 7;                                  85002500          
+    REPLACE FID BY LABELREC[17] FOR 7;                                  85002600          
+    END;                                                                85002700          
+                                                                        85002800          
+  READTAPELABEL:= INVALID;                                              85002900          
+  END READTAPELABEL;                                                    85003000          
+                                                                        86000000          
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%86000100          
+BOOLEAN PROCEDURE READTAPEDIRECTORY(TAPEDIR, DIRLEN, LABELREC, MFID);   86000200          
+  EBCDIC ARRAY TAPEDIR, LABELREC, MFID[0];                              86000300          
+  INTEGER DIRLEN;                                                       86000400          
+  BEGIN COMMENT                                                         86000500          
+      READS THE TAPE DIRECTORY FROM THE "FILE000" FILE, LOADS IT TO THE 86000600          
+      TAPEDIR ARRAY, AND RETURNS THE LENGTH OF THE DIRECTORY IN BYTES   86000700          
+      IN DIRLEN, PLUS THE LABEL RECORD AND TAPE MFID.                   86000800          
+      ;                                                                 86000900          
+  BOOLEAN                                                               86001000          
+    DONE,                               % LOOP CONTROL                  86001100          
+    IORESULT;                           % LOGICAL I/O RESULT WORD       86001200          
+  INTEGER                                                               86001300          
+    BLOCKLEN,                           % TAPE BLOCK LENGTH, CHR        86001400          
+    DX,                                 % INDEX INTO TAPE DIRECTORY     86001500          
+    X;                                  % INDEX INTO TAPE BLOCK         86001600          
+  EBCDIC ARRAY                                                          86001700          
+    BLOCK[0:900*8-1],                   % TAPE BLOCK                    86001800          
+    ENDLABEL[0:79],                     % ENDING FILE000 LABEL          86001900          
+    ENDFID[0:7],                        % ENDING TAPE FILE ID           86002000          
+    ENDMFID[0:7],                       % ENDING TAPE MULTI-FILE ID     86002100          
+    FID[0:7];                           % TAPE FILE ID (FILE000)        86002200          
+                                                                        86002300          
+  IORESULT:= READTAPELABEL(LABELREC, BLOCKLEN, MFID, FID);              86002400          
+  IF IORESULT THEN                                                      86002500          
+    DISPLAY1N1S(MSG_INVALIDTAPELABEL, BLOCKLEN,                         86002600          
+        LABELREC, MAX(BLOCKLEN, 1))                                     86002700          
+  ELSE IF FID ^= "FILE000" THEN                                         86002800          
+    DISPLAY1N1S(MSG_INVALIDTAPEDIR, BLOCKLEN,                           86002900          
+        LABELREC, MAX(BLOCKLEN, 1))                                     86003000          
+  ELSE                                                                  86003100          
+    BEGIN                                                               86003200          
+    IORESULT:= READTEXTBLOCK(BLOCK, BLOCKLEN);                          86003300          
+    IF IORESULT OR BLOCKLEN ^= -1 THEN                                  86003400          
+      DISPLAY1N(MSG_TAPEMARKEXPECTED, BCD.NEXTRECORD)                   86003500          
+    ELSE                                                                86003600          
+      BEGIN                                                             86003700          
+      DIRLEN:= BLOCKLEN:= DX:= 0;                                       86003800          
+      DO BEGIN                                                          86003900          
+        IORESULT:= READTEXTBLOCK(BLOCK, BLOCKLEN);                      86004000          
+        IF IORESULT THEN                                                86004100          
+          DONE:= TRUE                                                   86004200          
+        ELSE IF BLOCKLEN = -1 THEN                                      86004300          
+          DONE:= TRUE                                                   86004400          
+        ELSE                                                            86004500          
+          BEGIN                                                         86004600          
+          X:= 0;                                                        86004700          
+          WHILE BLOCKLEN-X >= 16 DO                                     86004800          
+            BEGIN                                                       86004900          
+            IF BLOCK[X] = "0000000?" THEN                               86005000          
+              X:= BLOCKLEN                % EOB SENTINEL                86005100          
+            ELSE                                                        86005200          
+              BEGIN                                                     86005300          
+              IF SIZE(TAPEDIR) < DX+16 THEN                             86005400          
+                RESIZE(TAPEDIR, DX+900*8, RETAIN);                      86005500          
+                                                                        86005600          
+              REPLACE TAPEDIR[DX] BY BLOCK[X] FOR 16;                   86005700          
+              DX:= *+16;                                                86005800          
+              X:= *+16;                                                 86005900          
+              END;                                                      86006000          
+            END;                                                        86006100          
+          END;                                                          86006200          
+        END                                                             86006300          
+      UNTIL DONE;                                                       86006400          
+      END;                                                              86006500          
+    END;                                                                86006600          
+                                                                        86006700          
+  DIRLEN:= DX;                                                          86006800          
+  IF NOT IORESULT THEN                                                  86006900          
+    BEGIN                                                               86007000          
+    IORESULT:= READTAPELABEL(ENDLABEL, BLOCKLEN, ENDMFID, ENDFID);      86007100          
+    IF IORESULT THEN                                                    86007200          
+      DISPLAY1N1S(MSG_INVALIDENDLABEL, BLOCKLEN,                        86007300          
+          LABELREC, MAX(BLOCKLEN, 1))                                   86007400          
+    ELSE IF ENDFID ^= FID FOR 7 THEN                                    86007500          
+      DISPLAY1N1S(MSG_INVALIDENDLABEL, BLOCKLEN,                        86007600          
+          LABELREC, MAX(BLOCKLEN, 1))                                   86007700          
+    END;                                                                86007800          
+                                                                        86007900          
+  READTAPEDIRECTORY:= IORESULT;                                         86008000          
+  END READTAPEDIRECTORY;                                                86008100          
+                                                                        88000000          
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%88000100          
+BOOLEAN PROCEDURE EXTRACTFILE(DISK, FID, DISKNAME, HEADER,              88000200          
+    TAPEBLOCK, FILEBLOCK);                                              88000300          
+  FILE DISK;                                                            88000500          
+  EBCDIC ARRAY FID, DISKNAME, TAPEBLOCK, FILEBLOCK[0];                  88000600          
+  ARRAY HEADER[0];                                                      88000800          
+  BEGIN COMMENT                                                         88000900          
+      READS THE DISK HEADER AND FILE DATA FROM THE BCD FILE, CONVERTING 88001000          
+      THE DATA INTO EBCDIC RECORDS AND WRITING THEM TO THE FILE DISK.   88001100          
+      ;                                                                 88001200          
+  BOOLEAN                                                               88001300          
+    DONE,                               % LOOP CONTROL                  88001400          
+    IORESULT;                           % LOGICAL I/O RESULT WORD       88001500          
+  INTEGER                                                               88001600          
+    BLOCKCHARS,                         % CHARS IN B5500 FILE BLOCK     88001700          
+    BLOCKLEN,                           % TAPE BLOCK LENGTH, CHR        88001800          
+    BX,                                 % INDEX INTO TAPE BLOCK         88001900          
+    RECCHARS,                           % CHARS IN B5500 FILE RECORD    88002000          
+    RECCOUNT,                           % 0-REL RECORD COUNT IN FILE    88002100          
+    RECPERBLOCK,                        % RECORDS UB B5500 FILE BLOCK   88002200          
+    RNR,                                % CURRENT RECORD NUMBER         88002300          
+    RX,                                 % INDEX INTO FILE BLOCK         88002400          
+    SEGSPERROW;                         % SECTORS PER B5500 ROW         88002500          
+                                                                        88002600          
+  IORESULT:= READWORDBLOCK(HEADER, BLOCKLEN);                           88002700          
+  IF IORESULT THEN                                                      88002800          
+    DISPLAY2N(MSG_HEADERREADERROR, BCD.NEXTRECORD, 0)                   88002900          
+  ELSE IF BLOCKLEN ^= 240 THEN                                          88003000          
+    DISPLAY2N(MSG_HEADERSIZEERROR, BCD.NEXTRECORD, BLOCKLEN)            88003100          
+  ELSE                                                                  88003200          
+    BEGIN                                                               88003300          
+    RECCHARS:=     HEADER[0].[47:15]*8;                                 88003400          
+    BLOCKCHARS:=   INCREMENTSOF(HEADER[0].[32:15]*8, 240);              88003500          
+    RECPERBLOCK:=  HEADER[0].[17:12];                                   88003600          
+    RECCOUNT:=     HEADER[7];                                           88003700          
+    SEGSPERROW:=   HEADER[8];                                           88003800          
+    DISK.MAXRECSIZE:= RECCHARS;                                         88003900          
+    DISK.BLOCKSIZE:= RECPERBLOCK*RECCHARS;                              88004000          
+    DISK.AREAS:= 10;                                                    88004100          
+    DISK.AREASIZE:=                                                     88004200          
+        (1000 DIV SECTORS(WDS(RECPERBLOCK*RECCHARS)))*RECPERBLOCK;      88004300          
+    DISK.NEWFILE:= TRUE;                                                88004400          
+    DISK.FILEUSE:= VALUE(OUT);                                          88004500          
+    DISK.FILEKIND:= VALUE(CDATA);                                       88004600          
+    REPLACE DISK.LFILENAME BY DISKNAME;                                 88004700          
+                                                                        88004800          
+    IF SIZE(FILEBLOCK) < BLOCKCHARS THEN                                88004900          
+      RESIZE(FILEBLOCK, BLOCKCHARS);                                    88005000          
+                                                                        88005100          
+    %--CONVERT THE RECORDS                                              88005200          
+    BX:= BLOCKLEN:= 0;                                                  88005300          
+    RX:= BLOCKCHARS;                                                    88005400          
+    DO BEGIN                                                            88005500          
+      IF RX+RECCHARS <= BLOCKCHARS THEN                                 88005600          
+        BEGIN                           % HAVE RECORD AVAIL IN FILEBLOCK88005700          
+        IF RNR <= RECCOUNT THEN                                         88005800          
+          BEGIN                                                         88005900          
+          RNR:= *+1;                                                    88006000          
+          WRITE(DISK, RECCHARS, FILEBLOCK[RX]);                         88006100          
+          END;                                                          88006200          
+                                                                        88006300          
+        RX:= *+RECCHARS;                                                88006400          
+        END                                                             88006500          
+      ELSE IF IORESULT OR BLOCKLEN < 0 THEN                             88006600          
+        DONE:= TRUE                     % TAPE ERROR OR EOF             88006700          
+      ELSE                                                              88006800          
+        BEGIN                           % NEED TO FILL FILEBLOCK        88006900          
+        RX:= BLOCKLEN-BX;                                               88007000          
+        IF RX >= BLOCKCHARS THEN                                        88007100          
+          RX:= 0                        % HAVE FULL FILEBLOCK           88007200          
+        ELSE                                                            88007300          
+          BEGIN                         % PARTIAL FILEBLOCK IN TAPEBLOCK88007400          
+          IF RX > 0 THEN                                                88007500          
+            REPLACE FILEBLOCK BY TAPEBLOCK[BX] FOR RX;                  88007600          
+                                                                        88007700          
+          BX:= 0;                                                       88007800          
+          IORESULT:= READTEXTBLOCK(TAPEBLOCK, BLOCKLEN);                88007900          
+          IF IORESULT OR BLOCKLEN < 1 THEN                              88008000          
+            BLOCKCHARS:= RX;                                            88008100          
+          END;                                                          88008200          
+                                                                        88008300          
+        REPLACE FILEBLOCK[RX] BY TAPEBLOCK[BX] FOR BLOCKCHARS-RX;       88008400          
+        BX:= *+BLOCKCHARS-RX;                                           88008500          
+        RX:= 0;                                                         88008600          
+        END;                                                            88008700          
+      END                                                               88008800          
+    UNTIL DONE;                                                         88008900          
+                                                                        88009000          
+    CLOSE(DISK, CRUNCH);                                                88009100          
+    END;                                                                88009200          
+                                                                        88009300          
+  EXTRACTFILE:= IORESULT;                                               88009400          
+  END EXTRACTFILE;                                                      88009500          
+                                                                        89000000          
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%89000100          
+PROCEDURE EXTRACTTAPE;                                                  89000200          
+  BEGIN COMMENT                                                         89000300          
+      DRIVER FOR EXTRACTING THE .BCD LIB/MAINT TAPE IMAGE TO INDIVIDUAL 89000400          
+      EBCDIC FILES.                                                     89000500          
+      ;                                                                 89000600          
+  INTEGER                                                               89000700          
+    BLOCKLEN,                           % CURRENT TAPE BLOCK LENGTH, CHR89000800          
+    DIRLEN,                             % LENGTH OF TAPE DIRECTORY, CHR 89000900          
+    DX,                                 % TAPE DIRECTORY BYTE OFFSET    89001000          
+    FNR;                                % CURRENT FILE NUMBER           89001100          
+  BOOLEAN                                                               89001200          
+    IORESULT,                           % LOGICAL I/O RESULT (STATE)    89001300          
+    DONE;                               % LOOP CONTROL                  89001400          
+  ARRAY                                                                 89001500          
+    HEADER[0:29];                       % DISK FILE HEADER              89001600          
+  EBCDIC ARRAY                                                          89001700          
+    DISKNAME[0:299],                    % FULL LOCAL FILE NAME          89001800          
+    DISKPREFIX[0:299],                  % LOCAL FILE NAME DIR PREFIX    89001900          
+    ENDFID[0:7],                        % ENDING TAPE FILE ID           89002000          
+    FID[0:7],                           % BEGINNING TAPE FILE ID        89002100          
+    FILEBLOCK[0:299],                   % LOGICAL FILE BLOCK WORKAREA   89002200          
+    LABELREC[0:79],                     % BEGINNING FILE TAPE LABEL     89002300          
+    MFID[0:7],                          % TAPE TAPE MULTI-FILE ID       89002400          
+    TAPEBLOCK[0:900*8-1],               % LIB/MAINT TAPE BLOCK          89002500          
+    TAPEDIR[0:900*8-1],                 % TAPE DIRECTORY FROM FILE000   89002600          
+    TAPEMFID[0:7];                      % INITIAL TAPE MULTI-FILE ID    89002700          
+  POINTER                                                               89002800          
+    P;                                                                  89002900          
+  FILE                                                                  89003000          
+    DISK(KIND=DISK, FRAMESIZE=8, FLEXIBLE, FILEUSE=OUT, NEWFILE,        89003100          
+        INTMODE=EBCDIC, EXTMODE=EBCDIC);                                89003200          
+                                                                        89003300          
+  REPLACE P:DISKPREFIX BY DISK.LFILENAME;                               89003400          
+  REPLACE P:P-1 BY "/", NUL;                                            89003500          
+  IORESULT:= READTAPEDIRECTORY(TAPEDIR, DIRLEN, LABELREC, TAPEMFID);    89003600          
+  IF NOT IORESULT THEN                                                  89003700          
+    BEGIN                                                               89003800          
+    WHILE DX < DIRLEN DO                                                89003900          
+      BEGIN                                                             89004000          
+      FNR:= *+1;                                                        89004100          
+      IORESULT:= READTAPELABEL(LABELREC, BLOCKLEN, MFID, FID);          89004200          
+      IF IORESULT THEN                                                  89004300          
+        DX:= DIRLEN                     % EOF OR BAD LABEL: KILL LOOP   89004400          
+      ELSE IF MFID ^= TAPEMFID FOR 7 THEN                               89004500          
+        BEGIN                                                           89004600          
+        DX:= DIRLEN;                                                    89004700          
+        DISPLAY1N1S(MSG_MFIDMISMATCH, BCD.NEXTRECORD,                   89004800          
+            LABELREC, BLOCKLEN)                                         89004900          
+        END                                                             89005000          
+      ELSE                                                              89005100          
+        BEGIN                                                           89005200          
+        IORESULT:= READTEXTBLOCK(TAPEBLOCK, BLOCKLEN);                  89005300          
+        IF IORESULT OR BLOCKLEN ^= -1 THEN                              89005400          
+          BEGIN                                                         89005500          
+          DX:= DIRLEN;                  % EOF EXPECTED: KILL THE LOOP   89005600          
+          DISPLAY1N(MSG_TAPEMARKEXPECTED, BCD.NEXTRECORD);              89005700          
+          END                                                           89005800          
+        ELSE                                                            89005900          
+          BEGIN                                                         89006000          
+          WRITE(LINE, <I5,X2,A7,X1,A7,": ",X2,A7,"/",A7>,               89006100          
+              FNR, MFID, FID, TAPEDIR[DX+1], TAPEDIR[DX+9]);            89006200          
+          REPLACE DISKNAME BY DISKPREFIX FOR SIZE(DISKPREFIX) UNTIL=NUL,89006300          
+              """, TAPEDIR[DX+1] FOR 7 UNTIL=SP,                        89006400          
+              "-",  TAPEDIR[DX+9] FOR 7 UNTIL=SP, "".", NUL;            89006500180526PK  
+          IORESULT:= EXTRACTFILE(DISK, FID, DISKNAME, HEADER,           89006600          
+              TAPEBLOCK, FILEBLOCK);                                    89006700          
+          IF IORESULT THEN                                              89006800          
+            DX:= DIRLEN                 % EXTRACT ERROR: KILL THE LOOP  89006900          
+          ELSE                                                          89007000          
+            BEGIN                                                       89007100          
+            DX:= *+16;                                                  89007200          
+            IORESULT:= READTAPELABEL(LABELREC, BLOCKLEN, MFID, ENDFID); 89007300          
+            IF IORESULT THEN                                            89007400          
+              DISPLAY1N1S(MSG_INVALIDENDLABEL, BLOCKLEN,                89007500          
+                  LABELREC, MAX(BLOCKLEN, 1))                           89007600          
+            ELSE IF ENDFID ^= FID FOR 7 THEN                            89007700          
+              DISPLAY1N1S(MSG_INVALIDENDLABEL, BLOCKLEN,                89007800          
+                  LABELREC, MAX(BLOCKLEN, 1))                           89007900          
+            END;                                                        89008000          
+          END;                                                          89008100          
+        END;                                                            89008200          
+      END WHILE DX;                                                     89008300          
+    END;                                                                89008400          
+  END EXTRACTTAPE;                                                      89008600          
+                                                                        99900000          
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%99902000          
+%%  OUTER BLOCK                                                       %%99903000          
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%99904000          
+REAL                                                                    99904100          
+  T7;                                   % TIME(7) TIMESTAMP WORD        99904200          
+                                                                        99910000          
+T7:= COMPILETIME(7);                                                    99910100          
+REPLACE BUF BY SP FOR 132;                                              99910200          
+REPLACE BUF BY "Paradigm B5500 Lib/Maint Tape Extractor";               99910300          
+REPLACE BUF[67] BY                                                      99910400          
+    T7.T7YEARF FOR 4 DIGITS, T7.T7MONTHF FOR 2 DIGITS,                  99910500          
+    T7.T7DAYF FOR 2 DIGITS, "-",                                        99910600          
+    T7.T7HOURF FOR 2 DIGITS, T7.T7MINUTEF FOR 2 DIGITS;                 99910700          
+WRITE(LINE[SPACE 2], 80, BUF);                                          99910800          
+MLSDISPLAY(MSGS[MSG_VERSION], STRING(BUF[67], 13));                     99910900          
+                                                                        99911000          
+OPEN(BCD);                                                              99911100          
+EXTRACTTAPE;                                                            99911200          
+CLOSE(BCD);                                                             99911300          
+END.                                                                    99999900          

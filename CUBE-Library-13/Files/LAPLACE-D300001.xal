@@ -1,0 +1,812 @@
+BEGIN                                                                   00000001
+COMMENT   NUMERICAL SOLUTION OF LAPLACE"S EQUATION BY THE METHOD OF     00000002
+          DIFFERENCE EQUATIONS (SLOR)                                   00000003
+                                                                                
+PROGRAM WRITTEN BY DR. JIM MOLBERG BOX 116, RT. 2, SNOHOMISH WASH. 9829000000004
+                                                                                
+                   INTRODUCTION                                         00000005
+                                                                                
+      THIS COMPUTER PROGRAM, WRITTEN IN XALGOL, SOLVES THE LAPLACE      00000006
+EQUATION DEL SQUARE V = 0 OVER A TWO DIMENSIONAL REGION IN EITHER       00000007
+RECTANGULAR OR CYLINDRICAL COORDINATES.  THIS EQUATION IS ENCOUNTERED   00000008
+IN STATIC HEAT DISTRIBUTION AND STATIC FIELD DISTRIBUTION PROBLEMS.     00000009
+THIS PROGRAM USES THE TECHNIQUE OF SLOR (REF 1) WITH INITIAL ESTIMATES  00000010
+COMPUTED AT ALL INTERIOR POINTS PRIOR TO THE START OF THE ITERATIVE     00000011
+PROCESS.  (INTERIOR POINTS ARE DEFINED AS ALL POINTS WHOSE VALUES HAVE  00000012
+NOT BEEN INITIALLY SPECIFIED).  THE PROBLEMS TO BE SOLVED ARE SET UP    00000013
+ENTIRELY BY DATA CARDS SO THAT NO ROUTINES NEED BE WRITTEN BY THE USER. 00000014
+THIS PROGRAM WAS WRITTEN FOR A B5500.  WHEN RUNNING THIS ON A B6500,    00000015
+THE WORD "OWN" IS NOT NEEDED AND SHOULD BE DELETED FROM DECLARATIONS    00000016
+OCCURING NEAR LINES 258, 308, 358, AND 564.                             00000017
+      THE PROGRAM HAS THE FOLLOWING FEATURES:                           00000018
+(1) THE FOLLOWING THREE TYPES OF BOUNDARY CONDITIONS CAN BE PLACED      00000019
+    ANYWHERE ON THE BOUNDARY OR IN THE INTERIOR OF A RECTANGULAR REGION.00000020
+     (A) CONSTANT POTENTIALS                                            00000021
+     (B) PARTIAL OF THE POTENTIAL DIVIDED BY THE PARTIAL WITH RESPECT   00000022
+         TO DISTANCE EQUALS ZERO.  THIS CORRESPONDS TO AN INSULATED     00000023
+         BOUNDARY IN A HEAT PROBLEM.                                    00000024
+     (C) V=K WHERE K IS DETERMINED BY THE POTENTIAL OF THE SURROUNDING  00000025
+         MEDIUM (THIS WOULD CORRESPOND TO AN IDEAL CONDUCTING REGION    00000026
+         LOCATED IN AN ELECTROSTATIC FIELD).                            00000027
+(2) THE NUMBER OF GRID LINES (OR GRID POINTS) IS SPECIFIED BY THE USER. 00000028
+(3) THE PERCENTAGE ERROR IS SPECIFIED BY THE USER AND AN EPSILON IS     00000029
+    COMPUTED BY THE PROGRAM TO TERMINATE THE ITERATIONS WHEN THE MAXIMUM00000030
+    ERROR IS WITHIN THE ALLOWABLE BOUNDS.                               00000031
+(4) A LINE PRINTER PLOT OF THE BOUNDARY CONDITIONS AND THE EQUIPOTENTIAL00000032
+    LINES IS PROVIDED ALONG WITH A PRINTOUT OF THE NUMERICAL VALUES.    00000033
+                                                                                
+                                                                                
+                   MATHEMATICAL DISCUSSION                              00000034
+                                                                                
+      LAPLACES EQUATION (DEL SQUARE V = 0) CAN BE WRITTEN IN FINITE     00000035
+DIFFERENCE FORM THUS:                                                   00000036
+   V[I,J] = ( V[I-1,J] + V[I+1,J] + V[I,J-1] + V[I,J+1] ) / 4           00000037
+      A SQUARE MESH IS DRAWN OVER THE REGION AND THE ABOVE EQUATION IS  00000038
+SATISFIED AT ALL INTERIOR POINTS (POINTS WHOSE VALUE IS TO BE COMPUTED).00000039
+IN ORDER TO SATISFY THIS EQUATION, THIS COMPUTER PROGRAM USES THE       00000040
+ITERATIVE TECHNIQUE OF SLOR (1).                                        00000041
+      THE TECHNIQUE OF SLOR TREATS ONE ENTIRE ROW AS A SET OF UNKNOWNS  00000042
+AND SOLVES FOR THOSE UNKNOWNS BY A DIRECT METHOD (RATHER THAN AN        00000043
+ITERATIVE METHOD).  EACH ROW IS COMPUTED IN SUCCESSION UNTIL ALL ROWS   00000044
+HAVE BEEN DONE.  THEN THE PROCESS IS REPEATED UNTIL CONVERGENCE IS      00000045
+REACHED.  OVERRELAXATION CAN BE USED WITH THIS TECHNIQUE JUST AS IT CAN 00000046
+BE USED WHEN THE MESH IS TREATED A POINT AT A TIME.  FOR EACH ITERATION,00000047
+THE ARITHMETIC STEPS REQUIRED FOR SLOR ARE APPROXIMATELY THE SAME AS FOR00000048
+THE POINT TECHNIQUE, HOWEVER, CONVERGENCE IS SLIGHTLY FASTER USING SLOR 00000049
+(AND THE PROGRAM MORE COMPLICATED).                                     00000050
+      FOR THIS PROGRAM THE OVERRELAXATION FACTOR IS DETERMINED BY THE   00000051
+TECHNIQUE OF CARRE (2).  THE METHOD USED TO TERMINATE THE ITERATIVE     00000052
+PROCESS IS DESCRIBED IN CARRE (2) ALSO.  BEFORE THE ITERATIVE PROCESS   00000053
+IS STARTED, INITIAL ESTIMATES ARE PROVIDED AT ALL INTERIOR POINTS (THE  00000054
+PAPER FOR THIS TECHNIQUE IS NOT YET PUBLISHED).  THE POTENTIAL OF THE   00000055
+IDEAL CONDUCTING REGIONS IS COMPUTED TO BE THE AVERAGE OF THE POTENTIAL 00000056
+OF THE SURROUNDING POINTS (THE PAPER FOR THIS HAS NOT YET BEEN PUBLISHED00000057
+EITHER).                                                                00000058
+      IF THE POSITION OF A FIXED POTENTIAL OR IDEAL CONDUCTING BOUNDARY 00000059
+CONDITION IS SITUATED BETWEEN TWO GRID POINTS, THE POSITION IS SHIFTED  00000060
+TO THE NEAREST GRID POINT.  ALTHOUGH THIS INTRODUCES A SLIGHT ERROR,    00000061
+THIS CAN BE MINIMIZED BY A JUDICOUS CHOICE OF GRID SIZE AND POSITION.   00000062
+                                                                                
+LITERATURE REFERENCES                                                   00000063
+(1) VARGA, R.S., "MATRIX ITERATIVE ANALYSIS". PRENTICE-HALL (1962)      00000064
+(2) CARRE, B.A., "DETERMINATION OF OPTIMUM ACCELERATING FACTOR FOR      00000065
+    SUCCESSIVE OVERELAXATION," COMPUTER JOURNAL, VOL.4, NO. 1,          00000066
+     PP. 73-78, APRIL 1961.                                             00000067
+                                                                                
+                                                                                
+                   USE OF THE PROCEDURE                                 00000068
+                                                                                
+      THE PROBLEMS TO BE SOLVED ARE SET UP ENTIRELY BY DATA CARDS IN    00000069
+THE FOLLOWING MANNER (INPUT IS FREE FORM I.E. / FORMAT).  THE INPUT     00000070
+FILE IS DECLARED FIN (AT THE BEGINNING OF THE PROGRAM).                 00000071
+CARD # 1   TITLE CARD                                                   00000072
+CARD # 2   NX, NY, NFXD, NDISC, NFLT, NCYL, ERROR,                      00000073
+SET # 3    FIXED POTENTIAL DATA CARDS (NFXD SHOULD BE SET EQUAL TO THE  00000074
+           TOTAL NUMBER OF CARDS IN THIS SET).                          00000075
+SET # 4    INSULATING BOUNDARY DATA CARDS, IF ANY (NDISC SHOULD BE SET  00000076
+           EQUAL TO THE TOTAL NUMBER OF CARDS IN THIS SET).             00000077
+SET # 5    IDEAL CONDUCTOR DATA CARDS, IF ANY (NFLT SHOULD BE SET EQUAL 00000078
+           TO THE TOTAL NUMBER OF CARDS IN THIS SET).                   00000079
+                                                                                
+      THE TITLE CARD CONSISTS OF ONE DATA CARD WHITH ANY ALPHA NUMERIC  00000080
+CHARACTERS ON IT.  THIS WILL BE PRINTED OUT WITH THE OUTPUT AND IS      00000081
+CUSTOMARILY USED TO IDENTIFY THE OUTPUT DATA.                           00000082
+NX, NY, - THE NUMBER OF GRID LINES DESIRED IN THE X AND Y DIRECTIONS    00000083
+          RESPECTIVELY.                                                 00000084
+NFXD, NDISC, NFLT, - THE NUMBER OF DATA CARDS IN EACH OF THE THREE      00000085
+          SETS OF CARDS TO FOLLOW.                                      00000086
+NCYL, -   IF THE PROBLEM TO BE SOLVED IS IN RECTANGULAR COORDINATES,    00000087
+          THEN NCYL = 0.                                                00000088
+                IF, HOWEVER, THE PROBLEM TO BE SOLVED IS IN             00000089
+          CYLINDRICAL COORDINATES, THEN THIS NUMBER SHOULD BE NEGATIVE. 00000090
+          NCYL IS SET TO -1, UNLESS THE LOWER PORTION IS AT A FIXED     00000091
+          POTENTIAL SO THAT THERE IS NO NEED TO ITERATE OVER THIS LOWER 00000092
+          SECTION.  IF THAT IS THE CASE, THEN NCYL CAN BE SET EQUAL TO  00000093
+          THE NEGATIVE OF THIS NUMBER AND THEN THAT MANY ROWS WILL BE   00000094
+          SKIPPED IN THE ITERATIVE PROCESS.  FOR EXAMPLE, IF THE CENTER 00000095
+          CONDUCTOR OF A COAX IS ONE HALF THE TOTAL DIAMETER, THEN IF   00000096
+          NY=20, THEN SETTING NCYL=-10 WOULD CAUSE THE ITERATIONS TO BE 00000097
+          DONE ONLY FROM NY=10 UP TO NY=20.  THIS SAVES STORAGE AS WELL 00000098
+          AS COMPUTING TIME.  THE ASTUTE READER WILL NOTICE THAT SINCE  00000099
+          THE LOWEST MAGNITUDE FOR NCYL IS -1, THEN ONE CAN NOT ITERATE 00000100
+          OVER Y=0,  THIS IS DONE TO AVOID THE DISCONTINUITY AT R=0.    00000101
+ERROR -   THIS NUMBER IS THE PERCENTAGE ERROR DESIRED (I.E. 2 WOULD     00000102
+          INDICATE THAT 2 PERCENT ERROR IS REQUESTED).  IF THIS NUMBER  00000103
+          IS TOO SMALL (I.E. LESS THAN @-6) THEN AN ERROR OF 1 PERCENT  00000104
+          IS ASSUMED.  (THIS WRITER WOULD QUESTION THE PRACTICALITY OF  00000105
+          REQUESTING AN ERROR OF LESS THAN 0.1 PERCENT).  THE PROGRAM   00000106
+           USES ERROR TO COMPUTE ITS OWN EPSILON IN ORDER TO TELL WHEN  00000107
+           CONVERGENCE IS REACHED.                                      00000108
+                                                                                
+      THE REMAINING DATA CARDS GIVE THE POSITION AND TYPE OF BOUNDARIES 00000109
+IN THE PROBLEM.  EACH CARD CONTAINS DATA FOR ONE STRAIGHT LINE SEGMENT. 00000110
+THE COORDINATES FOR THE ENTIRE REGION EXTEND FROM 0 TO NX IN THE X      00000111
+DIRECTION AND EXTEND FROM 0 TO NY IN THE Y DIRECTION.                   00000112
+FIXED POTENTIALS (SET # 3) - THE POTENTIAL AND COORDINATES OF THE END   00000113
+          POINTS OF THE STRAIGHT LINE SEGMENTS ARE PRESENTED AS FOLLOWS.00000114
+     POTENTIAL, X1, Y1, X2, Y2,                                         00000115
+INSULATING BOUNDARIES (SET # 4) - THE COORDINATES OF THE END POINTS OF  00000116
+          THE STRAIGHT LINE SEGMENTS ARE PUNCHED AS FOLLOWS.            00000117
+     X1, Y1, X2, Y2,                                                    00000118
+          IT IS PREFERRED THAT THESE BOUNDARIES LIE BETWEEN GRID POINTS 00000119
+          RATHER THAN DIRECTLY ON A GRID POINT (OTHERWISE AN AMBIGUITY  00000120
+          MAY RESULT).  IF NO BOUNDARY CONDITIONS ARE SPECIFIED FOR THE 00000121
+          OUTSIDE PERIMETER OF THE RECTANGULAR REGION, THEN IT IS       00000122
+          ASSUMED TO BE AN INSULATING BOUNDARY.                         00000123
+IDEAL CONDUCTING REGIONS (SET # 5) - THE COORDINATES OF THE END POINTS  00000124
+          AND AN IDENTIFICATION NUMBER ARE GIVEN.                       00000125
+     ID, X1, Y1, X2, Y2,                                                00000126
+          ALL DATA CARDS THAT SPECIFY THE BOUNDARIES OF THE SAME IDEAL  00000127
+          CONDUCTING REGION SHOULD HAVE THE SAME IDENTIFICATION NUMBER. 00000128
+          (IT FOLLOWS THAT 1 { ID { NFLT).                              00000129
+      THE PROGRAM READS IN THE DATA CARDS AND PRINTS THEM OUT SO THEY   00000130
+CAN BE VERIFIED.  WHEN THE ITERATIONS ARE COMPLETED, THE NUMERICAL      00000131
+VALUES ARE PRINTED OUT ALONG WITH A LINE PRINTER PLOT.  PROBLEMS CAN BE 00000132
+STACKED SEQUENTIALLY.                                                   00000133
+      EXECUTION TIME IS ROUGHLY PROPORTIONAL TO (NX | NY)*1.5 .         00000134
+HOWEVER, THIS CAN VARY GREATLY, DEPENDING ON SUCH FACTORS AS (1) GRID   00000135
+SIZE, (2) ACCURACY REQUESTED, (3) NUMBER AND TYPE OF THE BOUNDARY       00000136
+CONDITIONS.  FOR A TYPICAL PROBLEM OF GRID SIZE 20 | 20 AND AN ERROR OF 00000137
+0.1 PERCENT REQUESTED, THE EXECUTION TIME ON THE B5500 IS ROUGHLY TEN   00000138
+SECONDS.                                                                00000139
+      AS AN AID TO UNDERSTANDING THE DECK SET UP, THE USER COULD SUBMIT 00000140
+THE FOLLOWING TWO SETS OF DATA CARDS.  THE FIRST IS IN CARTESIAN        00000141
+COORDINATES AND THE SECOND IS A SIMPLE COAXIAL CABLE IN CYLINDRICAL     00000142
+COORDINATES.                                                            00000143
+ DATA FIN                                                               00000144
+         SAMPLE PROBLEM IN CARTESIAN COORDINATES                        00000145
+20, 10, 2, 2, 3, 0, 1,                                                  00000146
+0, 1, 1, 16, 1,                                                         00000147
+1, 3, 8, 17, 8,                                                         00000148
+-0.1, 8, 2, 10.1,                                                       00000149
+18, 10.1, 20.1, 8,                                                      00000150
+1, 2, 5, 1, 6,                                                          00000151
+2, 20, 4, 20, 0,                                                        00000152
+2, 18, 5, 17, 5,                                                        00000153
+        CROSS SECTION OF A COAX CABLE                                   00000154
+10, 10, 2, 0, 0, -5, 2,                                                 00000155
+0, 0, 5, 10, 5,                                                         00000156
+1, 0, 10, 10, 10,                                                       00000157
+                                                                                
+                                                                                
+                   PROGRAM DESCRIPTION                                  00000158
+                                                                                
+      THE INDEX VARIABLES I AND J REFER TO THE X AND Y DIRECTIONS       00000159
+RESPECTIVELY.  THESE ARE USED IN TWO DIMENSIONAL ARRAYS IN THE REVERSE  00000160
+ORDER, I.E. V[J,I].  THIS WAS INFLUENCED BY THE FACT THAT TWO           00000161
+DIMENSIONAL ARRAYS ARE STORED AS INDIVIDUAL ROWS IN THE B5500 AND THE   00000162
+B6500.                                                                  00000163
+ARRAYS - ALL LOWER BOUNDS FOR ARRAYS ARE ZERO.                          00000164
+V[NY,NX] - STORES THE POTENTIALS OF THE GRID POINTS.                    00000165
+B[NY,NX] - STORES BITS THAT ARE DETERMINED BY THE BOUNDARY CONDITIONS   00000166
+          AT EACH GRID POINT.  EACH LOCATION IN THE B ARRAY REFERS TO   00000167
+          THE CORRESPONDING POINT IN THE V ARRAY.                       00000168
+C, T[NX+1] - USED FOR COMPUTING THE NEW VALUES BY SLOR.  A PASS IS MADE 00000169
+          OVER ONE ROW OF V[J,I] IN THE FORWARD DIRECTION, COLLECTING   00000170
+          VALUES FROM THE ADJACENT ROWS AND STORING THEM IN C.  BACK    00000171
+          SUBSTITUTION IS THEN DONE TO COMPUTE NEW VALUES FOR ONE ROW OF00000172
+          V[J,I].  T CONTAINS CONSTANTS USED IN THE ARITHMETIC PROCESS. 00000173
+FV, FN, FSUM[NFLT] - USED FOR PROBLEMS THAT CONTAIN IDEAL CONDUCTING    00000174
+          REGIONS.  THEY STORE RESPECTIVELY - THE POTENTIAL VALUE,      00000175
+          NUMBER OF POINTS IN THE REGION, AND THE SUM OF THE CONDUCTING 00000176
+          REGION POTENTIALS FOR ONE ITERATION.                          00000177
+CA, CB[NY] - DIFFERENCE EQUATION CONSTANTS USED FOR CYLINDRICAL         00000178
+          COORDINATES.                                                  00000179
+IMAGE[NV,NCOL] - CONTAINS THE PLOT OF THE REGION TO BE PLOTTED OUT.     00000180
+      THE BITS STORED IN EACH LOCATION OF B[J,I] ARE DETERMINED BY THE  00000181
+BOUNDARY CONDITIONS LOCATED IN THE IMMEDIATE VICINITY OF THAT POINT,    00000182
+ACCORDING TO THE FOLLOWING SCHEME.  IF A DISCONTINUITY IS SITUATED      00000183
+BETWEEN A POINT AND ONE OF ITS NEIGHBORING POINTS, THEN THE NEIGHBORING 00000184
+POINT SHOULD NOT BE INCLUDED IN THE CALCULATION FOR THE NEW VALUE AT    00000185
+THAT POINT.  A NEIGHBORING POINT TO BE IGNORED IS INDICATED BY A 1 IN   00000186
+BIT POSITION 1, 2, 3, OR 4, REFERRING TO THE DIRECTION I+1, I-1, J-1,   00000187
+J+1, RESPECTIVELY.  POINTS FOR WHICH THE POTENTIAL IS SPECIFIED HAVE A  00000188
+1 PLACED IN ALL FOUR OF THESE BIT POSITIONS.                            00000189
+      IF THE POINT J,I IS PART OF AN IDEAL CONDUCTING REGION, THEN BIT  00000190
+POSITION 0 IS SET TO 1.  IF EITHER THE J+1 OR J-1 GRID POINTS ARE PART  00000191
+OF AN IDEAL CONDUCTING REGION THEN A 1 WILL BE IN BIT POSITION 6.       00000192
+      IF THE PROBLEM TO BE COMPUTED IS IN CYLINDRICAL COORDINATES, THEN 00000193
+A 1 WILL BE PUT IN BIT POSITION 5.                                      00000194
+      THE IDENTIFICATION NUMBER FOR IDEAL CONDUCTING REGIONS IS STORED  00000195
+IN BIT LOCATIONS 16 - 7 IN THE B ARRAY.                                 00000196
+                                                                                
+                                                                                
+                   PROGRAM FLOW                                         00000197
+                                                                                
+      THE TITLE CARD IS READ IN AND SAVED (THIS IS THEN PRINTED OUT     00000198
+WITH THE FINAL NUMERICAL VALUES).  THE NEXT DATA CARD IS THEN READ IN   00000199
+AND THE ARRAYS ARE SET UP.  DISCONTINUITIES ARE THEN PUT AROUND THE     00000200
+PERIMETER OF THE B ARRAY.  PROCEDURE PLOT1 SETS UP THE IMAGE ARRAY WITH 00000201
+A BOUNDARY AROUND THE PERIMETER AND BLANKS INTERNALLY.  PROCEDURE REED  00000202
+READS IN THE FIXED POTENTIAL DATA CARDS AND STORES THE POTENTIAL IN THE 00000203
+V[J,I] ARRAY AND SETS TO 1 BIT POSITIONS 1 - 4 IN THE CORRESPONDING     00000204
+LOCATIONS IN THE B ARRAY.                                               00000205
+      IF THERE ARE ANY DISCONTINUITY DATA CARDS, PROCEDURE REED READS   00000206
+THEM IN AND SETS THE APPROPRIATE BIT POSITIONS TO 1 IN THE B ARRAY.     00000207
+      INITIAL ESTIMATES ARE THEN COMPUTED AT ALL INTERIOR GRID POINTS   00000208
+BY PROCEDURE ESTIMATE.                                                  00000209
+      IF THERE ARE ANY IDEAL CONDUCTING REGIONS, THEN THE DATA CARDS    00000210
+ARE READ IN BY PROCEDURE REED.  THE ESTIMATED VALUES PROVIDED BY        00000211
+PROCEDURE ESTIMATE ARE INSERTED IN ARRAY FV (BY WAY OF ARRAY FSUM).     00000212
+      PROCEDURE CALC IS THEN CALLED.  IF THE PROBLEM IS IN CYLINDRICAL  00000213
+COORDINATES, THEN CONSTANTS CA[J] AND CB[J] ARE COMPUTED.               00000214
+      PROCEDURE CALC THEN PERFORMS THE ITERATIVE PROCESS TO COMPUTE THE 00000215
+VALUES OF V[J,I] BY THE METHOD OF SLOR.  WHEN CONVERGENCE HAS BEEN      00000216
+REACHED, THEN THE VALUES ARE PRINTED OUT BY PROCEDURE PRINT.            00000217
+      FOLLOWING THIS, PROCEDURE PLOT MAKES A PASS OVER THE ARRAY V[J,I] 00000218
+AND COMPUTES THE EQUIPOTENTIAL POSITIONS AND INSERTS (VIA PROCEDURE     00000219
+PLOT3) THE PROPER SYMBOL IN THE IMAGE ARRAY.  THE IMAGE ARRAY IS THEN   00000220
+PRINTED OUT.                                                            00000221
+                                                                                
+                                                                                
+                   PROGRAM;                                             00000222
+                                                                                
+FILE FIN (2,10,30);                                                     00000223
+FILE FOUT 4(2,17);                                                      00000224
+LABEL LFINAL;                                                           00000225
+INTEGER NX,NY,NFXD,NDISC,NFLT,NCYL,NH,NV,I,J,K,NSUB,NRD,NCOL;           00000226
+INTEGER LEFT,RIGHT,ABOVE,BELOW,BLANK;                                   00000227
+REAL ERROR,VMIN,VMAX,VAV;                                               00000228
+ALPHA ARRAY A[0:11];                                                    00000229
+FORMAT FERRA("NX OR NY IS TOO SMALL");                                  00000230
+FORMAT FMFIX(/X19,"POTENTIAL",X6,"XA",X8,"YA",X8,"XB",X8,"YB");         00000231
+FORMAT FMDISC(/X29,"XA",X8,"YA",X8,"XB",X8,"YB");                       00000232
+FORMAT FMCOND(/X21,"IDENT. NO.",X3,"XA",X8,"YA",X8,"XB",X8,"YB");       00000233
+FORMAT FMO("NX=",I3,"  NY=",I3,"  TOTAL DATA CARDS   FIXED=",I4,        00000234
+  "  DISCONTINUITY=",I4,"  CONDUCTING=",I4,"  NCYL=",I4,"  ERROR=",F5.2,00000235
+  " PERCENT");                                                          00000236
+FORMAT FTC("THIS PROBLEM IS IN CYLINDRICAL COORDINATES."),              00000237
+  FTR("THIS PROBLEM IS IN RECTANGULAR COORDINATES");                    00000238
+FORMAT FITITLE(12A6),FOTITLE(X20,12A6);                                 00000239
+FORMAT FERRB("SINCE THE ERROR IS TOO SMALL, ERROR=1 PERCENT");          00000240
+WHILE TRUE DO                                                           00000241
+ BEGIN                                                                  00000242
+  READ(FIN,FITITLE,FOR K:=0 STEP 1 UNTIL 11 DO A[K])[LFINAL];           00000243
+  READ(FIN,/,NX,NY,NFXD,NDISC,NFLT,NCYL,ERROR);                         00000244
+  WRITE(FOUT[DBL],FMO,NX,NY,NFXD,NDISC,NFLT,NCYL,ERROR);                00000245
+  IF NX LSS 2 OR NY LSS 2 THEN WRITE(FOUT,FERRA)                        00000246
+   ELSE                                                                 00000247
+    BEGIN                                                               00000248
+     COMMENT THE END THAT GOES WITH THIS BEGIN IS AT THE END OF THE     00000249
+         PROGRAM;                                                       00000250
+     IF ERROR LSS @-6 THEN BEGIN ERROR:=1; WRITE(FOUT,FERRB); END;      00000251
+     IF NCYL LSS 0 THEN  BEGIN NY:=NY+NCYL; WRITE(FOUT,FTC); END        00000252
+       ELSE  BEGIN NCYL:=0; WRITE(FOUT,FTR); END;                       00000253
+     COMMENT COMPUTE THE IMAGE SIZE FOR THE PLOT ROUTINE;               00000254
+     IF NX LSS NY|1.25 THEN BEGIN NV:=48; NH:=80|NX/NY; END             00000255
+      ELSE BEGIN NV:=60|NY/NX; NH:=100; END;                            00000256
+     BEGIN                                                              00000257
+      OWN INTEGER ARRAY B[0:NY,0:NX],FN[0:NFLT];                        00000258
+      OWN REAL ARRAY V[0:NY,0:NX],FV,FSUM[0:NFLT];                      00000259
+      OWN ALPHA ARRAY IMAGE[0:NV,0:(NCOL:=NH DIV 6)];                   00000260
+COMMENT  THE FOLLOWING SEVERAL PAGES CONSISTS OF PROCEDURES;            00000261
+PROCEDURE PLOT1;                                                        00000262
+  COMMENT PLOT1 INITIALIZES THE IMAGE ARRAY;                            00000263
+ BEGIN ALPHA RHS;                                                       00000264
+  CASE NH MOD 6 OF                                                      00000265
+   BEGIN                                                                00000266
+    BEGIN RHS:="I     ";IMAGE[0,NCOL]:=IMAGE[NV,NCOL]:="+     ";END;    00000267
+    BEGIN RHS:=" I    ";IMAGE[0,NCOL]:=IMAGE[NV,NCOL]:="-+    ";END;    00000268
+    BEGIN RHS:="  I   ";IMAGE[0,NCOL]:=IMAGE[NV,NCOL]:="--+   ";END;    00000269
+    BEGIN RHS:="   I  ";IMAGE[0,NCOL]:=IMAGE[NV,NCOL]:="---+  ";END;    00000270
+    BEGIN RHS:="    I ";IMAGE[0,NCOL]:=IMAGE[NV,NCOL]:="----+ ";END;    00000271
+    BEGIN RHS:="     I";IMAGE[0,NCOL]:=IMAGE[NV,NCOL]:="-----+";END;    00000272
+   END;                                                                 00000273
+  IMAGE[0,0]:=IMAGE[NV,0]:="+-----";                                    00000274
+  FOR I:=NCOL-1 STEP -1 UNTIL 1 DO IMAGE[0,I]:=IMAGE[NV,I]:="------";   00000275
+  FOR J:=NV-1 STEP -1 UNTIL 1 DO                                        00000276
+   BEGIN                                                                00000277
+    IMAGE[J,0]:="I     ";  IMAGE[J,NCOL]:=RHS;                          00000278
+    FOR I:=NCOL-1 STEP -1 UNTIL 1 DO IMAGE[J,I]:="      ";              00000279
+   END FORJ;                                                            00000280
+ END PROCPLOT1;                                                         00000281
+PROCEDURE PLOT3(Y,X,CHAR); REAL Y,X; ALPHA CHAR;                        00000282
+  COMMENT PLOT3 INSERTS CHARACTERS INTO IMAGE AS DETERMINED BY PLOT     00000283
+     AND ALSO REED;                                                     00000284
+ BEGIN INTEGER I;                                                       00000285
+  CASE (I:=NH|X/NX) MOD 6 OF                                            00000286
+   BEGIN                                                                00000287
+    IMAGE[NV|Y/NY,I DIV 6].[35:6]:=CHAR.[5:6];                          00000288
+    IMAGE[NV|Y/NY,I DIV 6].[29:6]:=CHAR.[5:6];                          00000289
+    IMAGE[NV|Y/NY,I DIV 6].[23:6]:=CHAR.[5:6];                          00000290
+    IMAGE[NV|Y/NY,I DIV 6].[17:6]:=CHAR.[5:6];                          00000291
+    IMAGE[NV|Y/NY,I DIV 6].[11:6]:=CHAR.[5:6];                          00000292
+    IMAGE[NV|Y/NY,I DIV 6].[5:6]:=CHAR.[5:6];                           00000293
+   END;                                                                 00000294
+ END PROCPLOT3;                                                         00000295
+PROCEDURE PLOT;                                                         00000296
+  COMMENT PLOT DETERMINES EQUIPOTENTIAL POSITIONS AND PRINTS OUT        00000297
+     THE IMAGE;                                                         00000298
+ BEGIN                                                                  00000299
+  FORMAT FMA("Y=",I3,X1,21A6),FMB(X6,21A6),FMC(X5,"X= 0",X*,"X=",I3);   00000300
+  FORMAT FMD("LEGEND- V = MAXIMUM POTENTIAL =",R12.4,X5,                00000301
+   "0 = MINIMUM POTENTIAL =",R12.4/X8,"* = CONSTANT POTENTIAL, ",       00000302
+   "OTHER THAN MAXIMUM OR MINIMUM, SPECIFIED ON A BOUNDARY"/X8,         00000303
+   ". = CONSTANT POTENTIAL, OTHER THAN MAXIMUM OR MINIMUM, ",           00000304
+   "FORCED ON A BOUNDARY BY THE SOLUTION (I.E. AN IDEAL CONDUCTOR) "    00000305
+    /X8,"X = DISCONTINUITY"/X8,"2,4,6,8, = EQUIPOTENTIALS, ",3R14.4,    00000306
+   " AND",R14.4);                                                       00000307
+  OWN INTEGER KVA,KVB;                                                  00000308
+  OWN REAL VA,VB,R;                                                     00000309
+  OWN ALPHA CHAR;                                                       00000310
+  OWN ALPHA ARRAY CH[0:5];                                              00000311
+  OWN REAL ARRAY VINCR[0:5];                                            00000312
+  REAL CONST,INCR;                                                      00000313
+  BOOLEAN PROCEDURE TEST;                                               00000314
+   BEGIN INTEGER SUBSCR;                                                00000315
+    IF KVA=KVB THEN TEST:=FALSE                                         00000316
+     ELSE                                                               00000317
+      BEGIN                                                             00000318
+       TEST:=TRUE;                                                      00000319
+       CHAR:=CH[(SUBSCR:=IF KVB GTR KVA THEN KVA+1 ELSE KVA)];          00000320
+       R:=(VINCR[SUBSCR]-VA)/(VB-VA);                                   00000321
+      END;                                                              00000322
+   END PROCTEST;                                                        00000323
+  INCR:=(VMAX-VMIN)/5;                                                  00000324
+  CONST:=5/(VMAX-VMIN);                                                 00000325
+  FOR K:=5 STEP -1 UNTIL 0 DO VINCR[K]:=INCR|K+VMIN;                    00000326
+  FILL CH[*] WITH "0", "2", "4", "6", "8", "V";                         00000327
+  FOR J:=NY STEP -1 UNTIL 0 DO FOR I:=NX STEP -1 UNTIL 0 DO             00000328
+   BEGIN KVA:=ENTIER(((VA:=V[J,I])-VMIN)|CONST);                        00000329
+    IF B[J,I].[4:1]=0 THEN                                              00000330
+      BEGIN KVB:=ENTIER(((VB:=V[J+1,I])-VMIN)|CONST);                   00000331
+       IF TEST THEN PLOT3(J+R,I,CHAR);                                  00000332
+      END;                                                              00000333
+    IF B[J,I].[1:1]=0 THEN                                              00000334
+      BEGIN KVB:=ENTIER(((VB:=V[J,I+1])-VMIN)|CONST);                   00000335
+       IF TEST THEN PLOT3(J,I+R,CHAR);                                  00000336
+      END                                                               00000337
+     ELSE IF B[J,I].[4:5]=30 THEN  PLOT3(J,I,IF VA=VMIN THEN            00000338
+                   "0" ELSE IF VA=VMAX THEN "V" ELSE "*");              00000339
+   END FRIJ;                                                            00000340
+  WRITE(FOUT,FMA,NY-NCYL,FOR I:=0 STEP 1 UNTIL NCOL DO IMAGE[NV,I]);    00000341
+  FOR J:=NV-1 STEP -1 UNTIL 1 DO                                        00000342
+    WRITE(FOUT,FMB,FOR I:=0 STEP 1 UNTIL NCOL DO IMAGE[J,I]);           00000343
+  WRITE(FOUT,FMA,-NCYL,FOR I:=0 STEP 1 UNTIL NCOL DO IMAGE[0,I]);       00000344
+  WRITE(FOUT[DBL],FMC,NH-7,NX);                                         00000345
+  WRITE(FOUT,FMD,VMAX,VMIN,FOR K:=1 STEP 1 UNTIL 4 DO VINCR[K]);        00000346
+  WRITE(FOUT[PAGE]);                                                    00000347
+ END PROCPLOT;                                                          00000348
+PROCEDURE REED;                                                         00000349
+  COMMENT REED READS IN THE DATA CARDS FOR FIXED (NSUB=0), DISCONTINUITY00000350
+   (NSUB=1), AND IDEAL CONDUCTING (NSUB=2) BOUNDARY CONDITIONS.         00000351
+   APPROPRIATE BITS ARE PUT IN B[], POTENTIALS IN V[], CHARACTERS IN    00000352
+   IMAGE[].  IDEAL CONDUCTING REGIONS ARE SET UP SO THAT ONLY THOSE     00000353
+   POINTS THAT ARE EXTERNAL TO A REGION ARE USED IN COMPUTING THE       00000354
+   VALUE OF THE REGION.  THIS IS PROBABLY THE TOUGHEST OF ALL THE       00000355
+   ROUTINES TO FIGURE OUT - MY SYMPATHIES ARE WITH YOU;                 00000356
+ BEGIN INTEGER JRD,COUNT,START;                                         00000357
+  OWN REAL POT,XI,YJ;                                                   00000358
+  REAL XA,XB,YA,YB,SLOPE,INTERCEPT;                                     00000359
+  FORMAT FMERRA ("THE PRECEDING DATA CARD IS NOT WITHIN LIMITS");       00000360
+  FORMAT FF("FIXED DATA CARD",R13.5,4R10.2);                            00000361
+  FORMAT FMERRB("THE PRECEDING IDENT NO IS NO GOOD SO IT IS SET = 1");  00000362
+  FORMAT FDISC("DISCONTINUITY DATA CARD",4R10.2);                       00000363
+  FORMAT FCOND("CONDUCTING DATA CARD",F8.0,4R10.2);                     00000364
+  BOOLEAN PROCEDURE CHECK(N,NL); REAL N; INTEGER NL;                    00000365
+   BEGIN CHECK:=IF N LSS -0.4 OR N GTR NL+0.4 THEN TRUE ELSE FALSE;     00000366
+   END PROCCHECK;                                                       00000367
+  PROCEDURE TEST(Z); REAL Z;                                            00000368
+   BEGIN FORMAT FMERRC("POSSIBLE TROUBLE NEAR",2F10.3," TRY MOVING THE",00000369
+          " PRECEDING BOUNDARY A HAIR.");                               00000370
+    IF Z-ENTIER(Z) GTR 0.99999999 OR Z-ENTIER(Z) LSS @-8                00000371
+        THEN WRITE(FOUT,FMERRC,XI,YJ);                                  00000372
+   END PROCTEST;                                                        00000373
+  PROCEDURE FLOAT(Y,X); REAL Y,X;                                       00000374
+    COMMENT FLOAT SETS UP POINTS WITHIN IDEAL CONDUCTING REGIONS;       00000375
+   BEGIN INTEGER BJI;                                                   00000376
+    BOOLEAN PROCEDURE INCR(YJ,XI); REAL YJ,XI;                          00000377
+     BEGIN BOOLEAN CH;                                                  00000378
+      INCR:=CH:=(B[YJ,XI].[16:10]=POT);                                 00000379
+      FN[POT]:=FN[POT]+(IF CH THEN -1 ELSE 1);                          00000380
+      FSUM[POT]:=FSUM[POT]+(IF CH THEN -V[Y,X] ELSE V[YJ,XI]);          00000381
+     END PROCINCR;                                                      00000382
+    BJI:=B[Y,X];                                                        00000383
+    IF BJI.[0:1]=0 AND BJI.[4:4] NEQ 15 THEN                            00000384
+     BEGIN PLOT3(INTEGER(Y),INTEGER(X),".");                            00000385
+      BJI:=BJI&POT[16:9:10]&1[0:0:1];                                   00000386
+      IF BJI.[4:1]=0 THEN                                               00000387
+       BEGIN                                                            00000388
+        IF INCR(Y+1,X) THEN BEGIN BJI.[4:1]:=1; B[Y+1,X].[3:1]:=1; END  00000389
+            ELSE B[Y+1,X].[6:1]:=1;                                     00000390
+       END;                                                             00000391
+      IF BJI.[3:1]=0 THEN                                               00000392
+       BEGIN                                                            00000393
+        IF INCR(Y-1,X) THEN BEGIN BJI.[3:1]:=1; B[Y-1,X].[4:1]:=1; END  00000394
+            ELSE B[Y-1,X].[6:1]:=1;                                     00000395
+       END;                                                             00000396
+      IF BJI.[2:1]=0 THEN IF INCR(Y,X-1) THEN                           00000397
+        BEGIN BJI.[2:1]:=1; B[Y,X-1].[1:1]:=1; END;                     00000398
+      IF BJI.[1:1]=0 THEN IF INCR(Y,X+1) THEN                           00000399
+        BEGIN BJI.[1:1]:=1; B[Y,X+1].[2:1]:=1; END;                     00000400
+      B[Y,X]:=BJI;                                                      00000401
+     END IFBJI NEQ0;                                                    00000402
+   END PROCFLOAT;                                                       00000403
+  FOR JRD:=1 STEP 1 UNTIL NRD DO                                        00000404
+   BEGIN                                                                00000405
+    CASE NSUB OF                                                        00000406
+     BEGIN                                                              00000407
+      BEGIN                                                             00000408
+       READ(FIN,/,POT,XA,YA,XB,YB); WRITE(FOUT,FF,POT,XA,YA,XB,YB);     00000409
+      END;                                                              00000410
+      BEGIN                                                             00000411
+       READ(FIN,/,XA,YA,XB,YB); WRITE(FOUT,FDISC,XA,YA,XB,YB);          00000412
+      END;                                                              00000413
+      BEGIN                                                             00000414
+       READ(FIN,/,POT,XA,YA,XB,YB); WRITE(FOUT,FCOND,POT,XA,YA,XB,YB);  00000415
+      END;                                                              00000416
+     END;                                                               00000417
+    IF NCYL LSS 0 THEN BEGIN YA:=YA+NCYL; YB:=YB+NCYL; END;             00000418
+    IF CHECK(XA,NX) OR CHECK(XB,NX) OR CHECK(YA,NY) OR CHECK(YB,NY)     00000419
+      THEN WRITE(FOUT,FMERRA)                                           00000420
+     ELSE                                                               00000421
+      BEGIN                                                             00000422
+       COMMENT THIS CASE STATEMENT TAKES CARE OF BOTH ENDS OF THE       00000423
+         BOUNDARY;                                                      00000424
+       CASE NSUB OF                                                     00000425
+        BEGIN                                                           00000426
+         BEGIN                                                          00000427
+          B[YA,XA]:=B[YB,XB]:=30;                                       00000428
+          V[YA,XA]:=V[YB,XB]:=POT;                                      00000429
+          COMMENT THE NEXT FEW LINES COMPUTE THE MAX AND MIN POTENTIAL; 00000430
+          IF JRD=1 THEN VMIN:=VMAX:=POT                                 00000431
+            ELSE                                                        00000432
+             BEGIN                                                      00000433
+              IF POT LSS VMIN THEN VMIN:=POT                            00000434
+                ELSE IF POT GTR VMAX THEN VMAX:=POT;                    00000435
+             END;                                                       00000436
+         END;                                                           00000437
+         ;                                                              00000438
+         BEGIN                                                          00000439
+          IF POT LSS 1 OR POT GTR NFLT THEN                             00000440
+            BEGIN WRITE(FOUT,FMERRB);  POT:=1; END;                     00000441
+          FLOAT(YA,XA);                                                 00000442
+          FLOAT(YB,XB);                                                 00000443
+         END;                                                           00000444
+        END OFCASE;                                                     00000445
+       COMMENT IF THE BOUNDARY CROSSES ANY GRID LINES IN THE X          00000446
+         DIRECTION, DO THE FOLLOWING;                                   00000447
+       IF (COUNT:=ENTIER(XB)-ENTIER(XA)) NEQ 0 THEN                     00000448
+        BEGIN                                                           00000449
+         SLOPE:=(YB-YA)/(XB-XA);                                        00000450
+          COMMENT START FROM THE LOWEST END;                            00000451
+         IF COUNT GTR 0 THEN                                            00000452
+           BEGIN START:=XA+0.5; INTERCEPT:=YA+(START-XA)|SLOPE; END     00000453
+          ELSE BEGIN START:=XB+0.5; INTERCEPT:=YB+(START-XB)|SLOPE;END; 00000454
+          COMMENT TAKE CARE OF GRID POINTS THAT ARE NEAR GRID           00000455
+            LINE CROSSINGS;                                             00000456
+         FOR I:=ABS(COUNT)-1 STEP -1 UNTIL 0 DO                         00000457
+          BEGIN                                                         00000458
+           XI:=START+I;                                                 00000459
+           YJ:=INTERCEPT+I|SLOPE;                                       00000460
+           CASE NSUB OF                                                 00000461
+            BEGIN                                                       00000462
+             BEGIN B[YJ,XI]:=30; V[YJ,XI]:=POT; END;                    00000463
+             BEGIN                                                      00000464
+              TEST(YJ);                                                 00000465
+              IF YJ GEQ 0 AND YJ LEQ NY THEN                            00000466
+               BEGIN                                                    00000467
+                B[ENTIER(YJ),XI].[4:1]:=1;                              00000468
+                B[YJ+0.5,XI].[3:1]:=1;                                  00000469
+                PLOT3(YJ,XI,"X");                                       00000470
+               END;                                                     00000471
+             END;                                                       00000472
+             FLOAT(YJ,XI);                                              00000473
+            END OFCASE;                                                 00000474
+          END FRI;                                                      00000475
+        END FRCOUNT;                                                    00000476
+        COMMENT TAKE CARE OF Y DIRECTION GRID LINE CROSSINGS;           00000477
+       IF (COUNT:=ENTIER(YB)-ENTIER(YA)) NEQ 0 THEN                     00000478
+        BEGIN                                                           00000479
+         SLOPE:=(XB-XA)/(YB-YA);                                        00000480
+         IF COUNT GTR 0 THEN                                            00000481
+           BEGIN START:=YA+0.5; INTERCEPT:=XA+(START-YA)|SLOPE; END     00000482
+          ELSE BEGIN START:=YB+0.5; INTERCEPT:=XB+(START-YB)|SLOPE; END;00000483
+         FOR J:=ABS(COUNT)-1 STEP -1 UNTIL 0 DO                         00000484
+          BEGIN                                                         00000485
+           XI:=INTERCEPT+J|SLOPE;                                       00000486
+           YJ:=START+J;                                                 00000487
+           CASE NSUB OF                                                 00000488
+            BEGIN                                                       00000489
+             BEGIN B[YJ,XI]:=30;V[YJ,XI]:=POT; END;                     00000490
+             BEGIN                                                      00000491
+              TEST(XI);                                                 00000492
+              IF XI GEQ 0 AND XI LEQ NX THEN                            00000493
+               BEGIN                                                    00000494
+                B[YJ,ENTIER(XI)].[1:1]:=1;                              00000495
+                B[YJ,XI+0.5].[2:1]:=1;                                  00000496
+                PLOT3(YJ,XI,"X");                                       00000497
+               END;                                                     00000498
+             END;                                                       00000499
+             FLOAT(YJ,XI);                                              00000500
+            END OFCASE;                                                 00000501
+          END FRJ;                                                      00000502
+        END FRCOUNT;                                                    00000503
+      END IFNOTCHECK;                                                   00000504
+   END FRJRD;                                                           00000505
+ END PROCREED;                                                          00000506
+PROCEDURE ESTIMATE;                                                     00000507
+  COMMENT MAKES INITIAL ESTIMATES AT ALL INTERIOR GRID POINTS;          00000508
+ BEGIN                                                                  00000509
+  INTEGER NR,NL,IP,ISTART,ISTOP;                                        00000510
+  REAL LN,RN,BN,AN,VL,VR,DENOM;                                         00000511
+  BOOLEAN ARRAY BA,BB[0:NX];                                            00000512
+  INTEGER ARRAY NA,NB[0:NX];                                            00000513
+  REAL ARRAY VA,VB[0:NX];                                               00000514
+  FOR I:=NX STEP -1 UNTIL 0 DO NB[I]:=0;                                00000515
+  COMMENT A CHECK IS MADE ABOVE AND BELOW (I.E. A AND B) TO SEE HOW FAR 00000516
+   AWAY THE BOUNDARY IS AND TO SEE IF IT IS A FIXED POTENTIAL;          00000517
+  FOR J:=NY STEP -1 UNTIL 0 DO FOR I:=NX STEP -1 UNTIL 0 DO             00000518
+    IF B[J,I].[4:4]=15 THEN NB[I]:=0                                    00000519
+     ELSE                                                               00000520
+      BEGIN                                                             00000521
+       COMMENT IT THE POINT IS NOT A FIXED POTENTIAL, THEN DO THE       00000522
+          FOLLOWING;                                                    00000523
+       IF B[J,I].[1:1]=0 THEN BEGIN RN:=NR:=1; VR:=V[J,I+1]; END        00000524
+         ELSE RN:=NR:=0;                                                00000525
+       I:=1+(ISTART:=I);                                                00000526
+        COMMENT THE DO CHECKS TO THE LEFT UNTIL IT HITS A BOUNDARY;     00000527
+       DO                                                               00000528
+        BEGIN                                                           00000529
+         I:=I-1;                                                        00000530
+         NA[I]:=NA[I]+1;                                                00000531
+         IF (NB[I]:=NB[I]-1) LSS 0 THEN                                 00000532
+          BEGIN                                                         00000533
+           IF B[J,I].[4:1]=0 THEN                                       00000534
+             BEGIN BA[I]:=TRUE; NA[I]:=1; VA[I]:=V[J+1,I]; END          00000535
+            ELSE BEGIN BA[I]:=FALSE; NA[I]:=0; END;                     00000536
+           NB[I]:=-1; WHILE B[J-(NB[I]:=NB[I]+1),I].[3:1]=0 DO ;        00000537
+           IF B[J-NB[I],I].[4:4]=15 THEN                                00000538
+             BEGIN VB[I]:=V[J-NB[I],I]; BB[I]:=TRUE; END                00000539
+            ELSE BB[I]:=FALSE;                                          00000540
+          END;                                                          00000541
+        END                                                             00000542
+       UNTIL B[J,I].[2:1]=1;                                            00000543
+       NL:=ISTART-I;                                                    00000544
+       IF B[J,I].[4:4]=15 THEN BEGIN LN:=1; VL:=V[J,I]; ISTOP:=I+1; END 00000545
+         ELSE BEGIN LN:=0; ISTOP:=I; END;                               00000546
+        COMMENT WORK FROM RIGHT TO LEFT MAKING INITIAL ESTIMATES;       00000547
+       FOR IP:=ISTART STEP -1 UNTIL ISTOP DO                            00000548
+        BEGIN                                                           00000549
+         IF RN GTR 0 THEN RN:=1/(NR|(NR+NL));                           00000550
+         IF LN GTR 0 THEN LN:=1/(NL|(NL+NR));                           00000551
+         BN:=IF BB[IP] THEN 1/(NB[IP]|(NB[IP]+NA[IP])) ELSE 0;          00000552
+         AN:=IF BA[IP] THEN 1/(NA[IP]|(NA[IP]+NB[IP])) ELSE 0;          00000553
+         V[J,IP]:=IF (DENOM:=LN+RN+BN+AN) = 0 THEN VAV                  00000554
+           ELSE (VB[IP]|BN+VA[IP]|AN+VR|RN+VL|LN)/DENOM;                00000555
+         NL:=NL-1;                                                      00000556
+         NR:=NR+1;                                                      00000557
+        END;                                                            00000558
+      END NEQ15;                                                        00000559
+ END PROCESTIMATE;                                                      00000560
+PROCEDURE CALC;                                                         00000561
+  COMMENT CALC CALCULATES THE POTENTIAL VALUES BY SLOR;                 00000562
+ BEGIN                                                                  00000563
+  OWN BOOLEAN CONVERGE;                                                 00000564
+  OWN INTEGER SITA,ITER;                                                00000565
+  OWN REAL DELTA;                                                       00000566
+  INTEGER JA,JB,NI,IA,IP,SITB;                                          00000567
+  REAL CN,VTEMP,RESID,RESIDA,RELAX,RATIO,ROOT,CAB,EPS,FJ,FI;            00000568
+  REAL ARRAY C,T[0:NX+1],CA,CB[0:IF NCYL LSS 0 THEN NY ELSE 0];         00000569
+  REAL PROCEDURE P(J,I); INTEGER J,I;                                   00000570
+   BEGIN                                                                00000571
+    P:=IF B[J,I].[0:1]=0 THEN V[J,I] ELSE FV[B[J,I].[16:10]];           00000572
+   END PROCP;                                                           00000573
+  PROCEDURE PRINT;                                                      00000574
+    COMMENT PRINT PRINTS OUT THE POTENTIAL VALUES;                      00000575
+   BEGIN                                                                00000576
+    FORMAT FCONV(/"CONVERGENCE HAS BEEN REACHED. THE NUMBER OF ",       00000577
+      "ITERATIONS WAS ",I6,". THE VALUES ARE PRINTED ON THE NEXT ",     00000578
+      "PAGE.");                                                         00000579
+    FORMAT FNCONV(/"CONVERGENCE HAS NOT BEEN REACHED AFTER",I6,         00000580
+      " ITERATIONS. THE VALUES REACHED SO FAR ARE PRINTED BELOW.");     00000581
+    FORMAT FMC(X5,"X=",I6,10I11/100(X11,10I11/));                       00000582
+    FORMAT FMD("Y=",I4,11R11.5/100(X13,10R11.5/));                      00000583
+    IF NFLT GTR 0 THEN                                                  00000584
+      FOR J:=NY STEP -1 UNTIL 0 DO FOR I:=NX STEP -1 UNTIL 0 DO         00000585
+        IF B[J,I].[0:1] NEQ 0 THEN V[J,I]:=FV[B[J,I].[16:10]];          00000586
+    IF CONVERGE THEN                                                    00000587
+      BEGIN WRITE(FOUT,FCONV,ITER); WRITE(FOUT[PAGE]); END              00000588
+     ELSE WRITE(FOUT[DBL],FNCONV,ITER);                                 00000589
+    WRITE (FOUT,FMC,FOR I:=0 STEP 1 UNTIL NX DO I);                     00000590
+    FOR J:=NY STEP -1 UNTIL 0 DO                                        00000591
+      WRITE(FOUT,FMD,J-NCYL,FOR I:=0 STEP 1 UNTIL NX DO V[J,I]);        00000592
+   END PROCPRINT;                                                       00000593
+  T[1]:=0.25; FOR K:=1 STEP 1 UNTIL NX DO T[K+1]:=1/(4-T[K]);           00000594
+  IA:=ITER:=SITB:=0;                                                    00000595
+  SITA:=RELAX:=1;                                                       00000596
+  EPS:=ERROR|@-2;                                                       00000597
+  IF NCYL LSS 0 THEN FOR J:=NY STEP -1 UNTIL 0 DO                       00000598
+   BEGIN                                                                00000599
+     COMMENT IF CYL COORD, THEN COMPUTE CONSTANTS;                      00000600
+    CA[J]:=1+(CAB:=0.5/(J-NCYL)); CB[J]:=1-CAB;                         00000601
+   END;                                                                 00000602
+  DO                                                                    00000603
+   BEGIN                                                                00000604
+    CONVERGE:=TRUE;                                                     00000605
+    FOR J:=NY STEP -1 UNTIL 0 DO                                        00000606
+     BEGIN                                                              00000607
+      JB:=-2+(JA:=J+1);                                                 00000608
+      FOR NI:=0 STEP 1 UNTIL NX DO                                      00000609
+       IF B[J,NI].[4:4] NEQ 15 THEN                                     00000610
+        BEGIN                                                           00000611
+         IF B[J,NI].[0:1]=0 THEN                                        00000612
+          BEGIN                                                         00000613
+            COMMENT IF THE POINTS ARE NOT FIXED OR AN IDEAL COND THEN   00000614
+              COMPUTE THEIR NEW VALUE ACCORDING TO SLOR. IF YOU DONT    00000615
+              KNOW WHAT SLOR IS, TURN BACK BEFORE IT IS TOO LATE;       00000616
+           C[0]:=P(J,NI-1+B[J,NI].[2:1]);                               00000617
+            COMMENT STEP FORWARD AND COLLECT VALUES;                    00000618
+           DO                                                           00000619
+            BEGIN                                                       00000620
+             CASE B[J,(IP:=NI+IA)].[6:4] OF                             00000621
+              BEGIN                                                     00000622
+               CN:=V[JA,IP]+V[JB,IP];                                   00000623
+               CN:=V[JA,IP]+V[J,IP];                                    00000624
+               CN:=V[J,IP]+V[JB,IP];                                    00000625
+               CN:=2|V[J,IP];                                           00000626
+               CN:=CA[J]|V[JA,IP]+CB[J]|V[JB,IP];                       00000627
+               CN:=CA[J]|V[JA,IP]+CB[J]|V[J,IP];                        00000628
+               CN:=CA[J]|V[J,IP]+CB[J]|V[JB,IP];                        00000629
+               CN:=2|V[J,IP];                                           00000630
+               CN:=P(JA,IP)+P(JB,IP);                                   00000631
+               CN:=P(JA,IP)+V[J,IP];                                    00000632
+               CN:=V[J,IP]+P(JB,IP);                                    00000633
+                ;                                                       00000634
+               CN:=CA[J]|P(JA,IP)+CB[J]|P(JB,IP);                       00000635
+               CN:=CA[J]|P(JA,IP)+CB[J]|V[J,IP];                        00000636
+               CN:=CA[J]|V[J,IP]+CB[J]|P(JB,IP);                        00000637
+                ;                                                       00000638
+              END;                                                      00000639
+             IA:=IA+1;                                                  00000640
+             C[IA]:=(CN+C[IA-1])|T[IA];                                 00000641
+            END                                                         00000642
+           UNTIL B[J,IP].[1:2] NEQ 0;                                   00000643
+           NI:=NI+IA-1;                                                 00000644
+             COMMENT TAKE CARE OF THE END POINT;                        00000645
+           IF B[J,IP].[4:4]=15 THEN                                     00000646
+              BEGIN VTEMP:=V[J,IP]; IP:=IP-1; IA:=IA-1; END             00000647
+            ELSE IF B[J,IP].[0:1]=1 THEN                                00000648
+                   BEGIN VTEMP:=FV[B[J,IP].[16:10]];                    00000649
+                     IP:=IP-1;  IA:=IA-1;  NI:=NI-1;                    00000650
+                   END                                                  00000651
+            ELSE VTEMP:=V[J,IP];                                        00000652
+             COMMENT COMPUTE NEW VALUES BY BACK SUBSTITUTION;           00000653
+           DO                                                           00000654
+            BEGIN                                                       00000655
+             VTEMP:=T[IA]|VTEMP+C[IA];                                  00000656
+             V[J,IP]:=(DELTA:=VTEMP-V[J,IP])|RELAX+V[J,IP];             00000657
+              COMMENT CHECK FOR CONVERGENCE;                            00000658
+             CASE SITA OF                                               00000659
+              BEGIN                                                     00000660
+                ;                                                       00000661
+               IF ABS(DELTA) GTR EPS THEN BEGIN CONVERGE:=FALSE;        00000662
+                     SITA:=SITA-1; END;                                 00000663
+               RESID:=DELTA*2+RESID;                                    00000664
+               BEGIN                                                    00000665
+                 IF ABS(DELTA) GTR EPS THEN BEGIN CONVERGE:=FALSE;      00000666
+                       SITA:=SITA-1; END;                               00000667
+                 RESID:=DELTA*2+RESID;                                  00000668
+               END;                                                     00000669
+              END CASESITA;                                             00000670
+             IP:=IP-1;                                                  00000671
+            END                                                         00000672
+           UNTIL (IA:=IA-1)=0;                                          00000673
+          END                                                           00000674
+         ELSE                                                           00000675
+          BEGIN                                                         00000676
+            COMMENT SINCE B[].[0:1]=0, THE POINT IS AN IDEAL COND;      00000677
+           CASE B[J,NI].[2:2] OF                                        00000678
+            BEGIN                                                       00000679
+             FI:=P(J,NI-1)+P(J,NI+1);                                   00000680
+             FI:=P(J,NI-1);                                             00000681
+             FI:=P(J,NI+1);                                             00000682
+             FI:=0;                                                     00000683
+            END;                                                        00000684
+           CASE B[J,NI].[5:3] OF                                        00000685
+            BEGIN                                                       00000686
+             FJ:=P(JA,NI)+P(JB,NI);                                     00000687
+             FJ:=P(JA,NI);                                              00000688
+             FJ:=P(JB,NI);                                              00000689
+             FJ:=0;                                                     00000690
+             FJ:=CA[J]|P(JA,NI)+CB[J]|P(JB,NI);                         00000691
+             FJ:=CA[J]|P(JA,NI);                                        00000692
+             FJ:=CB[J]|P(JB,NI);                                        00000693
+             FJ:=0;                                                     00000694
+            END;                                                        00000695
+           FSUM[B[J,NI].[16:10]]:=FSUM[B[J,NI].[16:10]]+FI+FJ;          00000696
+          END;                                                          00000697
+        END IFNEQ15;                                                    00000698
+     END FRJ;                                                           00000699
+    FOR K:=NFLT STEP -1 UNTIL 1 DO                                      00000700
+      BEGIN                                                             00000701
+         COMMENT COMPUTE THE NEW VALUES FOR THE IDEAL COND (IF ANY);    00000702
+       IF (DELTA:=FSUM[K]/FN[K]-FV[K]) GTR EPS THEN CONVERGE:=FALSE;    00000703
+       FV[K]:=FV[K]+RELAX|DELTA;                                        00000704
+       RESID:=RESID+DELTA*2;                                            00000705
+       FSUM[K]:=0;                                                      00000706
+      END FRK;                                                          00000707
+    SITA:=1;                                                            00000708
+    ITER:=ITER+1;                                                       00000709
+      COMMENT COMPUTE THE OVERRELAX FACTOR AND EPSILON;                 00000710
+    CASE SITB OF                                                        00000711
+      BEGIN                                                             00000712
+       IF ITER =5 THEN BEGIN SITB:=1; RELAX:=1.375; END;                00000713
+       IF ITER MOD 10=0 THEN BEGIN SITA:=3; RESID:=0; SITB:=2; END;     00000714
+       BEGIN SITA:=SITB:=3; RESIDA:=RESID; RESID:=0; END;               00000715
+       BEGIN SITA:=SITB:=1;                                             00000716
+         RATIO:=SQRT(RESID/RESIDA);                                     00000717
+         IF RATIO GTR 0 AND RATIO LSS 1 THEN                            00000718
+           BEGIN                                                        00000719
+            EPS:=ERROR|(1-RATIO)/RATIO;                                 00000720
+            RELAX:=IF (ROOT:=1-((RATIO+RELAX-1)/RELAX)*2/RATIO) GTR 0   00000721
+                THEN 2.5/(1+SQRT(ROOT))-0.5 ELSE ABS(RELAX)|0.9;        00000722
+           END                                                          00000723
+          ELSE RELAX:=ABS(RELAX)|0.9;                                   00000724
+       END;                                                             00000725
+      END OFSITB;                                                       00000726
+     IF ITER MOD 500 = 0 THEN PRINT;                                    00000727
+   END                                                                  00000728
+  UNTIL CONVERGE;                                                       00000729
+  PRINT;                                                                00000730
+ END PROCCALC;                                                          00000731
+COMMENT WE HAVE FINALLY MADE IT BACK TO THE MAIN PROGRAM;               00000732
+        COMMENT INITIALIZE B[];                                         00000733
+      ABOVE:=BELOW:=LEFT:=RIGHT:=BLANK:=0;                              00000734
+      RIGHT.[1:1]:=1;  LEFT.[2:1]:=1;                                   00000735
+      BELOW.[3:1]:=1;  ABOVE.[4:1]:=1;                                  00000736
+      B[ 0, 0]:=BELOW & 1[2:0:1];                                       00000737
+      B[ 0,NX]:=BELOW & 1[1:0:1];                                       00000738
+      B[NY, 0]:=ABOVE & 1[2:0:1];                                       00000739
+      B[NY,NX]:=ABOVE & 1[1:0:1];                                       00000740
+      IF NCYL LSS 0 THEN                                                00000741
+        BEGIN                                                           00000742
+          BLANK.[5:1]:=1;                                               00000743
+          RIGHT.[5:1]:=1;  LEFT.[5:1]:=1;                               00000744
+          BELOW.[5:1]:=1;  ABOVE.[5:1]:=1;                              00000745
+          B[ 0, 0].[5:1]:=1;                                            00000746
+          B[ 0,NX].[5:1]:=1;                                            00000747
+          B[NY, 0].[5:1]:=1;                                            00000748
+          B[NY,NX].[5:1]:=1;                                            00000749
+        END;                                                            00000750
+      FOR J:=NY-1 STEP -1 UNTIL 1 DO                                    00000751
+       BEGIN                                                            00000752
+        B[J,0]:=LEFT;                                                   00000753
+        B[J,NX]:=RIGHT;                                                 00000754
+        FOR I:=NX-1 STEP -1 UNTIL 1 DO B[J,I]:=BLANK;                   00000755
+       END;                                                             00000756
+      FOR I:=NX-1 STEP -1 UNTIL 1 DO                                    00000757
+              BEGIN B[0,I]:=BELOW; B[NY,I]:=ABOVE;  END;                00000758
+      PLOT1;                                                            00000759
+        COMMENT READ IN THE DATA CARDS;                                 00000760
+      WRITE(FOUT,FMFIX); NSUB:=0; NRD:=NFXD; REED;                      00000761
+      IF NDISC GTR 0 THEN                                               00000762
+        BEGIN WRITE(FOUT,FMDISC); NSUB:=1; NRD:=NDISC; REED; END;       00000763
+      ERROR:=(VMAX-VMIN)|ERROR|0.01;                                    00000764
+      VAV:=(VMAX+VMIN)/2;                                               00000765
+      ESTIMATE;                                                         00000766
+      IF NFLT GTR 0 THEN                                                00000767
+       BEGIN                                                            00000768
+        WRITE(FOUT,FMCOND);                                             00000769
+        FOR K:=NFLT STEP -1 UNTIL 0 DO FN[K]:=FSUM[K]:=0;               00000770
+        NSUB:=2;  NRD:=NFLT;  REED;                                     00000771
+          COMMENT REDUCE NFLT TO BE EQUAL TO THE NUMBER OF DIFFERENT    00000772
+             IDEAL COND REGIONS;                                        00000773
+        NFLT:=NFLT+1; WHILE FN[(NFLT:=NFLT-1)]=0 DO ;                   00000774
+        FOR K:=NFLT STEP -1 UNTIL 1 DO                                  00000775
+          BEGIN                                                         00000776
+            COMMENT COMPUTE INITIAL ESTIMATES FOR THE IDEAL COND REGS;  00000777
+           IF FN[K]=0 THEN FN[K]:=1;                                    00000778
+           FV[K]:=FSUM[K]/FN[K];                                        00000779
+           FSUM[K]:=0;                                                  00000780
+          END;                                                          00000781
+       END IFDISC GTR0;                                                 00000782
+      CALC;                                                             00000783
+      WRITE(FOUT[PAGE],FOTITLE,FOR K:=0 STEP 1 UNTIL 11 DO A[K]);       00000784
+      WRITE(FOUT[DBL],FOTITLE,FOR K:=0 STEP 1 UNTIL 11 DO A[K]);        00000785
+      PLOT;                                                             00000786
+     END DYN STOR;                                                      00000787
+    END CHECKNXNY;                                                      00000788
+ END WHILETRUE;                                                         00000789
+LFINAL:                                                                 00000790
+END.                                                                    00000791

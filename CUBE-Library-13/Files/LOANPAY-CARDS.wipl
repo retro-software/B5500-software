@@ -1,0 +1,88 @@
+1.00 WRITE"      PROGRAM LOANPAY  (A WIPL PROGRAM)"                     00001000
+1.05 WRITE                                                              00001050
+1.10 WRITE" COMPUTES MONTHLY PAYMENTS, INTEREST AND TOTAL INTEREST"     00001100
+1.11 WRITE" FOR A PERSONAL LOAN;"                                       00001110
+1.12 WRITE" ALSO COMPUTES TOTAL ANNUAL INTEREST FOR TAX DEDUCTION."     00001120
+1.13 WRITE                                                              00001130
+1.21 WRITE"   PRIN IS PRINCIPAL ($5,000 MAXIMUM PLEASE),"               00001210
+1.22 WRITE"   RATE IS MONTHLY (NOT ANNUAL) INTEREST RATE IN PERCENT,"   00001220
+1.23 WRITE"   NUMPAY IS THE NUMBER OF PAYMENTS YOU WISH TO MAKE,"       00001230
+1.24 WRITE"   MONTH IS THE MONTH (1 TO 12) WHEN PAYMENTS BEGIN,"        00001240
+1.25 WRITE"   YEAR IS THE YEAR WHEN PAYMENTS BEGIN."                    00001250
+1.26 WRITE                                                              00001260
+1.31 WRITE" YOU MUST SUPPLY THESE VALUES AS THE TELETYPE REQUESTS THEM."00001310
+2.00 Y=0                                                                00002000
+2.01 X=0                                                                00002010
+2.02 TOTINT=0                                                           00002020
+2.03 ANINT=0                                                            00002030
+2.04 TEMP=0                                                             00002040
+2.05 READ PRIN, RATE, NUMPAY, MONTH, YEAR                               00002050
+2.06 IF PRIN LE 5000 THEN GO TO 2.10                                    00002060
+2.07 WRITE"I DO NOT LOAN SUCH LARGE SUMS OF MONEY."                     00002070
+2.08 READ PRIN                                                          00002080
+2.09 GO TO 2.06                                                         00002090
+2.10 PERC=RATE                                                          00002100
+2.105 RATE=RATE/100                                                     00002105
+2.11 PAYM=(PRIN*RATE*((1+RATE)**NUMPAY))/(((1+RATE)**NUMPAY)-1)         00002110
+2.12 WRITE                                                              00002120
+2.21 WRITE FORM 2.22, PRIN                                              00002210
+2.22 FORM FOR A LOAN OF $&&&&.&&                                        00002220
+2.23 WRITE FORM 2.24, PERC                                              00002230
+2.24 FORM AT A RATE OF &&.&& PERCENT ON THE UNPAID BALANCE,             00002240
+2.25 WRITE FORM 2.26, PAYM                                              00002250
+2.26 FORM THE MONTHLY PAYMENT IS $&&&&.&&                               00002260
+2.27 IF X=1 THEN GO TO 3.00                                             00002270
+2.300 WRITE"DO YOU WANT SMALLER OR LARGER PAYMENTS."                    00002300
+2.301 WRITE"(ANSWER SMALLER, LARGER, OR NO.)"                           00002301
+2.302 READ                                                              00002302
+2.303 IF COLUMN(1)="S" THEN GO TO 2.311                                 00002303
+2.304 IF COLUMN(1)="L" THEN GO TO 2.321                                 00002304
+2.305 IF COLUMN(1)="N" THEN GO TO 2.324 ELSE GO TO 2.331                00002305
+2.311 WRITE"INCREASE NUMBER OF PAYMENTS."                               00002311
+2.312 READ NUMPAY                                                       00002312
+2.313 GO TO 2.11                                                        00002313
+2.321 WRITE"DECREASE NUMBER OF PAYMENTS."                               00002321
+2.322 READ NUMPAY                                                       00002322
+2.323 GO TO 2.11                                                        00002323
+2.324 X=1                                                               00002324
+2.325 GO TO 2.12                                                        00002325
+2.331 WRITE"I CANNOT INTERPRET THAT RESPONSE."                          00002331
+2.332 GO TO 2.300                                                       00002332
+3.00 WRITE"**************************************************"          00003000
+3.10  WRITE                                                             00003100
+3.11 WRITE"                            TOTAL"                           00003110
+3.12 WRITE" PRINCIPAL  INTEREST      INTEREST  MONTH    YEAR"           00003120
+3.13 WRITE FORM 3.14, YEAR                                              00003130
+3.14 FORM                                              &&&&             00003140
+4.11 INT=PRIN*RATE                                                      00004110
+4.12 TOTINT=TOTINT+INT                                                  00004120
+4.13 NPRIN=(PRIN+INT)-PAYM                                              00004130
+4.21 WRITE FORM 4.22, PRIN, INT, TOTINT, MONTH                          00004210
+4.22 FORM   $&&&&.&&  $&&&&.&&    $&&&&&&.&&   &&                       00004220
+4.31 PRIN=NPRIN                                                         00004310
+4.32 IF MONTH=12 THEN GO TO 4.50 ELSE GO TO 4.40                        00004320
+4.40 MONTH=MONTH+1                                                      00004400
+4.41 IF PRIN LEQ 0 THEN GO TO 5.11 ELSE GO TO 4.11                      00004410
+4.50 WRITE"*************************************************"           00004500
+4.60 ANINT=TOTINT-TEMP                                                  00004600
+4.61 TEMP=TOTINT                                                        00004610
+4.71 WRITE FORM 4.72, ANINT                                             00004710
+4.72 FORM THE TOTAL INTEREST FOR THIS YEAR IS $&&&&.&&                  00004720
+4.73 WRITE                                                              00004730
+4.74 IF Y=1 THEN GO TO 5.21                                             00004740
+4.80 MONTH=1                                                            00004800
+4.801 YEAR=YEAR+1                                                       00004801
+4.81 IF PRIN LEQ 0 THEN GO TO 5.21 ELSE GO TO 3.10                      00004810
+5.11 Y=1                                                                00005110
+5.12 GO TO 4.50                                                         00005120
+5.21 WRITE FORM 5.22, TOTINT                                            00005210
+5.22 FORM YOU HAVE PAID $&&&&&.&& INTEREST FOR THIS LOAN.               00005220
+5.23 WRITE                                                              00005230
+5.3  WRITE"THIS IS THE END OF PROGRAM LOANPAY."                         00005300
+5.40 WRITE"DO YOU WISH TO RUN THE PROGRAM AGAIN WITH NEW VALUES."       00005400
+5.41 READ                                                               00005410
+5.42 IF COLUMN(1)="Y" THEN GO TO 2.00                                   00005420
+5.43 IF COLUMN(1)="N" THEN GO TO 6.0                                    00005430
+5.44 WRITE"I CANNOT INTERPRET THAT RESPONSE. ANSWER YES OR NO."         00005440
+5.55 GO TO 5.40                                                         00005550
+6.0 STOP                                                                00006000

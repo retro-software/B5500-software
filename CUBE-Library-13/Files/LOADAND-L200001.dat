@@ -1,0 +1,27 @@
+            MCALGOL RELEASE #1      JAN 16, 1969                                
+                                                                                
+    WESTINGHOUSE RESEARCH LABORATORIES MACRO ALGOL COMPILER(WRL MCALGOL)        
+IS IMPLEMENTED AND TESTED IN ITS NEW FORM UP TO THE INTERMEDIATE LEVEL.         
+CERTAIN, BUT NOT ALL, OF THE INTERMEDIATE AND ADVANCED PORTIONS OPERATE         
+AS SPECIFIED IN THE REFERENCE MANUAL. USERS USING THESE CONSTRUCTS ARE          
+CAUTIONED THAT CERTAIN OF THE NEWER CONSTRUCTS AT THESE LEVELS ARE NOT          
+GUARANTEED TO FUNCTION PROPERLY ALTHOUGH THEY HAVE PERFORMED WELL UNDER         
+RECENT TESTING.                                                                 
+    ANY ERRORS SHOULD BE DOCUMENTED AND MAILED TO:                              
+            MCALGOL COMPILER                                                    
+            LARRY MCQUOWN                                                       
+            WESTINGHOUSE R & D                                                  
+            COMPUTER SCIENCES                                                   
+            PITTSBURGH, PA,   15235                                             
+                                                                                
+    THE FIRST STEP IN ACCEPTING THIS RELEASE IS TO COMPILE THE PROGRAM          
+"MESSAGE/FILES" TO LIBRARY FROM THE SOURCE FILE "MESSAGE/DIDDLER".              
+NEXT, PROCESS THE FILE "MCALGOL/MESSAGE" IN THE FOLLOWING WAY FOR               
+MORE DETAILS:                                                                   
+                                                                                
+        ? EXECUTE MESSAGE/FILES                                                 
+        ? FILE DISK = MCALGOL/MESSAGE                                           
+                                                                                
+INFORMATION ABOUT THE RESTRICTIONS, LIMITATIONS, AND REQUIREMENTS OF            
+THE MCALGOL PROGRAMMING SYSTEM WILL BE LISTED AS INDIVIDUAL MESSAGES            
+BY THIS PROGRAM.                                                                

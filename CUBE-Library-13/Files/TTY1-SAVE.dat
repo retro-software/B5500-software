@@ -1,0 +1,81 @@
+ RD THIS IS COURSE TTY1. IT IS INTENDED TO                              00000100
+    SHOW YOU HOW TO OPERATE THE TELETYPE. THE FIRST KEY TO              00000200
+    LEARN IS THE LEFT ARROW (UPPER CASE O). IT MEANS END                00000300
+    OF MESSAGE & SIGNALS THE COMPUTER THAT YOU ARE THROUGH              00000400
+    READING OR TYPING AND READY FOR THE NEXT OPERATION.                 00000500
+    NOW PRESS THE END OF MESSAGE.                                       00000600
+ QU GOOD. NOW WHAT DOES THE LEFT ARROW MEAN.                            00000700
+ CA END OF MESSAGE                                                      00000800
+ TY CORRECT. YOU ARE READY FOR THE NEXT QUESTION.                       00000900
+ UN THAT IS NOT CORRECT. MAYBE YOU MIS-SPELLED A WORD OR                00001000
+    PUT IN AN EXTRA SPACE. TRY AGAIN.                                   00001100
+ UN HOW COULD YOU MISS THAT QUESTION. IF YOU GIVE UP,                   00001200
+    TYPE "HELP".                                                        00001300
+ QU THE SECOND THING TO LEARN IS THAT IF YOU KEEP GETTING               00001400
+    WRONG ANSWERS YOU WILL BE GIVEN THE RIGHT ANSWER IF                 00001500
+    YOU TYPE "HELP". TRY THIS NOW.                                      00001600
+ CA ZZZ                                                                 00001700
+ TY WHEN YOU HAVE TYPED HELP YOU WILL ALWAYS HAVE TO REPEAT             00001800
+    THE CORRECT ANSWER BEFORE YOU CAN GO ON.                            00001900
+ UN IF YOU HAVE ALREADY TYPED HELP YOU MUST HAVE MADE A MISTAKE         00002000
+    IN COPYING THE CORRECT ANSWER. TRY AGAIN.                           00002100
+ QU HERE IS A SAMPLE QUESTION THAT YOU SHOULD BE ABLE TO                00002200
+    ANSWER.  WHO DISCOVERED AMERICA.                                    00002300
+ CA COLUMBUS                                                            00002400
+ CB CHRISTOPHER COLUMBUS                                                00002500
+ TY CORRECT.                                                            00002600
+ WA VESPUCCI                                                            00002700
+ WB AMERIGO VESPUCCI                                                    00002800
+ TY AMERICA WAS NAMED AFTER AMERIGO VESPUCCI BUT HE IS NOT              00002900
+    CREDITED WITH HAVING DISCOVERED AMERICA. TRY AGAIN.                 00003000
+ WA ERIKSON                                                             00003100
+ WB LIEF ERIKSON                                                        00003200
+ WB ERICKSON                                                            00003300
+ WB ERICSON                                                             00003400
+ TY SOME PEOPLE BELIEVE LIEF ERIKSON WAS THE FIRST EXPLORER             00003500
+    TO VISIT THIS CONTINENT, BUT WE WANT YOU TO GIVE THE                00003600
+    NORMALLY ACCEPTED ANSWER.                                           00003700
+ UN SURELY YOU KNOW THE ANSWER. TRY AGAIN.                              00003800
+ QU DO YOU WANT TO TRY ANOTHER QUESTION ABOUT COLUMBUS.                 00003900
+ CA YES                                                                 00004000
+ CA NO                                                                  00004100
+ BR SKIP                                                        0000000 00004200
+ UN PLEASE ANSWER YES OR NO.                                            00004300
+ QU IN WHAT YEAR DID HE DISCOVER AMERICA.                               00004400
+ CA 1492                                                                00004500
+ TY THAT WAS EASY, BUT AFTER ALL THIS IS JUST A                         00004600
+    DEMONSTRATION.                                                      00004700
+ UN TRY AGAIN.  MAYBE YOU HIT A WRONG KEY.                              00004800
+ LA SKIP                                                                00004900
+ QU HERE IS THE NEXT THING YOU SHOULD LEARN:                            00005000
+    ANOTHER USEFUL KEY IS THE BACKSPACE & ERASE. IT LOOKS               00005100
+    LIKE THE MATHEMATICAL SYMBOL "LESS THAN" AND IS THE UPPER           00005200
+    CASE COMMA. TO TEST THIS YOU MAY EXPERIMENT BEFORE                  00005300
+    TYPING "GO AHEAD", WHICH THE COMPUTER WILL RECOGNIZE                00005400
+    AS THE CORRECT ANSWER.                                              00005500
+ CA GO AHEAD                                                            00005600
+ UN TYPE "GO AHEAD" WHEN YOU ARE READY TO CONTINUE.                     00005700
+ RD IF YOU WANT TO ERASE A WHOLE LINE WITHOUT TRANSMITTING              00005800
+    IT TO THE COMPUTER, HOLD DOWN THE CTRL KEY AND PRESS THE L.         00005900
+    YOU MAY ALSO USE THE RETURN AND LINE FEED KEYS ANY TIME             00006000
+    YOU WANT TO.  THEY PRODUCE CARRIAGE RETURN AND LINE                 00006100
+    FEED AT THE TELETYPE BUT ARE NOT SENT TO THE COMPUTER.              00006200
+    YOU MAY EXPERIMENT WITH THIS NOW.  TYPE END OF MESSAGE              00006300
+    WHEN YOU ARE READY TO CONTINUE.                                     00006400
+ QU IF YOU WISH TO REPEAT A COURSE FROM THE BEGINNING, TYPE             00006500
+    START OVER.  YOU MAY WISH TO DO THIS NOW.  IF NOT,                  00006600
+    TYPE END OF MESSAGE.                                                00006700
+ CA                                                                     00006800
+ WA END OF MESSAGE                                                      00006900
+ TY WHEN WE SAY END OF MESSAGE WE MEAN THAT YOU SHOULD TYPE             00007000
+    THE LEFT ARROW SYMBOL.                                              00007100
+ UN YOU MADE AN ERROR.  TRY AGAIN.                                      00007200
+ QU ONE FINAL THING TO LEARN IS THAT IF YOU ARE READY TO                00007300
+    STOP BEFORE THE END OF THE COURSE YOU SHOULD TYPE STOP.             00007400
+    YOU WILL THEN GET AN EXTRA MESSAGE BEFORE THE MESSAGE               00007500
+    "FINISHED. PLEASE LOG OUT.", WHICH INDICATES THE END OF             00007600
+    THE PROGRAM. SINCE THIS IS ACTUALLY THE END OF THIS COURSE,         00007700
+    YOU SHOULD TYPE "STOP" NOW TO LEARN WHAT HAPPENS.                   00007800
+ CA DUMMY CA--NO CORRECT ANSWER                                         00007900
+ UN YOU MADE AN ERROR. TRY AGAIN.                                       00008000
+ 99                                                                     00008100

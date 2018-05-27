@@ -1,0 +1,80 @@
+BEGIN COMMENT THE SYMBOL PROCEDURE LCS, DEFINED BELOW, FINDS THE        00000100
+              LONGEST COMMON SEGMENT OF THE TWO LISTS L1 AND L2;        00000200
+FILE IN INFILE (2,10);                                                  00000250
+FILE OUT PRINTER 16(2,15);                                              00000300
+STRING LINE(120), CARD(80);                                             00000400
+BOOLEAN PROCEDURE INPRO;                                                00000500
+      BEGIN                                                             00000600
+      LABEL EOF,EXIT;                                                   00000700
+      READ(INFILE,10,CARD)[EOF];                                        00000800
+      WRITE(PRINTER,10,CARD);                                           00000900
+      GO TO EXIT;                                                       00001000
+EOF:  INPRO := TRUE;                                                    00001100
+EXIT: END OF INPRO;                                                     00001200
+SYMBOL L1,L2;                                                           00001210
+LABEL START;                                                            00001220
+      COMMENT                                                           00001300
+      COMSEGL FINDS THE LENGTH OF THE LONGEST INITIAL COMMON SEGMENT    00001400
+      OF TWO LISTS, X AND Y;                                            00001500
+INTEGER PROCEDURE COMSEGL(X,Y);                                         00001600
+      VALUE X,Y;                                                        00001700
+      SYMBOL X,Y;                                                       00001800
+      COMSEGL := IF NULL(X) OR NULL(Y) OR CAR(X) NEQ CAR(Y) THEN 0      00001900
+            ELSE COMSEGL(CDR(X),CDR(Y)) + 1;                            00002000
+      COMMENT                                                           00002100
+      COMSEG FINDS THE LONGEST INITIAL COMMON SEGMENT OF TWO LISTS      00002200
+      X AND Y;                                                          00002300
+SYMBOL PROCEDURE COMSEG(X,Y);                                           00002400
+      VALUE X,Y;                                                        00002500
+      SYMBOL X,Y;                                                       00002600
+      COMSEG := IF NULL(X) OR NULL(Y) OR CAR(X) NEQ CAR(Y) THEN 0       00002700
+             ELSE CONS(CAR(X),COMSEG(CDR(X),CDR(X)));                   00002800
+SYMBOL PROCEDURE LCS(L1,L2);                                            00002900
+      VALUE L1,L2;                                                      00003000
+      SYMBOL L1,L2;                                                     00003100
+      BEGIN                                                             00003200
+      LABEL A;                                                          00003300
+      REAL K,N,LX,LY;                                                   00003400
+      SYMBOL X,Y,BEST;                                                  00003500
+      LX := LENGTH(L1);                                                 00003600
+      FOR X ON L1 WHILE LX GTR K DO                                     00003700
+            BEGIN                                                       00003800
+            LY := LENGTH(L2);                                           00004000
+            FOR Y ON L2 WHILE LY GTR K DO                               00004100
+                  BEGIN                                                 00004200
+                  N := COMSEGL(X,Y);                                    00004300
+                  IF N LEQ K THEN GO TO A;                              00004400
+                  BEST := COMSEG(X,Y); K := N;                          00004500
+A:                LY := LY - 1;                                         00004600
+                  END;                                                  00004700
+            END;                                                        00004800
+      LCS := BEST;                                                      00004900
+      END OF LCS;                                                       00005000
+      COMMENT                                                           00005100
+      START OF EXECUTABLE CODE;                                         00005200
+      OUTPUT(PRINTER,LINE,120);                                         00005300
+      INPUT(INPRO,CARD,80);                                             00005400
+      PRINT #THE FOLLOWING IS A TEST OF THE LCS FUNCTION#;              00005500
+START:IF L1:=READ EQ QMARK OR L1 EQ "STOP" THEN EXIT;                   00005600
+      L2 := READ;                                                       00005602
+      PRINT LCS(L1,L2);                                                 00005604
+      GO TO START;                                                      00005606
+END.                                                                    00005700
+                                                                        00005800
+                                                                        00005900
+                                                                        00006000
+            THE CARD INPUT TO THE PROGRAM IS AS FOLLOWS:                00006100
+                                                                        00006200
+(A B C B C D E)$                                                        00006300
+(B C D A B C D E)$                                                      00006400
+STOP                                                                    00006500
+                                                                        00006600
+                                                                        00006700
+                                                                        00006800
+            THE OUTPUT AS LISTED ON THE PRINTER IS:                     00006900
+                                                                        00007000
+THE FOLLOWING IS A TEST OF THE LCS FUNCTION                             00007100
+(A B C B C D E)$                                                        00007200
+(B C D A B C D E)$                                                      00007300
+(B C D E)                                                               00007400
+STOP                                                                    00007500

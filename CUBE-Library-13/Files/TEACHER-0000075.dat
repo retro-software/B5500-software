@@ -1,0 +1,357 @@
+097100 ... DITTO                                                        00001000
+084092 ... COPY                                                         00002000
+133141 ... INLINE                                                       00003000
+315320 ... ZIP                                                          00004000
+069078 ... CHANGE                                                       00005000
+101124 ... EDIT                                                         00005500
+253260 ... SAVE                                                         00006000
+242252 ... RESEQ                                                        00007000
+220225 ... PUNCH                                                        00007500
+213219 ... PRINT                                                        00008000
+093096 ... DELETE                                                       00009000
+079080 ... CLOSE                                                        00010000
+081083 ... COMPILE                                                      00011000
+182189 ... PAGE                                                         00012000
+311314 ... TIME                                                         00013000
+261303 ... SCAN                                                         00014000
+154163 ... LISTING                                                      00015000
+131132 ... INC                                                          00016000
+304306 ... TAB                                                          00017000
+190212 ... PERCENT                                                      00018000
+226236 ... QUICK                                                        00019000
+142153 ... LIST                                                         00020000
+168181 ... OPEN                                                         00021000
+164167 ... MAIL                                                         00021500
+307310 ... TEACH                                                        00022000
+237238 ... REMOVE                                                       00023000
+239241 ... REPLACE                                                      00024000
+125130 ... END                                                          00025000
+                            REMOTE / CARD                               00027000
+                            -------------                               00028000
+                                                                        00029000
+ VERSION 75.      8/8/68.                                               00030000
+                                                                        00031000
+    REMOTE / CARD ENABLES YOU TO BUILD AND MAINTAIN CARD                00032000
+    IMAGE FILES ON DISK FROM A REMOTE TWX.                              00033000
+                                                                        00034000
+    A/B WILL INDICATE A FILE NAME. THAT IS BOTH A AND B                 00035000
+    WILL REPRESENT AN IDENTIFIER OF UP TO SEVEN ALPHA-NUMERIC           00036000
+    CHARACTERS.  IT IS RECOMMENDED THAT THE SECOND IDENTIFIER           00037000
+    BE THE USERS NAME AND THAT THE FIRST IDENTIFIER CONTAIN A           00038000
+    CODE TO INDICATE THAT IT IS A SYMBOLIC FILE (E.G. SY).              00039000
+    FILETYPE IS EITHER ALGOL, COBOL, FORTRAN OR DATA.                   00040000
+    FINALLY, THE LETTERS N AND M WILL INDICATE INTEGERS.                00041000
+                                                                        00042000
+ RESTRICTIONS:                                                          00043000
+  THE MAXIMUM FILE LENGTH IS 8191 RECORDS.                              00044000
+  THE MAXIMUM SEQUENCE NUMBER IS 2097149 - THE MINIMUM IS 1.            00045000
+  A SEQUENCE NUMBER OF 99999999 IS ALSO VALID.                          00046000
+  THE MAXIMUM RECORD LENGTH IS 80 CHARACTERS FOR A DATA FILE,           00047000
+                               72 CHARACTERS FOR A FORTRAN FILE,        00048000
+                               72 CHARACTERS FOR AN ALGOL FILE,         00049000
+                               66 CHARACTERS FOR A COBOL FILE.          00050000
+  OUTPUT TO THE TWX OF THE SPECIAL CHARACTERS ~, !, <, {,               00051000
+  >, AND } IS REPLACED BY A $ CHARACTER SO THAT THE                     00052000
+  TWX CONTROL FUNCTIONS ARE NOT ENVOKED.                                00053000
+                                                                        00054000
+    CALL OUT:                                                           00055000
+    ? LI: USER-CODE / AUTHENTICATION-CODE~                              00056000
+    B-5500 01/12 LOGGED-IN AT 0800                                      00057000
+    ?? EXECUTE REMOTE/CARD NO 12345678; END~                            00058000
+    5:REMOTE/CARD=3 BOJ 0802                                            00059000
+    HELLO  <USERCODE>                                                   00060000
+    <VERSION NUMBER>:                                                   00061000
+                                                                        00062000
+    CONTROL WORDS (VERBS):                                              00063000
+     CONTROLS WORDS ARE INDICATED BY A * IN THE FIRST INPUT             00064000
+     POSITION, 0 OR MORE SPACES AND THE VERB.  A COMMAND MAY            00065000
+     BE FOLLOWED BY ANOTHER INPUT BY SEPARATING THEM WITH A ;.          00066000
+    * CHANGE <STRING> TO <STRING>                                       00072100
+         SCANS THE OPEN FILE REPLACING EVERY OCCURENCE                  00072200
+         OF THE FIRST STRING WITH THE SECOND. THE LENGTH                00072300
+         OF THE SECOND SHOULD NOT EXCEED ABOUT TWICE THE FIRST.         00072310
+         <STRING> IS THE SAME AS IN SCAN EXCEPT IT CANNOT BE <EMPTY>.   00072320
+         THE FIRST STRING BECOMES THE PREVIOUS <STRING> FOR SCAN.       00072330
+    * CHANGE M <STRING> TO <STRING>                                     00072400
+         AS ABOVE FOR THE RECORD WITH SEQUENCE NUMBER M.                00072500
+    * CHANGE M, N <STRING> TO <STRING>                                  00072600
+         AS ABOVE FROM SEQUENCE NUMBER M TO N.                          00072700
+    * CLOSE                                                             00072800
+         CLOSES THE OPENED FILE.                                        00072900
+    * COMPILE A/B  COMPILER                                             00073000
+ COMPILES THE FILE TO LIBRARY UNDER THE NAME A/B. THE COMPILER USED MAY 00074000
+ BE SPECIFIED. THE LISTING FILE IS EQUATED TO LINE/USERCODE ON DISK.    00077000
+    * COPY A/B                                                          00083000
+    * COPY A/B M                                                        00084000
+    * COPY A/B M, N                                                     00085000
+         THE COPY VERB COPIES RECORDS FROM ANOTHER FILE (A/B).          00086000
+         THE FIRST FORM COPIES THE WHOLE FILE.                          00087000
+         THE SECOND FORM COPIES THE M-TH RECORD, WHERE THE              00088000
+         FIRST RECORD OF A/B IS 1, THE SECOND RECORD IS 2,              00089000
+         THE THIRD RECORD IS 3, ETC.                                    00090000
+         THE THIRD FORM COPIES THE M-TH THRU N-TH RECORDS.              00091000
+    * DELETE N                                                          00100000
+         DELETES CARD IMAGE N                                           00101000
+    * DELETE N, M                                                       00102000
+         DELETES CARD IMAGES FROM N TO M.                               00103000
+    * DITTO N                                                           00104000
+         COPIES CARD IMAGE N AS THE NEXT RECORD.                        00105000
+    * DITTO N, M                                                        00106000
+         COPIES THE CARD IMAGES FROM N TO M AS THE NEXT RECORDS.        00107000
+    * EDIT M, N: F                                                      00107100
+         EDITS EACH RECORD FROM SEQUENCE NUMBER M TO N                  00107110
+         ACCORDING TO THE FORMAT RECORD WITH SEQUENCE                   00107120
+         NUMBER F.                                                      00107130
+         THE RESULT OF THE EDIT IS THAT EACH RECORD BECOMES             00107140
+         IDENTICAL WITH THE FORMAT RECORD EXCEPT WHERE                  00107150
+         THERE IS A # OR @ IN THE FORMAT RECORD.  EACH @ IS             00107160
+         REPLACED BY THE NEXT CHARACTER OF THE INPUT RECORD.            00107170
+         EACH # SKIPS THE NEXT CHARACTER OF THE INPUT RECORD.           00107180
+         EXAMPLE:                                                       00107190
+         * LIST 1,3                                                     00107200
+         1:1234567890                                                   00107210
+         2:ABCDEFGHIJKLMNOPQRSTUVWXYZ                                   00107220
+         3:  @@@ ... @@. THIS IS THE WAY THE LINE ENDS...@@@@           00107230
+         4:* EDIT 1, 2: 3                                               00107240
+         4:* LIST 1, 2                                                  00107250
+         1:  123 ... 45. THIS IS THE WAY THE LINE ENDS...6789           00107260
+         2:  ABC ... DE. THIS IS THE WAY THE LINE ENDS...FGHI           00107270
+         A FORMAT RECORD OF ALL @ EXCEPT FOR A %JF IN COLUMNS           00107280
+         70 TO 72 WILL EDIT THE %JF INTO COLUMNS 70 TO 72 OF            00107290
+         EACH RECORD EDITED LEAVING THE REST OF THE RECORD              00107300
+         UNCHANGED.                                                     00107310
+         A FORMAT OF ALL @ EXCEPT FOR 3 # IN THE FIRST 3 CHAR-          00107320
+         ACTERS WILL SHIFT THE EDITED RECORDS 3 TO THE LEFT.            00107330
+    * END                                                               00108000
+         END TERMINATES REMOTE / CARD LISTING THE EXECUTION             00109000
+         TIMES.                                                         00110000
+    * END X                                                             00110100
+         TERMINATES THE PROGRAM WITHOUT LISTING THE TIMES.              00110200
+         X DENOTES ANY NON-EMPTY ALPHA-NUMERIC SET OF CHARACTERS.       00110300
+    * INC N                                                             00111000
+         SETS THE INCREMENT COUNTER TO N.                               00112000
+    * INLINE                                                            00113000
+         SETS UP FOR IN LINE EDITING ON THE PREVIOUS LINE               00114000
+         WITHOUT LISTING IT.                                            00115000
+         (IF I, R, OR D FOLLOWS THE INLINE COMMAND,                     00116000
+         THE IN-LINE EDITING STARTS WITH COLUMN 1.)                     00117000
+    * INLINE N                                                          00118000
+         LIST CARD IMAGE N AND SETS UP FOR IN LINE EDITING.             00119000
+         (IF I, R, OR D FOLLOWS THE INLINE N COMMAND,                   00120000
+         THE IN-LINE EDITING STARTS WITH COLUMN 1.)                     00121000
+    * LIST                                                              00122000
+         LISTS THE OPENED FILE COMPLETELY.                              00123000
+    * LIST A/B                                                          00124000
+         LISTS THE EXTERNAL FILE A/B WITHOUT OPENING IT.                00125000
+    * LIST A/B M                                                        00126000
+         AS ABOVE STARTING WITH THE M-TH RECORD.                        00127000
+    * LIST A/B M,N                                                      00128000
+         AS ABOVE STOPPING WITH THE N-TH RECORD.                        00129000
+    * LIST N                                                            00130000
+         LISTS THE CARD IMAGE WITH SEQUENCE NUMBER N.                   00131000
+    * LIST N, M                                                         00132000
+         LISTS THE CARD IMAGES FROM N TO M.                             00133000
+    * LISTING FILETYPE, S, L, U                                         00134000
+         LISTS THE SEQUENCE NUMBERS RELATED TO SEGMENT S FROM           00135000
+         RELATIVE ADDRESS L TO RELATIVE ADDRESS U.  FILETYPE IS         00136000
+         ALGOL, COBOL, OR FORTRAN AND INDICATES WHICH COMPILER          00137000
+         CREATED THE LISTING FILE LINE/USERCODE. (THIS FILE IS          00138000
+         AUTOMATICALLY GENERATED BY THE COMPILE VERB).                  00139000
+    * LISTING FILETYPE ERRORS                                           00140000
+         LISTS THE SYNTAX ERRORS OF YOUR LAST COMPILATION.              00140100
+    * LISTING                                                           00140200
+         PRINTS THE LINE FILE OF YOUR LAST COMPILATION ON THE PRINTER.  00140300
+    * MAIL                                                              00140400
+         THIS LISTS ALL THE MAIL SENT TO YOU.                           00140500
+    * MAIL TO USERCODE: MESSAGE                                         00140600
+         THIS ADDS YOUR MESSAGE TO USERCODES MAIL.                      00140700
+    * OPEN A/B FILE-TYPE OPEN-TYPE                                      00141000
+         OPEN ATTACHES REMOTE/CARD TO THE FILE A/B.                     00142000
+         FILE TYPE IS ALGOL, COBOL, FORTRAN, OR DATA.                   00143000
+         IF THE FILE TYPE IS EITHER ALGOL OR FORTRAN                    00144000
+         SEQUENCING OCCURS IN COLS 73 TO 80.                            00145000
+         IF THE FILE TYPE IS COBOL SEQUENCING OCCURS                    00146000
+         IN COLS 1 TO 6.                                                00147000
+         NO SEQUENCING OCCURS IF THE FILE TYPE IS DATA.                 00148000
+         OPEN-TYPE IS EITHER NEW, OLD, OR <EMPTY>.                      00148010
+         IF THE OPEN-TYPE IS NEW, A NEW FILE A/B IS CREATED.            00148020
+         IF THE OPEN-TYPE IS OLD, AN OLD FILE A/B IS USED. THIS         00148030
+           FILE IS ASSUMED TO BE SEQUENCED BY THE CURRENT INC.          00148040
+         IF THE OPEN-TYPE IS <EMPTY>, AN OLD FILE A/B IS                00148050
+           USED AND THE FILE IS READ TO OBTAIN ITS SEQUENCING.          00148060
+    * PAGE M, N                                                         00149000
+         SETS UP AUTOMATIC PAGING ON THE TWX.  THE PAGE LENGTH          00150000
+         IS M LINES.  THE FIRST PAGE NUMBER IS N.                       00151000
+    * PAGE M                                                            00152000
+         AS ABOVE EXCEPT THAT THE FIRST PAGE NUMBER IS ONE MORE         00153000
+         THAN THE PREVIOUS PAGE NUMBER.                                 00154000
+    * PAGE                                                              00155000
+         SKIPS TO A NEW PAGE.                                           00156000
+    * PERCENT ON                                                        00157000
+    * PERCENT OFF                                                       00158000
+         THE * PERCENT CONSTRUCTS ALLOW THE USER TO                     00159000
+         INPUT THE SPECIAL TWX CHARACTERS (I.E.                         00160000
+         LEFT-ARROW, NEQ, LSS, LEQ, GEQ, GTR, ?).                       00161000
+         * PERCENT ON  TURNS THE OPTION ON.                             00162000
+         * PERCENT OFF TURNS THE OPTION OFF.                            00163000
+         WHEN THE PERCENT OPTION IS ON, INPUT FROM THE                  00164000
+         TWX IS SCANNED FOR SPECIAL CHARACTER PAIRS.                    00165000
+         IF A PAIR IS FOUND IT IS REPLACED BY THE SINGLE                00166000
+         CHARACTER AS FOLLOWS:                                          00167000
+         CHARACTER PAIR     INTERNAL CHARACTER                          00168000
+         --------------     ------------------                          00169000
+           %-                    ~   (LEFT-ARROW)                       00170000
+           %=                    !   (NEQ)                              00171000
+           %(                    <   (LSS)                              00172000
+           %)                    >   (GTR)                              00173000
+           %[                    {   (LEQ)                              00174000
+           %]                    }   (GEQ)                              00175000
+           %%                    ?   (QUESTION MARK)                    00176000
+           %*                    *   (STAR)                             00176010
+         A % FOLLOWED BY ANY OTHER CHARACTER REMAINS                    00177000
+         AS IS.                                                         00178000
+    * PRINT A/B                                                         00179000
+         PRINTS THE OPEN FILE ON THE LINE-PRINTER (LABELED              00180000
+         A/B). IF B IS "DOUBLE" THEN DOUBLE SPACING IS USED.            00181000
+    * PRINT A/B M                                                       00181050
+         AS ABOVE STARTING WITH SEQUENCE NUMBER M.                      00181100
+    * PRINT A/B M,N                                                     00181150
+         AS ABOVE STOPPING WITH SEQUENCE NUMBER N.                      00181200
+    * PUNCH A/B                                                         00181250
+         PUNCHES A CARD DECK (LABELED A/B) OF THE OPEN FILE.            00181300
+    * PUNCH A/B M                                                       00181350
+         AS ABOVE STARTING WITH SEQUENCE NUMBER M.                      00181400
+    * PUNCH A/B M,N                                                     00181450
+         AS ABOVE STOPPING WITH SEQUENCE NUMBER N.                      00181500
+    * QUICK                                                             00182000
+    * QUICK N                                                           00183000
+    * QUICK M, N                                                        00184000
+    * QUICK A/B                                                         00185000
+    * QUICK A/B M                                                       00186000
+    * QUICK A/B M,N                                                     00187000
+         QUICK CAN BE USED ANYPLACE THE VERB LIST                       00188000
+         IS USED. QUICK TYPES THE INDICATED RECORDS                     00189000
+         ON THE TWX DELETING ANY EXCESS BLANKS.                         00190000
+         THAT IS, ALL MULTIPLE BLANKS ARE PRINTED AS                    00191000
+         A SINGLE SPACE.                                                00192000
+    * REMOVE A/B                                                        00193000
+         THE REMOVE VERB REMOVES THE FILE A/B FROM THE DISK.            00194000
+    * REPLACE A:B                                                       00195000
+         THE REPLACE VERB RENAMES THE VERB A WITH THE                   00196000
+         WORD B. (E.G. * REPLACE LIST:TYPE)                             00197000
+    * RESEQ                                                             00198000
+         RESEQUENCES THE FILE BY THE CURRENT INCREMENT COUNTER.         00199000
+    * RESEQ I                                                           00200000
+         SETS THE INCREMENT COUNTER TO I AND RESEQUENCES.               00201000
+    * RESEQ M, N                                                        00202000
+         RESEQUENCES SEQUENCE NUMBERS M THRU N BY THE CURRENT           00203000
+         INCREMENT COUNTER.  THE FIRST SEQUENCE NUMBER IS M.            00204000
+    * RESEQ M, N, K                                                     00205000
+         AS ABOVE EXCEPT THAT THE FIRST SEQUENCE NUMBER IS K.           00206000
+    * RESEQ M, N, K, I                                                  00207000
+         AS ABOVE EXCEPT THE INCREMENT IS SET TO I FIRST.               00208000
+    * SAVE A / B,  N                                                    00209000
+         SAVE A/B SAVES THE FILE ON DISK AS                             00210000
+         A/B.  REMOTE/CARD STILL REFERENCES THE CURRENT FILE.           00211000
+         (TO REFERENCE A/B, IT MUST BE OPENED.)                         00212000
+         N IS AN OPTIONAL SAVE-FACTOR.                                  00213000
+    * SAVE N                                                            00214000
+         SAVE SAVES YOUR FILE ON DISK.                                  00215000
+         N IS AN OPTIONAL SAVE-FACTOR.                                  00216000
+    * SCAN <STRING>                                                     00217000
+         SCANS THE FILE FROM THE CURRENT SEQUENCE                       00218000
+         NUMBER TO THE END OF THE FILE OR UNTIL THE                     00219000
+         FIRST OCCURENCE OF <STRING>.                                   00220000
+              IF THE STRING IS FOUND THE RECORD CONTAINING              00221000
+         IT IS TYPED ON THE TWX.                                        00222000
+    * SCAN M <STRING>                                                   00223000
+         AS ABOVE EXCEPT THAT THE SCAN BEGINS AT                        00224000
+         SEQUENCE NUMBER M.                                             00225000
+    * SCAN M, N <STRING>                                                00226000
+         AS ABOVE EXCEPT THAT THE SCANNING STOPS                        00227000
+         AFTER SEQUENCE NUMBER N.                                       00228000
+    * SCAN A/B <STRING>                                                 00229000
+         THE FILE A/B IS SCANNED FOR <STRING>.                          00230000
+         EVERY RECORD IN WHICH <STRING> OCCURS                          00231000
+         IS TYPED ON THE TWX.                                           00232000
+    * SCAN A/B M <STRING>                                               00233000
+         AS ABOVE EXCEPT THE SCAN BEGINS AT                             00234000
+         RECORD NUMBER M.                                               00235000
+    * SCAN A/B M, N <STRING>                                            00236000
+         AS ABOVE EXCEPT THAT THE SCANNING STOPS                        00237000
+         AFTER THE N-TH RECORD.                                         00238000
+                                                                        00239000
+         <STRING> ::= <PREVIOUS STRING> / <NEW STRING>                  00240000
+           <PREVIOUS STRING> ::= {EMPTY}                                00241000
+           <NEW STRING> ::= <LEFT> <TEXT> <RIGHT>                       00242000
+             <LEFT> ::= "  /  (  /  [                                   00243000
+             <RIGHT>::= "  /  )  /  ]                                   00244000
+             <TEXT> ::= {ANY NON-EMPTY STRING OF CHARACTERS             00245000
+                            EXCLUDING THE <RIGHT> CORRESPONDING         00246000
+                            TO THE <LEFT> CHARACTER USED.}              00247000
+                                                                        00248000
+         EXAMPLES:                                                      00249000
+         ---------                                                      00250000
+         " FD "                                                         00251000
+         "LIST"                                                         00252000
+         " M := IMAGE [5] ;"                                            00253000
+         ( WORD [I] := "SCAN" ;)                                        00254000
+                                                                        00255000
+         ["]                                                            00256000
+                                                                        00257000
+         IF THE <STRING> IS EMPTY THE PREVIOUSLY                        00258000
+         USED STRING WILL BE USED AGAIN.                                00259000
+    * TAB N                                                             00260000
+         SETS UP AUTOMATIC INDENTING TO POSITION N,                     00261000
+         WHERE 1 LEQ N LEQ 27.                                          00262000
+    * TEACH                                                             00263000
+         TEACH LISTS THE VALID CONTROL WORDS.                           00264000
+    * TEACH VERB                                                        00265000
+         LISTS THE SYNTAX AND SEMANTICS OF VERB.                        00266000
+    * TIME                                                              00267000
+         THIS VERB LISTS THE PROCESSOR, I/O, AND ELAPSED                00268000
+         TIMES THAT REMOTE / CARD HAS BEEN RUNNING ON THE               00269000
+         TWX.                                                           00270000
+    * ZIP                                                               00270100
+         THIS CONSTRUCT ZIPS THE OPEN FILE AFTER IT LINKS               00270200
+         ALL THE CONTROL CARDS AS INDICATED BY ?.                       00270300
+         SEE THE ALGOL REFERENCE MANUAL FOR ZIP.                        00270400
+    * ZIP A/B                                                           00270500
+         COPIES THE OPEN FILE CREATING A/B AND ZIPS A/B.                00270600
+    * N                                                                 00271000
+         SETS THE CURRENT SEQUENCE AT N AND LIST CARD IMAGE N           00272000
+         IF IT EXISTS.                                                  00273000
+                                                                        00274000
+    IN LINE EDITING                                                     00275000
+         TO MODIFY JUST PART OF A CARD IMAGE USE THE INLINE             00276000
+         VERB AND THEN SPACE TO THE CHARACTER JUST BEFORE               00277000
+         THE MODIFICATION.                                              00278000
+         (IF THE MODIFICATION IS TO BE DONE ON THE FIRST                00279000
+         CHARACTER, THEN INCLUDE THE I, R, OR D WITH THE                00280000
+         INLINE COMMAND.)                                               00281000
+         TO INSERT A STRING, TYPE THE LETTER I FOLLOWED                 00282000
+         BY THE STRING AND A ~.                                         00283000
+         TO DELETE A STRING USE THE LETTER D FOLLOWED BY                00284000
+         SPACES UNDER THE CHARACTERS TO BE DELETED AND                  00285000
+         THEN A ~.                                                      00286000
+         TO REPLACE A STRING, USE THE LETTER R FOLLOWED                 00287000
+         BY THE NEW STRING OF THE SAME LENGTH AND A ~.                  00288000
+         FOR EXAMPLE (THE FIRST LINE OF EACH TRIPLE IS                  00289000
+         THE ORIGINAL RECORD, THE SECOND IS THE EDIT INPUT,             00290000
+         AND THE THIRD IS THE RESULTING RECORD.)                        00291000
+           ABCDEFGHIJKLMNOPQRSTUVWXYZ                                   00292000
+             I12345~                                                    00293000
+           ABC12345DEFGHIJKLMNOPQRSTUVWXYZ                              00294000
+                                                                        00295000
+           ABCDEFGHIJKLMNOPQRSTUVWXYZ                                   00296000
+            D     ~                                                     00297000
+           ABHIJKLMNOPQRSTUVWXYZ                                        00298000
+                                                                        00299000
+           ABCDEFGHIJKLMNOPQRSTUVWXYZ                                   00300000
+                  R1234567890~                                          00301000
+           ABCDEFGH1234567890STUVWXYZ                                   00302000
+                                                                        00303000
+          * INLINE R                                                    00304000
+           ABCDEFGHIJKLMNOPQRSTUVWXYZ                                   00305000
+           123~                                                         00306000
+           123DEFGHIJKLMNOPQRSTUVWXYZ                                   00307000

@@ -1,0 +1,613 @@
+0001 BLOCK                    DECLARATION NOT FOLLOWED BY SEMICOLON             
+0011 BLOCK                    IDENTIFIER DECLARED TWICE IN SAME BLOCK           
+0021 PROCEDURE DECLARATION    SPECIFICATION CONTAINS IDENTIFIER NOT IN          
+0022                          FORMAL PARAMETER LIST                             
+0031 BLOCK                    NONIDENTIFIER IN IDENTIFIER OF DECLARATION        
+0041 PROCEDURE DECLARATION    STREAM PROCEDURE DECLARATION PRECEDED BY          
+0042                          ILLEGAL DECLARATOR                                
+0051 PROCEDURE DECLARATION    PROCEDURE DECLARATION PRECEEDED BY ILLEGAL        
+0052                          DECLARATOR                                        
+0061 PROCEDURE DECLARATION    PROCEDURE IDENTIFIER REPEATED IN SAME BLOCK       
+0062                          (NOT FORWARD)                                     
+0071 PROCEDURE DECLARATION    PROCEDURE IDENTIFIER NOT FOLLOWED BY LEFT         
+0072                          PARENTHESIS OR SEMICOLON                          
+0081 PROCEDURE DECLARATION    FORMAL PARAMETER LIST NOT FOLLOWED BY RIGHT       
+0082                          PARENTHESIS                                       
+0091 PROCEDURE DECLARATION    FORMAL PARAMETER PART NOT FOLLOWED BY             
+0092                          SEMICOLON                                         
+0101 PROCEDURE DECLARATION    VALUE CLAUSE CONTAINS IDENTIFIER NOT IN FORMAL    
+0102                          PARAMETER LIST                                    
+0111 PROCEDURE DECLARATION    VALUE CLAUSE NOT ENDED BY SEMICOLON               
+0121 PROCEDURE DECLARATION    MISSING OR ILLEGAL SPECIFICATION                  
+0131 PROCEDURE DECLARATION    OWN USED IN ARRAY SPECIFICATION                   
+0141 PROCEDURE DECLARATION    SAVE USED IN ARRAY SPECIFICATION                  
+0151 ARRAY SPECIFICATIONS     ARRAY CALL-BY-VALUE NOT IMPLEMENTED.              
+0161 ARRAY DECLARATION        ARRAY IDENTIFIER NOT FOLLOWED BY LEFT             
+0162                          BRACKET                                           
+0171 ARRAY DECLARATION        LOWER BOUND IN ARRAY DECLARATION NOT              
+0172                          FOLLOWED BY COLON.                                
+0181 ARRAY DECLARATION        BOUND PAIR IN ARRAY DECLARATION NOT FOLLOWED      
+0182                          BY RIGHT BRACKET                                  
+0191 ARRAY SPECIFICATION      ILLEGAL LOWER BOUND DESIGNATOR IN ARRAY           
+0192                          SPECIFICATION                                     
+0201 BLOCK                    OWN IMMEDIATELY BEFORE IDENTIFIER (NO TYPE)       
+0202                          IN DECLARATION                                    
+0211 BLOCK                    SAVE IMMEDIATELY BEFORE IDENTIFIER (NO TYPE)      
+0212                          IN DECLARATION                                    
+0221 BLOCK                    STREAM IMMEDIATELY BEFORE IDENTIFIER (THE         
+0222                          WORD PROCEDURE WAS LEFT OUT)                      
+0231 BLOCK                    DECLARATOR ILLEGALLY PRECEDED BY ANOTHER          
+0232                          DECLARATOR                                        
+0241 PROCEDURE DECLARATION    LABEL PASSED TO A FUNCTION                        
+0251 BLOCK                    DECLARATOR OR SPECIFIER ILLEGALLY PRECEDED        
+0252                          BY OWN, SAVE OR ANOTHER DECLARATOR                
+0261 FILE DECLARATION         MISSING LEFT PARENTHESIS IN FILE DECLARATION      
+0271 FILE DECLARATION         MISSING RECORD SIZE IN FILE DECLARATION           
+0281 FILE DECLARATION         ILLEGAL BUFFER PART OR SAVE FACTOR IN FILE        
+0282                          DECLARATION                                       
+0291 FILE DECLARATION         MISSING RIGHT PARENTHESIS IN FILE DECLARATION     
+0301 FILE DECLARATION         MISSING COLON IN DISK FILE DECLARATION            
+0311 LIST DECLARATION         MISSING LEFT PARENTHESIS IN LIST DECLARATION      
+0321 FORMAT DECLARATION       MISSING LEFT PARENTHESIS IN FORMAT                
+0322                          DECLARATION                                       
+0331 SWITCH DECLARATION       SWITCH DECLARATION DOES NOT HAVE ASSIGNMENT       
+0332                          OPERATOR OR FORWARD AFTER IDENTIFIER.             
+0341 SWITCH FILE DECLARA-     MISSING ASSIGNMENT OPERATOR AFTER                 
+0342 TION                     SWITCH FILE IDENTIFIER.                           
+0351 SWITCH FILE DECLARA-     NON-FILE IDENTIFIER IN DECLARATION OF             
+0352 TION                     SWITCH FILE LIST                                  
+0361 SWITCH FORMAT DECLA-     SWITCH FORMAT IDENTIFIER NOT FOLLOWED BY          
+0362 RATION                  AN ASSIGNMENT OPERATOR.                            
+0371 SWITCH FORMAT DECLA-     MISSING LEFT PARENTHESIS AT START OF SWITCH       
+0372 RATION                   FORMAT LIST                                       
+0381 SWITCH FORMAT DECLA-     SWITCH FORMAT SEGMENT GREATER THAN 1022           
+0382 RATION                  WORDS LONG.                                        
+0391 BLOCK                    NUMBER OF NESTED BLOCKS GREATER THAN 31.          
+0401                         PROGRAM PARAMETER BLOCK SIZE EXCEEDED.             
+0411 SWITCH LIST              MISSING ASSIGNMENT OPERATOR AFTER SWITCH          
+0412                          LIST IDENTIFIER.                                  
+0401 I/O DECLARATION          PROGRAM PARAMETER BLOCK SIZE EXCEEDED             
+0421 SWITCH LIST              ILLEGAL LIST IDENTIFIER APPEARING IN SWITCH LIST. 
+0431 IODEC                   MISSING ] AFTER DISK IN FILE DECLARATION.          
+0441 IODEC                   MISSING [ AFTER DISK IN FILE DECLARATION.          
+0451 DEFINE DECLARATION       MISSING = AFTER DEFINE IDENTIFIER                 
+0461 ARRAY                    NON-LITERAL ARRAY BOUND NOT GLOBAL TO ARRAY       
+0462                          DECLARATION.                                      
+0471 ANYWHERE                 ITEM FOLLOWING @ NOT A NUMERIC LITERAL            
+0481 PROCEDURE DECLARATION    NUMBER OF PARAMETERS DIFFERS FROM FORWARD         
+0482                          DECLARATION.                                      
+0491 PROCEDURE DECLARATION    CLASS OF PARAMETERS DIFFERS FROM FORWARD          
+0492                          DECLARATION.                                      
+0501 PROCEDURE DECLARATION    VALUE PART DIFFERS FROM FORWARD DECLARATION.      
+0511                          FORWARD DECLARATION DOES NOT AGREE WITH           
+0512                          ACTUAL DECLARATION.                               
+0521                          STATEMENT MAY NOT START WITH THIS TYPE QUANTITY.  
+0531                          MISSING RIGHT BRACKET IN SAVE ARRAY DECLARATION.  
+0541                          FILL PART OF SAVE ARRAY LONGER THAN SIZE.         
+0561                          ILLEGAL DIMENSION INDICATOR IN ARRAY DECLARATION. 
+0571                          SAVE STORAGE IS NOT ALLOWED WITH INTRNSICS.       
+0591 ARRAYDEC                 ILLEGAL ARRAY SIZE IN ARRAY DECLARATION           
+0601 FAULT STATEMENT          MISSING ASSIGNMENT OPERATOR IN FAULT              
+0602                         ASSIGNMENT STATEMENT                               
+0611 FAULT STATEMENT          INCORRECT IDENTIFIER IN FAULT TYPE LIST OF FAULT  
+0612                          DECLARATION                                       
+0621                         LEVEL OF POINTER EXPRESSION EXCEEDS LEVEL OF UPDATE
+0622                         POINTER IDENTIFIER.                                
+0631                         UPDATE POINTER MAY NOT BE CALL-BY-NAME FORMAL      
+0632                         PARAMETER.                                         
+0701 CASESTMTEXP              MISSING BEGIN IN CASE STATEMENT                   
+0711 CASESTMTEXP              MISSING END IN CASE STATEMENT                     
+0721 CASESTMTEXP              NULL EXPRESSION NOT ALLOWED IN CASE EXPRESSION    
+0731 CASESTMTEXP              TYPES OF EXPRESSIONS IN CASE EXPRESSION VARY      
+0741                         RELATIONAL OP OR IN EXPECTED                       
+0751                         CONDITION MUST START WITH WHILE OR UNTIL           
+0761                         BY MISSING AFTER DESTINATION POINTER               
+0771                         SOURCE MUST BE POINTER OR ARITHMETIC EXP           
+0781                         ALPHA REQUIRED AFTER IN                            
+0791                         ILLEGAL EXPRESSION TYPE                            
+0801                          MISSING COMMA IN ARRAY RELEASE STATEMENT.         
+0811 ENLINE                   ILLEGAL TYPE OF EXPRESSION IN INLINE FORMAL       
+0812                          PARAMETER PART                                    
+0821 ENLINE                   ILLEGAL DELIMITER IN INLINE FORMAL PARAMETER PART 
+0901                         MISSING LEFT BRACKET.                              
+0911                         MISSING COLON.                                     
+0921                         ILLEGAL BIT NUMBER.                                
+0931                         FIELD SIZE MUST BE LITERAL.                        
+0941                         MISSING RIGHT BRACKET.                             
+0951                         ILLEGAL FIELD SIZE.                                
+0981                          ILLEGAL SPECIFIER IN SCOPE STATEMENT.             
+0991                          EXTRA COLON IN STREAM HEADER.                     
+1001 ANYWHERE                 UNDECLARED IDENTIFIER                             
+1011 PROCEDURES               AN IDENTIFIER LOCAL TO ONE PROCEDURE AND GLOBAL TO
+1012                          ANOTHER MAY NOT BE REFERENCED.                    
+1021 ARITHMETIC EXPRESSION    CONDITIONAL EXPRESSION NOT OF ARITHMETIC TYPE     
+1031 PRIMARY                  PRIMARY MAY NOT BEGIN WITH THIS TYPE QUANTITY     
+1041 ANYWHERE                 MISSING RIGHT PARENTHESIS                         
+1051 ANYWHERE                 MISSING LEFT PARENTHESIS                          
+1061 PRIMARY                  PRIMARY MAY NOT START WITH DECLARATOR             
+1071 BOOLEAN EXPRESSION       THE EXPRESSION IS NOT OF BOOLEAN TYPE             
+1081 EXPRESSION               RELATION MAY NOT HAVE CONDITIONAL                 
+1082                          EXPRESSIONS AS ARITHMETIC EXPRESSIONS             
+1091 BOOLEAN EXPRESSION       PRIMARY IS NOT OF BOOLEAN TYPE                    
+1101 BOOLEAN EXPRESSION       NON-BOOLEAN OPERATOR IN BOOLEAN EXPRESSION        
+1111 BOOLEAN EXPRESSION       NO EXPRESSION MAY BEGIN WITH THIS TYPE QUANTITY   
+1121 BOOLEAN EXPRESSION       NO EXPRESSION MAY BEGIN WITH A DECLARATOR         
+1131 ANYWHERE                 EITHER SYNTAX OR RANGE OF LITERALS FOR            
+1132                          CONCATENATE OPERATOR IS INCORRECT                 
+1141 PARTIAL WORD             EITHER SYNTAX OR RANGE OF LITERALS FOR            
+1142                          PARTIAL WORD DESIGNATOR IS INCORRECT              
+1151 DESIGNATIONAL EXPRES-    EXPRESSION NOT OF DESIGNATIONAL TYPE              
+1152 SION                                                                       
+1161 IF CLAUSE                MISSING THEN                                      
+1171 ANYWHERE                 MISSING LEFT BRACKET                              
+1181 ANYWHERE                 MISSING RIGHT BRACKET                             
+1191 COMPOUND TAIL            MISSING SEMICOLON OR END                          
+1201 COMPOUND TAIL            MISSING END                                       
+1211 ACTUAL PARAMETER PART    AN INDEXED FILE MAY BE PASSED BY NAME ONLY-       
+1212                          AND ONLY TO STREAM PROCEDURE.                     
+1221 ACTUAL PARAMETER PART    EXPRESSIONS MAY NOT BE PASSED BY NAME TO STREAM   
+1222                          PROCEDURES                                        
+1231 ACTUAL PARAMETER PART    ACTUAL AND FORMAL PARAMETERS NOT SAME TYPE        
+1241 ACTUAL PARAMETER PART    ACTUAL AND FORMAL ARRAYS NOT SAME NUMBER OF       
+1242                          DIMENSIONS                                        
+1251 ACTUAL PARAMETER PART    STREAM PROCEDURE MAY NOT BE PASSED AS AN          
+1252                          ACTUAL PARAMETER TO PROCEDURE                     
+1261 ACTUAL PARAMETER PART    ACTUAL PARAMETER MAY NOT BEGIN WITH THIS          
+1262                          TYPE QUANTITY                                     
+1271 ACTUAL PARAMETER PART    THIS TYPE QUANTITY MAY NOT BE PASSED TO           
+1272                          STREAM PROCEDURE                                  
+1281 ACTUAL PARAMETER PART    ACTUAL AND FORMAL PARAMETERS DO NOT AGREE         
+1282                          IN NUMBER OR EXTRA RIGHT PARENTHESIS              
+1291 ACTUAL PARAMETER PART    ILLEGAL PARAMETER DELIMITER                       
+1301 RELEASE STATEMENT        MISSING FILE NAME IN RELEASE STATEMENT            
+1311 DO STATEMENT             MISSING UNTIL IN DO STATEMENT                     
+1321 WHILE STATEMENT          MISSING DO IN WHILE STATEMENT                     
+1331 LABEL                    MISSING COLON AFTER LABEL                         
+1341 LABEL                    LABEL NOT DECLARED IN THIS BLOCK                  
+1351 LABEL                    LABEL HAS ALREADY BEEN USED IN THIS BLOCK         
+1361 FORMAT                   INPROPER FORMAT EDITING PHRASE                    
+1371 FORMAT                   FORMAT EDITING PHRASE DOES NOT HAVE INTEGER       
+1372                          WHERE REQUIRED                                    
+1381 FORMAT                   WIDTH TOO SMALL IN E OR F OR R EDITING PHRASE     
+1391 TABLE                    DEFINE NESTED MORE THAN 8 DEEP                    
+1401 FORMAT                   INTEGER IN FORMAT GREATER THAN 1023               
+1411 SCANNER                  INTEGER OR IDENTIFIER TOO LONG                    
+1412                          OR ERROR IN PARAMETRIC DEFINE                     
+1421 DEFINE                   DEFINE LONGER THAN 2047 CHARACTERS                
+1431 COMPOUND TAIL            EXTRA END                                         
+1441 STATEMENT                STATEMENT MAY NOT START WITH THIS TYPE            
+1442                          IDENTIFIER                                        
+1451 STATEMENT                STATEMENT MAY NOT START WITH THIS TYPE            
+1452                          QUANTITY                                          
+1461 STATEMENT                STATEMENT MAY NOT START WITH A DECLARATOR.        
+1471 SWITCH                   MORE THAN 256 EXPRESSIONS IN SWITCH               
+1472                          DECLARATION                                       
+1481 PRT SPACE                MORE THAN 1023 PROGRAM REFERENCE TABLE            
+1482                          CELLS REQUIRED FOR THIS PROGRAM                   
+1491 PRT SPACE                MORE THAN 255 STACK CELLS REQUIRED FOR THIS       
+1492                          PROCEDURE                                         
+1501 ACTUAL PARAMETER PART    CONSTANTS MAY NOT BE PASSED BY NAME TO            
+1502                          STREAM PROCEDURES                                 
+1511 FOR STATEMENT            IMPROPER INDEX VARIABLE IN FOR STATEMENT          
+1521 FOR STATEMENT            MISSING ASSIGNMENT OPERATOR FOLLOWING             
+1522                          INDEX VARIABLE IN FOR STATEMENT                   
+1531 FOR STATEMENT            MISSING UNTIL OR WHILE IN STEP ELEMENT            
+1541 FOR STATEMENT            MISSING DO IN FOR CLAUSE                          
+1551 IF STATEMENT             MISSING ELSE IN IF STATEMENT                      
+1561 LIST ELEMENT             DESIGNATIONAL EXPRESSION MAY NOT BE LIST          
+1562                          ELEMENT                                           
+1571 LIST ELEMENT             ROW DESIGNATOR MAY NOT BE LIST ELEMENT            
+1581 LIST ELEMENT             MISSING RIGHT BRACKET IN LIST ELEMENT             
+1591 PROCEDURE STATEMENT      ILLEGAL USE OF PROCEDURE OR FUNCTION              
+1592                          IDENTIFIER                                        
+1601 PURGE                    DECLARED LABEL DID NOT OCCUR                      
+1611 PURGE                    DECLARED FORWARD PROCEDURE DID NOT OCCUR          
+1621 PURGE                    DECLARED FORWARD SWITCH DID NOT OCCUR             
+1631 FORMAT                   WIDTH OF FIELD MORE THAN 63 CHARACTERS            
+1641 ZIP STATEMENT            SYNTAX ERROR                                      
+1651 IMPFUN                  SYNTAX ERROR IN DELAY STATEMENT                    
+1661                         THE EXPRESSION IS NOT OF POINTER TYPE              
+1671                         POINTER PRIMARY MAY NOT START WITH A QUANTITY OF   
+1672                         THIS TYPE                                          
+1681                         POINTER MAY NOT HAVE PARTIAL WORD SYNTAX           
+1691                         POINTER ARRAYS NOT PERMITTED                       
+1701                         MISSING COMMA.                                     
+1711                         PARAMETERS MUST BE 2-DIMENSIONAL ARRAYS.           
+1721                          TOO MANY PARAMETERS IN DEFINE DECLARATION.        
+1731                          RIGHT PARENTHESIS OR RIGHT BRACKET EXPECTED.      
+1741                          WRONG NUMBER OF PARAMETERS IN DEFINE INVOCATION.  
+1991 E                        COMPILER SYMBOL TABLE OVERFLOW;                   
+1992                          PLEASE SEE PROGRAMMING ASSISTANT.                 
+2001 EMIT                     SEGMENT LONGER THAN 1023 WORDS.                   
+2011 SIMPLE VARIABLE          PARTIAL WORD DESIGNATOR NOT LEFTMOST IN           
+2012                          LEFT PART LIST                                    
+2021 SIMPLE VARIABLE          MISSING PERIOD OR ASSIGNMENT OPERATOR             
+2031 SUBSCRIPTED VARIABLE     WRONG NUMBER OF SUBSCRIPTS IN ROW DESIGNATOR      
+2041 SUBSCRIPTED VARIABLE     MISSING RIGHT BRACKET IN ROW DESIGNATOR           
+2051 SUBSCRIPTED VARIABLE     ROW DESIGNATOR OUTSIDE OF ACTUAL PARAMETER        
+2052                          IN LIST OR FILL STATEMENT                         
+2061 SUBSCRIPTED VARIABLE     MISSING RIGHT BRACKET IN SUBSCRIPTED VARIABLE     
+2071 SUBSCRIPTED VARIABLE     MISSING LEFT BRACKET IN SUBSCRIPTED VARIABLE      
+2081 SUBSCRIPTED VARIABLE     WRONG NUMBER OF SUBSCRIPTS IN SUBSCRIPTED VARIABLE
+2091 SUBSCRIPTED VARIABLE     PARTIAL WORD DESIGNATOR NOT LEFTMOST IN LEFT      
+2092                          PART LIST                                         
+2101 SUBSCRIPTED VARIABLE     MISSING "." OR ASSIGNMENT OPERATOR                
+2111 VARIABLE                 PROCEDURE IDENTIFIER APPEARS OUTSIDE OF           
+2112                          SCOPE IN LEFT PART                                
+2121 VARIABLE                SUB-ARRAY DESIGNATOR PERMITTED                     
+2122                         AS ACTUAL PARAMETER ONLY.                          
+2131                         POINTER REQUIRES ARRAY ROW, SUBSCRIPTED VARIABLE,  
+2132                         OR ONE-DIMENSIONAL ARRAY ID                        
+2141                         POINTER RELATION MUST BE EQL OR NEQ ONLY.          
+2151                         CHARACTER SIZE MUST BE LITERAL 6 OR 8.             
+2161                         LEVEL OF POINTER EXPRESSION EXCEEDS LEVEL OF       
+2162                         LEFT-PART POINTER IDENTIFIER                       
+2171                         LEFT-PART POINTER MAY NOT BE CALL-BY-NAME FORMAL   
+2172                         PARAMETER.                                         
+2181                         POINTER UPDATE NOT PERMITTED WITH POINTER RELATION.
+2191                         RELATIONAL OPERATOR EXPECTED WHEN POINTER UPDATE   
+2192                         CONSTRUCT USED.                                    
+2501 STREAM STATEMENT         ILLEGAL STREAM STATEMENT                          
+2511 STREAM STATEMENT         MISSING ASSIGNMENT OPERATOR IN STREAM             
+2512                          STATEMENT                                         
+2521 INDEX                    MISSING + OR - IN STREAM INDEX STATEMENT          
+2531 INDEX                    MISSING NUMBER OR STREAM VARIABLE IN STREAM INDEX 
+2532                          STATEMENT                                         
+2551 DESTINATION STRING       MISSING STRING IN DS := LIT STATEMENT             
+2561 RELEASE STATEMENT        MISSING PARENTHESIS OR FILE IDENTIFIER            
+2562                          NOT A FORMAL PARAMETER OF STREAM PROCEDURE        
+2571 GO TO, LABEL OR JUMP     LABEL SPECIFIED NOT ON THE SAME NEST LEVEL AS     
+2572 STATEMENT                PRECEDING APPEARANCE OF THE LABEL                 
+2581 LABEL                    MISSING COLON AFTER LABEL                         
+2591 LABEL                    LABEL APPEARS MORE THAN ONCE                      
+2601 GO TO STATEMENT          MISSING LABEL IN GO TO OR JUMP OUT TO             
+2602                          STATEMENT                                         
+2611 JUMP STATEMENT           MISSING OUT IN JUMP OUT STATEMENT                 
+2621 NESTS                    MISSING PARENTHESIS IN STREAM NEST STATEMENT      
+2631 IF STATEMENT             MISSING SC IN IF STATEMENT                        
+2641 IF STATEMENT             MISSING RELATIONAL IN IF STATEMENT                
+2651 IF STATEMENT             MISSING ALPHA, DC OR STRING IN IF STATEMENT       
+2661 IF STATEMENT             MISSING THEN IN IF STATEMENT                      
+2671 GO TO STATEMENT          LABEL UNDEFINED IN GO TO STATEMENT                
+2681 EMIT LITERAL             REPEAT INDEX GREATER THAN OR EQUAL TO 64          
+2682                          WAS SPECIFIED OR MORE THAN 63 FORMAL              
+2683                          PARAMETERS, LOCALS AND LABELS WERE USED           
+2691 TABLE                    CONSTANT SPECIFIED TOO LARGE OR TOO SMALL         
+2701 IF STATEMENT             RELATIONAL OPERATOR OTHER THAN = IN SOURCE        
+2702                          FOR ALPHA TEST                                    
+2711 IF STATEMENT             IMPROPER CONSTRUCT FOR SOURCE WITH LITERAL TEST   
+2751                          JUMP IN STREAM STATEMENT IS LONGER THAN           
+2752                          63 SYLLABLES.                                     
+2761 STREAMWHILESTATEMENT     MISSING DO IN STREAM WHILE STATEMENT              
+2771 STREAMDOSTATEMENT        MISSING UNTIL IN STREAM DO STATEMENT              
+2811 DOUBLE STATEMENT         MISSING LEFT PARENTHESIS IN DOUBLE STATEMENT      
+2821 DOUBLE STATEMENT         TOO MANY OPERATORS IN DOUBLE STATEMENT            
+2831 DOUBLE STATEMENT         TOO MANY OPERANDS IN DOUBLE STATEMENT             
+2841 DOUBLE STATEMENT         MISSING COMMA IN DOUBLE STATEMENT                 
+2851 DOUBLE STATEMENT         MISSING RIGHT PARENTHESIS IN DOUBLE STATEMENT     
+2861                          ILLEGAL PARAMETER IN DOUBLE STATEMENT.            
+2891                          ILLEGAL PARAMETER IN DOUBLE STATEMENT.            
+2901                          MISSING PERIOD IN FILE ATTRIBUTE PART.            
+2911                          MISSING FILE ATTRIBUTE.                           
+2921                          MISSING ASSIGNMENT OPERATOR IN FILE ATTRIBUTE     
+2922                          STATEMENT.                                        
+2931                          FILE ATTRIBUTE IS NOT ASSIGNABLE.                 
+                                                                                
+2941                          FILE ATTRIBUTE IS NOT OF TYPE REAL.               
+2951                          FILE ATTRIBUTE MUST BE LEFTMOST IN LEFT PART LIST.
+3001 FILL STATEMENT           IDENTIFIER FOLLOWING FILL NOT ARRAY OR FILE       
+3002                          IDENTIFIER                                        
+3011 FILL STATEMENT           MISSING WITH IN FILL STATEMENT                    
+3021 FILL STATEMENT           IMPROPER FILL ELEMENT                             
+3031 ANYWHERE                 NONOCTAL DIGIT IN OCTAL NUMBER                    
+3041 FILL STATEMENT           IMPROPER ROW DESIGNATOR IN FILL STATEMENT         
+3051                         NUMBER OF DATA WORDS EXCEEDS 1023.                 
+3061 ANYWHERE                 NONOCTAL DIGIT IN OCTAL STRING                    
+3501 CHECKCOMMA:              MISSING OR ILLEGAL PARAMETER DELIMITER IN SORT OR 
+3502                          MERGE STATEMENT.                                  
+3511 OUTPROCHECK:             ILLEGAL TYPE FOR SORT OR MERGE OUTPUT PROCEDURE.  
+3521 OUTPROCHECK:             OUTPUT PROCEDURE IN SORT OR MERGE STATEMENT DOES  
+3522                          NOT HAVE EXACTLY TWO PARAMETERS.                  
+3531 OUTPROCHECK:             FIRST PARAMETER OF OUTPUT PROCEDURE MUST BE       
+3532                          BOOLEAN VARIABLE.                                 
+3541 OUTPROCHECK:             SECOND PARAMETER  OF OUTPUT PROCEDURE MUST BE     
+3542                          ONE-DIMENSIONAL ARRAY.                            
+3551 SORTSTMT:                MISSING LEFT PARENTHESIS IN SORT STATEMENT.       
+3561 HVCHECK:                 ILLEGAL TYPE FOR SORT OR MERGE HIGHVALUE          
+3562                          PROCEDURE.                                        
+3571 HVCHECK:                 HIGHVALUE PROCEDURE DOES NOT HAVE EXACTLY ONE     
+3572                          PARAMETER.                                        
+3581 HVCHECK:                 HIVALUE PROCEDURE PARAMETER NOT ONE-DIMENSIONAL   
+3582                          ARRAY.                                            
+3591 EQLESCHECK:              SORT OR MERGE COMPARE PROCEDURE NOT BOOLEAN.      
+3601 EQLESCHECK:              COMPARE PROCEDURE DOES NOT HAVE EXACTLY TWO       
+3602                          PARAMETERS.                                       
+3611 EQLESCHECK:              COMPARE PROCEDURE FIRST PARAMETER NOT             
+3612                          ONE-DIMENSIONAL ARRAY.                            
+3621 EQLESCHECK:              COMPARE PROCEDURE SECOND PARAMETER NOT            
+3622                          ONE-DIMENSIONAL ARRAY.                            
+3631 INPROCHECK:              SORT STATEMENT INPUT PROCEDURE NOT BOOLEAN.       
+3641 INPROCHECK:              INPUT PROCEDURE DOES NOT HAVE EXACTLY ONE         
+3642                          PARAMETER.                                        
+3651 INPROCHECK:              INPUT PROCEDURE PARAMETER NOT ONE-DIMENSIONAL     
+3652                          ARRAY.                                            
+3661 SORTSTMT:                MISSING RIGHT PARENTHESIS IN SORT STATEMENT.      
+3671 MERGESTMT:               MISSING LEFT PARENTHESIS IN MERGE STATEMENT.      
+3681 MERGESTMT:               MORE THAN SEVEN OR LESS THAN TWO FILES TO MERGE.  
+3691 MERGESTMT:               MISSING RIGHT PARENTHESIS IN MERGE STATEMENT.     
+4001 MONITOR DECLARATION      MISSING FILE IDENTIFIER IN MONITOR DECLARATION    
+4011 MONITOR DECLARATION      MISSING LEFT PARENTHESIS IN MONITOR DECLARATION   
+4021 MONITOR DECLARATION      IMPPROPER SUBSCRIPT FOR MONITOR LIST ELEMENT      
+4031 MONITOR DECLARATION      IMPROPER SUBSCRIPT EXPRESSION DELIMITER IN        
+4032                          MONITOR LIST ELEMENT                              
+4041 MONITOR DECLARATION      IMPROPER NUMBER OF SUBSCRIPTS IN MONITOR          
+4042                          LIST ELEMENT                                      
+4051 MONITOR DECLARATION      LABEL OR SWITCH MONITORED AT IMPROPER LEVEL       
+4061 MONITOR DECLARATION      IMPROPER MONITOR LIST ELEMENT                     
+4071 MONITOR DECLARATION      MISSING RIGHT PARENTHESIS IN MONITOR DECLARATION  
+4081 MONITOR DECLARATION      IMPROPER MONITOR DECLARATION DELIMITER            
+4091 DUMP DECLARATION         MISSING FILE IDENTIFIER IN DUMP DECLARATION       
+4101 DUMP DECLARATION         MISSING LEFT PARENTHESIS IN DUMP DECLARATION      
+4111 DUMP DECLARATION         SUBSCRIPTED VARIABLE IN DUMP LIST HAS WRONG       
+4112                          NUMBER OF SUBSCRIPTS                              
+4121 DUMP DECLARATION         SUBSCRIPTED VARIABLE IN DUMP LIST HAS WRONG       
+4122                          NUMBER OF SUBSCRIPTS                              
+4131 DUMP DECLARATION         IMPROPER ARRAY DUMP LIST ELEMENT                  
+4141 DUMP DECLARATION         ILLEGAL DUMP LIST ELEMENT                         
+4151 DUMP DECLARATION         MORE THAN 100 LABELS AS DUMP LIST ELEMENTS        
+4152                          IN SINGLE DUMP DECLARATION                        
+4161 DUMP DECLARATION         ILLEGAL DUMP LIST ELEMENT DELIMITER               
+4171 DUMP DECLARATION         MISSING DUMP LABEL IN DUMP DECLARATION            
+4181 DUMP DECLARATION         MISSING COLON IN DUMP DECLARATION                 
+4191 DUMP DECLARATION         IMPROPER DUMP DECLARATION DELIMITER               
+4201 READ STATEMENT           MISSING LEFT PARENTHESIS READ STATEMENT           
+4211 READ STATEMENT           MISSING LEFT PARENTHESIS IN READ REVERSE          
+4212                          OR READ SEEK STATEMENT.                           
+4221 READ STATEMENT           MISSING FILE IN READ STATEMENT                    
+4241 READ STATEMENT           IMPROPER FILE DELIMITER IN READ STATEMENT         
+4251 READ STATEMENT           IMPROPER FORMAT DELIMITER IN READ STATEMENT       
+4261 READ STATEMENT           IMPROPER DELIMITER FOR SECOND PARAMETER IN        
+4262                          READ STATEMENT                                    
+4271 READ STATEMENT           IMPROPER ROW DESIGNATOR IN READ STATEMENT         
+4281 READ STATEMENT           IMPROPER ROW DESIGNATOR DELIMITER IN READ         
+4282                          STATEMENT                                         
+4291 READ STATEMENT           MISSING ROW DESIGNATOR IN READ STATEMENT          
+4301 READ STATEMENT           IMPROPER DELIMITER PRECEDING LIST IN READ         
+4302                          STATEMENT                                         
+4311 ACTION LABEL             IMPROPER END OF FILE LABEL IN READ OR SPACE       
+4312                          STATEMENT                                         
+4321 ACTION LABEL             IMPROPER PARITY LABEL IN READ OR SPACE            
+4322                          STATEMENT                                         
+4331 ACTION LABEL             MISSING RIGHT BRACKET IN READ OR SPACE            
+4332                          STATEMENT.                                        
+4341 SPACE STATEMENT          MISSING LEFT PARENTHESIS IN SPACE STATEMENT       
+4351 SPACE STATEMENT          IMPROPER FILE IDENTIFIER IN SPACE STATEMENT       
+4361 SPACE STATEMENT          MISSING COMMA IN SPACE STATEMENT                  
+4371 SPACE STATEMENT          MISSING RIGHT PARENTHESIS IN SPACE STATEMENT      
+4381 WRITE STATEMENT          MISSING LEFT PARENTHESIS IN WRITE STATEMENT       
+4391 WRITE STATEMENT          IMPROPER FILE IDENTIFIER IN WRITE STATEMENT       
+4401 WRITE STATEMENT          IMPROPER DELIMITER FOR FIRST PARAMETER IN         
+4402                          WRITE STATEMENT                                   
+4411 WRITE STATEMENT          MISSING RIGHT BRACKET IN CARRIAGE CONTROL         
+4412                          PART OF WRITE STATEMENT                           
+4421 WRITE STATEMENT          ILLEGAL CARRIAGE CONTROL DELIMITER IN WRITE       
+4422                          STATEMENT                                         
+4431 WRITE STATEMENT          IMPROPER SECOND PARAMETER DELIMITER IN WRITE      
+4432                          STATEMENT                                         
+4441 WRITE STATEMENT          IMPROPER ROW DESIGNATOR IN WRITE STATEMENT        
+4451 WRITE STATEMENT          MISSING RIGHT PARENTHESIS AFTER                   
+4452                          ROW DESIGNATOR IN WRITE STATEMENT                 
+4461 WRITE STATEMENT          MISSING ROW DESIGNATOR IN WRITE STATEMENT         
+4471 WRITE STATEMENT          IMPROPER DELIMITER PRECEDING LIST IN WRITE        
+4472                          STATEMENT                                         
+4481 WRITE STATEMENT          IMPROPER LIST DELIMITER IN WRITE STATEMENT        
+4491 READ STATEMENT           IMPROPER LIST DELIMITER IN READ STATEMENT         
+4501 LOCK STATEMENT           MISSING LEFT PARENTHESIS IN LOCK STATEMENT        
+4511 LOCK STATEMENT           IMPROPER FILE IN LOCK STATEMENT                   
+4521 LOCK STATEMENT           MISSING COMMA IN LOCK STATEMENT                   
+4531 LOCK STATEMENT           IMPROPER UNIT DISPOSITION PART IN LOCK STATEMENT. 
+4541 LOCK STATEMENT           MISSING RIGHT PARENTHESIS IN LOCK STATEMENT       
+4551 CLOSE STATEMENT          MISSING LEFT PARENTHESIS IN CLOSE STATEMENT       
+4561 CLOSE  TATEMENT          IMPROPER FILE IN CLOSE STATEMENT                  
+4571 CLOSE STATEMENT          MISSING COMMA IN CLOSE STATEMENT                  
+4581 CLOSE STATEMENT          IMPROPER UNIT DISPOSITION PART IN CLOSE STATEMENT.
+4591 CLOSE STATEMENT          MISSING RIGHT PARENTHESIS IN CLOSE STATEMENT      
+4601 REWIND STATEMENT         MISSING LEFT PARENTHESIS IN REWIND STATEMENT      
+4611 REWIND STATEMENT         IMPROPER FILE PART IN REWIND STATEMENT            
+4621 REWIND STATEMENT         MISSING RIGHT PARENTHESIS IN REWIND STATEMENT     
+4631 BLOCK                    MONITOR DECLARATION IN SPECIFICATION OF PROCEDURE 
+4641 BLOCK                    DUMP DECLARATION IN SPECIFICATION OF PROCEDURE    
+4651 BLOCK                    DUMP INDICATOR MUST BE UNSIGNED INTEGER OR        
+4652                          SIMPLE VARIABLE.                                  
+4751 LISTGEN                  FOR LISTNAME NOT FOLLOWED BY DO                   
+4761 LISTGEN                  EXPLICIT LISTS MAY NOT BE RECURSIVE.              
+4891 POLISHER                 ERROR IN POLISH STRING                            
+5001 SUBPROGRAM               ILLEGAL SUBPROGRAM TAPE IDENTIFIER                
+5011 SUBPROGRAM               SUBPROGRAM IDENTIFIER NOT IN DIRECTORY            
+5021 SUBPROGRAM               ILLEGAL SUBPROGRAM START POINT                    
+5031 SUBPROGRAM               SEPARATOR REQUIRED BETWEEN START POINT AND        
+5032                          LENGTH ON SUBPROGRAM CARD                         
+5041 SUBPROGRAM               ILLEGAL SUBPROGRAM LENGTH                         
+5051 SUBPROGRAM               MISSING BRACKET ON SUBPROGRAM CARD                
+5071 SUBPROGRAM               MAGNETIC TAPE POSITIONING ERROR - RECOMPILE       
+5081 TSS                      CONSTRUCT NOT ALLOWED ON TIME-SHARING SYSTEM      
+5091                          NON-LITERAL FILE VALUE NOT GLOBAL TO FILE         
+5092                         DECLARATION                                        
+5101 LISTGEN                  FOR LIST DO MAY BE USED ONLY IN PROCEDURES.       
+6001 ARRAYDEC                ARRAY SIZE TOO LARGE.                              
+6011 FORMALARRAY             NUMBER OF DIMENSIONS EXCEEDS 7.                    
+6021 NEWINTRINSIC            RECALL CANNOT BE USED WITHOUT REMEMBER             
+6022                         AND VICE VERSA.                                    
+6031 EMIT                    LOCAL STRING TOO LARGE                             
+6041 EMIT                    INTERNAL STRING EXPRESSION JUMP TOO LONG.          
+6056 IT                      MISSING NUMBER OR NUMBER TOO LARGE.                
+6061 ANYWHERE                MISSING COMMA.                                     
+6071 ANYWHERE                MISSING RIGHT BRACKET.                             
+6081 RPROP                   MISSING RECORD TYPE.                               
+6091 CONVAL                  MISSING OR ILLEGAL NUMBER.                         
+6101 ARAY                    ARRAY ROW NOT ALLOWED HERE.                        
+6111 DBLPRIM                 DOUBLE PRIMARY MAY NOT BEGIN WITH                  
+6112                         QUANITY OF THIS TYPE.                              
+6121 REXP                    ILLEGAL RECORD EXPRESSION                          
+6131 REXP                    RECORD CLASSES DO NOT AGREE.                       
+6141 FIELDINDEX              MISSING RIGHT BRACKET.                             
+6151 GENQUOTE                ILLEGAL LIST ITEM.                                 
+6161 GENQUOTE                TOO MANY RIGHT PARENTHESES IN LIST                 
+6171 CHAINOP                  MISSING ASSIGNMENT OPERATOR IN ASSIGNMENT         
+6172                          STATEMENT                                         
+6181 SYMBOLEXP               ILLEGAL SYMBOL EXPRESSION.                         
+6191 RETURN                  RETURN USED OUTSIDE OF SCOPE.                      
+6201 EXIT                    EXIT USED OUTSIDE OF SCOPE.                        
+6211 RECLAIM                 SYMBOL REFERENCES CANNOT BE EXPLICITLY             
+6212                         RECLAIMED WHEN USING AUTOMATIC STORAGE             
+6213                         RECLAMATION.                                       
+6221 RECALL-REMEMBER         ILLEGAL FILE IDENTIFIER.                           
+6231 PRINT                   PRINT STRING TOO LARGE.                            
+6241 IOSTMT                  ILLEGAL FILE OR PROCEDURE IDENTIFIER               
+6242                         IN INPUT OR OUTPUT STATEMENT.                      
+6251 IOSTMT                  ILLEGAL STRING IDENTIFIER IN IO STATEMENT.         
+6261 NOGO                    THIS DESIGNATIONAL EXPRESSION NOT PERMITTED        
+6262                         WHEN USING AUTOMATIC STORAGE RECLAMATION.          
+6271 RECORDGEN               UNDEFINED FIELD IDENTIFIER IN RECORD GENERATOR.    
+6281 FILEDGEN                A FIELD CANNOT BE A FORMAL PARAMETER.              
+6291 FILEDGEN                ILLEGAL FIELD DECLARATION.                         
+6301 FILEDGEN                FIELD PREVIOUSLY DECLARED IN SAME BLOCK.           
+6311 FILEDGEN                MISSING COLON.                                     
+6321 FILEDGEN                FIELD TOO SMALL FOR REFERENCE VALUE.               
+6331 RECORDGEN               NUMBER OF RECORD CLASSES EXCEEDS 30.               
+6341 STRINGEN                DECLARED STRING LENGTH EXCEEDS 8134 CHARACTERS.    
+6351 RECORDGEN.              ACTUAL NUMBER OF SUBSCRIPTS OF INDEXED             
+6352                         FIELD IS NOT EQUAL TO DECLARED NUMBER.             
+6361 FIELDC                  FIELD NOT CONTAINED IN GIVEN RECORD CLASS.         
+6371 GENQUOTE                MISSING QUOTE IN QUOTED SYMBOL EXPRESSION.         
+6381 PRINT                   UNPRINTABLE EXPRESSION.                            
+6391 SYMBOLDEFINE            ILLEGAL PROPERTY LIST ELEMENT.                     
+6401 SYMBOLDEFINE            MISSING RIGHT BRACKET IN SYMBOL DEFINE.            
+6411 SYMBOLDEFINE            ATOMIC SYMBOL MUST PRECEDE PROPERTY LIST PART.     
+6421 SYMBOLDEFINE            MISSING COLON.                                     
+6431 LISTELEMENT             ILLEGAL LIST ELEMENT.                              
+6441 IOSTMT                  MISSING INPUT STATEMENT.                           
+6451 IOSTMT                  MISSING OUTPUT STATEMENT.                          
+6461                          MISSING IN OR OUT FILE DECLARATION.               
+6471                          BUFFER LENGTH MUST BE DECLARED TO BE 5 (WORDS)    
+6472                          IN FILE DECLARATION.                              
+6481                          BUFFER LENGTH MUST BE UNSIGNED INTEGER IN         
+6482                          REMOTE FILE OR RECORD FILE DECLARATION.           
+6491                          INPUT STRING LENGTH PLUS LEFT MARGIN MUST BE      
+6492                          GREATER THAN 60 CHARACTERS.                       
+6501                          LABEL MUST BE DECLARED IN OUTERMOST BLOCK.        
+6511                          THE SAME OUTPUT STRING VARIABLE MUST APPEAR       
+6512                          IN MULTIPLE OCCURANCES OF THE REMOTE TERMINAL     
+6513                          OUTPUT STATEMENT.                                 
+6531                          MISSING INPUT OR OUTPUT STATEMENT FOR REMOTE      
+6532                          TERMINAL FILE.                                    
+6541                          MISSING OR ILLEGAL LABEL IDENTIFIER IN            
+6542                          REMOTE TERMINAL OUTPUT STATEMENT.                 
+6551                          RECORD FILE MUST BE DECLARED IN SAME BLOCK        
+6552                          AS RECORD CLASS IDENTIFIER.                       
+6561                          ILLEGAL DISK FILE IDENTIFIER IN RECORD            
+6562                          CLASS DECLARATION.                                
+6571                          MISSING DISK FILE IDENTIFIER IN RECORD            
+6572                          CLASS DECLARATION.                                
+6581                          NUMBER OF RECORD CLASS IDENTIFIERS                
+6582                          ASSOCIATED WITH GIVEN RECORD FILE EXCEEDS 31.     
+6591                          RECORD SIZE EXCEEDS SIZE OF LOGICAL RECORD        
+6592                          IN RECORD FILE.                                   
+6611                          MISSING UNSIGNED CONSTANT IN WAIT PART OF         
+6601                          ILLEGAL USE OF RETURN STATEMENT IN SYMBOL FORMAT. 
+6612                          FILE REMOTE DECLARATION.                          
+6621                          MISSING OR ILLEGAL FILE IDENTIFIER IN             
+6622                          RECORD FILE REFERENCE.                            
+6631                          IDENTIFIERS IN SYMBOL FORMAT INFO DECLARATION     
+6632                          MUST BE DECLARED IN OUTER BLOCK.                  
+6641                          SYMBOL FORMAT CLASS VARIABLE PREVIOUSLY DECLARED  
+6651                          SYMBOL FORMAT GETNEXT PROCEDURE PREVIOUSLY        
+6652                          DECLARED                                          
+6661                          ILLEGAL FORMAL PARAMETER IN SYMBOL FORMAT ERROR   
+6662                          PROCEDURE                                         
+6671                          ILLEGAL SYMBOL FORMAT INFO DECLARATION            
+6681                          MISSING ATOMIC SYMBOL IN SYMBOL FORMAT TERMINAL   
+6682                          COMPONENT                                         
+6691                          MISSING OR ILLEGAL SYMBOL FORMAT TERMINAL         
+6702                          TERMINAL COMPONENT SEQUENCE                       
+6701                          NONDECREASING CLASS ASSIGNMENT IN SYMBOL FORMAT   
+6692                          COMPONENT                                         
+6711                          GETNEXT PROCEDURE AND/OR CLASS VARIABLE SHOULD    
+6712                          HAVE BEEN DECLARED PREVIOUSLY IN SYMBOL FORMAT    
+6713                          DECLARATION                                       
+6721                          MISSING [ IN SYMBOL FORMAT DECLARATION            
+6731                          CLASS ASSIGNMENT IN SYMBOL FORMAT TERMINAL        
+6732                          MATCHING SEQUENCE MUST BE CONSECUTIVE FOR SYMBOL  
+6733                          FORMAT SWITCH                                     
+6741                          TOO MANY FIRST TERMINAL COMPONENTS IN SYMBOL      
+6742                          FORMAT SWITCH (GREATER THAN 127)                  
+6751                          MISSING ERROR PROCEDURE IN SYMBOL FORMAT          
+6752                          DECLARATION                                       
+6761                          FIRST COMPONENT OF SYMBOL FORMAT SWITCH MATCHING  
+6762                          SEQUENCE MUST BE A TERMINAL COMPONENT             
+6771                          MISSING MATCHING COMPONENTS IN SYMBOL FORMAT      
+6781                          MISSING OR ILLEGAL ERROR LABEL IN SYMBOL FORMAT   
+6782                          STATEMENT                                         
+6791                          MISSING REMOTE TERMINAL I/O DECLARATIONS          
+6801                          MISSING SYMBOL FORMAT IDENTIFIER IN TWXLOOP       
+6811                          MISSING COLON IN FIELD ASSIGNMENT CONS            
+6821                          MISSING FIELD IDENTIFIER IN FIELD ASSIGNMENT CONS 
+6831                          IDENTIFIER MUST BE DECLARED IN OUTERMOST BLOCK    
+6841                          ONLY SINGLE DIMENSIONAL ARRAYS ARE                
+6842                          PERMITTED AS STRING EXPRESSION PRIMARIES.         
+6861                          ILLEGAL ARGUMENT OF CONVAL FUNCTION.              
+6852                          STATEMENT.                                        
+6851                          MISSING ASSIGNMENT OPERATOR IN FIELD ASSIGNMENT   
+6871                          OCTAL STRING PRIMARY PERMITTED ONLY IN STRING     
+6872                          ASSIGNMENT STATEMENTS.                            
+6881                          MISSING ATOMIC SYMBOL IN SYMBOL DEFINE            
+6882                          DECLARATION.                                      
+6891                          MISSING STRING VARIABLE IN STRING SUBST PRIMARY.  
+6901                          ONLY INTEGER CONSTANTS CAN APPEAR IN STRING       
+6902                          SUBST PRIMARY.                                    
+6911                          ILLEGAL LENGTH SPECIFICATION IN STRING VARIABLE   
+6912                          IN SUBST.                                         
+6921                          MISSING SUBSTITUTION CHARACTER IN SUBST.          
+6931                          LEFT MARGIN GREATER THAN OUTPUT STRING            
+6932                          VARIABLE LENGTH.                                  
+6941                          INPUT STRING VARIABLE DIFFERS IN MULTIPLE         
+6942                          OCCURANCES OF REMOTE TERMINAL INPUT STATEMENT.    
+6951                          ILLEGAL RECORD FILE DECLARATION.                  
+6961                          FILE REMOTE DECLARATION MUST BE MADE IN           
+6962                          OUTER-MOST BLOCK.                                 
+6991                          ARGUMENT OF SEARCH IS STRING LONGER THAN          
+6992                          63 CHARACTERS IN LENGTH.                          
+7001 AMONG                   MISSING STRING AFTER AMONG.                        
+7011 BITXP                   REPEAT INDICATOR TOO LARGE IN BIT EXPRESSION.      
+7021 BITXP                   BIT1 OR BIT0 EXPECTED.                             
+7031 STRINGINT               REPEAT INDICATOR NOT PERMITTED HERE.               
+7041 STRINGXP                STRING EXPRESSION (LENGTH) OVERFLOW.               
+7051 STRINGXP                QUOTED STRING TOO LONG.                            
+7061 STRINGLOOP              MISSING COLON.                                     
+7071 STRINGLOOP              STRING EXPRESSION TOO LARGE.                       
+7081 STRINGXP                STRING EXPRESSION CANNOT CONTAIN THIS              
+7082                         TYPE QUANTITY.                                     
+7091 STRINGXP                REPEAT INDICATOR TOO LARGE.                        
+7101 STRINGVAR               SUBSTRING NOT IN DESIGNATED STRING                 
+7102                         OR MISSING OR FORMAL STRING IDENTIFIER.            
+7111 STRINGVAR               ARRAY ROW DESIGNATOR NOT PERMITTED HERE.           
+7121 STRINGVAR               STRING DESIGNATOR NOT PERMITTED HERE.              
+7131 STRINGVAR               STARTING POSITION PLUS SUBSTRING LENGTH            
+7132                         EXCEEDS LENGTH OF MAIN STRING.                     
+7141 STRINGXP                MISSING RELATIONAL OPERATOR IN STRING              
+7142                         COMPARISON EXPRESSION.                             
+7151 STRINGLOOP              MISSING RIGHT BRACKET.                             
+7161 STRINGXP                STRINGS ON LEFT AND RIGHT HAND SIDES               
+7162                         OF RELATIONAL OPERATOR KNOWN TO BE OF              
+7163                         UNEQUAL LENGTH.                                    
+7171 STRINGSEC               MISSING ASSIGNMENT OPERATOR                        
+9001                          MISMATCHED PARENTHESES                            
+9011                          MISSING BOOLEAN OPERAND                           
+9021                          TOO MANY BOOLEANS SET                             
+9031                          MISSING COMMA                                     
+9041                          MISSING "IF"                                      
+9051                          UNRECOGNIZED WORD OR CHARACTER                    
+9061                          MISSING SEQUENCE NUMBER                           
+9071                          MISSING SEMICOLON                                 
+9081                          MISSING BOOLEAN ID, "=" OR TRUTH VALUE ON SET CARD
+9991                           COMPILATION TERMINATED PREMATURELY.              

@@ -1,0 +1,48 @@
+ QU HELLO.  I AM YOUR FRIENDLY BURROUGHS B5500 COMPUTER.                00000100
+    TO TALK TO ME, JUST TYPE YOUR ANSWERS & PRESS THE LEFT              00000200
+    ARROW KEY AFTER EACH ANSWER.                                        00000300
+    WOULD YOU LIKE TO LEARN MORE ABOUT ME.                              00000400
+ CA                                                                     00000500
+ CA YES                                                                 00000600
+ CB OK                                                                  00000700
+ CB O.K.                                                                00000800
+ CA NO                                                                  00000900
+ TY TOO BAD, BUT I AM GOING AHEAD ANYHOW.                               00001000
+ UN I EXPECT YOU TO ANSWER YES OR NO.                                   00001100
+ UN YOU ARE STUBBORN.                                                   00001200
+ UN WELL THEN, PRESS THE LEFT ARROW KEY.                                00001300
+ QU I AM LOCATED AT THE UNIVERSITY OF DENVER. I HAVE BEEN               00001400
+    HERE SEVERAL YEARS, BUT I JUST ACQUIRED THE ABILITY TO              00001500
+    CONVERSE BY TELETYPE IN JANUARY 1967.  DO YOU KNOW                  00001600
+    HOW MUCH I COST.                                                    00001700
+ CA $1,367,000                                                          00001800
+ CA PLENTY                                                              00001900
+ TY YES, INDEED.  IN FACT, I COST $1,367,000.                           00002000
+ CA NOTHING                                                             00002100
+ TY THAT IS AN INSULT. IN FACT, I COST $1,367,000.                      00002200
+ CA NO                                                                  00002300
+ TY I SEE YOU ARE HONEST. IN FACT, I COST $1,367,000.                   00002400
+ UN THAT IS NOT RIGHT.  GUESS AGAIN.                                    00002500
+ UN THAT IS NOT RIGHT, EITHER.  KEEP GUESSING IF YOU WANT               00002600
+    TO.  IF YOU GIVE UP, TYPE "HELP".                                   00002700
+ QU THAT IS QUITE A LOT OF MONEY, BUT I THINK I AM WORTH IT.            00002800
+    I CAN DO A SCIENTIFIC COMPUTATION IN ONE MINUTE THAT                00002900
+    WOULD TAKE A MAN AT A DESK CALCULATOR A FULL YEAR TO DO.            00003000
+    NOW LET ME FIND OUT SOMETHING ABOUT YOU.                            00003100
+    DO YOU LIKE COLD WEATHER.                                           00003200
+ CA YES                                                                 00003300
+ CA NO                                                                  00003400
+ UN MY VOCABULARY IS LIMITED. PLEASE JUST SAY YES OR NO.                00003500
+ QU I SEE.  HOW ABOUT HOT WEATHER.                                      00003600
+ CA YES                                                                 00003700
+ CA NO                                                                  00003800
+ UN I JUST WANT YOU TO SAY YES OR NO.                                   00003900
+ UN I INSIST ON JUST A YES OR NO ANSWER.                                00004000
+ QU IT IS ALL THE SAME TO ME. I SPEND ALL MY TIME IN AN                 00004100
+    AIR-CONDITIONED ROOM.                                               00004200
+    WELL, IT HAS BEEN NICE TALKING TO YOU, BUT I REALLY                 00004300
+    SHOULD GET BACK TO WORK. PLEASE SAY GOODBYE.                        00004400
+ CA GOODBYE                                                             00004500
+ UN I SAID SAY GOODBYE.                                                 00004600
+ UN COME ON, BE POLITE AND SAY GOODBYE.                                 00004700
+ 99                                                                     00004800

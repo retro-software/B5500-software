@@ -1,0 +1,285 @@
+BEGIN                                                                   00000100
+COMMENT A SYNTAX-DIRECTED PARSING PROGRAM USING THE REMOTE TERMINAL.    00000200
+      THIS PROGRAM PRODUCES REVERSE POLISH FROM ANY ARITHMETIC          00000300
+      EXPRESSION.  THE COMMAND "POLISH" FOLLOWED BY ANY ARITHMETIC      00000400
+      EXPRESSION WILL RESULT IN THE PRINTING OF THE POLISH OF           00000500
+      THAT EXPRESSION.  AN OPTIONAL TRACE FEATURE IS INCLUDED.  THE     00000600
+      COMMAND "TRACE ON" WILL TURN THIS FEATURE ON, THUS GIVING         00000700
+      A TRACE OF THE PARSING OF THE ARITHMETIC EXPRESSION INTO          00000800
+      POLISH.  TO TURN THE TRACE OFF THE COMMAND "TRACE OFF" IS         00000900
+      USED.  TO STOP THE PROGRAM, THE USER ENTERS "STOP" AND THE        00001000
+      PROGRAM GOES TO END-OF-JOB.  ANY OTHER INPUT OR                   00001100
+      AN ILLEGAL ARITHMETIC EXPRESSION RESULTS IN AN ERROR              00001200
+      MESSAGE.  AFTER COMPLETING A COMMAND OR DETECTING AN              00001300
+      ERROR, THE PROGRAM PRINTS "GO AHEAD" AND WAITS FOR ANOTHER        00001400
+      COMMAND FROM THE TERMINAL;                                        00001500
+FILE REMOTE;                                                            00001600
+REAL CLASS;       % THE CLASS VARIABLE                                  00001700
+BOOLEAN TRACE;    % THE TRACE VARIABLE                                  00001800
+LABEL START,ERROR;                                                      00001900
+SYMBOL FORMAT     % SYNTACTICAL CLASS ASSIGNMENT                        00002000
+      *0                                                                00002100
+      = VARIABLE                                                        00002200
+      * NUMBER                                                          00002300
+      * "("                                                             00002400
+      * ")"                                                             00002500
+      * "*"                                                             00002600
+      * "|"                                                             00002700
+      * "/"                                                             00002800
+      * "+"                                                             00002900
+      * "-"                                                             00003000
+      * "POLISH"                                                        00003100
+      * "TRACE"                                                         00003200
+      * "ON"                                                            00003300
+      * "OFF"                                                           00003400
+      * "STOP"                                                          00003500
+      * EOF;                                                            00003600
+REAL FIELD CDRF [33:15];                                                00003700
+%                                                                       00003800
+%THE "GETNEXT" PROCEDURE                                                00003900
+%                                                                       00004000
+PROCEDURE GETNEXT;                                                      00004100
+      CLASS := CASE READCON(FALSE) OF                                   00004200
+      BEGIN                                                             00004300
+      EOF;        % THE END-OF-FILE CLASS (SECTION 9.6.2)               00004400
+      NUMBER;     % ILLEGAL NUMBER CLASS                                00004500
+      NUMBER;     % NUMBER CLASS - NUMBER IN INREAL                     00004600
+      CDRF(INSYM);% ATOMIC SYMBOL CLASS                                 00004700
+      VARIABLE;   % NOT ON SYMBOL TABLE - GIVE VARIABLE CLASS           00004800
+      END;                                                              00004900
+      COMMENT                                                           00005000
+      NOW TELL THE COMPILER THE NAMES OF THE GETNEXT PROCEDURE,         00005100
+      WHICH VARIABLE IS THE CLASS VARIABLE AND                          00005200
+      THAT THE TRACE OPTION IS DESIRED.  NOTE THAT THE ERROR            00005300
+      OPTION IS NOT BEING USED IN THIS EXAMPLE;                         00005400
+SYMBOL FORMAT *CLASS, GETNEXT, TRACE;                                   00005500
+SYMBOL FORMAT AEXP; FORWARD;                                            00005600
+SYMBOL FORMAT PRIMARY;                                                  00005700
+      [VARIABLE: PRIN INSYM SPACE ELSE                                  00005800
+      NUMBER: PRIN INREAL SPACE ELSE                                    00005900
+      "(", *AEXP, ")" ];                                                00006000
+SYMBOL FORMAT FACTOR;                                                   00006100
+      [*PRIMARY,                                                        00006200
+      ["*", *PRIMARY, PRIN #* #; RETURN ELSE NIL]];                     00006300
+SYMBOL FORMAT TERM;                                                     00006400
+      BEGIN                                                             00006500
+      BOOLEAN TIMES;                                                    00006600
+      [*FACTOR,                                                         00006700
+      ["|"*"/": TIMES := CLASS =  ="|";                                 00006800
+      *FACTOR, PRIN IF TIMES THEN #| # ELSE #/ #;                       00006900
+      RETURN ELSE NIL]];                                                00007000
+      END;                                                              00007100
+SYMBOL FORMAT AEXP;                                                     00007200
+      BEGIN                                                             00007300
+      REAL MINUS;                                                       00007400
+      [*TERM,                                                           00007500
+      ["+"*"-": MINUS := CLASS;                                         00007600
+      *TERM, PRIN IF MINUS =  ="-" THEN #- # ELSE #+ #;                 00007700
+      RETURN ELSE NIL]];                                                00007800
+      END;                                                              00007900
+                                                                        00008000
+      COMMENT PROGRAM STARTS HERE;                                      00008100
+      PRINT #RECC POLISH GENERATOR#;                                    00008200
+      GETNEXT;                                                          00008300
+START:[EOF: PRINT #GO AHEAD#,/ ELSE                                     00008400
+      "POLISH", *AEXP, TERPRI ELSE                                      00008500
+      "TRACE",                                                          00008600
+            ["ON"*"OFF": TRACE := CLASS = ="ON";] ELSE                  00008700
+      "STOP", PRINT #GOOD BYE#,/,/,/; EXIT;]:ERROR;                     00008800
+      GO START;                                                         00008900
+ERROR:PRINT #ILLEGAL SYNTAX OR COMMAND#;                                00009000
+      COL := RMARGI; GETNEXT; GO START;                                 00009100
+END.                                                                    00009200
+                                                                        00009300
+                                                                        00009400
+RUN                                                                     00009500
+                                                                        00009600
+ -BOJ- 0POLISH                                                          00009700
+RECC POLISH GENERATOR                                                   00009800
+GO AHEAD                                                                00009900
+POLISH (A+B)|(C-D)                                                      00010000
+A B + C D - |                                                           00010100
+GO AHEAD                                                                00010200
+TRACE ON                                                                00010300
+GO AHEAD                                                                00010400
+POLISH (A+B)|(C-D)                                                      00010500
+                                                                        00010600
+    CALL AEXP                                                           00010700
+                                                                        00010800
+        CALL TERM                                                       00010900
+                                                                        00011000
+            CALL FACTOR                                                 00011100
+                                                                        00011200
+                CALL PRIMARY                                            00011300
+                                                                        00011400
+                    CALL AEXP                                           00011500
+                                                                        00011600
+                        CALL TERM                                       00011700
+                                                                        00011800
+                            CALL FACTOR                                 00011900
+                                                                        00012000
+                                CALL PRIMARY                            00012100
+A                                                                       00012200
+                                PRIMARY = 1                             00012300
+                                                                        00012400
+                            FACTOR = 1                                  00012500
+                                                                        00012600
+                        TERM = 1                                        00012700
+                                                                        00012800
+                        CALL TERM                                       00012900
+                                                                        00013000
+                            CALL FACTOR                                 00013100
+                                                                        00013200
+                                CALL PRIMARY                            00013300
+B                                                                       00013400
+                                PRIMARY = 1                             00013500
+                                                                        00013600
+                            FACTOR = 1                                  00013700
+                                                                        00013800
+                        TERM = 1                                        00013900
++                                                                       00014000
+                    AEXP = 1                                            00014100
+                                                                        00014200
+                PRIMARY = 1                                             00014300
+                                                                        00014400
+            FACTOR = 1                                                  00014500
+                                                                        00014600
+            CALL FACTOR                                                 00014700
+                                                                        00014800
+                CALL PRIMARY                                            00014900
+                                                                        00015000
+                    CALL AEXP                                           00015100
+                                                                        00015200
+                        CALL TERM                                       00015300
+                                                                        00015400
+                            CALL FACTOR                                 00015500
+                                                                        00015600
+                                CALL PRIMARY                            00015700
+C                                                                       00015800
+                                PRIMARY = 1                             00015900
+                                                                        00016000
+                            FACTOR = 1                                  00016100
+                                                                        00016200
+                        TERM = 1                                        00016300
+                                                                        00016400
+                        CALL TERM                                       00016500
+                                                                        00016600
+                            CALL FACTOR                                 00016700
+                                                                        00016800
+                                CALL PRIMARY                            00016900
+D                                                                       00017000
+                                PRIMARY = 1                             00017100
+                                                                        00017200
+                            FACTOR = 1                                  00017300
+                                                                        00017400
+                        TERM = 1                                        00017500
+-                                                                       00017600
+                    AEXP = 1                                            00017700
+                                                                        00017800
+                PRIMARY = 1                                             00017900
+                                                                        00018000
+            FACTOR = 1                                                  00018100
+|                                                                       00018200
+        TERM = 1                                                        00018300
+                                                                        00018400
+    AEXP = 1                                                            00018500
+                                                                        00018600
+GO AHEAD                                                                00018700
+POLISH (A+(B*C)/D)+E*F                                                  00018800
+                                                                        00018900
+    CALL AEXP                                                           00019000
+                                                                        00019100
+        CALL TERM                                                       00019200
+                                                                        00019300
+            CALL FACTOR                                                 00019400
+                                                                        00019500
+                CALL PRIMARY                                            00019600
+                                                                        00019700
+                    CALL AEXP                                           00019800
+                                                                        00019900
+                        CALL TERM                                       00020000
+                                                                        00020100
+                            CALL FACTOR                                 00020200
+                                                                        00020300
+                                CALL PRIMARY                            00020400
+A                                                                       00020500
+                                PRIMARY = 1                             00020600
+                                                                        00020700
+                            FACTOR = 1                                  00020800
+                                                                        00020900
+                        TERM = 1                                        00021000
+                                                                        00021100
+                        CALL TERM                                       00021200
+                                                                        00021300
+                            CALL FACTOR                                 00021400
+                                                                        00021500
+                                CALL PRIMARY                            00021600
+                                                                        00021700
+                                    CALL AEXP                           00021800
+                                                                        00021900
+                                        CALL TERM                       00022000
+                                                                        00022100
+                                            CALL FACTOR                 00022200
+                                                                        00022300
+                                                CALL PRIMARY            00022400
+B                                                                       00022500
+                                                PRIMARY = 1             00022600
+                                                                        00022700
+                                                CALL PRIMARY            00022800
+C                                                                       00022900
+                                                PRIMARY = 1             00023000
+*                                                                       00023100
+                                            FACTOR = 1                  00023200
+                                                                        00023300
+                                        TERM = 1                        00023400
+                                                                        00023500
+                                    AEXP = 1                            00023600
+                                                                        00023700
+                                PRIMARY = 1                             00023800
+                                                                        00023900
+                            FACTOR = 1                                  00024000
+                                                                        00024100
+                            CALL FACTOR                                 00024200
+                                                                        00024300
+                                CALL PRIMARY                            00024400
+D                                                                       00024500
+                                PRIMARY = 1                             00024600
+                                                                        00024700
+                            FACTOR = 1                                  00024800
+/                                                                       00024900
+                        TERM = 1                                        00025000
++                                                                       00025100
+                    AEXP = 1                                            00025200
+                                                                        00025300
+                PRIMARY = 1                                             00025400
+                                                                        00025500
+            FACTOR = 1                                                  00025600
+                                                                        00025700
+        TERM = 1                                                        00025800
+                                                                        00025900
+        CALL TERM                                                       00026000
+                                                                        00026100
+            CALL FACTOR                                                 00026200
+                                                                        00026300
+                CALL PRIMARY                                            00026400
+E                                                                       00026500
+                PRIMARY = 1                                             00026600
+                                                                        00026700
+                CALL PRIMARY                                            00026800
+F                                                                       00026900
+                PRIMARY = 1                                             00027000
+*                                                                       00027100
+            FACTOR = 1                                                  00027200
+                                                                        00027300
+        TERM = 1                                                        00027400
++                                                                       00027500
+    AEXP = 1                                                            00027600
+                                                                        00027700
+GO AHEAD                                                                00027800
+TRACE OFF                                                               00027900
+GO AHEAD                                                                00028000
+POLISH (A+(B*C)/D)+E*F                                                  00028100
+A B C * D / + E F * +                                                   00028200
+GO AHEAD                                                                00028300
+STOP                                                                    00028400
+GOOD BYE                                                                00028500

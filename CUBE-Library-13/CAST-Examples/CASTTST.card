@@ -1,0 +1,6 @@
+?COMPILE PTS024/TEST ALGOL SYNTAX
+?DATA CARD
+$CARD LIST SINGLE
+$$ A PTS024
+                                                                        99999999
+?END

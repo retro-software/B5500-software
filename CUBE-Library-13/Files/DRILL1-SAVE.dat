@@ -1,0 +1,50 @@
+ QU COURSE DRILL1,A QUICK DRILL IN ADDITION, SUBTRACTION,               00000100
+    MULTIPLICATION AND DIVISION.                                        00000200
+    2+2=                                                                00000300
+ CA 4                                                                   00000400
+ UN TRY 2+2 AGAIN                                                       00000500
+ QU 4+3=                                                                00000600
+ CA 7                                                                   00000700
+ UN TRY 4+3 AGAIN                                                       00000800
+ QU 6+2=                                                                00000900
+ CA 8                                                                   00001000
+ UN TRY 6+2 AGAIN                                                       00001100
+ QU 4+9=                                                                00001200
+ CA 13                                                                  00001300
+ UN TRY 4+9 AGAIN                                                       00001400
+ QU 7+8=                                                                00001500
+ CA 15                                                                  00001600
+ UN TRY 7+8 AGAIN                                                       00001700
+ QU 9+3=                                                                00001800
+ CA 12                                                                  00001900
+ UN TRY 9+3 AGAIN                                                       00002000
+ QU 5+7=                                                                00002100
+ CA 12                                                                  00002200
+ UN TRY 5+7 AGAIN                                                       00002300
+ QU 9+8=                                                                00002400
+ CA 17                                                                  00002500
+ UN TRY 9+8 AGAIN                                                       00002600
+QU 3 X 9=                                                               00002700
+ CA 27                                                                  00002800
+ UN TRY 3 X 9 AGAIN                                                     00002900
+ QU 7 X 8=                                                              00003000
+ CA 56                                                                  00003100
+ UN TRY 7 X 8 AGAIN                                                     00003200
+ QU 21/3=                                                               00003300
+ CA 7                                                                   00003400
+ UN TRY 21/3 AGAIN                                                      00003500
+ QU 36/9=                                                               00003600
+ CA 4                                                                   00003700
+ UN TRY 36/9 AGAIN                                                      00003800
+ QU 77/11=                                                              00003900
+ CA 7                                                                   00004000
+ UN TRY 77/11 AGAIN                                                     00004100
+ QU 32768/128=                                                          00004200
+ CA 256                                                                 00004300
+ TY I WONDER IF YOU REALLY GOT THAT WITHOUT TYPING HELP.                00004400
+                                                                        00004500
+    THAT IS THE END OF THIS COURSE.                                     00004600
+ UN THAT WAS NOT SO EASY.  IF YOU GIVE UP, TYPE HELP                    00004700
+ 99                                                                     00004800
+TESTING 1234567890TESTING SOME MORE AND MORE AND MOREAND STILL MORE AND 00004900
+STOP                                                                    00005000

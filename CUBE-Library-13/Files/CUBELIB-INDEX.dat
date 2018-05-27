@@ -1,0 +1,1064 @@
+LAST UPDATED 02-01-72--TAPES ARE CUBEA13 & CUBEB13          |           00000100
+LANG CODE: A=ALGOL,F=FORTRAN,C=COBOL,D=DATA,XA=XALGOL,G=GTL             00000200
+  CUBEA.. CONTAINS A200001 THRU M200011. CUBEB.. CONTAINS N0|           00000300
+00001 TO END. CUBELST/Q000007 & CUBELIB/INDEX ARE ON BOTH.              00000400
+    A THIRD TAPE IN CASTC FORMAT CONTAINS BURROUGHS MATHEMAT|           00000500
+ICAL LIBRARY. THESE PROGRAMS HAVE * BEFORE NAME.                        00000600
+ALL FILES EXCEPT DATA(CATEGORY Y) ARE ON TAPE AS NAME/CUBE I|           00000700
+D #, SUCH AS CTRANCD/A200001, SO THAT THE NAME OF THE                   00000800
+SOURCE FILE WILL NOT CONFLICT WITH THE NAME OF THE OBJECT PR|           00000900
+OGRAM                                                                   00001000
+                                                            |           00001100
+                                                                        00001200
+*** DENOTES PROGRAM NOT ON TAPE BUT LISTED FOR INFORMATION. |           00001300
+                                                                        00001400
+                                                            |           00001500
+                                                                        00001600
+A. ARITHMETIC ROUTINES                                      |           00001700
+                                                                        00001800
+   1. REAL NUMBERS                                          |           00001900
+                                                                        00002000
+   2. COMPLEX NUMBERS                                       |           00002100
+                                                                        00002200
+                                                            |           00002300
+                                                                        00002400
+          CTRANCD/A200001 CTRANCARDS   (ALLOW DECLARATION OF            00002500
+                           A   9/1/67 SRI       B.R.BAKER               00002600
+          CTRANEX/A200002 CTRANEXECUTE (VARIABLES AS COMPLEX            00002700
+                           A   9/1/67 SRI       B.R.BAKER               00002800
+          CTRBAS /A200003 CTRBASIC (THESE THREE PROCEDURES M            00002900
+UST                        A   9/1/67 SRI       B.R.BAKER               00003000
+          CTRLN1 /A200004 CTRLN1 (BE ON CASTA DISK TO EXECUT            00003100
+E                          A   9/1/67 SRI       B.R.BAKER               00003200
+          CTRLN2 /A200005 CTRLN2 (THE ABOVE 2 PROGS.SEE COMM            00003300
+ENTS                       A   9/1/67 SRI       B.R.BAKER               00003400
+                                                            |           00003500
+                                                                        00003600
+   3. DECIMAL                                               |           00003700
+                                                                        00003800
+B. ELEMENTARY FUNTIONS                                      |           00003900
+                                                                        00004000
+   1. TRIGONOMETIC                                          |           00004100
+                                                                        00004200
+                                                            |           00004300
+                                                                        00004400
+          DPSINE /B100001 DOUBLE PRECISION SINE                         00004500
+                           A NOV 1963 NASA      BURROUGHS               00004600
+          DPCOS  /B100002 DOUBLE PRECISION COSINE                       00004700
+                           A NOV 1963 NASA      BURROUGHS               00004800
+          DPTAN  /B100003 DOUBLE PRECISION TAN                          00004900
+                           A NOV 1963 NASA      BURROUGHS               00005000
+          DPASINE/B100004 DOUBLE PRECISION ARCSINE                      00005100
+                           A NOV 1963 NASA      BURROUGHS               00005200
+          DPACOS /B100005 DOUBLE PRECISION ARCCOSINE                    00005300
+                           A NOV 1963 NASA      BURROUGHS               00005400
+          DPATAN /B100006 DOUBLE PRECISION ARCTANGENT                   00005500
+                           A NOV 1963 NASA      BURROUGHS               00005600
+          DPLOG  /B100007 DOUBLE PRECISION LOG                          00005700
+                           A NOV 1963 NASA      BURROUGHS               00005800
+          DPEXP  /B100008 DOUBLE PRECISION EXPONENTIAL                  00005900
+                           A NOV 1963 NASA      BURROUGHS               00006000
+          DPSQRT /B100009 DOUBLE PRECISION SQUARE ROOT                  00006100
+                           A NOV 1963 NASA      BURROUGHS               00006200
+                                                            |           00006300
+                                                                        00006400
+   2. HYPERBOLIC                                            |           00006500
+                                                                        00006600
+                                                            |           00006700
+                                                                        00006800
+          CONFRAC/B200001 CONFRAC - SINH,COSH,TANH                      00006900
+                           A JAN 1964 NASA      J C MORELOCK            00007000
+                                                            |           00007100
+                                                                        00007200
+   3. EXPONENTIAL AND LOGARITHMIC                           |           00007300
+                                                                        00007400
+   4. ROOTS AND POWERS                                      |           00007500
+                                                                        00007600
+C. POLYNOMIAL AND SPECIAL FUNCTIONS                         |           00007700
+                                                                        00007800
+   1. EVALUATION OF POLYNOMIALS                             |           00007900
+                                                                        00008000
+   2. ROOTS OF POLYNOMIALS                                  |           00008100
+                                                                        00008200
+                                                            |           00008300
+                                                                        00008400
+        * MRS114 /C200001 REAL ROOTS OF A POLYNOMAIL WITH RE            00008500
+AL COEFF., NEWTON-MAEHLY   A 07 01 63 BURR    JOANNE K KONDO            00008600
+        * MRS122 /C200002 PROGRAM FOR FINDING ALL ROOTS OF A            00008700
+ GENERAL FUNCTION          A 09 15 63 BURR        R D RODMAN            00008800
+        * MRS131R/C200003 DETERMINE THE ROOTS OF A POLYNOMIA            00008900
+L USING DOWNHILL METHOD    A 07 31 64 BURR        R D RODMAN            00009000
+        * MRS131C/C200004 DETERMINE THE ROOTS OF A POLYNOMIA            00009100
+L USING DOWNHILL METHOD    A 07 31 64 BURR        R.D.RODMAN            00009200
+        * MRS140 /C200005 ROOTS OF A POLYNOMIAL BY THE GRAEF            00009300
+FE RESULTANT PROCEDURE     A 06 15 64 BURR    JOANNE K KONDO            00009400
+        * MRS142 /C200006 REAL ROOTS OF A POLYNOMIAL BY THE             00009500
+SECANT METHOD              A 09 30 64 BURR    JOANNE K KONDO            00009600
+          CPOLY  /C200010 CPOLY/TTY-ROOTS OF POLYNOM.(IMAG.C            00009700
+OEF)                       A                                            00009800
+          RPOLY  /C200011 RPOLY/TTY-ROOTS OF POLYNOM.(REAL C            00009900
+OEF)                       A                                            00010000
+          POLYOP /C200012 POLYOP/TTY, MANY POLYNOMIAL OPERATI           00010100
+ONS FROM TELETYPE          A JUL 1969 U OF DENVER WITKIN                00010200
+                                                            |           00010300
+                                                                        00010400
+   3. EVALUATION OF SPECIAL FUNCTIONS                       |           00010500
+                                                                        00010600
+                                                            |           00010700
+                                                                        00010800
+        * MRS130 /C300001 CALC MODIFIED BESSEL FUNCTIONS, FI            00010900
+RST AND SECOND KIND        A  05 04 64 BURR        J.K. KONDO           00011000
+        * MRS132 /C300002 REGULAR BESSEL FUNCTIONS OF THE FI            00011100
+RST AND SECOND KIND        A 05 04 64 BURR         J K KONDO            00011200
+        * MRS133 /C300003 EVALUATE GENERALIZED REAL HYPERGEO            00011300
+METRIC FUNCTIONS, COMPLEX  A 02 21 64 BURR    ROBT R HAMMERS            00011400
+        * MRS135 /C300004 CALC ANALYTIC CONTINUATION OF THE             00011500
+HYPERGEOMETRIC FUNCTION    A 04 27 64 BURR    ROBT R HAMMERS            00011600
+        * MRS137 /C300005 CALC BESSEL FUNCTIONS FOR INTEGRAL            00011700
+ ORDERS & COMPLEX ARG.     A 05 01 64 BURR         J K KONDO            00011800
+        * MRS143 /C300006 HYPERGEOMETRIC SERIES                         00011900
+                           A 10 05 64 BURR    ROBT R HAMMERS            00012000
+   4. SIMULTANEOUS NON-LINEAR ALGEBRAIC EQUATIONS           |           00012100
+                                                                        00012200
+   5. SIMULTANEOUS TRANSCENDENTAL EQUATIONS                 |           00012300
+                                                                        00012400
+D. OPERATIONS ON FUNCTIONS AND SOLUTIONS OF DIFFERENTIAL EQU|           00012500
+ATIONS                                                                  00012600
+   1. NUMERICAL INTEGRATION                                 |           00012700
+                                                                        00012800
+                                                            |           00012900
+                                                                        00013000
+          SIMPS  /D100001 SIMPSONS RULE INTEGRATION                     00013100
+                           A 4/2/65   U OF VA   ACM-ALGO 233            00013200
+        * MRS116 /D100002 EVALUATE AN INTEGRAL BY WEDDLES RU            00013300
+LE                         A 08 15 63 BURR      ANNE G MACEK            00013400
+        * MRS120 /D100003 EVALUATE AN INTEGRAL USING SIMPSON            00013500
+ RULE                      A 11 15 63 BURR    ROBT R HAMMERS            00013600
+        * MRS136 /D100004 EVALUATION OF THE ELLIPTIC INTEGRA            00013700
+LS, FIRST AND SECOND KIND  A 04 30 64 BURR   STEPHEN MATZXER            00013800
+                                                            |           00013900
+                                                                        00014000
+   2. NUMERICAL  SOLUTIONS OF ORDINARY DIFFERENTIAL  EQUATIO|           00014100
+NS                                                                      00014200
+                                                            |           00014300
+                                                                        00014400
+        * MRS112 /D200001 SOLVE A SINGLE FIRST ORDER DIFF. E            00014500
+Q., CLIPPINGER-DIMSDALE    A 06 03 63 BURR      ANNE G MACEK            00014600
+        * MRS113 /D200002 SOLVE ORDINARY DIFF. EQ. WITH RUNG            00014700
+E-KUTTA-NYSTROM STARTING P A 08 01 63 BURR        A.F.PIXLEY            00014800
+        * MRS126 /D200003 SOLVE FIRST ORDER ORDINARY DIFF. E            00014900
+Q., HAMMINGS METHOD        A 02 01 64 BURR        A F PIXLEY            00015000
+        * MRS127 /D200004 SOLVE A FIRST ORDER DIFF. EQ., CLI            00015100
+PPINGER-DIMSDALE METHOD    A 01 17 64 BURR      ANNE G MACEK            00015200
+        * MRS129 /D200005 SOLVE SYSTEM OF FIRST ORDER ORDINA            00015300
+RY DIFF. EQ., MILNE MTEHOD A 01 17 64 BURR  PIXLEY:AND MACEK            00015400
+   3. NUMERICAL SOLUTIONS OF PARTIAL DIFFERENTIAL EQUATIONS |           00015500
+                                                                        00015600
+                                                            |           00015610
+                                                                        00015612
+          LAPLACE/D300001 SOLVES LAPLACE EQ BY METHOD OF DIF            00015614
+FERENCE EQ (SLOR)          XA SEPT 1971     J. MOLBERG                  00015616
+                                                            |           00015618
+                                                                        00015620
+   4. NUMERICAL DIFFERENTIATION                             |           00015700
+                                                                        00015800
+                                                            |           00015900
+                                                                        00016000
+          ANADIFF/D400001 ANALYTIC DIFFERENTIATION                      00016100
+                           A                    DOW                     00016200
+                                                            |           00016300
+                                                                        00016400
+E. INTERPOLATION AND APPROXIMATIONS                         |           00016500
+                                                                        00016600
+   1. TABLE LOOK-UP AND INTERPOLATION                       |           00016700
+                                                                        00016800
+                                                            |           00016900
+                                                                        00017000
+        * MRS103A/E100001 UNIVARIATE INTERPOLATION                      00017100
+                           A 06 28 63 BURR        R.D.RODMAN            00017200
+        * MRS103B/E100002 BIVARIATE INTERPOLATION                       00017300
+                           A 06 28 63 BURR        R.D.RODMAN            00017400
+        * MRS109 /E100003 BESSELS INTERPOLATION PROCEDURE               00017500
+                           A 06 21 63 BURR    JOANNE K KONDO            00017600
+        * MRS110 /E100004 NEWTONS FORWARD AND BACKWARD INTER            00017700
+POLATION                   A 06 21 63 BURR    JOANNE K KONDO            00017800
+        * MRS111 /E100005 EVERETTS INTERPOLATION PROCEDURE              00017900
+                           A 06 14 63 BURR    JOANNE K KONDO            00018000
+   2. CURVE FITTING                                         |           00018100
+                                                                        00018200
+                                                            |           00018300
+                                                                        00018400
+          POLYCF1/E200001 POLYNOMIAL CURVE FIT-DOOLITTLE MET            00018500
+H.                         A AUG 1963 NASA      R F CRAFTS              00018600
+          LSQFOUR/E200002 LEAST SQUARE FOURIER                          00018700
+                           A SEPT  63 NASA      R L STEVENS             00018800
+          POLYCF2/E200004 POLNOMIAL CURVE FIT   MULT. CASES             00018900
+                           A NOV 1963 NASA      EIKE HUETER             00019000
+          FOURIER/E200005 EVALUATION OF A FOURIER APPROXIMAT            00019100
+ION                        A NOV 1963 NASA      EIKE HUETER             00019200
+        * MRS134 /E200006 LEAST SQUARES CURVE FITTING TO A P            00019300
+OWER SERIES, AUTO WT. ADJ. A 04 06 64 BURR   EDGAR  EICHHORN            00019400
+        * MRS141 /E200007 EVALUATE THE COEFFICIENTS OF AN EM            00019500
+PIRICAL FORMULA, KNOWN PER A 07 15 64 BURR   STEPHEN MATZNER            00019600
+        * PTS024R/E200008 NON-LINEAR LEAST SQUARES CORVE FIT            00019700
+TING                       A 06 14 63 BURR     A PAUL OHLSON            00019800
+          LSQFIT /E200010 B0031/TTY-LEAST SQUARE CURVE FIT              00019900
+                           A         BURROUGHS--U OF DENVER             00020000
+                                                            |           00020100
+                                                                        00020200
+   4. SURFACE FITTING                                       |           00020300
+                                                                        00020400
+                                                            |           00020500
+                                                                        00020600
+        * PTS062 /E300001 FITTING AN N-DIMENSIONAL SURFACE W            00020700
+ITH ORTHOGONAL POLYNOMIALS A 08 31 64 BURR     EDWIN SEIDMAN            00020800
+        * PTS063 /E300002 EVAL OF ORTHOC POLYS & THEIR PARTI            00020900
+AL DERIV. FOR SURFACE FITS A 09 01 64 BURR     EDWIN SEIDMAN            00021000
+                                                            |           00021100
+                                                                        00021200
+F. OPERATIONS ON MATRICES, VECTORS AND SIMULTANEOUS LINEAR E|           00021300
+QUATIONS                                                                00021400
+                                                            |           00021500
+                                                                        00021600
+          SETROW /F000001 SETROWSIZE - EACH ROW SET SEPARATE            00021700
+LY                         A          U OF VA                           00021800
+                                                            |           00021900
+                                                                        00022000
+   1. MATRIX OPERATIONS                                     |           00022100
+                                                                        00022200
+                                                            |           00022300
+                                                                        00022400
+          MATROP /F100001 32 OPERATIONS ON MATRICES                     00022500
+                           A 9/70 U OF D STATMAN WACKWITZ               00022600
+          COMFIX /F100002 REPLACE DIAG ELEMENTS OF R. MATRIX            00022700
+ WITH SQUARED MULT CORR    A 12/68 U OF D STATMAN RECK                  00022800
+          CROSTAB/F100003 BIVARIATE CROSS-TAB                           00022900
+                           A 12/68 U OF D STATMAN RECK                  00023000
+          MATROP /F100004 MATROP/TTY, MANY MATRIX OPERATIONS            00023100
+ FROM TELETYPE             A FEB 1969 U OF DENVER WITKIN                00023200
+        * MRS088R/F100005 REDUCE A REAL SYMMETRIC MATRIX TO             00023300
+TRI-DIAG. FORM, GIVENS MET A  8/15/61 BURR     G.F.L.DIETZEL            00023400
+        * MRS093R/F100006 EVALUATION OF THE INVERSE OF A MAT            00023500
+RIX                        A 04/01/63 BURR        R.D.RODMAN            00023600
+        * MRS095R/F100007 A SYMMETRIC MATRIX INVERSION ROUTI            00023700
+NE                         A 04 01 63 BURR        R.D.RODMAN            00023800
+        * MRS096R/F100008 REDUCE ROUND-OFF ERROR OF THE INV             00023900
+ERSE MATRIX                A 04/01/63 BURR        R.D.RODMAN            00024000
+        * MRS124 /F100009 MATRIX INVERSION AND MULTIPLICATIO            00024100
+N WITH COMPLEX ELEMENTS    A 11/15/63 BURR        R.D.RODMAN            00024200
+                                                            |           00024300
+                                                                        00024400
+   2. EIGENVALUES AND EIGENVECTORS                          |           00024500
+                                                                        00024600
+                                                            |           00024700
+                                                                        00024800
+        * MRS087R/F200001 DETERMINE EIGENVALUES-EIGENVECTORS            00024900
+ OF REAL SYMMETRIC MATRIX  A 02/15/64 BURR    G.F.L. DIETZEL            00025000
+        * MRS128 /F200002 EIGENVALUES OF A REAL SYMMETRIC MA            00025100
+TRIX, GIVENS METHOD        A 01/24/64 BURR     G.F.L.DIETZEL            00025200
+   3. DETERMINANTS                                          |           00025300
+                                                                        00025400
+                                                            |           00025500
+                                                                        00025600
+        * MRS092R/F300001 EVALUATION OF A DETERMINATE                   00025700
+                           A 04/01/63 BURR        R.D.RODMAN            00025800
+   4. SIMULTANEOUS LINEAR EQUATIONS                         |           00025900
+                                                                        00026000
+                                                            |           00026100
+                                                                        00026200
+        * MRS097R/F400001 SOLUTION OF AN N BY M NON-HOMOGENE            00026300
+OUS LINEAR EQUATIONS       A 04/01/63 BURR        R.D.RODMAN            00026400
+        * MRS101 /F400002 SOLVE SIMULTANEOUS LINEAR EQUATION            00026500
+S, MONTE CARLO METHOD INV. A 11 23 62 BURR        R.D.RODMAN            00026600
+        * ORS031 /F400003 SOLVE NON-HOMOGENEOUS LINEAR EQUAT            00026700
+IONS, PROD FORM OF INVERSE A 03 30 64 BURR   JOHN R. KESSLER            00026800
+          SIMSOLV/F400010 SIM/SOLVE-TELETYPE-SOLVE 24 SIMUL.            00026900
+EQNS                       A          U OF DENVER                       00027000
+                                                            |           00027100
+                                                                        00027200
+G. STATISTICAL ANALYSIS AND PROBABILITY                     |           00027300
+                                                                        00027400
+   0. GENERAL                                               |           00027500
+                                                                        00027600
+                                                            |           00027700
+                                                                        00027800
+        * ORS038 /G000001 FACTOR ANALYSIS                               00027900
+                           A 12 15 64 BURR     CHARLES CLARK            00028000
+        * ORS034A/G000002 MEAN,MIN,MAX,RANGE,SAMPLE SIZE                00028100
+                           A 09 15 64          CHARLES CLARK            00028200
+   1. DATA REDUCTION                                        |           00028300
+                                                                        00028400
+                                                            |           00028500
+                                                                        00028600
+          CHISQ1 /G100010 CHI/SQUARE -TELETYPE                          00028700
+                           A           U OF DENVER                      00028800
+          REMGRAD/G100011 REMOTE/GRADER-TELETYPE -FOR TEACHE            00028900
+RS                         A     8/1/67 U OF D  MALCOLM                 00029000
+                                                            |           00029100
+                                                                        00029200
+   2. CORRELATION AND REGRESSION ANALYSIS                   |           00029300
+                                                                        00029400
+                                                            |           00029500
+                                                                        00029600
+          MISDATA/G200001 MISSING DATA CORRELATION                      00029700
+                           A 1965 U OF D STATMAN R J HAM                00029800
+          REGRESW/G200002 WESTINGHOUSE REGRESSION                       00029900
+                           A JAN 1967 U OF VA                           00030000
+          CORREL /G200003 CORRELATIONS--DATA NOT MISSING                00030100
+                           A JAN 1967 U OF D STATMAN WACKWIT            00030200
+          REGRES1/G200004 MULT. REGRES. BY SIMULT. SOL-SCORE            00030300
+S INPUT ONLY               A JAN 1967  U OF D STATMAN                   00030400
+          REGRES2/G200005 STEPWISE MULTIPLE REGRESSION                  00030500
+                           A JAN 1967 U OF D   STATMAN                  00030600
+          REGRES3/G200006 MULT REGRES BY SIMULT SOL--SCORES             00030700
+AND CORREL INPUT           A 12/68 U OF D STATMAN  RECK                 00030800
+        * ORS020 /G200007 SIMPLE REGRESSION ANALYSIS                    00030900
+                           A 10 25 63           E B SEIDMAN             00031000
+        * ORS025R/G200008 GENERAL MULTIPLE REGRESSION AND CO            00031100
+RRELATION ANALYSIS         A 12 20 64 BURR     CHARLES CLARK            00031200
+        * ORS035 /G200009 STEP-WISE MULTIPLE REGRESSION                 00031300
+                           A 12 01 64 BURR     CHARLES CLARK            00031400
+          CORREL2/G200010 B0301/TTY-BIVARIATE CORRELATION &             00031500
+REGR                       A        BURROUGHS--U OF DENVER              00031600
+          CORREL3/G200011 B0304/TTY-MULT.REGRES AND CORRELAT            00031700
+ION                        A         BURROUGHS--U OF DENVER             00031800
+          CORREL4/G200012 B0309A/TTY-STATISTICAL WITH OMISSI            00031900
+ON                         A        BURROUGHS--U OF DENVER              00032000
+          CORREL5/G200013 B0309B/TTY-CORRELATION ANALYSIS               00032100
+                           A         BURROUGHS--U OF DENVER             00032200
+          CORMISD/G200014 COMBINATION--M200001+G200001                  00032300
+                           A 5/28/68 U OF D STATMAN V.RECK              00032400
+          PARCOR /G200015 PARTIAL CORRELATIONS FROM RAW DATA            00032500
+ OR CORR. MATRIX           A 1/70 U OF D STATMAN CALDWELL               00032600
+        * ORS034B/G200016 CORRELATIONS, MEAN,STD. DEV.                  00032700
+                           A 09 15 64 BURR     CHARLES CLARK            00032800
+                                                            |           00032900
+                                                                        00033000
+   3. SEQUENTIAL ANALYSIS                                   |           00033100
+                                                                        00033200
+   4. ANALYSIS OF VARIANCE                                  |           00033300
+                                                                        00033400
+                                                            |           00033500
+                                                                        00033600
+          ANOVA1 /G400001 VARIANCE FOR BALANCED DESIGNS                 00033700
+                           A  U OF D STATMAN TATEISHI,CARHAR            00033800
+          ANCOVA1/G400002 ONE WAY COVARIANCE--BMD04V                    00033900
+                           A 3/9/67 U OF D STATMAN EICHEL               00034000
+          ANOVA2 /G400003  VARIANCE FOR BALANCED DESIGNS--BM            00034100
+D08V                       A 8/16/68  U OF D STATMAN RECK               00034200
+          ANALVAR/G400004 ONE WAY ANALYSIS OF VARIANCE                  00034300
+                           A 9/70   U OF D  STATMAN RECK                00034400
+          ANOVAUC/G400005 2-WAY ANAL.OF VARIANCE WITH PROVI             00034500
+SION FOR UNEVEN CELLS      A 1/70  U OF D STATMAN  CALDWELL             00034600
+                                                            |           00034700
+                                                                        00034800
+H. OPERATIONS RESEARCH TECHNIQUES, SIMULATION AND MANAGEMENT|           00034900
+ SCIENCE                                                                00035000
+   0. GENERAL                                               |           00035100
+                                                                        00035200
+   1. LINEAR PROGRAMMING                                    |           00035300
+                                                                        00035400
+   2. NON-LINEAR PROGRAMMING                                |           00035500
+                                                                        00035600
+   3. TRANSPORTION AND NETWORK CODES                        |           00035700
+                                                                        00035800
+   4. SIMULATION MODELING                                   |           00035900
+                                                                        00036000
+                                                            |           00036100
+                                                                        00036200
+          LOADAND/H400001 LOADAND/LISTW01 DESCRIBES WALSE &             00036300
+TELLS WHAT TO DO NEXT      D APR 1969 WESTINGHOUSE MC QUOWN             00036400
+          WALSE  /H400002 WALSE/MESSAGE--EX MESSAGE/FILES WI            00036500
+TH FILE DISK=WALSE/H400002 D APR 1969 WESTINGHOUSE MC QUOWN             00036600
+          WALSE  /H400003 WALSE/SOURCE,IN MC ALGOL--SEE WALS            00036700
+E MESSAGE FOR INSTRUCTIONS D APR 1969 WESTINGHOUSE MC QUOWN             00036800
+          ERRORWA/H400004 ERROROF/WALSE, TO CREATE WALSE/ERR            00036900
+ORS--SEE WALSE MESSAGE     D APR 1969 WESTINGHOUSE MC QUOWN             00037000
+                                                            |           00037100
+                                                                        00037200
+   5. SIMULATION MODELS                                     |           00037300
+                                                                        00037400
+                                                            |           00037500
+                                                                        00037600
+          CALCSIM/H500010 CALCSIM/REMOTE -TELETYPE-DESK CALC            00037700
+                           A          U OF D     KURTZ                  00037800
+          ECONSIM/H500011 ECONSIM/TTY-MANAGEMENT GAME                   00037900
+                           A         BURROUGHS--U OF DENVER             00038000
+          MOHAWK /H500012 SIMULATES A MOHAWK 1320 ON THE B55            00038100
+00 LINE PRINTER            A JAN 1970 CHASE BRASS WILES/KARL            00038200
+                                                            |           00038300
+                                                                        00038400
+   6. CRITICAL PATH PROGRAMS                                |           00038500
+                                                                        00038600
+                                                            |           00038700
+                                                                        00038800
+          MINPATH/H600001 MINIMUM PATHS IN A TRANSPORT  NETW            00038900
+ORK                        F JUL 69 INT. BANK FOR R&D MILLER            00039000
+                                                            |           00039100
+                                                                        00039200
+   7. RESERVED. PLEASE DO NOT USE.                          |           00039300
+                                                                        00039400
+   8. AUXILIARY PROGRAMS                                    |           00039500
+                                                                        00039600
+   9. COMBINED                                              |           00039700
+                                                                        00039800
+I. INPUT                                                    |           00039900
+                                                                        00040000
+   1. BINARY                                                |           00040100
+                                                                        00040200
+   2. OCTAL                                                 |           00040300
+                                                                        00040400
+   3. DECIMAL                                               |           00040500
+                                                                        00040600
+   4. BCD (HOLLERITH)                                       |           00040700
+                                                                        00040800
+                                                            |           00040900
+                                                                        00041000
+          CDTODSK/I400001 CDTODSK - FOR TEACHER/DU COURSES              00041100
+                           A          U OF D    EICHELBERGER            00041200
+                                                            |           00041300
+                                                                        00041400
+   5. (FORMERLY COMPOSITE)                                  |           00041500
+                                                                        00041600
+   9. COMPOSITE                                             |           00041700
+                                                                        00041800
+                                                            |           00041900
+                                                                        00042000
+          CARDIN /I900001 CARDIN - READS OVERPUNCHES                    00042100
+                           A 9/18/64  U OF VA   J G WILLIAMS            00042200
+                                                            |           00042300
+                                                                        00042400
+J. OUTPUT                                                   |           00042500
+                                                                        00042600
+   1. BINARY                                                |           00042700
+                                                                        00042800
+   2. OCTAL                                                 |           00042900
+                                                                        00043000
+   3. DECIMAL                                               |           00043100
+                                                                        00043200
+   4. BCD (HOLLERITH)                                       |           00043300
+                                                                        00043400
+                                                            |           00043500
+                                                                        00043600
+          RDDISK /J400001 RDDISK READ/PUNCH DISK FILE                   00043700
+                           A          U OF D    EICHELBERGER            00043800
+          LISTERB/J400002 LISTER/B--CARD LISTER WITH SEQ CHE            00043900
+CKS                        A            BURR    G.JONES                 00044000
+          LISTERC/J400003 LISTER/C--TAPE,DISK,CARD LISTER               00044100
+                           A            BURR    G.JONES                 00044200
+          PDLIST /J400004 PD/LIST--LISTS DIRECTORY;PCH DECK             00044300
+                           A            BURR    G.JONES                 00044400
+          TAPEDIR/J400005 TAPEDIR/LIST--DIR OF A LIB TAPE               00044500
+                           A            BURR    G.JONES                 00044600
+          DUMPARR/J400006 DUMP/ARRAY--PROCS TO DUMP ARRAYS              00044700
+                           A            BURR    G.JONES                 00044800
+          DISCAR /J400007 MEDIA-TO-MEDIA UTILITY,DOC IN COMM            00044900
+ENT VIA XREF/JONES         A 9/4/70 BURR-TORONTO BILL MOIR              00045000
+          TWXPRT /J400008 LISTS ALL OR PART OF ANY DISK FILE            00045100
+ ON TELETYPE               XA 9/4/70 BURR-TORONTO BILL MOIR             00045200
+                                                            |           00045300
+                                                                        00045400
+   5. PLOTTING                                              |           00045500
+                                                                        00045600
+                                                            |           00045700
+                                                                        00045800
+          PLOTP1 /J500001 PLOT(ON LINE PRINTER)                         00045900
+                           A          NNG                               00046000
+        * MRS144 /J500002 ROUTINES FOR USE WITH THE CALCOMP             00046100
+PLOTTER                    A 01 15 65 BURR    COLLINGE MEYER            00046200
+          REMPLT /J500003 REMOTE FUNCTION PLOTTER.                      00046210
+                           G JAN 72  GA TECH                            00046211
+                                                            |           00046300
+                                                                        00046400
+   6. (FORMERLY PLOTTING)                                   |           00046500
+                                                                        00046600
+   9. COMPOSITE                                             |           00046700
+                                                                        00046800
+K. INTERNAL INFORMATION TRANSFER                            |           00046900
+                                                                        00047000
+   1. DRUM                                                  |           00047100
+                                                                        00047200
+   2. RELOCATION                                            |           00047300
+                                                                        00047400
+   3. DISK                                                  |           00047500
+                                                                        00047600
+   4. TAPE                                                  |           00047700
+                                                                        00047800
+                                                            |           00047900
+                                                                        00048000
+          TAPEDMP/K400001 TAPEDUMP                                      00048100
+                           A          U OF VA                           00048200
+                                                            |           00048300
+                                                                        00048400
+   5. DIRECT DATA DEVICES                                   |           00048500
+                                                                        00048600
+L. EXECUTIVE ROUTINES                                       |           00048700
+                                                                        00048800
+   1. ASSEMBLY                                              |           00048900
+                                                                        00049000
+   2. COMPILING                                             |           00049100
+                                                                        00049200
+                                                            |           00049300
+                                                                        00049400
+          LOADAND/L200001 LOADAND/LISTME, TELLS HOW TO GET              00049500
+MC ALGOL DOCUMENTATION     D FEB, 1969 WESTINGHOUSE MC QUOWN            00049600
+          MCALGOL/L200002 MCALGOL/MESSAGE, BASIC DOCUMENTATI            00049700
+ON FOR MC ALGOL PACKAGE    D FEB, 1969 WESTINGHOUSE MC QUOWN            00049800
+          MESSAGE/L200003 MESSAGE/DIDDLER, SOURCE FOR MESSAG            00049900
+E/FILES (MC ALGOL PACKAGE) A FEB, 1969 WESTINGHOUSE MC QUOWN            00050000
+          ERRORAL/L200004 ERROROF/ALGOL, TO FORM "ALGOL/ERRO            00050100
+RS" (MC ALGOL PACKAGE)     D FEB, 1969 WESTINGHOUSE MC QUOWN            00050200
+          ERRORMC/L200005 ERROROF/MCALGOL, TO FORM "MCALGOL/            00050300
+ERRORS"(MC ALGOL PACKAGE)  D FEB, 1969 WESTINGHOUSE MC QUOWN            00050400
+          INITIAL/L200006 INITIAL/MCALGOLSY, SOURCE FOR "INI            00050500
+TIAL/MCALGOL"(MC ALG PKG)  A FEB, 1969 WESTINGHOUSE MC QUOWN            00050600
+          LANGUAG/L200007 LANGUAG/LEVEL3, USED BY INITIAL MCA           00050700
+LGOL (MC ALGOL PACKAGE)    D FEB, 1969 WESTINGHOUSE MC QUOWN            00050800
+          ALGOL  /L200008 ALGOL/PATCHES,WRL PATCH DECK TO               00050900
+MAKE WRALGOL (MC ALG PKG)  A FEB 1969 WESTINGHOUSE MC QUOWN             00051000
+          MCALGOL/L200009 MCALGOL/SOURCE, THE MCALGOL COMPIL            00051100
+ER (MC ALGOL PACKAGE)      A FEB 1969 WESTINGHOUSE MC QUOWN             00051200
+          SNOBOL /L200010 SNOBOL/FEB69, SNOBOL3 LIST PROCESS            00051300
+ING LANGUAGE               A APR 1969 U OF WISC  CHAMBERS               00051400
+          SNOBOL /L200011 SNOBOL/MANUAL--LIST WITH SNOBOL/RU            00051500
+NOFF                       D APR 1969 U OF WISC CHAMBERS                00051600
+          SNOBOL /L200012 SNOBOL/RUNOFF--PROGRAM IN SNOBOL T            00051700
+O LIST SNOBOL/MANUAL       D APR 1969 U OF WISC CHAMBERS                00051800
+          APL    /L200013 A PROGRAMMING LANGUAGE, CONVERSATI            00051900
+ONAL                       A MAR. 1971 U OF WASH. MILLER                00052000
+          APLPTCH/L200014 PATCHES FOR APL    /L200013                   00052100
+                           A MAR. 1971 U OF WASH. MILLER                00052200
+          GTL    /L200015 GA TECH LANGUAGE(GTL), SEE GTL/L20            00052210
+0016 FOR DOCUMENTATION.    A JAN 72 GA TECH                             00052211
+          GTL    /L200016 GTL DOCUMENTATION.                            00052220
+                           D JAN 72 GA TECH                             00052221
+          GTL    /L200017 ALGOL/ERRORS, GTL ERROR MSG FILE              00052230
+                           D JAN 72  GA TECH                            00052231
+                                                            |           00052300
+                                                                        00052400
+   3. MONITORING                                            |           00052500
+                                                                        00052600
+   4. PREPROCESSING                                         |           00052700
+                                                                        00052800
+                                                            |           00052900
+                                                                        00053000
+          DETAB65/L400001 DETAB65 DECISION TABLE                        00053100
+                           C 6/8/67             JUG                     00053200
+                                                            |           00053300
+                                                                        00053400
+   5. DISASSEMBLY AND DE-RELATIVIZING                       |           00053500
+                                                                        00053600
+   6. RELATIVIZING                                          |           00053700
+                                                                        00053800
+   7. COMPUTER LANGUAGE TO COMPUTER LANGUAGE TRANSLATORS    |           00053900
+                                                                        00054000
+                                                            |           00054010
+                                                                        00054011
+          ALTRAN /L700001 ALGOL TO FORTRAN TRANSLATOR.                  00054020
+                           G JAN 72  GA TECH                            00054021
+                                                            |           00054030
+                                                                        00054031
+M. DATA HANDLING                                            |           00054100
+                                                                        00054200
+   1. SORTING                                               |           00054300
+                                                                        00054400
+                                                            |           00054500
+                                                                        00054600
+          KWIC1  /M100001 KWIC1  (CALLS SRTLOCN AND SRTPERM)            00054700
+                           A          BURROUGHS J SKELTON               00054800
+          SRTLOCN/M100002 SRTLOCN (USED BY KWIC1)                       00054900
+                           C          BURROUGHS J SKELTON               00055000
+          SRTPERM/M100003 SRTPERM (USED BY KWIC1)                       00055100
+                           C          BURROUGHS J SKELTON               00055200
+          KWIC2  /M100004 KWIC2                                         00055300
+                           C          NNG                               00055400
+                                                            |           00055500
+                                                                        00055600
+   2. CONVERSION AND/OR SCALING                             |           00055700
+                                                                        00055800
+                                                            |           00055900
+                                                                        00056000
+          MAKMAST/M200001 PREPARES INPUT FOR MISDATA                    00056100
+                           A 3/31/65  U OF D STATMAN EICHEL             00056200
+          CONVIBM/M200002 CONVERT(7094 WORDS TO B5500 WORDS)            00056300
+                           A 3/27/64  NASA      R L STEVENS             00056400
+          BINBCD /M200003 BINBCD (BINARY TO 8-DIGITS BCD)               00056500
+                           A JAN 1965 NASA      C BANNISTER             00056600
+          OCTBCD /M200004 OCTAL TO BCD CONVERSION                       00056700
+                           A AUG 1963 NASA      EIKE HUETER             00056800
+          COORD  /M200010 COORD/TTY-CONVRT SPHER. & CART. CO            00056900
+ORD.                       A                                            00057000
+          TRNSGEN/M200011 LINEAR AND NON-LINEAR TRANSFORMATI            00057100
+ONS                        A 5/28/68 U OF D STATMAN RECK                00057200
+                                                            |           00057300
+                                                                        00057400
+   3. MERGING                                               |           00057500
+                                                                        00057600
+   4. CHARACTER MANIPUTION                                  |           00057700
+                                                                        00057800
+   5. SEARCHING                                             |           00057900
+                                                                        00058000
+N. DEBUGGING                                                |           00058100
+                                                                        00058200
+                                                            |           00058300
+                                                                        00058400
+          DCDEBUG/N000001 DATACOM/DEBUG                                 00058500
+                           A  5/31/67 U OF WASH DAN COVILL              00058600
+                                                            |           00058700
+                                                                        00058800
+   1. TRACING: TRAPPING                                     |           00058900
+                                                                        00059000
+   2. DUMPING                                               |           00059100
+                                                                        00059200
+   3. MEMORY VERIFICATON AND SEARCHING                      |           00059300
+                                                                        00059400
+   4. BREAKPOINT PRINTING                                   |           00059500
+                                                                        00059600
+O. SIMULATION OF COMPUTERS AND DATA PROCESSORS; INTERPRETERS|           00059700
+                                                                        00059800
+   1. OFF-LINE EQUIPMENT                                    |           00059900
+                                                                        00060000
+   2. RESERVED. PLEASE DO NOT USE.                          |           00060100
+                                                                        00060200
+   3. COMPUTERS                                             |           00060300
+                                                                        00060400
+   4. PSEUDO-COMPUTERS                                      |           00060500
+                                                                        00060600
+                                                            |           00060700
+                                                                        00060800
+          SYSX   /O400001 SYSX (HAS ASSEMBLER & OP SYSTEM)**            00060900
+*                          A  (GET FROM U OF VA.  W.WULF)               00061000
+                                                            |           00061100
+                                                                        00061200
+   9. OTHER OR COMPOSITE                                    |           00061300
+                                                                        00061400
+P. DIAGNOSTICS                                              |           00061500
+                                                                        00061600
+                                                            |           00061700
+                                                                        00061800
+          MODECHG/P000001 MODE-CHANGE (TAPE READ TEST)                  00061900
+                           A NOV 63   NASA      BOB STEVENS             00062000
+                                                            |           00062100
+                                                                        00062200
+Q. SERVICE OR HOUSEKEEPING; PROGRAMMING AIDS                |           00062300
+                                                                        00062400
+                                                            |           00062500
+                                                                        00062600
+          INDEXER/Q000001 INDEXER OF IDENT. IN AN ALGOL PROG            00062700
+.                          A 9/18/64  U OF VA   A P BATSON              00062800
+          EDITOR /Q000002 EDITOR                                        00062900
+                                                                        00063000
+          FLOWCHT/Q000003 FLOWCHT (FLOWCHARTS ALGOL PROGRAM)            00063100
+                           A 7/27/67  REALTIME  LEACH                   00063200
+          DSKPRN2/Q000004 DSKPRNT/YANDR-PRINTS ANY DISK FILE            00063300
+                           A   2/1/68 Y & R; 1/70 DOW CHEM              00063400
+          CLEANDK/Q000005 CLEAN/DISK-MAPS & UNCHECKERBOARDS             00063500
+DISK                       A   2/1/68 Y & R                             00063600
+          LIBMAKE/Q000006 LIBTAPE/MAKER TAPE-TO-TAPE DUMP TA            00063700
+PE COPIER, CHECKER,ETC     A NOV 68 WESTINGHOUSE BOWLDEN                00063800
+          CUBELST/Q000007 CUBELIB/LISTER LISTS CUBELIB/INDEX            00063900
+ WITH OPTIONS              A NOV 68 U OF D EICHELBERGER                 00064000
+          CBLFLOW/Q000008 FLOWCHARTS A COBOL PROGRAM                    00064100
+                           C APR 1969 CHASE BRASS NEIL KARL             00064200
+          PATCHMG/Q000009 PATCH/MERGER, COMBINES & DOCUMENTS            00064300
+ PATCH DECKS               A APR 1969 WESTINGHOUSE MC QUOWN             00064400
+          PATCHL /Q000010 PATCH/LISTER, TO LIST FILES FROM P            00064500
+ATCH/MERGER,BY PATCH ID    A APR 1969 WESTINGHOUSE MC QUOWN             00064600
+          MULTSUB/Q000011 SEARCH & SUBSTITUTE WORD OR PHRASE            00064700
+ IN SOURCE DECK            A 1/70  CHASE BRASS  KUZELA                  00064800
+                                                            |           00064900
+                                                                        00065000
+   1. CLEAR/RESET PROGRAMS                                  |           00065100
+                                                                        00065200
+   2. CHECK SUM ACCUMULATION AND CORRECTION                 |           00065300
+                                                                        00065400
+   3. REWIND, TAPE MARK, LOAD CARDS, LOAD TAPE, ETC. PROGRAM|           00065500
+S                                                                       00065600
+                                                            |           00065700
+                                                                        00065800
+          CARDCOM/Q300001 CARDCOM (COMPARES TWO CARDS DECKS)            00065900
+                           A 7/15/64  U OF VA   A P BATSON              00066000
+                                                            |           00066100
+                                                                        00066200
+   4. INTERNAL HOUSEKEEPING: SAVE,RESTORE, ETC.             |           00066300
+                                                                        00066400
+   5. REPORT GENERATOR SUBROUTINES                          |           00066500
+                                                                        00066600
+                                                            |           00066700
+                                                                        00066800
+          XREFJNS/Q500001 XREF/JONES--ALGOL CROSS-REF & FLOW            00066900
+ CHART                     A       BURR      G. JONES                   00067000
+          IDENT  /Q500002 IDENT/SCANNER                                 00067100
+                           A          U OF D    CARHART                 00067200
+                                                            |           00067300
+                                                                        00067400
+R. LOGICAL AND SYMBOLIC                                     |           00067500
+                                                                        00067600
+   1. FORMAL LOGIC                                          |           00067700
+                                                                        00067800
+   2. SYMBOL MANIPULATION                                   |           00067900
+                                                                        00068000
+S. INFORMATION RETRIEVAL                                    |           00068100
+                                                                        00068200
+                                                            |           00068300
+                                                                        00068400
+          SELSUP /S000001 SELECT/SUPER--RETRIEVAL PROGRAM               00068500
+                           A            Y & R                           00068600
+          SUPREP /S000002 SUPER/REPORT--REPORT GENERATOR                00068700
+                           A            Y & R                           00068800
+          UPDICTS/S000003 UPDICT/SUPER--MAKES DICT FOR SUPER            00068900
+                           A            Y & R                           00069000
+                                                            |           00069100
+                                                                        00069200
+T. APPLICATIONS AND APPLICATION/ORIENTED PROGRAMS           |           00069300
+                                                                        00069400
+   1. PHYSICS (INCLUDING NUCLEAR)                           |           00069500
+                                                                        00069600
+   2. CHEMISTRY                                             |           00069700
+                                                                        00069800
+                                                            |           00069900
+                                                                        00070000
+        * PTS025R/T200001 THE BENEDICT-WEBB-RUBIN EQUATION O            00070100
+F STATE                    A 12 01 62 BURR   EDWIN B SEIDMAN            00070200
+        * PTS028 /T200002 CMC. OF THE ENTHALPHIES & HEAT CA             00070300
+PACITIES OF LIQUID MIXTURE A 07 15 63 BURR     A PAUL OLESON            00070400
+        * PTS031 /T200003 CALC OF ENTHALPY OF A NON-IDEAL GA            00070500
+SEOUS MIXTURE  PARTIAL DER.A 12 01 63 BURR     MARK N LAYMAN            00070600
+        * PTS033 /T200004 VAPOR-LIQUID EQUILIBRIUM RATIOS FO            00070700
+R LIGHT CARBON SYSTEMS     A 06 12 63 BURR   D.VOSS P OLESEN            00070800
+        * PTS035A/T200005 VAPOR-LIQUID EQUILIBAIUM RATIOS FR            00070900
+OM VAPOR PRESSURE DATA     A 11 30 62 BURR     DONALD L VOSS            00071000
+        * PTS035B/T200006 VAPOR-LIQUID EQUILIBRIUM RATIOS FR            00071100
+OM VAPOR PRESSURE DATA     A 11 30 62 BURR     DONALD P VOSS            00071200
+        * PTS037A/T200007 VAPOR-LIQUID EQUILIBRIUM RATIOS FR            00071300
+OM REL. VOLATILING DATA    A 11 25 63 BURR   OLESON AND VOSS            00071400
+        * PTS037B/T200008 VAPOR-LIQUID EQUILIBRIUM RATIOS FR            00071500
+OM RELATIVE VOLATILITY DATAA 11 25 63 BURR   OLESON AND VOSS            00071600
+        * PTS039 /T200009 VAPOR-LIQUID EQUILIBRIUM RATIOS FR            00071700
+OM RELATIVE VOLITILITY DATAA 11 25 63 BURR     DONALD L VOSS            00071800
+        * PTS041A/T200010 SELECTION OF VAPOR-LIQUID EQUIL. R            00071900
+ATIOS FROM ALGOL PROCEDURESA 11 25 63 BURR     DONALD L VOSS            00072000
+        * PTS041B/T200011 SELECTION OF VAPOR-LIQUID EQUIL. R            00072100
+ATIOS FROM ALGOL PROCEDURESA 11 25 63 BURR     DONALD L VOSS            00072200
+        * PTS043A/T200012 ACTIVITY COEFFICIENTS OF MULTICOMP            00072300
+ONENT SYSTEM,MARGULE,VAN L A 09 15 64 BURR     CHIEN-SHIH LU            00072400
+        * PTS043B/T200013 ACTIVITY COEFFICIENTS OF MULTICOMP            00072500
+ONENT SYSTEMS,MARGULE,VAN LA 09 15 64 BURR     CHIEN-SHIN LU            00072600
+        * PTS043C/T200014 ACTIVITY COEFFICIENTS OF MULTICOMP            00072700
+ONENT SYSTEMS,MARGULE,VAN LA 09 15 64 BURR     CHIEN-SHIN-LU            00072800
+        * PTS047A/T200015 SELECTION OF LIQUID ENTHALPY VALUE            00072900
+S FROM ALGOL PROCEDURES    A 03 10 64 BURR     DONALD L VOSS            00073000
+        * PTS047B/T200016 SELECTION OF LIQUID ENTHALPY VALUE            00073100
+S FROM ALGOL PROCEDURES    A 03 10 64 BURR     DONALD L VOSS            00073200
+        * PTS049A/T200017 SELECTION OF LIQUID ENTHALPY VALUE            00073300
+S FROM ALGOL PROCEDURES    A 03 15 64 BURR     DONALD L VOSS            00073400
+        * PTS049B/T200018 SELECTION OF LIQUID ENTHALPY VALUE            00073500
+S FROM ALGOL PROCEDURES    A 03 15 64 BURR     DONALD L VOSS            00073600
+        * PTS051 /T200019 NON-ADIABADIC FLASH CALCULATIONS F            00073700
+OR HYDROCARBON MIXTURES    A 03 15 64 BURR        A.D.OLESON            00073800
+        * PTS053 /T200020 ISOTHERMAL AND ISDBARIC FLASH CALC            00073900
+ULATIONS                   A 10 01 63 BURR     DONALD L VOSS            00074000
+        * PTS055 /T200021 DEW-POINT AND BUBBLE-POINT CALCULA            00074100
+TIONS                      A 11 25 63 BURR     DONALD L VOSS            00074200
+        * PTS057 /T200022 GENERAL NON-ADIABATIC FLASH CALCU             00074300
+LATIONS                    A 11 25 63 BURR     DONALD L VOSS            00074400
+        * PTS061 /T200023 ADIABATIC FLASH CALCULATIONS FOR H            00074500
+YDROCARBON MIXTURES, WATER A          BURR                              00074600
+        * PTS065 /T200024 TRAY CALC FOR MULTIPLE-FEED MULTI             00074700
+PLE-DRAW ABSORBERS-STRIPPE A 10 01 63 BURR  OLESON & LAYMAN             00074800
+        * PTS067 /T200025 MULTI-FEED MULTI-DRAW ABSORBERS &             00074900
+STRIPPERS MULPHREE TRAYS   A 02 28 64 BURR        A.P.OLESON            00075000
+        * PTS071 /T200026 PERFORMANCE CALC FOR COMPLEX DLSTI            00075100
+CLATION COLS,THEOR TRAYS   A 10/12/64 BURR WANG LAYMAN                  00075200
+        * PTS072 /T200027 PATHS AND LOOPS IN A NETWORK                  00075300
+                           A 12 01 64 BURR        YUI L WANG            00075400
+                                                            |           00075500
+                                                                        00075600
+   3. OTHER PHYSICAL SCIENCES (GEOLOGY, ASTRONOMY, ETC.)    |           00075700
+                                                                        00075800
+                                                            |           00075900
+                                                                        00076000
+        * DS029  /T300001 UNIT CELL CONSTANTS & POSSIBLE IND            00076100
+EX COMB. FOR A WAVELENGTH  A 04 30 63 BURR      R.T.OLLIVIER            00076200
+        * DS030  /T300002 ATOMIC DISTANCES AND BOND ANGLES              00076300
+                           A 03 30 64 BURR EICHHORN  MATZNER            00076400
+        * DS031  /T300003 FIT A PLANE TO A SET OF POINTS BY             00076500
+LEAST SQUARING             A 04 06 64 BURR  EICHHORN MATZNER            00076600
+                                                            |           00076700
+                                                                        00076800
+   4. ENGINEERING                                           |           00076900
+                                                                        00077000
+                                                            |           00077100
+                                                                        00077200
+        * CES010 /T400001 A TRAVERSE CLOSURE PROGRAM                    00077300
+                           A 09/09/68 BURR     VICTOR BERMAN            00077400
+        * CES013 /T400002 DESIGN OF REINFORCED CONCRETE FIXE            00077500
+D END BEAMS                A 9/ 9/ 68 BURR     VICTOR BERMAN            00077600
+        * CES014 /T400003 DESIGN OF REINFORCED CONCRETE TIED            00077700
+ COLUMNS                    A   9/9/68   BURR     VICTOR BERMAN         00077800
+        * CES012 /T400004 PIPE STRESS ANALYSIS                          00077900
+ A                         A  9/9/68   BURR     VICTOR BERMAN           00078000
+                                                            |           00078100
+                                                                        00078200
+   5. BUSINESS DATA PROCESSING                              |           00078300
+                                                                        00078400
+   6. MANUFACTURING, (NON-DATA) PROCESSING, AND PROCESS CONT|           00078500
+ROL                                                                     00078600
+   7. MATHEMATICS AND APPLIED MATHEMATICS                   |           00078700
+                                                                        00078800
+   8. SOCIAL AND BEHAVIORAL SCIENCES AND PSYCHOLOGY         |           00078900
+                                                                        00079000
+                                                            |           00079100
+                                                                        00079200
+          FACVAR /T800001 FACVAR (ORIGINALLY BIMD-17)                   00079300
+                           A          U OF D    EICH. CARH.             00079400
+          MAXPLAN/T800002 OBLIQUE ROTATION OF FACTOR MATRIX             00079500
+                           A 1/70 U OF D STATMAN EBER                   00079600
+          PRNCX1 /T800003 PRNCX1  FROM BIMD-17 AND BMD03M               00079700
+                           A 1960     U OF D    J H WACKWITZ            00079800
+          PRNCX2 /T800004 PRIN. FACT. ANAL. BY JACOBI SIMULT            00079900
+ SOLUTION                  A 1965 U OF D STATMAN WACKWITZ               00080000
+          PRNCX3 /T800005 PRIN FACT. ANAL. BY SUCCESSIVE SOL            00080100
+. WITHOUT RESIDUALS        A 1966 U OF D STATMAN WACKWITZ               00080200
+          VARMAX /T800006 VARIMAX ROTATION OF FACTOR MATRIX             00080300
+                           A 3/9/67  U OF D STATMAN WACKWITZ            00080400
+          PRNCX4 /T800007 PRIN.  FACT. ANAL. BY SUCCESSIVE S            00080500
+OL. WITH RESIDUALS         A 5/68 U OF D STATMAN RECK                   00080600
+          STANSRS/T800008  STANDARD SCORES                              00080700
+                           A 5/68 U OF D STATMAN RECK                   00080800
+          BMD01D /T800009  BMD01D SIMPLE DATA DESCRIPTION               00080900
+                           F JAN 1970 U OF D UCLA                       00081000
+          BMD01M /T800010  BMD01M PRINCIPAL COMPONENT ANALYS            00081100
+IS                         F JAN 70  UCLA   LOVELACE                    00081200
+          BMD03M /T800011  BMD03M FACTOR ANALYSIS                       00081300
+                           F JAN 70  UCLA   LOVELACE                    00081400
+          BMD02R /T800012  BMD02R STEPWISE REGRESSION                   00081500
+                           A JAN 1970 U OF D UCLA                       00081600
+          BMD05R /T800013  BMD05R POLYNOMIAL REGRESSION                 00081700
+                           F JAN 70  UCLA   LOVELACE                    00081800
+          BMD06R /T800014  BMD06R ASYMPTOTIC REGRESSION                 00081900
+(NOW WORKS)                F 9/4/70 UCLA LOVELACE                       00082000
+          BMD03S /T800015  BMD03S PROBIT ANALYSIS                       00082100
+                           A 7/5/68  UCLA   LOVELACE                    00082200
+          BMD02T /T800016  BMD02T TIME SERIES ANALYSIS                  00082300
+                           F JAN 1970  U OF D   UCLA                    00082400
+          BMD01V /T800017  BMD01V ANALYSIS OF VARIANCE                  00082500
+                           F 7/5/68  UCLA   LOVELACE                    00082600
+          BMD02V /T800018  BMD02V ANALYSIS OF VARIANCE                  00082700
+                           F 7/5/68  UCLA   LOVELACE                    00082800
+          BMD05VA/T800019  BMD05V GENERAL LINEAR HYPOTHESIS             00082900
+(DOES NOT COMPILE)         A 7/5/68 UCLA LOVELACE                       00083000
+          BMD05VF/T800020  BMD05V GENERAL LINEAR HYPOTHESIS             00083100
+                           F JAN 70  UCLA   LOVELACE                    00083200
+          BMD06V /T800021  BMD06V GENERAL LINEAR HYPOTHESIS             00083300
+(DOES NOT WORK)            A 7/5/68 UCLA LOVELACE                       00083400
+          BMDX85 /T800022  BMDX85 NON-LINEAR LEAST SQUARES              00083500
+(DOES NOT WORK)            F 7/5/68 UCLA LOVELACE                       00083600
+          BMD04M /T800023 DISCRIMINATE ANALYSIS FOR TWO GROU            00083700
+PS                         F JUL 69 UCLA U OF DENVER CALDWELL           00083800
+          BMD05M /T800024 DISCRIMINATE ANALYSIS FOR SEVERAL             00083900
+GROUPS                     F JUL 69 UCLA U OF DENVER CALDWELL           00084000
+          BMD03R /T800025 MULTIPLE REGRESSION  WITH CASE COM            00084100
+BINATIONS                  F 9/4/70 UCLA LOVELACE                       00084200
+          BMD09S /T800026 TRANSGENERATIONS                              00084300
+                           F 9/4/70 UCLA LOVELACE                       00084400
+          PRNCX5 /T800027 PRNCX3 WITH OPTIONS FOR SUCC APPROX           00084500
+  TO COMMUNALITIES         A 9/70 U OF D STATMAN FOSTER                 00084600
+                                                            |           00084700
+                                                                        00084800
+   9. BIOLOGICAL SCIENCES                                   |           00084900
+                                                                        00085000
+U. LINGUISTICS AND LANGUAGES                                |           00085100
+                                                                        00085200
+V. GENERAL PURPOSE UTILITY SUBROUTINES                      |           00085300
+                                                                        00085400
+                                                            |           00085500
+                                                                        00085600
+          FMTGEN /V000001 OBJECTFMTGEN (READ-IN FORMATS)                00085700
+                           A          U OF D    F CARHART               00085800
+          FIXFORM/V000002 FIXFORM (READ-IN FORMATS)                     00085900
+                           A          USAFA     S SCHLUTER              00086000
+          DOCUMNT/V000003 BUILDS DISK OR TAPE FILES FOR MOTO            00086100
+ROLA MDR-1000 DOC READER   A 1/70  CHASE BRASS KARL                     00086200
+          COPARE /V0100AA COMPARES TWO MULTIFILE TAPES                  00086300
+                           A 12/68 BURR UTILITY LIBRARY                 00086400
+          DCMAP  /V0101AA DISK DIR. LISTED ON TTY                       00086500
+                           A 12/68 BURR UTILITY LIBRARY                 00086600
+          DISKMAP/V0102AA HEADING AND ADDRESS OF DISK FILES             00086700
+                           A 12/68 BURR UTILITY LIBRARY                 00086800
+          DECKSEQ/V0103AA SEQUENCES SOURCE DECKS                        00086900
+                           A 12/68 BURR UTILITY LIBRARY                 00087000
+          KRUNCH /V0104AA KRUNCHES ALGOL SOURCE PROGRAM                 00087100
+                           A 12/68 BURR UTILITY LIBRARY                 00087200
+          SELECT /V0105AA SEL & PRINT FM PRIN BACKUP TAPE               00087300
+                           A 12/68 BURR UTILITY LIBRARY                 00087400
+          SORTGEN/V0106AA GENS ALGOL PROG FOR A SORT                    00087500
+                           A 12/68 BURR UTILITY LIBRARY                 00087600
+          UNKRNCH/V0107AA REFORMATS ANY ALGOL SOURCE PROG               00087700
+                           A 12/68 BURR UTILITY LIBRARY                 00087800
+          CARDPRN/V0108AA LISTS CARDS OR DISK FILE                      00087900
+                           A 12/68 BURR UTILITY LIBRARY                 00088000
+          TAPEPRN/V0109AA LISTS SYMBOLIC TAPE(X,56,10)                  00088100
+                           A 12/68 BURR UTILITY LIBRARY                 00088200
+          CARDPCH/V0110AA PUNCHES FM CARDS OR DISK FILE                 00088300
+                           A 12/68 BURR UTILITY LIBRARY                 00088400
+          PARTCRD/V0111AA LISTS 72 COLS OF CARD OR DISK FILE            00088500
+                           A 12/68 BURR UTILITY LIBRARY                 00088600
+          PATCH  /V0112AA MAKES NEW SYMBOL TAPE FM PATCHES              00088700
+                           A 12/68 BURR UTILITY LIBRARY                 00088800
+          TAPEDMP/V0113AA PRINTS TAPE OF UNKNOWN FORMAT                 00088900
+                           A 12/68 BURR UTILITY LIBRARY                 00089000
+          DSKXREF/V0114CA XREF COBOL SOURCE DECK FM DISK                00089100
+                           C 12/68 BURR UTILITY LIBRARY                 00089200
+          CRDXREF/V0115CA XREF COBOL SOURCE CARDS OR TAPE               00089300
+                           C 12/68 BURR UTILITY LIBRARY                 00089400
+          MULTIPL/V0116AA MEDIUM TO MEDIUM CONVERSION                   00089500
+                           A 12/68 BURR UTILITY LIBRARY                 00089600
+          TAPEPCH/V0117CA TAPE-TO-CARD                                  00089700
+                           C 12/68 BURR UTILITY LIBRARY                 00089800
+          DISKPCH/V0118CA DISK-TO-CARD                                  00089900
+                           C 12/68 BURR UTILITY LIBRARY                 00090000
+          DIRCTRY/V0119CA COMPLETE DISK DIRECTORY LISTING               00090100
+                           C 12/68 BURR UTILITY LIBRARY                 00090200
+          DUMPLST/V0120CA LISTS LOG WITHOUT RESETTING                   00090300
+                           C 12/68 BURR UTILITY LIBRARY                 00090400
+          MAKSOLT/V0121CA MAKES SOLT FM CARDS OR TAPE                   00090500
+                           C 12/68 BURR UTILITY LIBRARY                 00090600
+          PCHSOLT/V0122CA  SOLT TAPE-TO-CARDS                           00090700
+                           C 12/68 BURR UTILITY LIBRARY                 00090800
+          PBDPBT /V0123AA MAKES PB TAPE FROM PB DISK FILE               00090900
+                           A 12/68 BURR UTILITY LIBRARY                 00091000
+          BICOMP /V0124AA BINARY CARD READ & COMPARE                    00091100
+                           A 12/68 BURR UTILITY LIBRARY                 00091200
+                                                            |           00091300
+                                                                        00091400
+   1. RANDOM NUMBER GENERATORS                              |           00091500
+                                                                        00091600
+                                                            |           00091700
+                                                                        00091800
+          RANDOM /V100001 RANDOM                                        00091900
+                           A 10/7/64  U OF VA   WM A WULF               00092000
+                                                            |           00092100
+                                                                        00092200
+   2. COMBINATORIAL GENERATORS PERMUTATIONS, COMBINATIONS, A|           00092300
+ND SUBSETS                                                              00092400
+                                                            |           00092500
+                                                                        00092600
+          MAXLIST/V200001 MAX (GETS MAX OR MIN VAL FROM A LI            00092700
+ST)                        A          SRI                               00092800
+                                                            |           00092900
+                                                                        00093000
+Y. DATA FILES (IN DISK FORMAT REQUIRED BY THE PROGRAM USING |           00093100
+THEM. NOTE THAT THEY ARE ON TAPE UNDER "REAL" NAMES.)                   00093200
+                                                            |           00093300
+                                                                        00093400
+          DETABD /Y000001 DETAB TEST DATA                               00093500
+                           D 6/8/67   JUG                               00093600
+          ECONDAT/Y000002 FIRST/ECSIM,DATA FOR FIRST QUARTER            00093700
+ FOR USE WITH ECONSIM/TTY  D NOV 68 U OF DENVER LUCAS                   00093800
+          TTY1   /Y100001 TTY1/SAVE  (COURSE FOR TEACHER)               00093900
+                           D          U OF D    EICHELBERGER            00094000
+          ADDTEST/Y100002 ADDTEST/SAVE  (COURSE FOR TEACHER)            00094100
+                           D          U OF D    EICHELBERGER            00094200
+          PEOPLE /Y100003 PEOPLE/SAVE  (COURSE FOR TEACHER)             00094300
+                           D          U OF D    F B LUCAS               00094400
+          CORSWT /Y100004 CORSWT/SAVE  (COURSE FOR TEACHER)             00094500
+                           D          U OF D    MALCOLM                 00094600
+          JES1   /Y100005 JES1/SAVE (COURSE IN ALGOL FOR TEA            00094700
+CHER)                      D          BURROUGHS J SKELTON               00094800
+          DRILL1 /Y100006 DRILL1/SAVE  (COURSE FOR TEACHER)             00094900
+                           D          U OF D    EICHELBERGER            00095000
+          DRILL2 /Y100007 DRILL2/SAVE(COURSE FOR TEACHER)               00095100
+                           D          U OF D    EICHELBERGER            00095200
+          KOURSE /Y100008 KOURSE/SAVE(COURSE FOR TEACHER)               00095300
+                           D          U OF D    M MALCOLM               00095400
+          SEQNO  /Y100009 SEQNO/SAVE (COURSE FOR TEACHER)               00095500
+                           D          U OF D    R HOFFMAN               00095600
+          HELLO  /Y100010 HELLO/SAVE (COURSE FOR TEACHER)               00095700
+                           D          U OF D    EICHELBERGER            00095800
+          CAPITAL/Y100011 CAPITAL/SAVE (COURSE FOR TEACHER)             00095900
+                           D          U OF D    V TYNES                 00096000
+          SIGDIG /Y100012 SIGDIG/SAVE (COURSE FOR TEACHER)              00096100
+                           D          U OF D    D MILLER                00096200
+          PRIMES /Y100013 PRIMES/SAVE(COURSE FOR TEACHER)               00096300
+                           D          U OF D    DR GREENBERG            00096400
+          CUBELIB/Y200001 CUBELIB/INDEX , DATA FILE FOR THIS            00096500
+ INDEX                     D 11/24/68 U OF D EICHELBERGER               00096600
+          TEACHER/Y200002 TEACHER/0000075, TEACH FILE FOR RE            00096700
+MOTE CARD                  D AUG 68 BURROUGHS RON BRODY                 00096800
+          TEACHER/Y200003 TEACHER/0000094, DOCUMENTATION FOR            00096900
+ R/C,MULT USER REMOTE CARD D JAN 72, BURR  RON BRODY                    00097000
+          CONTENT/Y200004 DOCUMENTATION FOR BURROUGHS UTILIT            00097100
+Y LIBRARY                  D 12/68 BURROUGHS DETROIT                    00097200
+          SORTDOC/Y200005 ITD SORT INTRINSIC FLOW CHART (WIT            00097300
+H XREF/JONES)              D JAN 69 BURR-PASADENA, GREGORY              00097400
+          ELIZA  /Y200006 ELIZA/SCRIPT DATA FOR ELIZA/Z10000            00097410
+10                         G JAN 72  GA TECH                            00097411
+          ERRIN  /Y200007 ERROR/INPUT, DATA FOR ERRSRC/Z1000            00097420
+11                         D JAN 72  GA TECH                            00097421
+          HELPFIL/Y300001 HELPFIL/CARDS, USED BY WIPL                   00097500
+                           D JAN 71 U OF WISC  HARRIS                   00097600
+          ERRORS /Y300002 ERRORS/CARDS, USED BY WIPL                    00097700
+                           D JAN 71 U OF WISC  HARRIS                   00097800
+          LOANPAY/Y300003 LOANPAY/CARDS, SAMPLE PROGRAM FOR             00097900
+WIPL                       D OCT 68 U OF WISC  HARRIS                   00098000
+                                                            |           00098100
+                                                                        00098200
+Z. ALL OTHERS                                               |           00098300
+                                                                        00098400
+                                                            |           00098500
+                                                                        00098600
+          TEACH6 /Z100001 TEACHER (GIVES ANY CAI COURSE)                00098700
+ SINGLE-USER VERSION (6)   A          U OF D    EICHELBERGER            00098800
+          TEACH8 /Z100002 TEACHER/DU8--MULT USER TEACHER VER            00098900
+SION                       A    1/2/68 U OF D  SKELTON                  00099000
+          CREATE /Z100003 CREATE/FILE--CREATES DISK FILES               00099100
+                           A  1/15/68   U OF D  EICHELBERGER            00099200
+          RCSY75 /Z100004 REMOTE/CARD CREATES, EDITS, ETC DI            00099300
+SK FILES FROM TELETYPE     A AUG 68 BURROUGHS RON BRODY                 00099400
+          UPDATE /Z100005 UPDATE/TEACHER,UPDATES TEACHER FIL            00099500
+E FOR REMOTE/CARD          A AUG 68 BURROUGHS RON BRODY                 00099600
+          RCSY94 /Z100006 R/C,REMOTE/CARD MULTIPLE USER VERS            00099700
+ION                        A JAN 72, BURR  RON BRODY                    00099800
+          UWISMEM/Z100007 UWISC/MEMORY, SAMPLES CORE IN USE             00099900
+FROM A TELETYPE            A JAN 69 U OF WISC JANOSKI                   00100000
+          SCANFIL/Z100008 SCAN/FILE, LISTS ANY TYPE OF FILE             00100100
+ON DISK FROM TELETYPE      A JAN 69 USAEC, FT. MON.-WARSHAWER           00100200
+          RECORD2/Z100009 LISTS 1 RECORD AT A TIME ON TTY FR            00100300
+OM DISK OR TAPE            A 1/70 CHASE BRASS KUZELA                    00100400
+          ELIZA  /Z100010 INTERACTICE PSYCHIATRIST PROG.                00100410
+                           G JAN 72  GA TECH                            00100411
+          ERRSRC /Z100011 GTL ERROR MSG FILE GENERATOR.                 00100420
+                           G JAN 72  GA TECH                            00100421
+          NEXTONE/Z200001 NEXTONE (GETS NEXT ITEM FROM LIST)            00100500
+                           A          S R I                             00100600
+          JOBFIN /Z200002 JOBFINISH  (PRINTS TIME & COST)               00100700
+                           A AUG 1964 NASA      L BANNISTER             00100800
+          GPF    /Z200003 GREATEST PRIME FACTOR                         00100900
+                           A MARCH 65 NASA      L E SHANNON             00101000
+          TICTAC /Z200010 TICTAC/TTY TIC-TAC-TOE GAME                   00101100
+                           A JULY 1967   BURR--MOD BY U OF D            00101200
+          WIPL   /Z300001 WIPL/WIPL EXTENDED REMOTE PROGRAMM            00101300
+ING LANGUAGE               A JAN 71 U OF WISC HARRIS                    00101400
+          OMNITAB/Z300002 A LANGUAGE BASED ON ENGLISH RATHER            00101500
+  THAN ALGEBRAIC SYNTAX    F SEPT 68 IOWA ST/NATC PATUXENT              00101600
+          WIPL   /Z300003  PATCH DECK FOR WIPL/Z300001                  00101610
+                           A JAN 72  GA TECH                            00101611
+          EXAMPLE/Z400001 EXAMPLE/COMPLEX, EXAMPLE USING GTL            00101700
+                           G JAN 72  GA TECH                            00101800
+          EXAMPLE/Z400002 EXAMPLE/DOUBLE, EXAMPLE USING GTL             00101900
+                           G JAN 72  GA TECH                            00102000
+          EXAMPLE/Z400003 EXAMPLE/LISP, EXAMPLE USING GTL               00102100
+                           G JAN 72  GA TECH                            00102200
+          EXAMPLE/Z400004 EXAMPLE/RECORD, EXAMPLE USING GTL             00102300
+                           G JAN 72  GA TECH                            00102400
+          EXAMPLE/Z400005 EXAMPLE/REVERSE, EXAMPLE USING GTL            00102500
+                           G JAN 72   GA TECH                           00102600
+          EXAMPLE/Z400006 EXAMPLE/SENTENC EXAMPLE USING GTL             00102700
+                           G JAN 72  GA TECH                            00102800
+          EXAMPLE/Z400007 EXAMPLE/STRING, EXAMPLE USING GTL             00102900
+                           G JAN 72  GA TECH                            00103000
+          EXAMPLE/Z400008 EXAMPLE/SYNTAX, EXAMPLE USING GTL             00103100
+                           G JAN 72  GA TECH                            00103200
+                                                            |           00103300
+                                                                        00103400

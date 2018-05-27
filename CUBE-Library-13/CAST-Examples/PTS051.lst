@@ -1,0 +1,1158 @@
+ LABEL  000000000LINE   00188147?COMPILE PTS051/TEST ALGOL GO                                            ALGOL  /PTS051
+
+
+
+
+
+                      BURROUGHS B-5700 ALGOL COMPILER MARK XIII.0   THURSDAY, 05/26/88,   4:14 PM.
+
+
+
+
+
+                         BEGIN                                                                  35230001 C  0000
+                                                                                        START OF SEGMENT **********    2
+                                                                                                35230002 C  0000
+                COMMENT       TEST PROGRAM FOR FLASHW PROCEDURE.                                35230003 C  0000
+                              BY A. PAUL OLESON                                                 35230004 C  0000
+                              PROFESSIONAL SERVICES GROUP, BURROUGHS CORP.                      35230005 C  0000
+                              CARD SEQUENCE STARTS WITH TEST0001.                               35230006 C  0000
+                              DATE OF FIRST ISSUE 12-1-63 ;                                     35230007 C  0000
+                FILE IN       FLIN (1,10) ;                                                     35230008 C  0000
+                FILE OUT      FIL1 (1,15) ;                                                     35230009 C  0003
+                BOOLEAN       CALCPDC ;                                                         35230010 C  0007
+                BOOLEAN ARRAY B[0:10] ;                                                         35230011 C  0007
+                INTEGER       I, J, N ;                                                         35230012 C  0008
+                INTEGER ARRAY PICKK[0:8], KC7[0:20], KC11[0:20,0:2]  ;                          35230013 C  0008
+                REAL          T, P, VDF, S ;                                                    35230014 C  0014
+                REAL ARRAY    KC1[0:20,0:28], KC2[0:20,0:3], KC3[0:3], KC4[0:5],                35230015 C  0014
+                              KC5[0:2,0:3], KC6[0:3],KC8[0:20,0:2,0:2],                         35230016 C  0022
+                              KC9[0:20,0:2,0:2], KC10[0:20,0:5], KC12[0:20], K[0:20],           35230017 C  0028
+                              PK[0:20], Z[0:20], X[0:20], Y[0:20], LIMITFW[0:4] ;               35230018 C  0035
+                                                                                                35230019 C  0044
+                LABEL         ENDPROB, ERRORFW ;                                                35230020 C  0044
+                FORMAT IN     F2 (E17.8,3E16.8) ,                                               35230021 C  0044
+                                                                                        START OF SEGMENT **********    3
+                              F3 (X4,2F6.1,F4.1,3F6.3,4I2) ;                                    35230022 C  0044
+                                                                                           3 IS   13 LONG, NEXT SEG    2
+                                                                                                35230023 C  0044
+                FORMAT OUT    FO1 (2F9.5,2E16.8) ,                                              35230024 C  0044
+                                                                                        START OF SEGMENT **********    4
+                              FO2 (3E16.8) ;                                                    35230025 C  0044
+                                                                                           4 IS    9 LONG, NEXT SEG    2
+                                                                                                35230026 C  0044
+                LIST          LI1(FOR I ~ 1,2 DO FOR J ~ 1 STEP 1 UNTIL 28 DO                   35230027 C  0044
+                              KC1[I,J]),                                                        35230028 C  0052
+                              LI2(T, P, VDF, Z[1], Z[2], Z[3], B[1], B[2], B[3], B[4]),         35230029 C  0060
+                              LI3(T, P, VDF, S) ,                                               35230030 C  0078
+                              L4 (FOR I ~ 1,2,3 DO [Z[I], X[I], Y[I]]) ;                        35230031 C  0087
+                REAL          LOGP ;                                                            35230032 C  0103
+                COMMENT       GLOBAL ARRAYS FOR KNGAA PROCEDURE ;                               35230033 C  0103
+                ARRAY         TR1S1[0:4], PDC[0:8,0:4], LOGP1[0:7] ;                            35230034 C  0103
+                COMMENT       GLOBAL ARRAYS FOR PHIPART PROCEDURE ;                             35230035 C  0109
+                INTEGER ARRAY TADD, ADD[0:5], DEGREE[0:4] ;                                     35230036 C  0109
+                ARRAY         POLY[0:25], TT[0:4] ;                                             35230037 C  0112
+                                                                                                35230038 C  0116
+                PROCEDURE     KNGAA (T, P, N, CALCPDC, CALCPT, CALCPP, K, PKT, PKP) ;           25770010 C  0116
+                                                                                                00000000 C  0116
+                COMMENT       N.G.A.A. K-RATIO PROCEDURE.                                       25770002 C  0116
+                              BY A. PAUL OLESON AND DONALD L. VOSS                              25770003 C  0116
+                              PROFESSIONAL SERVICES GROUP,  BURROUGHS CORPORATION               25770004 C  0116
+                              FIRST RELEASE DATE:  5-5-63                                       25770005 C  0116
+                                                                                                00000000 C  0116
+                              THIS PROCEDURE CALCULATES VAPOR-LIQUID EQUILIBRIUM RATIOS         25770006 C  0116
+                              (Y/X) FOR LIGHT HYDROCARBONS BY MEANS OF THE N.G.A.A.             25770007 C  0116
+                              CORRELATION.  ALSO CALCULATED, BY OPTION, ARE THE                 25770008 C  0116
+                              TEMPERATURE AND PRESSURE DERIVATIVES OF THE K-RATIOS.             25770009 C  0116
+                              COMPONENTS MAY BE REFERENCED TO ANY COMPONENT IN THE              25770010 C  0116
+                              SYSTEM BY K = K[R](A + B | T + C | T*2), WHERE                    25770011 C  0116
+                                   A = KC1[I,2] | P + KC1[I,3],                                 25770012 C  0116
+                                   B = KC1[I,4] | P + KC1[I,5],                                 25770013 C  0116
+                                   C = KC1[I,6] | P + KC1[I,7],                                 25770014 C  0116
+                              AND T IS DEGREES RANKINE/1000.                                    25770015 C  0116
+                                                                                                00000000 C  0116
+                              THE INPUT PARAMETERS ARE                                          25770016 C  0116
+                              T    - TEMPERATURE, F - REAL                                      25770017 C  0116
+                              P    - PRESSURE, PSIA - REAL                                      25770018 C  0116
+                              N    - NUMBER OF COMPONENTS - INTEGER                             25770019 C  0116
+                              CALCPDC - BOOLEAN.  IF TRUE, CALCULATE P DEPENDENT                25770020 C  0116
+                                     COEFFICIENTS.  FOR CALCPDC = FALSE, P OF THE LAST          25770021 C  0116
+                                     ENTRY MUST EQUAL P OF THE PRESENT ENTRY.                   25770022 C  0116
+                              CALCPT - BOOLEAN.  IF TRUE, CALCULATE THE T DERIVATIVE            25770023 C  0116
+                                     OF K.                                                      25770024 C  0116
+                              CALCPP - BOOLEAN.  IF TRUE, CALCULATE THE P DERIVATIVE            25770025 C  0116
+                                     OF K.                                                      25770026 C  0116
+                                                                                                00000000 C  0116
+                              ALSO, THE VARIABLE KC1 IS NON-LOCAL.                              25770027 C  0116
+                              KC1  - N.G.A.A. COEFFICIENTS - REAL ARRAY [0:N,0:28],             25770028 C  0116
+                                     WHERE THE 28 COEFFICIENTS ARE ALTERNATELY 4 SETS           25770029 C  0116
+                                     OF 7 P COEFFICIENTS.  IF KC1[I,1] = 0, COMPONENT           25770030 C  0116
+                                     I IS REFERENCED TO COMPONENT R AND KC1[I,8] = R.           25770031 C  0116
+                                     R IS REAL AND MUST BE GREATER THAN I.                      25770032 C  0116
+                                                                                                00000000 C  0116
+                              THE OUTPUT PARAMETERS ARE                                         25770033 C  0116
+                              K    - COMPONENT VAPOR-LIQUID EQUILIBRIUM RATIOS (Y/X) -          25770034 C  0116
+                                     REAL ARRAY [0:N]                                           25770035 C  0116
+                              PKT  - COMPONENT T DERIVATIVES OF K - REAL ARRAY [0:N]            25770036 C  0116
+                              PKP  - COMPONENT P DERIVATIVES OF K - REAL ARRAY [0:N] ;          25770037 C  0116
+                                                                                                00000000 C  0116
+                VALUE         T, P, N, CALCPDC, CALCPT, CALCPP ;                                25770038 C  0116
+                INTEGER       N ;                                                               25770039 C  0116
+                BOOLEAN       CALCPDC, CALCPT, CALCPP ;                                         25770040 C  0116
+                REAL          T, P ;                                                            25770041 C  0116
+                ARRAY         K[0], PKT[0], PKP[0] ;                                            25770042 C  0116
+                                                                                                00000000 C  0116
+                         BEGIN                                                                  25770043 C  0116
+                LABEL         KNG1, KNG2, KNG3, KNG4, KNG5, KNG6, KNG7, KNG8, KNG9 ;            25770044 C  0116
+                                                                                        START OF SEGMENT **********    5
+                INTEGER       I, J, U, E, G, TIS1, Q ;                                          25770045 C  0000
+                REAL          TRS1, TR1, TR12 ;                                                 25770046 C  0000
+                                                                                                00000000 C  0000
+                COMMENT       CALCULATE PRESSURE DEPENDENT COEFFICIENTS IF CALCPDC = 1 ;        25770050 C  0000
+                              IF CALCPDC THEN                                                   25770051 C  0000
+                         BEGIN                                                                  25770052 C  0000
+                              LOGP ~ LN(P) | 0.1 ;      LOGP1[1] ~ 1.0 ;                        25770053 C  0000
+                              FOR U ~ 2 STEP 1 UNTIL 7 DO                                       25770054 C  0003
+                              LOGP1[U] ~ LOGP1[U-1] | LOGP ;                                    25770055 C  0007
+                              LOGP ~ 10.0 | LOGP ;                                              25770056 C  0011
+                              FOR I ~ 1 STEP 1 UNTIL N DO                                       25770057 C  0013
+                         BEGIN                                                                  25770058 C  0015
+                              IF KC1[I,1] = 0 THEN GO TO KNG1 ;                                 25770059 C  0015
+                              FOR J ~ 1, 8, 15, 22 DO                                           25770060 C  0017
+                         BEGIN                                                                  25770061 C  0025
+                              Q ~ J + 6 ;                                                       25770062 C  0025
+                              E ~ Q DIV 7 ;                                                     25770063 C  0027
+                              PDC[I,E] ~ 0 ;                                                    25770064 C  0028
+                              TIS1 ~ 1 - J ;                                                    25770065 C  0030
+                              FOR U ~ J STEP 1 UNTIL Q DO                                       25770066 C  0031
+                         BEGIN                                                                  25770067 C  0033
+                              G ~ U + TIS1 ;                                                    25770068 C  0033
+                              PDC[I,E] ~ KC1[I,U] | LOGP1[G] + PDC[I,E]                         25770069 C  0034
+                         END                                                                    25770070 C  0038
+                         END  ;                                                                 25770071 C  0039
+                              GO TO KNG2 ;                                                      25770072 C  0042
+                                                                                                00000000 C  0042
+                COMMENT       CALCULATE PRESSURE DEPENDENT COEFFICIENTS OF REFERENCED           25770073 C  0042
+                              COMPONENTS ;                                                      25770074 C  0042
+                KNG1:         PDC[I,1] ~ 0 ;                                                    25770075 C  0042
+                              PDC[I,2] ~ KC1[I,2] | P + KC1[I,3] ;                              25770076 C  0045
+                              PDC[I,3] ~ KC1[I,4] | P + KC1[I,5] ;                              25770077 C  0050
+                              PDC[I,4] ~ KC1[I,6] | P + KC1[I,7] ;                              25770078 C  0055
+                KNG2:    END                                                                    25770079 C  0060
+                         END  ;                                                                 25770080 C  0060
+                                                                                                00000000 C  0062
+                COMMENT       CALCULATE K-RATIOS ;                                              25770081 C  0062
+                KNG3:         TR1 ~ (T + 459.7) | 0.001 ;  TR12 ~ TR1*2 ;                       25770082 C  0062
+                              FOR I ~ N STEP -1 UNTIL 1 DO                                      25770083 C  0066
+                         BEGIN                                                                  25770084 C  0069
+                              IF PDC[I,1] = 0 THEN GO TO KNG4 ;                                 25770085 C  0069
+                              K[I] ~ EXP (PDC[I,4] | TR12 + PDC[I,3] | TR1 +                    25770086 C  0071
+                              PDC[I,1]/TR1 + PDC[I,2] - LOGP) ;                                 25770087 C  0075
+                              GO TO KNG5 ;                                                      25770088 C  0080
+                                                                                                00000000 C  0081
+                COMMENT       CALCULATE K-RATIOS OF REFERENCED COMPONENTS ;                     25770089 C  0081
+                KNG4:         K[I] ~ K[KC1[I,8]] | (PDC[I,3] | TR1 + PDC[I,2] +                 25770090 C  0081
+                              PDC[I,4] | TR12) ;                                                25770091 C  0086
+                KNG5:    END  ;                                                                 25770092 C  0089
+                                                                                                00000000 C  0091
+                COMMENT       CALCULATE TEMPERATURE DERIVATIVES OF K-RATIOS, IF CALCPT          25770093 C  0091
+                              IS TRUE ;                                                         25770094 C  0091
+                              IF CALCPT THEN                                                    25770095 C  0091
+                              FOR I ~ N STEP -1 UNTIL 1 DO                                      25770096 C  0091
+                         BEGIN                                                                  25770097 C  0093
+                              IF PDC[I,1] = 0 THEN GO TO KNG6 ;                                 25770098 C  0093
+                              PKT[I] ~ (-PDC[I,1]/TR12 + 2.0 | PDC[I,4] | TR1 +                 25770099 C  0095
+                              PDC[I,3] ) | 0.001 | K[I] ;                                       25770100 C  0100
+                              GO TO KNG7 ;                                                      25770101 C  0103
+                                                                                                00000000 C  0106
+                COMMENT       CALCULATE TEMPERATURE DERIVATIVES OF K-RATIOS FOR                 25770102 C  0106
+                              REFERENCED COMPONENTS ;                                           25770103 C  0106
+                KNG6:         E ~ KC1[I,8] ;                                                    25770104 C  0106
+                              PKT[I] ~ K[I]/K[E] | PKT[E] + (PDC[I,4] | 2.0 | TR1 +             25770105 C  0107
+                              PDC[I,3] ) | K[E] | 0.001 ;                                       25770106 C  0112
+                KNG7:    END  ;                                                                 25770107 C  0116
+                                                                                                00000000 C  0118
+                COMMENT       CALCULATE PRESSURE DERIVATIVES OF K-RATIOS, IF CALCPP IS          25770108 C  0118
+                              TRUE ;                                                            25770109 C  0118
+                              IF CALCPP THEN                                                    25770110 C  0118
+                              FOR I ~ N STEP -1 UNTIL 1 DO                                      25770111 C  0118
+                         BEGIN                                                                  25770112 C  0122
+                              IF PDC[I,1] = 0 THEN GO TO KNG8 ;                                 25770113 C  0122
+                              FOR J ~ 1, 8, 15, 22 DO                                           25770114 C  0124
+                         BEGIN                                                                  25770115 C  0132
+                              Q ~ J + 5 ;                                                       25770116 C  0132
+                              E ~ (J + 6) DIV 7 ;                                               25770117 C  0134
+                              TR1S1[E] ~ 0 ;  TRS1 ~ 1.0 ;                                      25770118 C  0135
+                              TIS1 ~ 1 - J ;                                                    25770119 C  0137
+                              FOR U ~ J STEP 1 UNTIL Q DO                                       25770120 C  0139
+                         BEGIN                                                                  25770121 C  0141
+                              G ~ U + TIS1 ;                                                    25770122 C  0141
+                              TR1S1[E] ~ KC1[I,U+1] | LOGP1[G] | TRS1 + TR1S1[E] ;              25770123 C  0142
+                              TRS1 ~ TRS1 + 1.0                                                 25770124 C  0147
+                         END                                                                    25770125 C  0147
+                         END  ;                                                                 25770126 C  0148
+                              PKP[I] ~ (TR1S1[4] | TR12 + TR1S1[3] | TR1 + TR1S1[1]/TR1         25770127 C  0152
+                              + TR1S1[2] - 10.0) | 0.1 | K[I]/P ;                               25770128 C  0155
+                              GO TO KNG9 ;                                                      25770129 C  0159
+                                                                                                00000000 C  0162
+                COMMENT       CALCULATE PRESSURE DERIVATIVES OF K-RATIOS FOR REFERENCED         25770130 C  0162
+                              COMPONENTS ;                                                      25770131 C  0162
+                KNG8:         E ~ KC1[I,8] ;                                                    25770132 C  0162
+                              PKP[I] ~ (KC1[I,6] | TR12 + KC1[I,4] | TR1 + KC1[I,2] ) |         25770133 C  0163
+                              K[E] + (PDC[I,4] | TR12 + PDC[I,3] | TR1 + PDC[I,2] ) |           25770134 C  0169
+                              PKP[E] ;                                                          25770135 C  0175
+                KNG9:    END                                                                    25770136 C  0177
+                                                                                                00000000 C  0177
+                         END  KNGAA ;                                                           25770137 C  0177
+                                                                                           5 IS  184 LONG, NEXT SEG    2
+                PROCEDURE     PHIPART (V, DATA, ALEPH, BETA, COEFF, P, S, PHI, SUM) ;           26220001 C  0116
+                COMMENT       THIS PROCEDURE COMPUTES POINTS ON AN N-DIMENSIONAL SURFACE        26220002 C  0116
+                              AND, BY OPTION, THE PARTIAL DERIVATIVES OF ANY OF THE             26220003 C  0116
+                              VARIABLES AT THE POINTS IN QUESTION ;                             26220004 C  0116
+                VALUE         V ;                                                               26220005 C  0116
+                INTEGER       V ;                                                               26220006 C  0116
+                INTEGER ARRAY P[0] ;                                                            26220007 C  0116
+                BOOLEAN ARRAY S[0] ;                                                            26220008 C  0116
+                REAL ARRAY    DATA[0], ALEPH[0,0], BETA[0,0], COEFF[0], SUM[0] ;                26220009 C  0116
+                REAL          PHI ;                                                             26220010 C  0116
+                         BEGIN                                                                  26220011 C  0116
+                INTEGER       KV, M, T, I, D, PV ;                                              26220012 C  0116
+                                                                                        START OF SEGMENT **********    6
+                BOOLEAN       B ;                                                               26220014 C  0000
+                REAL          DATUM ;                                                           26220015 C  0000
+                COMMENT       THE SIZE OF POLY IS SUM(P[I]+1), I ~ 1 STEP 1 UNTIL V. IT         26220017 C  0000
+                              HAS BEEN SET TO A VALUE SO AS NOT TO REQUIRE CALCULATION          26220018 C  0000
+                              WITH EACH PASS THROUGH PHIPART, BUT IT MAY BE ALTERED. ;          26220019 C  0000
+                LABEL         POLYCOMPUTE, PARTCOMPUTE, D2, BACK, HERE, FINI, DEPENDENT;        26220020 C  0000
+                              TADD[1] ~ ADD[1] ~ T ~ 1 ;                                        26220021 C  0000
+                              FOR M ~ 1 STEP 1 UNTIL V DO                                       26220022 C  0002
+                         BEGIN                                                                  26220023 C  0004
+                              DATUM ~ DATA[M] ;          SUM[M] ~ 0 ;                           26220024 C  0004
+                COMMENT       EVALUATE THE POLYNOMIALS ;                                        26220025 C  0006
+                POLYCOMPUTE :                                                                   26220026 C  0006
+                         BEGIN                                                                  26220027 C  0007
+                              POLY[T] ~ 1.0 ;                                                   26220028 C  0007
+                              POLY[T+1] ~ DATUM + ALEPH[M,1] ;          T ~ T + 2 ;             26220029 C  0008
+                              FOR I ~ 2 STEP 1 UNTIL P[M] DO                                    26220030 C  0012
+                         BEGIN                                                                  26220031 C  0016
+                              POLY[T] ~ (ALEPH[M,I] + DATUM) | POLY[T-1] +                      26220032 C  0016
+                              BETA[M,I] | POLY[T-2] ;                                           26220033 C  0020
+                              T ~ T + 1                                                         26220034 C  0023
+                         END                                                                    26220035 C  0023
+                         END POLYCOMPUTE ;                                                      26220036 C  0024
+                              TADD[M+1] ~ ADD[M+1] ~ T                                          26220037 C  0027
+                         END ;                                                                  26220038 C  0029
+                              B ~ FALSE ;                                                       26220039 C  0032
+                COMMENT       COMPUTE THE DEPENDENT VARIABLE OR THE PARTIAL ;                   26220040 C  0033
+                DEPENDENT :                                                                     26220041 C  0033
+                         BEGIN                                                                  26220042 C  0034
+                              D ~ 1 ;                                                           26220043 C  0034
+                              FOR M ~ 1 STEP 1 UNTIL V DO                                       26220044 C  0034
+                         BEGIN                                                                  26220045 C  0036
+                              DEGREE[M] ~ TADD[M] ;          TT[M] ~ 0                          26220046 C  0036
+                         END ;                                                                  26220047 C  0038
+                              PV ~ TADD[V] + P[V] ;                                             26220048 C  0041
+                BACK :        FOR I ~ TADD[V] STEP 1 UNTIL PV DO                                26220049 C  0042
+                         BEGIN                                                                  26220050 C  0047
+                              TT[V] ~ COEFF[D] | POLY[I] + TT[V] ;                              26220051 C  0047
+                              D ~ D + 1                                                         26220052 C  0050
+                         END ;                                                                  26220053 C  0050
+                              IF V = 1 THEN GO TO FINI ;                                        26220054 C  0051
+                              M ~ V - 1 ;                                                       26220055 C  0053
+                HERE :        TT[M] ~ POLY[DEGREE[M]] | TT[M+1] + TT[M] ;                       26220056 C  0054
+                              TT[M+1] ~ 0 ;                                                     26220057 C  0058
+                              DEGREE[M] ~ DEGREE[M] + 1 ;                                       26220058 C  0060
+                              IF DEGREE[M] { TADD[M] + P[M] THEN GO TO BACK ;                   26220060 C  0062
+                              IF M = 1 THEN GO TO FINI ;                                        26220061 C  0065
+                              DEGREE[M] ~ TADD[M] ;          M ~ M - 1 ;                        26220062 C  0066
+                              GO TO HERE ;                                                      26220063 C  0069
+                FINI :        IF B THEN                                                         26220064 C  0069
+                         BEGIN                                                                  26220065 C  0070
+                              SUM[KV] ~ TT[1] ;          GO TO D2                               26220066 C  0070
+                         END ;                                                                  26220067 C  0072
+                              PHI ~ TT[1]                                                       26220068 C  0072
+                         END DEPENDENT ;                                                        26220069 C  0073
+                              FOR KV ~ 1 STEP 1 UNTIL V DO                                      26220070 C  0074
+                         BEGIN                                                                  26220071 C  0075
+                              M ~ KV ;                                                          26220072 C  0075
+                              IF S[M] THEN                                                      26220073 C  0075
+                         BEGIN                                                                  26220074 C  0076
+                              DATUM ~ DATA[M] ;                                                 26220075 C  0076
+                COMMENT       EVALUATE THE PARTIAL POLYNOMIALS ;                                26220076 C  0077
+                PARTCOMPUTE :                                                                   26220077 C  0077
+                         BEGIN                                                                  26220078 C  0078
+                              POLY[T] ~ 0 ;          POLY[T+1] ~ 1.0 ;                          26220079 C  0078
+                              T ~ T + 2 ;                                                       26220080 C  0081
+                              FOR I ~ 2 STEP 1 UNTIL P[M] DO                                    26220081 C  0082
+                         BEGIN                                                                  26220082 C  0086
+                              POLY[T] ~ (ALEPH[M,I] + DATUM) | POLY[T-1] +                      26220083 C  0086
+                              POLY[ADD[M]+I-1] + BETA[M,I] | POLY[T-2] ;                        26220084 C  0089
+                              T ~ T + 1                                                         26220085 C  0095
+                         END                                                                    26220086 C  0095
+                         END PARTCOMPUTE ;                                                      26220087 C  0096
+                              T ~ TADD[M] ~ ADD[V+1] ;          B ~ TRUE ;                      26220088 C  0098
+                              GO TO DEPENDENT ;                                                 26220089 C  0101
+                D2 :          TADD[KV] ~ ADD[KV]                                                26220090 C  0101
+                         END                                                                    26220091 C  0102
+                         END                                                                    26220092 C  0103
+                         END PHIPART ;                                                          26220093 C  0103
+                                                                                           6 IS  109 LONG, NEXT SEG    2
+                PROCEDURE     ANT1 (X, CALCPX, ANTC, ANT, PANTX) ;                              15370001 C  0116
+                                                                                                00000000 C  0116
+                COMMENT       ANTOINE EQUATION PROCEDURE.                                       15370002 C  0116
+                              BY DONALD L. VOSS                                                 15370003 C  0116
+                              PROFESSIONAL SERVICES GROUP,  BURROUGHS CORPORATION               15370004 C  0116
+                              FIRST RELEASE DATE:  11-1-62                                      15370005 C  0116
+                                                                                                00000000 C  0116
+                              THIS PROCEDURE EVALUATES THE 3-CONSTANT ANTOINE EQUATION.         15370006 C  0116
+                                                                                                00000000 C  0116
+                              THE INPUT PARAMETERS ARE                                          15370007 C  0116
+                              X    - INDEPENDENT VARIABLE - REAL                                15370008 C  0116
+                              CALCPX - BOOLEAN.  IF TRUE, CALCULATE PANTX.                      15370009 C  0116
+                              ANTC - ANTOINE EQUATION COEFFICIENTS - REAL ARRAY [0:3]           15370010 C  0116
+                                                                                                00000000 C  0116
+                              THE OUTPUT PARAMETERS ARE                                         15370011 C  0116
+                              ANT  - VALUE OF THE ANTOINE EQUATION AT X - REAL                  15370012 C  0116
+                              PANTX - X DERIVATIVE OF ANT - REAL ;                              15370013 C  0116
+                                                                                                00000000 C  0116
+                VALUE         X, CALCPX ;                                                       15370014 C  0116
+                BOOLEAN       CALCPX ;                                                          15370015 C  0116
+                REAL          X, ANT, PANTX ;                                                   15370016 C  0116
+                ARRAY         ANTC[0] ;                                                         15370017 C  0116
+                                                                                                00000000 C  0116
+                         BEGIN                                                                  15370018 C  0116
+                REAL          TRS1 ;                                                            15370019 C  0116
+                                                                                        START OF SEGMENT **********    7
+                                                                                                00000000 C  0000
+                COMMENT       EVALUATE THE ANTOINE EQUATION ;                                   15370020 C  0000
+                              TRS1 ~ ANTC[3] + X ;                                              15370021 C  0000
+                              ANT ~ EXP (-ANTC[2]/TRS1 + ANTC[1] ) ;                            15370022 C  0001
+                                                                                                00000000 C  0004
+                COMMENT       IF CALCPX IS TRUE, CALCULATE THE DERIVATIVE OF THE                15370023 C  0004
+                              ANTOINE EQUATION WITH RESPECT TO X. ;                             15370024 C  0004
+                              IF CALCPX THEN                                                    15370025 C  0004
+                              PANTX ~ ANTC[2]/TRS1*2 | ANT                                      15370026 C  0005
+                         END  ANT1 ;                                                            15370027 C  0007
+                                                                                           7 IS   11 LONG, NEXT SEG    2
+                PROCEDURE     KIDEAL (T, P, N, CALCPT, CALCPP, K, PKT, PKP) ;                   29470001 C  0116
+                                                                                                00000000 C  0116
+                COMMENT       IDEAL K-RATIO PROCEDURE.                                          29470002 C  0116
+                              BY DONALD L. VOSS                                                 29470003 C  0116
+                              PROFESSIONAL SERVICES GROUP,  BURROUGHS CORPORATION               29470004 C  0116
+                              FIRST RELEASE DATE:  5-5-63                                       29470005 C  0116
+                                                                                                00000000 C  0116
+                              THIS PROCEDURE CALCULATES VAPOR-LIQUID EQUILIBRIUM RATIOS         29470006 C  0116
+                              (Y/X), AND THEIR DERIVATIVES WITH RESPECT TO TEMPERATURE          29470007 C  0116
+                              AND PRESSURE.  IDEAL LIQUID AND VAPOR BEHAVIOR IS ASSUMED.        29470008 C  0116
+                                                                                                00000000 C  0116
+                              THE INPUT PARAMETERS ARE                                          29470009 C  0116
+                              T    - TEMPERATURE, F - REAL                                      29470010 C  0116
+                              P    - PRESSURE, PSIA - REAL                                      29470011 C  0116
+                              N    - NUMBER OF COMPONENTS - INTEGER                             29470012 C  0116
+                              CALCPT - BOOLEAN.  IF TRUE, CALCULATE PKT.                        29470013 C  0116
+                              CALCPP - BOOLEAN.  IF TRUE, CALCULATE PKP.                        29470014 C  0116
+                                                                                                00000000 C  0116
+                              ALSO, THE VARIABLE KC2 IS NON-LOCAL.                              29470015 C  0116
+                              KC2  - COMPONENT VAPOR PRESSURE COEFFICIENTS - REAL ARRAY         29470016 C  0116
+                                     [0:N,0:3].  KC2 IS USED AS ANTC IN THE ANT1                29470017 C  0116
+                                     PROCEDURE.                                                 29470018 C  0116
+                                                                                                00000000 C  0116
+                              THE OUTPUT PARAMETERS ARE                                         29470019 C  0116
+                              K    - COMPONENT VAPOR-LIQUID EQUILIBRIUM RATIOS (Y/X) -          29470020 C  0116
+                                     REAL ARRAY [0:N]                                           29470021 C  0116
+                              PKT  - COMPONENT T DERIVATIVES OF K - REAL ARRAY [0:N]            29470022 C  0116
+                              PKP  - COMPONENT P DERIVATIVES OF K - REAL ARRAY [0:N]            29470023 C  0116
+                                                                                                00000000 C  0116
+                              THE PROCEDURE ANT1 MUST BE DECLARED PRIOR TO KIDEAL. ;            29470024 C  0116
+                                                                                                00000000 C  0116
+                VALUE         T, P, N, CALCPT, CALCPP ;                                         29470025 C  0116
+                INTEGER       N ;                                                               29470026 C  0116
+                BOOLEAN       CALCPT, CALCPP ;                                                  29470027 C  0116
+                REAL          T, P ;                                                            29470028 C  0116
+                ARRAY         K[0], PKT[0], PKP[0] ;                                            29470029 C  0116
+                                                                                                00000000 C  0116
+                         BEGIN                                                                  29470030 C  0116
+                INTEGER       I ;                                                               29470031 C  0116
+                                                                                        START OF SEGMENT **********    8
+                REAL          TRS1 ;                                                            29470032 C  0000
+                                                                                                00000000 C  0000
+                              TRS1 ~ 1.0/P ;                                                    29470033 C  0000
+                              FOR  I ~ 1 STEP 1 UNTIL N DO                                      29470034 C  0001
+                         BEGIN                                                                  29470035 C  0003
+                                                                                                00000000 C  0003
+                COMMENT       ENTER THE ANT1 PROCEDURE TO CALCULATE THE VAPOR PRESSURE          29470036 C  0003
+                              AND ITS TEMPERATURE DERIVATIVE FOR EACH COMPONENT. ;              29470037 C  0003
+                              ANT1 (T, CALCPT, KC2[I,*], K[I], PKT[I] ) ;                       29470038 C  0003
+                                                                                                00000000 C  0011
+                COMMENT       CALCULATE THE COMPONENT K-RATIOS. ;                               29470039 C  0011
+                              K[I] ~ K[I] | TRS1 ;                                              29470040 C  0011
+                                                                                                00000000 C  0013
+                COMMENT       IF CALCPT IS TRUE, CALCULATE THE COMPONENT T DERIVATIVES          29470041 C  0013
+                              OF THE K-RATIOS. ;                                                29470042 C  0013
+                              IF CALCPT THEN                                                    29470043 C  0013
+                              PKT[I] ~ PKT[I] | TRS1 ;                                          29470044 C  0013
+                                                                                                00000000 C  0015
+                COMMENT       IF CALCPP IS TRUE, CALCULATE THE COMPONENT P DERIVATIVES          29470045 C  0015
+                              OF THE K-RATIOS. ;                                                29470046 C  0015
+                              IF CALCPP THEN                                                    29470047 C  0015
+                              PKP[I] ~ -K[I] | TRS1                                             29470048 C  0016
+                         END                                                                    29470049 C  0017
+                                                                                                00000000 C  0018
+                         END  KIDEAL ;                                                          29470050 C  0018
+                                                                                           8 IS   24 LONG, NEXT SEG    2
+                PROCEDURE     KPOLY (T, N, CALCPT, K, PKT) ;                                    27870001 C  0116
+                                                                                                00000000 C  0116
+                COMMENT       RELATIVE VOLATILITY K-RATIO PROCEDURE.                            27870002 C  0116
+                              BY DONALD L. VOSS                                                 27870003 C  0116
+                              PROFESSIONAL SERVICES GROUP,  BURROUGHS CORPORATION               27870004 C  0116
+                              CARD SEQUENCE CODE STARTS WITH KPYP0001                           27870005 C  0116
+                              FIRST RELEASE DATE:  5-5-63                                       27870006 C  0116
+                                                                                                00000000 C  0116
+                              THIS PROCEDURE CALCULATES VAPOR-LIQUID EQUILIBRIUM                27870007 C  0116
+                              K-RATIOS (Y/X) AND THEIR DERIVATIVES WITH RESPECT TO              27870008 C  0116
+                              TEMPERATURE BY MEANS OF A RELATIVE VOLATILITY EQUATION.           27870009 C  0116
+                              THE REFERENCE COMPONENT K-RATIO IS CALCULATED BY MEANS            27870010 C  0116
+                              OF A FOURTH DEGREE POLYNOMIAL IN TEMPERATURE.  A SECOND           27870011 C  0116
+                              DEGREE POLYNOMIAL IS USED FOR THE RELATIVE VOLATILITIES           27870012 C  0116
+                              OF THE OTHER COMPONENTS.                                          27870013 C  0116
+                                                                                                00000000 C  0116
+                              THE INPUT PARAMETERS ARE                                          27870014 C  0116
+                              T    - TEMPERATURE, F.  - REAL                                    27870015 C  0116
+                              N    - NUMBER OF COMPONENTS  - INTEGER                            27870016 C  0116
+                              CALCPT - BOOLEAN.  IF TRUE, CALCULATE PKT.                        27870017 C  0116
+                                                                                                00000000 C  0116
+                              IN ADDITION, THE VARIABLES KC4 AND KC5 ARE NON-LOCAL TO           27870018 C  0116
+                              KPOLY.                                                            27870019 C  0116
+                              KC4  - REFERENCE COMPONENT K-RATIO COEFFICIENTS  - REAL           27870020 C  0116
+                                   ARRAY [0:5]                                                  27870021 C  0116
+                              KC5  - RELATIVE VOLATILITY COEFFICIENTS OF COMPONENTS  -          27870022 C  0116
+                                   REAL ARRAY [0:N,0:3]                                         27870023 C  0116
+                                                                                                00000000 C  0116
+                              THE OUTPUT PARAMETERS ARE                                         27870024 C  0116
+                              K    - COMPONENT K-RATIO  - REAL ARRAY [0:N]                      27870025 C  0116
+                              PKT  - T DERIVATIVE OF K  - REAL ARRAY [0:N]  ;                   27870026 C  0116
+                                                                                                00000000 C  0116
+                VALUE         T, N, CALCPT ;                                                    27870027 C  0116
+                INTEGER       N ;                                                               27870028 C  0116
+                BOOLEAN       CALCPT ;                                                          27870029 C  0116
+                REAL          T ;                                                               27870030 C  0116
+                ARRAY         K[0], PKT[0] ;                                                    27870031 C  0116
+                                                                                                00000000 C  0116
+                         BEGIN                                                                  27870032 C  0116
+                INTEGER       I ;                                                               27870033 C  0116
+                                                                                        START OF SEGMENT **********    9
+                REAL          TRS1, KR, PKRT1, RV ;                                             27870034 C  0000
+                                                                                                00000000 C  0000
+                COMMENT       CALCULATE THE K-RATIO OF THE REFERENCE COMPONENT, KR.  ;          27870035 C  0000
+                              TRS1 ~ 0.01 | T ;                                                 27870036 C  0000
+                              KR ~ (((KC4[5] | TRS1 + KC4[4]) | TRS1 + KC4[3]) | TRS1 +         27870037 C  0001
+                              KC4[2]) | TRS1 + KC4[1] ;                                         27870038 C  0004
+                                                                                                00000000 C  0007
+                COMMENT       CALCULATE THE TEMPERATURE DERIVATIVE OF KR, MULTIPLIED BY         27870039 C  0007
+                              100.0, IF CALCPT IS TRUE.  ;                                      27870040 C  0007
+                              IF CALCPT THEN                                                    27870041 C  0007
+                              PKRT1 ~ ((KC4[5] | TRS1 | 4.0 + KC4[4] | 3.0) | TRS1 +            27870042 C  0007
+                              KC4[3] | 2.0) | TRS1 + KC4[2] ;                                   27870043 C  0011
+                                                                                                00000000 C  0014
+                COMMENT       CALCULATE THE COMPONENT K-RATIOS AND, IF CALCPT IS TRUE,          27870044 C  0014
+                              THEIR TEMPERATURE DERIVATIVES.  ;                                 27870045 C  0014
+                              FOR I ~ 1 STEP 1 UNTIL N DO                                       27870046 C  0014
+                         BEGIN                                                                  27870047 C  0019
+                              RV ~ (KC5[I,3] | TRS1 + KC5[I,2]) | TRS1 + KC5[I,1] ;             27870048 C  0019
+                              K[I] ~ KR | RV ;                                                  27870049 C  0024
+                              IF CALCPT THEN                                                    27870050 C  0026
+                              PKT[I] ~ ((KC5[I,3] | TRS1 | 2.0 + KC5[I,2]) | KR +               27870051 C  0026
+                              RV | PKRT1) | 0.01                                                27870052 C  0032
+                         END                                                                    27870053 C  0033
+                                                                                                00000000 C  0034
+                         END  KPOLY ;                                                           27870054 C  0034
+                                                                                           9 IS   42 LONG, NEXT SEG    2
+                PROCEDURE     KWATER (T, P, CALCPT, CALCPP, KW, PVW, XW, PKWT, PKWP,            26970001 C  0116
+                              PPVWT, PXWT) ;                                                    26970002 C  0116
+                                                                                                00000000 C  0116
+                COMMENT       PROCEDURE FOR K-RATIO OF WATER DISSOLVED IN HYDROCARBONS.         26970003 C  0116
+                              BY A. PAUL OLESON AND DONALD L. VOSS                              26970004 C  0116
+                              PROFESSIONAL SERVICES GROUP,  BURROUGHS CORPORATION               26970005 C  0116
+                              FIRST RELEASE DATE:  5-5-63                                       26970006 C  0116
+                                                                                                00000000 C  0116
+                              THIS PROCEDURE CALCULATES THE FOLLOWING QUANTITIES FOR            26970007 C  0116
+                              WATER: VAPOR-LIQUID EQUILIBRIUM RATIO (KW OR Y/X), VAPOR          26970008 C  0116
+                              PRESSURE, MOLE FRACTION OF WATER DISSOLVED IN THE HYDRO-          26970009 C  0116
+                              CARBON PHASE, THE DERIVATIVES OF THESE QUANTITIES WITH            26970010 C  0116
+                              RESPECT TO TEMPERATURE, AND THE DERIVATIVE OF KW WITH             26970011 C  0116
+                              RESPECT TO PRESSURE.  THE K-RATIO OF WATER IS CALCULATED          26970012 C  0116
+                              BY ASSUMING IDEAL VAPOR BEHAVIOR AND USING AN EMPIRICAL           26970013 C  0116
+                              CORRELATION FOR THE WATER SOLUBILITY.                             26970014 C  0116
+                                                                                                00000000 C  0116
+                              THE INPUT PARAMETERS ARE                                          26970015 C  0116
+                              T    - TEMPERATURE, F. - REAL                                     26970016 C  0116
+                              P    - PRESSURE, PSIA - REAL                                      26970017 C  0116
+                              CALCPT - BOOLEAN.  IF TRUE, CALCULATE PKWT, PPVWT, AND            26970018 C  0116
+                                     PXWT.                                                      26970019 C  0116
+                              CALCPP - BOOLEAN.  IF TRUE, CALCULATE PKWP.                       26970020 C  0116
+                                                                                                00000000 C  0116
+                              ALSO, THE VARIABLES KC3 AND KC6 ARE NON-LOCAL.                    26970021 C  0116
+                              KC3  - WATER VAPOR PRESSURE COEFFIENTS - REAL ARRAY [0:3].        26970022 C  0116
+                                     KC3 IS USED AS ANTC IN THE ANT1 PROCEDURE.                 26970023 C  0116
+                              KC6  - COEFFICIENTS FOR THE SOLUBILITY OF WATER IN HYDRO-         26970024 C  0116
+                                     CARBONS - REAL ARRAY [0:3].  KC6 IS USED AS ANTC           26970025 C  0116
+                                     IN THE ANT1 PROCEDURE.                                     26970026 C  0116
+                                                                                                00000000 C  0116
+                              THE OUTPUT PARAMETERS ARE                                         26970027 C  0116
+                              KW   - VAPOR-LIQUID EQUILIBRIUM RATIO (Y/X) OF WATER -            26970028 C  0116
+                                     REAL                                                       26970029 C  0116
+                              PVW  - VAPOR PRESSURE OF WATER, PSIA                              26970030 C  0116
+                              XW   - MOLE FRACTION OF WATER DISSOLVED IN HYDROCARBON            26970031 C  0116
+                                     PHASE - REAL                                               26970032 C  0116
+                              PKWT - T DERIVATIVE OF KW - REAL                                  26970033 C  0116
+                              PKWP - P DERIVATIVE OF KW - REAL                                  26970034 C  0116
+                              PPVWT - T DERIVATIVE OF PVW - REAL                                26970035 C  0116
+                              PXWT - T DERIVATIVE OF XW - REAL                                  26970036 C  0116
+                                                                                                00000000 C  0116
+                              THE ANT1 PROCEDURE MUST BE DECLARED PRIOR TO KWATER ;             26970037 C  0116
+                                                                                                00000000 C  0116
+                VALUE         T, P, CALCPT, CALCPP ;                                            26970038 C  0116
+                BOOLEAN       CALCPT, CALCPP ;                                                  26970039 C  0116
+                REAL          T, P, KW, PVW, XW, PKWT, PKWP, PPVWT, PXWT ;                      26970040 C  0116
+                                                                                                00000000 C  0116
+                         BEGIN                                                                  26970041 C  0116
+                                                                                                00000000 C  0116
+                COMMENT       ENTER THE ANT1 PROCEDURE TO CALCULATE THE VAPOR PRESSURE          26970042 C  0116
+                              OF WATER, AND ITS TEMPERATURE DERIVATIVE. ;                       26970043 C  0116
+                              ANT1 (T, CALCPT, KC3, PVW, PPVWT) ;                               26970044 C  0116
+                                                                                                00000000 C  0119
+                COMMENT       ENTER THE ANT1 PROCEDURE TO CALCULATE THE SOLUBILITY OF           26970045 C  0119
+                              WATER IN HYDROCARBONS, AND ITS TEMPERATURE DERIVATIVE. ;          26970046 C  0119
+                              ANT1 (T, CALCPT, KC6, XW, PXWT) ;                                 26970047 C  0119
+                                                                                                00000000 C  0122
+                COMMENT       CALCULATE THE K-RATIO OF WATER. ;                                 26970048 C  0122
+                              KW ~ PVW/(P | XW) ;                                               26970049 C  0122
+                                                                                                00000000 C  0124
+                COMMENT       IF CALCPT IS TRUE, CALCULATE THE T DERIVATIVE OF KW. ;            26970050 C  0124
+                              IF CALCPT THEN                                                    26970051 C  0124
+                              PKWT ~ (-PXWT/XW + PPVWT/PVW) | KW ;                              26970052 C  0124
+                                                                                                00000000 C  0128
+                COMMENT       IF CALCPP IS TRUE, CALCULATE THE P DERIVATIVE OF KW. ;            26970053 C  0128
+                              IF CALCPP THEN                                                    26970054 C  0128
+                              PKWP ~ -KW/P                                                      26970055 C  0128
+                                                                                                00000000 C  0130
+                         END  KWATER ;                                                          26970056 C  0130
+                PROCEDURE     KPICKW (T, P, PICKK, CALCPT, CALCPP, CALCPDC, K, PKT, PKP,        27670001 C  0131
+                              PVW, XW, PPVWT, PXWT) ;                                           27670002 C  0131
+                                                                                                00000000 C  0131
+                COMMENT       THIS PROCEDURE TIES TOGETHER THE PROCEDURES KNGAA, KIDEAL,        27670003 C  0131
+                              KPOLY, PHIPART, AND KWATER FOR THE PURPOSE OF CALCULATING         27670004 C  0131
+                              K-RATIOS AND THEIR DERIVATIVES.                                   27670005 C  0131
+                              BY DONALD L. VOSS                                                 27670006 C  0131
+                              PROFESSIONAL SERVICES GROUP,  BURROUGHS CORPORATION               27670007 C  0131
+                              CARD SEQUENCE CODE STARTS WITH KPWP0001.                          27670008 C  0131
+                                                                                                00000000 C  0131
+                              FIRST RELEASE DATE    5-5-63                                      27670009 C  0131
+                              THE INPUT PARAMETERS ARE                                          27670010 C  0131
+                              T    - TEMPERATURE, F  - REAL                                     27670011 C  0131
+                              P    - PRESSURE, PSIA  - REAL                                     27670012 C  0131
+                              PICKK - NO. OF COMPONENTS FOR EACH OPTION - INTEGER ARRAY         27670013 C  0131
+                                   [0:6].                                                       27670014 C  0131
+                                   PICKK[1] - NO. USING KNGAA                                   27670015 C  0131
+                                   PICKK[2] - NO. USING KIDEAL                                  27670016 C  0131
+                                   PICKK[3] - NO. USING KPOLY                                   27670017 C  0131
+                                   PICKK[4] - NO. USING PHIPART                                 27670018 C  0131
+                                   PICKK[5] - NO. WHOSE K VALUES ARE GIVEN IN KC12[]            27670019 C  0131
+                                   PICKK[6] - =1 TO CALCULATE FOR WATER DISSOLVED IN A          27670020 C  0131
+                                              HYDROCARBON PHASE.  =0 IF NOT.                    27670021 C  0131
+                              CALCPT - BOOLEAN.  IF TRUE, CALCULATE PKT.                        27670022 C  0131
+                              CALCPP - BOOLEAN.  IF TRUE, CALCULATE PKP.                        27670023 C  0131
+                              CALCPDC - BOOLEAN.  IF TRUE, CALCULATE THE PRESSURE               27670024 C  0131
+                                   DEPENDENT COEFFICIENTS IN KNGAA.  FOR CALCPDC = TRUE,        27670025 C  0131
+                                   P(LAST ENTRY) MUST EQUAL P(PRESENT ENTRY).                   27670026 C  0131
+                                                                                                00000000 C  0131
+                              IN ADDITION, THE KC- VARIABLES ARE NON-LOCAL TO KPICK.            27670027 C  0131
+                              KC1  - N.G.A.A. COEFFICIENTS FOR KNGAA  - REAL ARRAY [0:          27670028 C  0131
+                                   PICKK[1],0:28]                                               27670029 C  0131
+                              KC2  - VAPOR PRESSURE COEFFICIENTS FOR KIDEAL  - REAL             27670030 C  0131
+                                   ARRAY[0:PICKK[2],0:3]                                        27670031 C  0131
+                              KC3  - WATER VAPOR PRESSURE COEFFICIENTS FOR KWATER  -            27670032 C  0131
+                                   REAL ARRAY [0:3]                                             27670033 C  0131
+                              KC6  - COEFFICIENTS FOR THE SOLUBILITY OF WATER IN                27670034 C  0131
+                                   HYDROCARBONS FOR KWATER  - REAL ARRAY [0:3]                  27670035 C  0131
+                              KC4  - REFERENCE COMPONENT K COEFFICIENTS FOR KPOLY  -            27670036 C  0131
+                                   REAL ARRAY [0:5]                                             27670037 C  0131
+                              KC5  - RELATIVE VOLATILITY COEFFICIENTS FOR KPOLY  - REAL         27670038 C  0131
+                                   ARRAY [0:PICKK[3],0:3]                                       27670039 C  0131
+                              KC7  - COMPONENT V VALUES IN PHIPART  - INTEGER ARRAY             27670040 C  0131
+                                   [0:PICKK[4]]                                                 27670041 C  0131
+                              KC8  - COMPONENT ALEPH VALUES IN PHIPART  - REAL ARRAY            27670042 C  0131
+                                   [0:PICKK[4],0:MAX KC7[],0:MAX KC11[] ]                       27670043 C  0131
+                              KC9  - COMPONENT BETA VALUES IN PHIPART  - REAL ARRAY             27670044 C  0131
+                                   [0:PICKK[4],0:MAX KC7[],0:MAX KC11[] ]                       27670045 C  0131
+                              KC10 - COMPONENT COEFF VALUES IN PHIPART  - REAL ARRAY            27670046 C  0131
+                                   [0:PICKK[4],0:MAX (KC11[I]+1) ... (KC11[V]+1) ]              27670047 C  0131
+                              KC11 - COMPONENT P VALUES IN PHIPART  - INTEGER ARRAY             27670048 C  0131
+                                   [0:PICKK[4],0:MAX KC7[] ]                                    27670049 C  0131
+                              IN PHIPART, THE INDEPENDENT VARIABLES ARE T OR T AND P.           27670050 C  0131
+                              KC12 - GIVEN VALUES OF COMPONENT K RATIOS  - REAL ARRAY           27670051 C  0131
+                                   [0:PICKK[5] ]                                                27670052 C  0131
+                                                                                                00000000 C  0131
+                              THE OUTPUT PARAMETERS ARE                                         27670053 C  0131
+                              K    - COMPONENT K-RATIOS (Y/X)  - REAL ARRAY [0:N],              27670054 C  0131
+                                   WHERE N IS THE TOTAL NUMBER OF COMPONENTS.                   27670055 C  0131
+                              PKT  - COMPONENT T DERIVATIVES OF K  - REAL ARRAY [0:N]           27670056 C  0131
+                              PKP  - COMPONENT P DERIVATIVES OF K  - REAL ARRAY [0:N] -         27670057 C  0131
+                                   (NOT INCLUDED FOR KPOLY)                                     27670058 C  0131
+                              PVW  - VAPOR PRESSURE OF WATER, PSIA  - REAL                      27670059 C  0131
+                              XW   - MOLE FRACTION OF WATER DISSOLVED IN HYDROCARBON            27670060 C  0131
+                                   PHASE  - REAL                                                27670061 C  0131
+                              PPVWT - T DERIVATIVE OF PVW  - REAL                               27670062 C  0131
+                              PXWT - T DERIVATIVE OF XW  - REAL                                 27670063 C  0131
+                                                                                                00000000 C  0131
+                              THE INPUT AND OUTPUT COMPONENT ARRAYS ARE ARRANGED                27670064 C  0131
+                                   ACCORDING TO THE PICKK[] ORDER.                              27670065 C  0131
+                              THE PROCEDURES KNGAA, KIDEAL, KPOLY, PHIPART, ANT1, AND           27670066 C  0131
+                                   KWATER MUST BE DECLARED PRIOR TO KPICKW.                     27670067 C  0131
+                              THE PROCEDURE ANT1 MUST BE DECLARED PRIOR TO KIDEAL AND           27670068 C  0131
+                                   KWATER.  ;                                                   27670069 C  0131
+                                                                                                00000000 C  0131
+                VALUE         T, P, CALCPT, CALCPP, CALCPDC ;                                   27670070 C  0131
+                REAL          T, P, PVW, XW, PPVWT, PXWT ;                                      27670071 C  0131
+                BOOLEAN       CALCPT, CALCPP, CALCPDC ;                                         27670072 C  0131
+                ARRAY         K[0], PKT[0], PKP[0] ;                                            27670073 C  0131
+                INTEGER ARRAY PICKK[0] ;                                                        27670074 C  0131
+                                                                                                00000000 C  0131
+                         BEGIN                                                                  27670075 C  0131
+                INTEGER       NF1, NF2, NF3, NF4, NF5, I, E, J, U, KC7E, KC11E ;                27670076 C  0131
+                                                                                        START OF SEGMENT **********   10
+                BOOLEAN ARRAY S[0:2] ;                                                          27670077 C  0000
+                REAL ARRAY    DATA, SUM[0:2] ;                                                  27670078 C  0001
+                                                                                                00000000 C  0003
+                COMMENT       SET UP ITERATION LIST VARIABLES ;                                 27670079 C  0003
+                              NF1 ~ PICKK[1] + PICKK[2] ;        NF2 ~ PICKK[3] + NF1 ;         27670080 C  0003
+                              NF3 ~ PICKK[4] + NF2 ;             NF4 ~ PICKK[5] + NF3 ;         27670081 C  0007
+                              NF5 ~ PICKK[6] + NF4 ;                                            27670082 C  0010
+                                                                                                00000000 C  0011
+                COMMENT       KWATER VALUES ;                                                   27670083 C  0011
+                              IF PICKK[6] = 1 THEN                                              27670084 C  0011
+                              KWATER (T, P, CALCPT, CALCPP, K[NF5], PVW, XW, PKT[NF5],          27670085 C  0012
+                              PKP[NF5], PPVWT, PXWT) ;                                          27670086 C  0020
+                                                                                                00000000 C  0025
+                COMMENT       K-RATIOS GIVEN IN KC12[] ;                                        27670087 C  0025
+                              IF PICKK[5] > 0 THEN                                              27670088 C  0025
+                              FOR I ~ NF3+1 STEP 1 UNTIL NF4 DO                                 27670089 C  0026
+                         BEGIN                                                                  27670090 C  0030
+                              E ~ I - NF3 ;     K[I] ~ KC12[E]                                  27670091 C  0030
+                         END  ;                                                                 27670092 C  0032
+                                                                                                00000000 C  0034
+                COMMENT       PHIPART VALUES ;                                                  27670093 C  0034
+                              IF PICKK[4] > 0 THEN                                              27670094 C  0034
+                         BEGIN                                                                  27670095 C  0035
+                              DATA[1] ~ T ;     DATA[2] ~ P ;                                   27670096 C  0035
+                              S[1] ~ S[2] ~ FALSE ;                                             27670097 C  0038
+                              IF CALCPT  THEN  S[1] ~ TRUE ;                                    27670098 C  0040
+                              IF CALCPP  THEN  S[2] ~ TRUE ;                                    27670099 C  0042
+                              FOR I ~ NF2 + 1 STEP 1 UNTIL NF3  DO                              27670100 C  0044
+                         BEGIN                                                                  27670101 C  0048
+                              E ~ I - NF2 ;     KC7E ~ KC7[E] ;                                 27670102 C  0048
+                              IF  KC11[E,1] > KC11[E,2]  THEN   KC11E ~ KC11[E,1]               27670103 C  0050
+                              ELSE   KC11E ~ KC11[E,2] ;                                        27670104 C  0055
+                         BEGIN                                                                  27670105 C  0058
+                REAL ARRAY    ALEPH, BETA[0:2,0:KC11E] ;                                        27670106 C  0058
+                                                                                        START OF SEGMENT **********   11
+                              FOR J ~ 1 STEP 1 UNTIL KC7E  DO                                   27670107 C  0004
+                              FOR  U ~ 1 STEP 1 UNTIL KC11E  DO                                 27670108 C  0006
+                         BEGIN                                                                  27670109 C  0007
+                              ALEPH[J,U] ~ KC8[E,J,U] ;     BETA[J,U] ~ KC9[E,J,U]              27670110 C  0007
+                         END ;                                                                  27670111 C  0013
+                              PHIPART (KC7[E], DATA, ALEPH, BETA, KC10[E,*], KC11[E,*],         27670112 C  0019
+                              S, K[I], SUM) ;                                                   27670113 C  0024
+                              IF CALCPT  THEN  PKT[I] ~ SUM[1] ;                                27670114 C  0028
+                              IF CALCPP  THEN  PKP[I] ~ SUM[2]                                  27670115 C  0031
+                         END                                                                    27670116 C  0032
+                         END                                                                    27670117 C  0033
+                                                                                          11 IS   37 LONG, NEXT SEG   10
+                         END  ;                                                                 27670118 C  0059
+                                                                                                00000000 C  0059
+                COMMENT       KPOLY VALUES ;                                                    27670119 C  0059
+                              IF PICKK[3] > 0 THEN                                              27670120 C  0059
+                         BEGIN                                                                  27670121 C  0060
+                              KPOLY (T, PICKK[3], CALCPT, K, PKT) ;                             27670122 C  0061
+                              FOR I ~ NF1+1 STEP 1 UNTIL NF2 DO                                 27670123 C  0064
+                         BEGIN                                                                  27670124 C  0068
+                              E ~ I - NF1 ;     K[I] ~ K[E] ;                                   27670125 C  0068
+                              IF CALCPT  THEN  PKT[I] ~ PKT[E]                                  27670126 C  0071
+                         END                                                                    27670127 C  0072
+                         END  ;                                                                 27670128 C  0073
+                                                                                                00000000 C  0073
+                COMMENT       KIDEAL VALUES ;                                                   27670129 C  0073
+                              IF PICKK[2] > 0 THEN                                              27670130 C  0073
+                         BEGIN                                                                  27670131 C  0074
+                              KIDEAL (T, P, PICKK[2], CALCPT, CALCPP, K, PKT, PKP) ;            27670132 C  0075
+                              FOR I ~ PICKK[1]+1 STEP 1 UNTIL NF1 DO                            27670133 C  0079
+                         BEGIN                                                                  27670134 C  0084
+                              E ~ I - PICKK[1] ;     K[I] ~ K[E] ;                              27670135 C  0084
+                              IF CALCPT  THEN  PKT[I] ~ PKT[E] ;                                27670136 C  0087
+                              IF CALCPP  THEN  PKP[I] ~ PKP[E]                                  27670137 C  0089
+                         END                                                                    27670138 C  0090
+                         END  ;                                                                 27670139 C  0091
+                                                                                                00000000 C  0092
+                COMMENT       KNGAA VALUES ;                                                    27670140 C  0092
+                              IF PICKK[1] > 0 THEN                                              27670141 C  0092
+                              KNGAA (T, P, PICKK[1], CALCPDC, CALCPT, CALCPP, K, PKT,           27670142 C  0093
+                              PKP)                                                              27670143 C  0097
+                                                                                                00000000 C  0097
+                         END  KPICKW ;                                                          27670144 C  0097
+                                                                                          10 IS  105 LONG, NEXT SEG    2
+                                                                                                00000000 C  0131
+                PROCEDURE     FLASHW (Z, PICKK, B, LIMITFW, CALCPDC, T, P, VDF, S,              63860001 C  0131
+                              X, Y) ;                                                           63860002 C  0131
+                                                                                                63860003 C  0131
+                COMMENT       PROCEDURE FOR GENERAL NONADIABATIC FLASH CALCULATIONS             63860004 C  0131
+                              FOR HYDROCARBON MIXTURES CONTAINING WATER. A SEPARATE             63860005 C  0131
+                              PURE LIQUID WATER PHASE IS CONSIDERED.                            63860006 C  0131
+                              THIS PROCEDURE COMPUTES THE TEMPERATURE OR PRESSURE OR            63860007 C  0131
+                              THE VAPOR-TO-FEED MOL RATIO FOR SPECIFIED VALUES OF THE           63860008 C  0131
+                              OTHER TWO VARIABLES. THE FRACTION OF LIQUID WATER, S,             63860009 C  0131
+                              IS CALCULATED AS A FUNCTION OF THESE VARIABLES.                   63860010 C  0131
+                                                                                                63860011 C  0131
+                              A. PAUL OLESON                                                    63860012 C  0131
+                              PROFESSIONAL SERVICES GROUP, BURROUGHS CORP.                      63860013 C  0131
+                              CARD SEQUENCE STARTS WITH FLHW0001.                               63860014 C  0131
+                              DATE OF FIRST ISSUE 12-1-63 .                                     63860015 C  0131
+                                                                                                63860016 C  0131
+                              THE INPUT PARAMETERS ARE                                          63860017 C  0131
+                                                                                                63860018 C  0131
+                              T       - TEMPERATURE, F., REAL.                                  63860019 C  0131
+                              P       - PRESSURE, PSIA, REAL.                                   63860020 C  0131
+                              VDF     - VAPOR TO FEED MOL RATIO, REAL.                          63860021 C  0131
+                              Z       - FEED COMPOSITION, MOL FRACTIONS, REAL ARRAY.            63860022 C  0131
+                              PICKK   - SELECTORS OF K-RATIO CORRELATIONS, INTEGER ARRAY        63860023 C  0131
+                                   SEE KPICKW PROCEDURE, PTS-   .                               63860024 C  0131
+                              CALCPDC - INSTRUCTION TO CALCULATE PRESSURE DEPENDENT             63860025 C  0131
+                                   COEFFICIENTS IN NGAA K-RATIO PROCEDURE (PTS-   ),            63860026 C  0131
+                                   BOOLEAN. TRUE IF REQUIRED.                                   63860027 C  0131
+                              B       - PROBLEM TYPE, BOOLEAN ARRAY,                            63860028 C  0131
+                                   B[1] - TRUE IF WATER IS PRESENT,                             63860029 C  0131
+                                   B[2] - TRUE IF CALCULATING TEMPERATURE.                      63860030 C  0131
+                                   B[3] - TRUE IF CALCULATING PRESSURE.                         63860031 C  0131
+                                   B[4] - TRUE IF CALCULATING VAPOR TO FEED RATIO.              63860032 C  0131
+                              LIMITFW - BOUNDS ON TEMPERATURE AND PRESSURE, ARRAY               63860033 C  0131
+                                   LIMITFW[1] - MIN. T                                          63860034 C  0131
+                                   LIMITFW[2] - MAX. T                                          63860035 C  0131
+                                   LIMITFW[3] - MIN. P                                          63860036 C  0131
+                                   LIMITFW[4] - MAX. P                                          63860037 C  0131
+                                                                                                63860038 C  0131
+                              GLOBAL INPUT PARAMETERS INCLUDE                                   63860039 C  0131
+                              KC1 THROUGH KC12, COEFFIENTS FOR THE VARIOUS K-RATIO              63860040 C  0131
+                              CORRELATIONS. SEE PTS-041 FOR DETAILS.                            63860041 C  0131
+                                                                                                63860042 C  0131
+                              OUTPUT PARAMETERS ARE                                             63860043 C  0131
+                              T       - TEMPERATURE, F., REAL,                                  63860044 C  0131
+                              P       - PRESSURE, PSIA, REAL.                                   63860045 C  0131
+                              VDF     - VAPOR TO FEED MOL RATIO, REAL.                          63860046 C  0131
+                              S       - MOL RATIO OF PURE LIQUID WATER TO FEED.                 63860047 C  0131
+                              X       - COMPOSITION OF LIQUID HYDROCARBON PHASE, MOL            63860048 C  0131
+                                   FRACTION, REAL ARRAY.                                        63860049 C  0131
+                              Y       - COMPOSITION OF VAPOR PHASE, MOL FRACTIONS, REAL         63860050 C  0131
+                                   ARRAY.                                                       63860051 C  0131
+                              THE REFERENCE LABEL IS                                            63860052 C  0131
+                              ERRORFW - LABEL OUTSIDE PROCEDURE ;                               63860053 C  0131
+                                                                                                63860054 C  0131
+                VALUE                               CALCPDC ;                                   63860055    0131
+                BOOLEAN       CALCPDC ;                                                         27720111 C  0131
+                BOOLEAN ARRAY B[0] ;                                                            27720112 C  0131
+                INTEGER ARRAY PICKK[0] ;                                                        27720113 C  0131
+                REAL          T, P, VDF, S ;                                                    27720114 C  0131
+                ARRAY         Z, LIMITFW, X, Y[0] ;                                             27720115 C  0131
+                                                                                                27720116 C  0131
+                         BEGIN                                                                  27720117 C  0131
+                LABEL         FLW1, L1, L2, L3, FLW2, FLW3 ;                                    27720118 C  0131
+                                                                                        START OF SEGMENT **********   12
+                INTEGER       NW, I, NL ;                                                       27720119 C  0000
+                BOOLEAN       B0, B1, B2, B3, B4, B5, B6, B7, B8 ;                              27720120 C  0000
+                REAL          STS1, STS2, XW, XW1, PVW, PVW1, G, ER, E, PGE, PGS, PSE,          27720121 C  0000
+                                                                                                27720122 C  0000
+                              PXWT ;                                                            27720123 C  0000
+                ARRAY         HK, PKT, PKP, K[0:20] ;                                           27720124 C  0000
+                                                                                                27720125 C  0002
+                REAL PROCEDURE  FT (A) ;                                                        27720126 C  0002
+                VALUE         A ;                                                               27720127 C  0002
+                REAL          A ;                                                               27720128 C  0002
+                         BEGIN                                                                  27720129 C  0002
+                              FT ~ - KC3[2] / (LN(A) - KC3[1]) - KC3[3]                         27720130 C  0002
+                         END  FT ;                                                              27720131 C  0005
+                                                                                                27720132 C  0009
+                REAL PROCEDURE FUNC (I,EA,EB,EC,HK,Z,VDF,S) ;                                   27720133 C  0009
+                VALUE         I, EA, EB, EC,        VDF, S ;                                    63860079    0009
+                INTEGER       I, EA, EB, EC ;                                                   27720159 C  0009
+                REAL          VDF, S ;                                                          27720160 C  0009
+                ARRAY         Z, HK[0] ;                                                        27720161 C  0009
+                         BEGIN                                                                  27720162 C  0009
+                              FUNC ~ HK[I]*EA | Z[I]*EC / (HK[I] | VDF + 1.0 - S)*EB            27720163 C  0009
+                         END FUNC ;                                                             27720164 C  0017
+                                                                                                27720165 C  0023
+                COMMENT       SUM NUMBER OF COMPONENTS FROM PICKK ARRAY ;                       27720166 C  0023
+                                                                                                27720167 C  0023
+                              NW ~ 0 ;  FOR I ~ 1 STEP 1 UNTIL 6 DO NW ~ PICKK[I] + NW ;        27720168 C  0023
+                              B0 ~ (VDF = 0.0) ;  B1 ~ (VDF = 1.0) ;                            27720169 C  0026
+                              B2 ~ B3 ~ B4 ~ B5 ~ B6 ~ B7 ~ B8 ~ FALSE ;                        27720170 C  0032
+                FLW1:         KPICKW (T, P, PICKK, B[2], B[3], CALCPDC, K, PK, PK,              27720171 C  0036
+                              PVW, XW, STS1, PXWT) ;                                            27720172 C  0041
+                              IF B[2] THEN CALCPDC ~ FALSE ELSE CALCPDC ~ TRUE ;                27720173 C  0042
+                              XW1 ~ 1.0 - XW ;                                                  27720174 C  0046
+                              FOR I ~ 1 STEP 1 UNTIL NW DO HK[I] ~ K[I] - 1.0 ;                 27720175 C  0048
+                                                                                                27720176 C  0054
+                COMMENT       IF CALCULATING VDF, CHECK IF 0 { VDF { (1 - S) ;                  27720177 C  0054
+                                                                                                27720178 C  0054
+                L1 :          IF B[4] THEN                                                      27720179 C  0054
+                         BEGIN                                                                  27720180 C  0055
+                              STS1 ~ STS2 ~ 0 ;                                                 27720181 C  0056
+                              FOR I ~ 1 STEP 1 UNTIL NW DO                                      27720182 C  0057
+                         BEGIN                                                                  27720183 C  0059
+                              STS1 ~ Z[I] / K[I] + STS1 ;  STS2 ~ Z[I] | K[I] + STS2            27720184 C  0059
+                         END  ;                                                                 27720185 C  0062
+                              IF B[1] AND (Z[NW] > XW) THEN                                     27720186 C  0065
+                         BEGIN                                                                  27720187 C  0067
+                              S ~ (Z[NW] - XW) / XW1 ;                                          27720188 C  0068
+                              STS2 ~ -HK[NW] | S + STS2                                         27720189 C  0070
+                         END                                                                    27720190 C  0071
+                              ELSE S ~ 0 ;                                                      27720191 C  0072
+                              B0 ~ (STS2 { 1.0) ;  B1 ~ (STS1 { 1.0) ;                          27720192 C  0074
+                L2 :          IF B1 THEN                                                        27720193 C  0076
+                         BEGIN                                                                  27720194 C  0077
+                                                                                                27720195 C  0077
+                COMMENT       TEST IF ONLY VAPOR AND LIQUID WATER ARE PRESENT ;                 27720196 C  0077
+                                                                                                27720197 C  0077
+                L3 :          IF B[1] AND (Z[NW] > (PVW / P)) THEN                              27720198 C  0077
+                         BEGIN                                                                  27720199 C  0080
+                              STS1 ~ HK[NW] | (Z[NW] | P - PVW) / (K[NW] | (P - PVW))           27720200 C  0080
+                              + STS1 ;                                                          27720201 C  0084
+                              B2 ~ B1 ~ (STS1 < 1.0) ;                                          27720202 C  0085
+                              IF B1 THEN                                                        27720203 C  0087
+                         BEGIN                                                                  27720204 C  0087
+                              S ~ (Z[NW] | P - PVW) / (P - PVW) ; VDF ~ 1.0 - S                 27720205 C  0088
+                         END                                                                    27720206 C  0092
+                                                                                                27720207 C  0093
+                COMMENT       OTHERWISE LIQUID WATER CANNOT BE PRESENT ;                        27720208 C  0093
+                                                                                                27720209 C  0093
+                         END                                                                    27720210 C  0093
+                              ELSE                                                              27720211 C  0093
+                         BEGIN                                                                  27720212 C  0093
+                              S ~ 0 ; VDF ~ 1.0                                                 27720213 C  0095
+                         END  ;                                                                 27720214 C  0096
+                                                                                                27720215 C  0097
+                COMMENT       TEST IF VAPOR IS NOT PRESENT ;                                    27720216 C  0097
+                                                                                                27720217 C  0097
+                         END  ;                                                                 27720218 C  0097
+                              IF B0 THEN VDF ~ 0.0 ;                                            27720219 C  0097
+                                                                                                27720220 C  0098
+                COMMENT       END L2 ;                                                          27720221 C  0098
+                                                                                                27720222 C  0098
+                              IF (B1 OR B0) THEN GO TO FLW3                                     27720223 C  0098
+                         END  L1 ;                                                              27720224 C  0099
+                                                                                                27720225 C  0100
+                COMMENT       COMPUTE MOL RATIO OF LIQUID WATER TO FEED ;                       27720226 C  0100
+                                                                                                27720227 C  0100
+                FLW2 :        IF B1 OR NOT B[1] THEN S ~ 0 ELSE                                 27720228 C  0100
+                              S ~ (-(HK[NW] | VDF + 1.0) | XW + Z[NW]) / XW1 ;                  27720229 C  0103
+                              B8 ~ (S > 0) ;  IF NOT B8 THEN S ~ 0 ;                            27720230 C  0110
+                              IF (NOT B2 AND NOT B[4] AND ((S + VDF) > 1.0)) THEN               27720231 C  0113
+                         BEGIN                                                                  27720232 C  0116
+                              S ~ 1.0 - VDF ;                                                   27720233 C  0117
+                              IF B[2] THEN T ~ FT ((Z[NW] - S) | P / VDF)                       27720234 C  0118
+                              ELSE  P ~ VDF | PVW / (Z[NW] - S) ;                               27720235 C  0121
+                              B2 ~ TRUE ; GO TO FLW1                                            27720236 C  0127
+                         END  ;                                                                 27720237 C  0129
+                                                                                                27720238 C  0129
+                COMMENT       EVALUATE FUNCTION G ;                                             27720239 C  0129
+                                                                                                27720240 C  0129
+                              G ~ 0 ;                                                           27720241 C  0129
+                              FOR I ~ 1 STEP 1 UNTIL NW DO G ~ FUNC(I,1,1,1,HK,Z,VDF,S)         27720242 C  0129
+                              + G ;                                                             27720243 C  0134
+                              IF B8 THEN G ~ - FUNC(NW,1,1,0,HK,Z,VDF,S) | S + G ;              27720244 C  0137
+                                                                                                27720245 C  0143
+                COMMENT       TEST IF TWO OR THREE PHASES ARE PRESENT ;                         27720246 C  0143
+                                                                                                27720247 C  0143
+                              IF B2 THEN                                                        27720248 C  0143
+                         BEGIN                                                                  27720249 C  0144
+                              IF G > 0 THEN                                                     27720250 C  0144
+                         BEGIN                                                                  27720251 C  0145
+                              B1 ~ TRUE ;  GO TO FLW3                                           27720252 C  0145
+                         END                                                                    27720253 C  0147
+                              ELSE  B2 ~ FALSE                                                  27720254 C  0147
+                         END  ;                                                                 27720255 C  0147
+                                                                                                27720256 C  0148
+                COMMENT       TEST IF TOLERANCE ON G IS MET ;                                   27720257 C  0148
+                                                                                                27720258 C  0148
+                              IF B[4] THEN ER ~ 10.0*(-6) ELSE ER ~ 10.0*(-3) ;                 27720259 C  0148
+                              IF ABS(G) < ER THEN                                               27720260 C  0156
+                         BEGIN                                                                  27720261 C  0157
+                                                                                                27720262 C  0158
+                COMMENT       COMPARE DEW POINTS WITH RESPECT TO LIQUID WATER AND               27720263 C  0158
+                              LIQUID HYDROCARBON PHASES. SELECT LOWER PRESSURE OR               27720264 C  0158
+                              HIGHER TEMPERATURE ;                                              27720265 C  0158
+                                                                                                27720266 C  0158
+                              IF B[1] AND B1 THEN                                               27720267 C  0158
+                         BEGIN                                                                  27720268 C  0159
+                              IF B[2] THEN                                                      27720269 C  0159
+                         BEGIN                                                                  27720270 C  0160
+                              T ~ FT (Z[NW] | P) ;                                              27720271 C  0160
+                              IF T < E THEN T ~ E                                               27720272 C  0162
+                         END                                                                    27720273 C  0164
+                              ELSE                                                              27720274 C  0165
+                         BEGIN                                                                  27720275 C  0165
+                              P ~ PVW / Z[NW] ;  IF P > E THEN P ~ E                            27720276 C  0167
+                         END                                                                    27720277 C  0170
+                         END  ;                                                                 27720278 C  0171
+                              GO TO FLW3                                                        27720279 C  0171
+                         END  ;                                                                 27720280 C  0171
+                                                                                                27720281 C  0171
+                COMMENT       ADJUST E USING THE NEWTON-RAPHSON METHOD. CALCULATE THE           27720282 C  0171
+                              DERIVATIVES FIRST ;                                               27720283 C  0171
+                                                                                                27720284 C  0171
+                              PGE ~ 0 ;                                                         27720285 C  0171
+                              IF B[4] THEN                                                      27720286 C  0172
+                         BEGIN                                                                  27720287 C  0172
+                              E ~ VDF ;                                                         27720288 C  0173
+                              FOR I ~ 1 STEP 1 UNTIL NW DO                                      27720289 C  0174
+                              PGE ~ - FUNC(I,2,2,1,HK,Z,VDF,S) + PGE                            27720290 C  0175
+                         END                                                                    27720291 C  0178
+                              ELSE                                                              27720292 C  0182
+                         BEGIN                                                                  27720293 C  0182
+                              IF B[2] THEN E ~ T ELSE E ~ P ;                                   27720294 C  0182
+                              FOR I ~ 1 STEP 1 UNTIL NW DO                                      27720295 C  0185
+                              PGE ~ FUNC(I,0,2,1,HK,Z,VDF,S) | PK[I] + PGE ;                    27720296 C  0187
+                              PGE ~ (1.0 - S) | PGE                                             27720297 C  0194
+                         END  ;                                                                 27720298 C  0195
+                                                                                                27720299 C  0196
+                COMMENT       ADJUST PGE FOR S-DEPENDENT TERMS ;                                27720300 C  0196
+                                                                                                27720301 C  0196
+                              IF B8 THEN                                                        27720302 C  0196
+                         BEGIN                                                                  27720303 C  0196
+                              PGS ~ 0 ;                                                         27720304 C  0197
+                              FOR I ~ 1 STEP 1 UNTIL NW DO                                      27720305 C  0197
+                              PGS ~ FUNC(I,1,2,1,HK,Z,VDF,S) + PGS ;                            27720306 C  0200
+                              PGS ~ - FUNC(NW,1,2,0,HK,Z,VDF,S) | (HK[NW] | VDF + 1.0)          27720307 C  0206
+                              + PGS ;                                                           27720308 C  0211
+                              IF B[4] THEN                                                      27720309 C  0213
+                         BEGIN                                                                  27720310 C  0213
+                              PSE ~ -HK[NW] | XW / XW1 ;                                        27720311 C  0214
+                              PGE ~ FUNC(NW,2,2,0,HK,Z,VDF,S) | S + PGE                         27720312 C  0216
+                         END                                                                    27720313 C  0220
+                              ELSE                                                              27720314 C  0221
+                         BEGIN                                                                  27720315 C  0221
+                              PGE ~ FUNC(NW,0,2,0,HK,Z,VDF,S) | PK[NW] | (S - 1.0) | S          27720316 C  0223
+                              + PGE ;                                                           27720317 C  0228
+                              PSE ~ -PK[NW] | XW | VDF / XW1 ;                                  27720318 C  0229
+                              IF B[2] THEN PSE ~ -(HK[NW] | VDF + 1.0 - S) |PXWT / XW1          27720319 C  0232
+                              + PSE                                                             27720320 C  0236
+                         END  ;                                                                 27720321 C  0236
+                                                                                                27720322 C  0237
+                COMMENT       ADJUST DERIVATIVE OF G ;                                          27720323 C  0237
+                                                                                                27720324 C  0237
+                              PGE ~ PGS | PSE  + PGE                                            27720325 C  0237
+                         END  ;                                                                 27720326 C  0238
+                                                                                                27720327 C  0239
+                COMMENT       ADJUST VALUE OF E FOR NEXT ITERATION ;                            27720328 C  0239
+                                                                                                27720329 C  0239
+                              E ~ E - G / PGE ;                                                 27720330 C  0239
+                                                                                                27720331 C  0241
+                COMMENT       TEST LIMITS. IF EXCEEDED EXIT TO REFERENCE LABEL ERRORFLW         27720332 C  0241
+                              IN MAIN PROGRAM ;                                                 27720333 C  0241
+                                                                                                27720334 C  0241
+                              IF NOT B[4] THEN                                                  27720335 C  0241
+                         BEGIN                                                                  27720336 C  0242
+                              IF B[2] THEN NL ~ 0 ELSE NL ~ 2 ;                                 27720337 C  0242
+                              IF E < LIMITFW[NL+1] THEN                                         27720338 C  0246
+                         BEGIN                                                                  27720339 C  0248
+                              IF B7 THEN GO TO ERRORFW ;                                        27720340 C  0248
+                              E ~ LIMITFW[NL+1] ;                                               27720341 C  0251
+                              IF B[3] AND B4 THEN E ~ LIMITFW[4] - 50.0 ;                       27720342 C  0253
+                              IF B[2] OR B4 THEN B7 ~ B4 ~ TRUE                                 27720343 C  0256
+                         END  ;                                                                 27720344 C  0258
+                                                                                                27720345 C  0259
+                COMMENT       TEST IF UPPER LIMITS ARE EXCEEDED ;                               27720346 C  0259
+                                                                                                27720347 C  0259
+                              IF E > LIMITFW[NL+2] THEN                                         27720348 C  0259
+                         BEGIN                                                                  27720349 C  0260
+                              IF B5 THEN GO TO ERRORFW ;                                        27720350 C  0261
+                              E ~ LIMITFW[NL+2] ;                                               27720351 C  0264
+                              IF B[3] AND B6 THEN E ~ LIMITFW[3] + 50.0 ;                       27720352 C  0265
+                              IF B6 OR B[2] THEN B5 ~ B6 ~ TRUE                                 27720353 C  0268
+                         END                                                                    27720354 C  0270
+                         END  ;                                                                 27720355 C  0271
+                                                                                                27720356 C  0271
+                COMMENT       RETURN TO FLW1 OR FLW2 TO CONTINUE ITERATIONS IF THE              27720357 C  0271
+                              FUNCTION G IS NOT WITHIN TOLERANCE ;                              27720358 C  0271
+                                                                                                27720359 C  0271
+                              IF B[2] THEN T ~ E                                                27720360 C  0271
+                              ELSE IF B[3] THEN P ~ E                                           27720361 C  0272
+                              ELSE                                                              27720362 C  0276
+                         BEGIN                                                                  27720363 C  0277
+                              VDF ~ E ;  GO TO FLW2                                             27720364 C  0277
+                         END  ;                                                                 27720365 C  0279
+                              GO TO FLW1 ;                                                      27720366 C  0279
+                                                                                                27720367 C  0279
+                COMMENT       COMPUTE COMPOSITIONS OF PHASES PRESENT AT SOLUTION ;              27720368 C  0279
+                                                                                                27720369 C  0279
+                FLW3 :        FOR I ~ 1 STEP 1 UNTIL NW DO                                      27720370 C  0279
+                         BEGIN                                                                  27720371 C  0281
+                              X[I] ~ FUNC(I,0,1,1,HK,Z,VDF,S) ;  Y[I] ~ K[I] | X[I]             27720372 C  0281
+                         END  ;                                                                 27720373 C  0286
+                              IF B0 OR B1 THEN                                                  27720374 C  0290
+                              FOR I ~ 1 STEP 1 UNTIL NW DO                                      27720375 C  0290
+                         BEGIN                                                                  27720376 C  0292
+                              IF B1 THEN X[I] ~ 0 ELSE Y[I] ~ 0                                 27720377 C  0292
+                         END  ;                                                                 27720378 C  0295
+                              IF B[1] AND NOT B1 THEN                                           27720379 C  0298
+                         BEGIN                                                                  27720380 C  0299
+                              X[NW] ~ - FUNC(NW,0,1,0,HK,Z,VDF,S) | S + X[NW] ;                 27720381 C  0299
+                              IF NOT B0 THEN Y[NW] ~ K[NW] | X[NW]                              27720382 C  0305
+                         END  ;                                                                 27720383 C  0308
+                              IF B2 THEN  Y[NW] ~ Y[NW] - S / VDF ;                             27720384 C  0309
+                         END FLASHW  ;                                                          27720385 C  0312
+                                                                                          12 IS  323 LONG, NEXT SEG    2
+                                                                                                99090118 C  0131
+                              KC3[1] ~ 14.40555 ;   KC3[2] ~ 6936.5635 ;                        99090119 C  0131
+                              KC3[3] ~ 379.92103 ;   KC6[1] ~ 6.1556551 ;                       99090120 C  0134
+                              KC6[2] ~ 6691.9779 ;   KC6[3] ~ 420.42673 ;                       99090121 C  0137
+                              FOR I ~ 1 STEP 1 UNTIL 8 DO PICKK[I] ~ 0 ;                        99090122 C  0139
+                              PICKK[1] ~ 2 ;  PICKK[6] ~ 1 ;                                    99090123 C  0150
+                              LIMITFW[1] ~ 0.0 ;  LIMITFW[2] ~ 500.0 ;                          99090124 C  0153
+                              LIMITFW[3] ~ 10.0 ;  LIMITFW[4] ~ 1600.0 ;                        99090125 C  0155
+                              READ (FLIN, F2, LI1)[ENDPROB] ;                                   99090126 C  0158
+                              CALCPDC ~ TRUE ;                                                  99090127 C  0162
+                                                                                                99090128 C  0163
+                              FOR N ~ 1 STEP 1 UNTIL 19 DO                                      99090129 C  0163
+                         BEGIN                                                                  99090130 C  0168
+                              READ (FLIN,F3,LI2) ;                                              99090131 C  0168
+                              FLASHW (Z, PICKK, B, LIMITFW, CALCPDC, T, P, VDF, S,              99090132 C  0171
+                              X, Y) ;                                                           99090133 C  0176
+                              WRITE (FIL1,FO1,LI3) ;                                            99090134 C  0178
+                              WRITE (FIL1, FO2, L4) ;                                           99090135 C  0181
+                         END  ;                                                                 99090136 C  0184
+                                                                                                99090137 C  0186
+                ENDPROB:      ;                                                                 99090138 C  0186
+                ERRORFW: END  .                                                                 99090139 C  0187
+                                                                                           2 IS  190 LONG, NEXT SEG    1
+PRT(106) = EXP INTRINSIC, SEGMENT NUMBER =   13.
+PRT(105) = LN INTRINSIC, SEGMENT NUMBER =   14.
+PRT(136) = OUTPUT(W) INTRINSIC, SEGMENT NUMBER =   15.
+PRT(5) = BLOCK CONTROL INTRINSIC, SEGMENT NUMBER =   16.
+PRT(135) = INPUT(W) INTRINSIC, SEGMENT NUMBER =   17.
+PRT(130) = X TO THE I INTRINSIC, SEGMENT NUMBER =   18.
+PRT(132) = GO TO SOLVER  INTRINSIC, SEGMENT NUMBER =   19.
+PRT(14) = ALGOL WRITE   INTRINSIC, SEGMENT NUMBER =   20.
+PRT(15) = ALGOL READ    INTRINSIC, SEGMENT NUMBER =   21.
+PRT(16) = ALGOL SELECT  INTRINSIC, SEGMENT NUMBER =   22.
+                                                                                           1 IS    2 LONG, NEXT SEG    0
+                                                                                          23 IS   69 LONG, NEXT SEG    0
+NUMBER OF ERRORS DETECTED =   0.  COMPILATION TIME =   52 SECONDS.
+
+PRT SIZE =  95; TOTAL SEGMENT SIZE =  1118 WORDS; DISK SIZE =  52 SEGS; NO. PGM. SEGS =  23
+
+ESTIMATED CORE STORAGE REQUIRED =  6750 WORDS.
+
+ESTIMATED AUXILIARY MEMORY REQUIRED =     0 WORDS.
+
+
+
+ LABEL  000000000LINE   00188147?COMPILE PTS051/TEST ALGOL GO                                            ALGOL  /PTS051
+
+
+
+
+
+
+
+
+
+
+
+ LABEL  0PTS051 0RESULTS00188147?COMPILE PTS051/TEST ALGOL GO                                            PTS051 /TEST
+
+
+
+
+
+280.00000 75.00000  1.00000000@+00  0.00000000@+00
+  2.50000000@-01  0.00000000@+00  2.50000000@-01
+  2.50000000@-01  0.00000000@+00  2.50000000@-01
+  5.00000000@-01  0.00000000@+00  5.00000000@-01
+220.00000 50.00000  7.61468900@-01  2.38531100@-01
+  2.50000000@-01  0.00000000@+00  3.28312818@-01
+  2.50000000@-01  0.00000000@+00  3.28312818@-01
+  5.00000000@-01  0.00000000@+00  3.43374365@-01
+150.00000 75.00000  0.00000000@+00  1.62734841@-02
+  4.90000000@-01  4.98105919@-01  0.00000000@+00
+  4.90000000@-01  4.98105919@-01  0.00000000@+00
+  2.00000000@-02  3.78816250@-03  0.00000000@+00
+175.00000 75.00000  1.45501147@-02  3.95035624@-01
+  3.00000000@-01  4.87257880@-01  8.46453743@-01
+  3.00000000@-01  5.06542741@-01  6.39130436@-02
+  4.00000000@-01  6.19937949@-03  8.96332133@-02
+225.00000 75.00000  3.15745904@-02  0.00000000@+00
+  2.99000000@-01  2.83424367@-01  7.76720804@-01
+  6.99000000@-01  7.15247186@-01  2.00681982@-01
+  2.00000000@-03  1.32844741@-03  2.25972138@-02
+178.63852 80.00000  0.00000000@+00  1.94654652@-01
+  4.00000000@-01  4.96681332@-01  0.00000000@+00
+  4.00000000@-01  4.96681332@-01  0.00000000@+00
+  2.00000000@-01  6.63733672@-03  0.00000000@+00
+160.50083 60.00000  0.00000000@+00  0.00000000@+00
+  4.99000000@-01  4.99000000@-01  0.00000000@+00
+  4.99000000@-01  4.99000000@-01  0.00000000@+00
+  2.00000000@-03  2.00000000@-03  0.00000000@+00
+270.52313 70.00000  1.00000000@+00  0.00000000@+00
+  3.00000000@-01  0.00000000@+00  3.00000000@-01
+  5.00000000@-01  0.00000000@+00  5.00000000@-01
+  2.00000000@-01  0.00000000@+00  2.00000000@-01
+303.00957100.00000  1.00000000@+00  0.00000000@+00
+  1.50000000@-01  0.00000000@+00  1.50000000@-01
+  1.50000000@-01  0.00000000@+00  1.50000000@-01
+  7.00000000@-01  0.00000000@+00  7.00000000@-01
+240.15276 50.00000  4.00000000@-01  6.00000000@-01
+  1.00000000@-01  0.00000000@+00  2.50000000@-01
+  1.00000000@-01  0.00000000@+00  2.50000000@-01
+  8.00000000@-01  0.00000000@+00  5.00000000@-01
+226.24518 75.00000  5.00000000@-01  2.67550356@-01
+  3.00000000@-01  1.85581970@-01  5.13723074@-01
+  3.00000000@-01  7.99392401@-01  2.28363041@-01
+  4.00000000@-01  1.51057405@-02  2.57876641@-01
+236.48398 75.00000  5.00000000@-01  0.00000000@+00
+  4.99000000@-01  2.49490789@-01  7.48509211@-01
+  4.99000000@-01  7.50293967@-01  2.47706033@-01
+  2.00000000@-03  2.15400966@-04  3.78459903@-03
+100.00000 38.23899  0.00000000@+00  1.99016995@-01
+  6.00000000@-01  7.49079564@-01  0.00000000@+00
+  2.00000000@-01  2.49693188@-01  0.00000000@+00
+  2.00000000@-01  1.22724811@-03  0.00000000@+00
+160.00000 62.00906  0.00000000@+00  0.00000000@+00
+  5.00000000@-01  5.00000000@-01  0.00000000@+00
+  4.96000000@-01  4.96000000@-01  0.00000000@+00
+  4.00000000@-03  4.00000000@-03  0.00000000@+00
+300.00000 74.64772  1.00000000@+00  0.00000000@+00
+  1.00000000@-01  0.00000000@+00  1.00000000@-01
+  7.00000000@-01  0.00000000@+00  7.00000000@-01
+  2.00000000@-01  0.00000000@+00  2.00000000@-01
+200.00000 14.40352  1.00000000@+00  0.00000000@+00
+  1.00000000@-01  0.00000000@+00  1.00000000@-01
+  1.00000000@-01  0.00000000@+00  1.00000000@-01
+  8.00000000@-01  0.00000000@+00  8.00000000@-01
+200.00000 23.04563  4.00000000@-01  6.00000000@-01
+  1.00000000@-01  0.00000000@+00  2.50000000@-01
+  1.00000000@-01  0.00000000@+00  2.50000000@-01
+  8.00000000@-01  0.00000000@+00  5.00000000@-01
+120.00000 17.18754  6.00000000@-01  2.40362917@-01
+  5.00000000@-01  2.08254649@-01  7.77924726@-01
+  2.00000000@-01  7.89768147@-01  1.23206195@-01
+  3.00000000@-01  1.97514947@-03  9.88696260@-02
+250.00000 52.45852  5.00000000@-01  0.00000000@+00
+  2.90000000@-01  1.04168744@-01  4.75831256@-01
+  6.90000000@-01  8.94345273@-01  4.85654727@-01
+  2.00000000@-02  1.47913471@-03  3.85208653@-02
+
+
+ LABEL  0PTS051 0RESULTS00188147?COMPILE PTS051/TEST ALGOL GO                                            PTS051 /TEST
+
+
+
+
+

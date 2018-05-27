@@ -1,0 +1,39 @@
+BEGIN                                                                   00000100
+COMMENT THIS PROGRAM TAKES THE FIRST OF TWO LISTS,                      00000200
+        REVERSES IT AND ADDS THE SECOND LIST TO IT;                     00000300
+FILE REMOTE;                                                            00000400
+SYMBOL L1,L2;                                                           00000500
+SYMBOL PROCEDURE REVANDADD (X,Y); VALUE X,Y; SYMBOL X,Y;                00000600
+        REVANDADD := IF NULL(X) THEN Y ELSE                             00000700
+             REVANDADD(CDR(X),CONS(CAR(X),Y));                          00000800
+LABEL EOF,START;                                                        00000900
+PRINT #GO AHEAD#,/;                                                     00001000
+START: WHILE L1:= READ EQ QMARK DO;                                     00001100
+      IF L1 EQ "STOP" THEN GO TO EOF;                                   00001200
+       WHILE L2:= READ EQ QMARK DO;                                     00001300
+       PRINT #THE NEW LIST IS # REVANDADD(L1,L2),/,/;                   00001400
+       GO START;                                                        00001500
+EOF:                                                                    00001600
+END.                                                                    00001700
+                                                                        00001701
+EXECUTE REVADD                                                          00001702
+ RUNNING                                                                00001703
+                                                                        00001704
+                                                                        00001705
+GO AHEAD                                                                00001706
+(THIS IS A LIST)$                                                       00001707
+(THIS IS ANOTHER LIST)$                                                 00001708
+THE NEW LIST IS (LIST A IS THIS THIS IS ANOTHER LIST)                   00001709
+                                                                        00001710
+(THIS (IS A) (COMPLEX (LIST)))$                                         00001711
+(THIS IS A SIMPLE LIST)$                                                00001712
+THE NEW LIST IS ((COMPLEX (LIST)) (IS A) THIS THIS IS A SIMPLE LIST)    00001713
+                                                                        00001714
+(REVERSE IS THIS)$                                                      00001715
+(OF A LIST)$                                                            00001716
+THE NEW LIST IS (THIS IS REVERSE OF A LIST)                             00001717
+                                                                        00001718
+STOP                                                                    00001719
+                                                                        00001720
+                                                                        00001721
+ END REVADD 1.1 SEC.                                                    00001722

@@ -1,4096 +1,4095 @@
-              R / C  -- A MULTI USER REMOTE/CARD.                       00000500          
-  WRITTEN BY RON BRODY;  BURROUGHS CORP.; PAOLI, PA. 215-NI4-4700 X219  00001000          
-BEGIN                                                                   00001500          
- DEFINE VERSION = 94# ;  % NOVEMBER 18, 1971.                           00002000          
-   DEFINE MAXUSERS = 8#, MAXUSER = 7#;                                  00002500          
- DEFINE CHRSPERBUFFER = 56 #,      % OR 28                              00002600          
-   WORDSPERBUFFER = 8#,            % OR 5                               00002700          
-   WDSPERBUFFER = 7# ;             % OR 4                               00002800          
- %  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *       00003000          
- ALPHA FILE IN TWXINPUT 14 (MAXUSER + MAXUSER, 8);                      00003500          
- ALPHA FILE OUT TWXOUTPUT 14 (MAXUSERS, WORDSPERBUFFER) ;               00004000          
- DEFINE TWXOUT = TWXOUTPUT (STATIONI, 0)# ;                             00008500          
- ARRAY PRETANK [0 : 3],                                                 00009500          
-   BUFFERS [0 : MAXUSERS, 0 : 44] ;                                     00010000          
- DEFINE BUFFER [BUFFER1] = BUFFERS [USER, BUFFER1]#,                    00010200          
-   BLOC = BUFFER [29]#,                                                 00010300          
-   BUFF [BUFF1] = BUFFERS [MAXUSERS, BUFF1]# ;                          00010400          
- INTEGER ARRAY READYQ [0 : MAXUSERS] ;                                  00011000          
- DEFINE RATTLEINDEX = READYQ [MAXUSERS]# ;                              00011500          
- INTEGER USER,                                                          00012000          
-   USER32,                                                              00012200          
-   CLOCK,                                                               00013000          
-   READYQTOP,                                                           00013500          
-   NEXTCLOCK,                                                           00014500          
-   TINK,                                                                00015000          
-   BIGBIRD ;                                                            00016000          
- BOOLEAN GLOBALBOOL ;                                                   00016500          
- DEFINE                                                                 00017000          
-   TANKEDOUTPUT = GLOBALBOOL . [47 : 1]#,                               00017010          
-   OUTPUTREADY = (GLOBALBOOL)#,                                         00017020          
-   Q = GLOBALBOOL . [46 : 1]#,                                          00017100          
-   LOCKED = GLOBALBOOL . [45 : 1]#,                                     00017200          
-   XLOCKED = GLOBALBOOL . [44 : 1]#,                                    00017210          
-   YLOCKED = GLOBALBOOL . [43 : 1]#,                                    00017220          
-   QINPUT = GLOBALBOOL . [42 : 1]#,                                     00017300          
-   ERRTOG = GLOBALBOOL . [1 : 1]# ;                                     00017500          
- ARRAY INPUT [0 : 14] ;                                                 00018000          
- DEFINE T0 = INPUT [10]#,                                               00018100          
-  T1 = INPUT [11]#,                                                     00018200          
-  TN = INPUT [12]#,                                                     00018300          
-   FREEHEAD = INPUT [13]#,                                              00018400          
-   MAXFREEHEAD = INPUT [14]# ;                                          00018500          
- DEFINE CHRS = BUFFER [30]#,                                            00019000          
-   NCHRS = BUFFER [31]#,                                                00019100          
-   USERCODEI = BUFFER [32]#,                                            00019500          
-   STATIONI = BUFFER [33]#,                                             00020000          
-   BREAKI = BUFFER [34]#,                                               00020500          
-   ABNORMALEND = BUFFER [35]#,                                          00020600          
-   INREADYQ = BUFFER [36]#,                                             00020700          
-   FIRSTCHANCE = BUFFER [37]#,                                          00020710          
-   ILFCRI = BUFFER [38]#,                                               00020800          
-   TRANSLATEI = BUFFER [39]#,                                           00020900          
-   HEADI = BUFFER [40]#,                                                00021000          
-   TIMEI = BUFFER [41]#,                                                00021100          
-   TAILI = BUFFER [42]#,                                                00021500          
-   SLOTI = BUFFER [43]#,                                                00022000          
-   BLOCK = BUFFER [44]#,                                                00022100          
-   COUNTI = BUFFER [0]# ;                                               00022500          
- ALPHA ARRAY RECORD [0 : 9] ;                                           00023000          
- REAL ARRAY LINKLISTS [0 : 32 | MAXUSERS - 1, 0 : 255] ;                00023500          
- DEFINE TIMEX = TIME (1)#,                                              00023600          
-   FIRST = LINKLISTS [USER32, 0]#,                                      00023800          
-   LAST = LINKLISTS [USER32, 1]#,                                       00023900          
-   LEFTSIDE = [35 : 5]#,                                                00024000          
-   RIGHTSIDE = [40 : 8]#,                                               00024500          
-   LL [LL1] =                                                           00025000          
-     LINKLISTS [(TINK := LL1).LEFTSIDE + USER32, TINK.RIGHTSIDE]#,      00025500          
-   S = [1 : 21]#,                                                       00026000          
-   SF = 1 : 27 : 21#,                                                   00026500          
-   F = [22 : 13]#,                                                      00027000          
-   FF = 22 : 35 : 13#,                                                  00027500          
-   T = [35 : 13]#,                                                      00028000          
-   TF = 35 : 35 : 13#,                                                  00028500          
-   INFINITY = 2097151#,  %MAXIMUM SEQUENCE NUMBER = 2*21-1.             00029000          
-   FINITY = 2097150#,                                                   00029010          
-   MAXFILELENGTH = 8191# ;% = 2*13-1.                                   00029500          
- DEFINE MODIFY (MODIFY1) =                                              00029700          
-     MODIFIED := MODIFIED OR TWO ((MODIFY1).LEFTSIDE)# ;                00029800          
- DEFINE WAITFLAG = BOOL . [47 : 1]#,  WAITING = (BOOL)#,                00030500          
-   INLINETOG = BOOL . [46 : 1]#,                                        00031000          
-   EXTRALFCR = BOOL . [45 : 1]#,                                        00031500          
-   EXECUTEECHO = BOOL . [44 : 1]#,                                      00032000          
-   TRANSLATING = BOOL . [43 : 1]#,     % INITIALLY ON                   00032500          
-   XECHO = BOOL . [42 : 1]#,                                            00033000          
-   NUM1 = BOOL . [36 : 2]#,                                             00035000          
-   NUM2 = BOOL . [34 : 2]#,                                             00035500          
-   NUM3 = BOOL . [32 : 2]#,                                             00036000          
-   NUM4 = BOOL . [30 : 2]#,                                             00036500          
-   EMPTY1 = BOOL . [36 : 1]#,                                           00037500          
-   EMPTY2 = BOOL . [34 : 1]#,                                           00038000          
-   EMPTY3 = BOOL . [32 : 1]#,                                           00038500          
-   EMPTY4 = BOOL . [30 : 1]#,                                           00039000          
-   NOSTAR = BOOL . [29 : 1]#,                                           00039500          
-   MOREINPUT = BOOL . [23 : 1]#,                                        00042500          
-   NOTFIRSTINPUT = BOOL . [22 : 1]#,                                    00043000          
-   INLINEECHO = BOOL . [21 : 1]#,      % INITIALLY ON                   00043010          
-   CHANGEECHO = BOOL . [20 : 1]#,                                       00043020          
-   EDITECHO = BOOL . [19 : 1]#,                                         00043030          
-   COPYCLOBBER = BOOL . [18 : 1]#,                                      00043040          
-   DITTOCLOBBER = BOOL . [17 : 1]#,                                     00043050          
-   TEMPTOG = BOOL . [16 : 1]#,                                          00043060          
-   TABON = BOOL . [15 : 1]#,           % INITIALLY ON                   00043070          
-   COLUMNS = BOOL . [12 : 1]#,                                          00043100          
-   INORDER = BOOL . [1 : 1]#,                                           00043500          
-   INITIALBOOL = BOOLEAN ("44000+")# ;                                  00043600          
- ARRAY CONTROLS [0 : 90] ;                                              00043700          
- DEFINE VN                  =      CONTROLS [89]#,                      00043800          
-   STRINGI                  =      CONTROLS [88]#,                      00043900          
-   STRINGID                 =      CONTROLS [87]#,                      00044000          
-   STRINGILEFT              =      CONTROLS [86]#,                      00044100          
-   STRINGIREPEAT            =      CONTROLS [85]#,                      00044200          
-   STRINGJ                  =      CONTROLS [84]#,                      00044300          
-   STRINGJD                 =      CONTROLS [83]#,                      00044400          
-   STRINGJLEFT              =      CONTROLS [82]#,                      00044500          
-   STRINGJREPEAT            =      CONTROLS [81]#,                      00044600          
-   CHARACTER                =      CONTROLS [80]#,                      00044700          
-   MAXCOLSTOP               =      CONTROLS [79]#,                      00044800          
-   COLSTOPS                 =      CONTROLS [78]#,                      00044900          
-   COLSTOP4                 =      CONTROLS [77]#,                      00045000          
-   COLSTOP3                 =      CONTROLS [76]#,                      00045100          
-   COLSTOP2                 =      CONTROLS [75]#,                      00045200          
-   COLSTOP1                 =      CONTROLS [74]#,                      00045300          
-   COLSTOP [COLSTOP1]       =      CONTROLS [73 + COLSTOP1]#,           00045400          
-   RELATIVENUMBER           =      CONTROLS [73]#,                      00045500          
-   STRING                   =      CONTROLS [30]# ; % - CONTROLS [37]   00046600          
- REAL PARAMETER0,           %      CONTROLS [38]                        00046610          
-   PARAMETER1,              %      CONTROLS [39]                        00046620          
-   PARAMETER2,              %      CONTROLS [40]                        00046630          
-   PARAMETER3,              %      CONTROLS [41]                        00046640          
-   PARAMETER4,              %      CONTROLS [42]                        00046650          
-   USERCODE,                %      CONTROLS [43]                        00046700          
-   STATION,                 %      CONTROLS [44]                        00046800          
-   PREFIX,                  %      CONTROLS [45]                        00046900          
-   SUFFIX,                  %      CONTROLS [46]                        00047000          
-   MACROLIBRARY ;           %      CONTROLS [47]                        00047100          
- BOOLEAN MODIFIED ;         %      CONTROLS [48]                        00047200          
- INTEGER FILEINFO,          %      CONTROLS [49]                        00047300          
-   TABAMOUNT,               %      CONTROLS [50]                        00047400          
-   FILEACCESS,              %      CONTROLS [51]                        00047500          
-   SAVEFACTOR,              %      CONTROLS [52]                        00047600          
-   PREWHERE,                %      CONTROLS [53]                        00047700          
-   XDEX,                    %      CONTROLS [54]                        00047800          
-   N,                       %      CONTROLS [55]                        00047900          
-   AT,                      %      CONTROLS [56]                        00048000          
-   D,                       %      CONTROLS [57]                        00048100          
-   M,                       %      CONTROLS [58]                        00048200          
-   INC,                     %      CONTROLS [59]                        00048300          
-   I,                       %      CONTROLS [60]                        00048400          
-   RESETN ;                 %      CONTROLS [61]                        00048500          
- BOOLEAN BOOL ;             %      CONTROLS [62]                        00048800          
- DEFINE COBOLFILE = BOOLEAN (FILEINFO)#,                                00048820          
-   DATAFILE = FILEINFO = DATA#,                                         00048830          
-   ALGOLFILE = FILEINFO GEQ ALGOL#,                                     00048840          
-   COMPILER = FILEINFO#,                                                00048850          
-   LENGTH = (IF ALGOLFILE THEN 72 ELSE IF COBOLFILE THEN 66 ELSE 80)#,  00048860          
-   HALFLENGTH=(IF ALGOLFILE THEN 36 ELSE IF COBOLFILE THEN 33 ELSE 40)#,00048870          
-   FULLLENGTH = (IF DATAFILE THEN 80 ELSE 72)#,                         00048880          
-   HALFFULLLENGTH = (IF DATAFILE THEN 40 ELSE 36)#,                     00048890          
-   COBOL = 1#,                                                          00049600          
-   DATA = 2#,                                                           00049610          
-   ALGOL = 4#,                                                          00049620          
-   XALGOL = 6#,                                                         00049630          
-   FORTRAN = 8#,                                                        00049640          
-   BASIC = 10#,                                                         00049650          
-   FILEOPEN = FILEACCESS GTR 0#,                                        00050710          
-   FILECLOSED = FILEACCESS LEQ 0#,                                      00050720          
-   READONLYFILE = FILEACCESS = 2#,                                      00050730          
-   READWRITEFILE = FILEACCESS GEQ 3# ;                                  00050740          
- SAVE ARRAY IMAGE [0 : 29] ;                                            00058000          
- DEFINE RSWDM = 27#,                                                    00058500          
-   RSWD [RSWD1] = CONTROLS [RSWD1]#,                                    00061500          
-   RWTEACH = RSWD [24]# ;                                               00062000          
- FILE DISC DISK SERIAL (2, 10, 30) ;                                    00064000          
- FILE LIBRARY DISK SERIAL (2, 10, 30) ;                                 00065500          
- FILE R1 DISK SERIAL "R/C" "#1" (1, 90) ;                               00069500          
- FILE R2 DISK SERIAL "R/C" "#2" (1, 256) ;                              00070000          
- FILE IO DISK RANDOM [20:150] (1, 30) ;                                 00070500          
- ARRAY ZIPPY [0 : MAX (29, MAXUSERS + MAXUSERS + 1)] ;                  00071500          
- FORMAT ZIPPER ("CC COMPILE ", A1, A6, "/", A1, A6, " WITH ",           00072000          
-      A1, A6, " LIBRARY; ALGOL FILE CARD=", A1, A6, "/", A1, A6,        00072500          
-      "SERIAL; ALGOL FILE LINE=LINE/", A1, A6, " SERIAL; END."),        00073000          
-   EOJ ("{!GOOD BYE{!!!~"),                                             00073600          
-   NOROOM (X8, "SORRY, FULL UP.{!BYE{!~"),                              00073700          
-   USERUN (X8, "USE:{!?? RUN ...~"),                                    00078600          
-   STAR ("*", X79),                                                     00079000          
-   DATE (X6, A1, A6, "/", A1, A6, " LISTED AT", I3, ":", I2, " ON ",    00079300          
-         A6, "DAY ", O, " BY ", A1, A6, X62),                           00079400          
-   WAITF ("WAIT...~"),                                                  00085000          
-   RATTLE (X8, "<<<~"),                                                 00087000          
-   TEACH1 ("{!THE VALID VERBS ARE:~"),                                  00087500          
-   TEACH2 (7 (A1, A6, X2)),                                             00088000          
-   TEACH3 ("FOR SYNTAX OF A VERB (E.G. TAB), INPUT: * TEACH",           00088500          
-           " VERB. (E.G. * TEACH TAB) "),                               00089000          
-   BROKEN (X8, "{!BREAK{!~") ;                                          00092000          
- DEFINE ONOFF (ONOFF1) = (IF ONOFF1 THEN " ON    " ELSE " OFF   ")# ;   00097100          
- DEFINE XMAX = 5# ;                                                     00099600          
- ARRAY XARRAY [0:MAXUSER, 0:XMAX | 13 - 1] ;                            00099700          
- DEFINE                                                                 00099800          
-  XSUB = XDEX | 13#,                                                    00099810          
-  XPARAMETERS [XPARAMETERS1] = XARRAY [USER, XSUB + XPARAMETERS1]#,     00099900          
-  XSTART = XARRAY [USER, XSUB + 5]#,                                    00100000          
-  XLAST = XARRAY [USER, XSUB + 6]#,                                     00100100          
-  XN = XARRAY [USER, XSUB + 7]#,                                        00100200          
-  XREPEAT = XARRAY [USER, XSUB + 8]#,                                   00100300          
-  XPREFIX = XARRAY [USER, XSUB + 9]#,                                   00100400          
-  XSUFFIX = XARRAY [USER, XSUB + 10]#,                                  00100500          
-  XFILETYPE = XARRAY [USER, XSUB + 11]#,                                00100600          
-  XNCHRS = XARRAY [USER, XSUB + 12]# ;                                  00100700          
- PROCEDURE PROGRAM ; FORWARD ;                                          00101000          
- ALPHA PROCEDURE OCTDECIMAL (N, M, F) ;                                 00101100          
- VALUE N, F ;                                                           00101200          
- INTEGER N, M, F ;                                                      00101300          
- BEGIN                                                                  00101400          
- ALPHA STREAM PROCEDURE OCTDECX (N, F, Q, T) ;                          00101500          
- VALUE F, Q, T ;                                                        00101600          
-    BEGIN                                                               00102500          
- LABEL EXIT ;                                                           00102600          
-      DI := LOC OCTDECX ;                                               00103000          
-      SI := N ;                                                         00103100          
-      T (Q (DS := F OCT ; JUMP OUT 2 TO EXIT) ;                         00103200          
-         SKIP F DB ; DS := SET ; JUMP OUT TO EXIT) ;                    00103500          
-      Q (F (SI := SI + 2 ; DS := 2 CHR ; DS := LIT "/" ; DS := 2 CHR ;  00103600          
-            DS := LIT "/" ; DS := 2 CHR ; JUMP OUT 2 TO EXIT) ;         00103700          
-         DI := DI + 7 ; DS := CHR ; JUMP OUT TO EXIT) ;                 00103800          
-      DS := 8 DEC ;                                                     00104000          
-      F (DI := DI - 7 ; DS := 6 FILL) ;                                 00104100          
- EXIT:                                                                  00104200          
-    END OCTDECX;                                                        00104300          
-    IF F LEQ 1 THEN                                                     00104400          
-    BEGIN                                                               00104500          
-      N := N ;                                                          00104600          
-      OCTDECIMAL := OCTDECX (N, F, 0, 0) ;                              00104700          
-    END ELSE IF F = 2 THEN                                              00104800          
-      OCTDECIMAL := OCTDECX (M, 0, 1, 0)                                00104900          
-    ELSE IF F = 3 THEN                                                  00104910          
-      OCTDECIMAL := OCTDECX (N, 1, 1, 0)                                00104920          
-    ELSE IF F = 4 THEN                                                  00104930          
-      OCTDECIMAL := OCTDECX (M, N, 1, 1)                                00104940          
-    ELSE                                                                00105000          
-      OCTDECIMAL := OCTDECX (M, N:= 47 - N, 0, 1) ;                     00105100          
- END OCTDECIMAL ;                                                       00105200          
- DEFINE OCTDEC (OCTDEC1) = OCTDECIMAL (OCTDEC1, M, 0)#,                 00105300          
-   OCTDEX (OCTDEX1) = OCTDECIMAL (OCTDEX1, M, 1)#,                      00105400          
-   FIRSTCHAR (FIRSTCHAR1) = OCTDECIMAL (0, FIRSTCHAR1, 2)#,             00105500          
-   MMDDYY = OCTDECIMAL (TIME (5), M, 3)#,                               00105600          
-   DEC (DEC1, DEC2) = OCTDECIMAL (DEC2, DEC1, 4)#,                      00105700          
-   TWO (TWO1) = BOOLEAN (OCTDECIMAL (TWO1, M, 5))# ;                    00105800          
- % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        00120500          
- DEFINE SEQUENCE =                                                      00121000          
-    IF ALGOLFILE THEN                                                   00121500          
-      IMAGE [9] := OCTDEC (IF N = FINITY THEN 99999999 ELSE N)          00122000          
-    ELSE IF COBOLFILE THEN                                              00122500          
-    BEGIN                                                               00123000          
-      IMAGE [0].[1:35] := OCTDEC (N) ;                                  00124000          
-      IMAGE [9] := SUFFIX & "."[1:43:5] ;                               00124500          
-    END# ;                                                              00125500          
- % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        00126000          
- PROCEDURE STATIONFIX (STATION, I) ;                                    00126500          
- VALUE STATION, I ;                                                     00126600          
- REAL STATION ;                                                         00126700          
- INTEGER I ;                                                            00126800          
- BEGIN                                                                  00126900          
- REAL X ;                                                               00127000          
-    IF I LEQ 4 THEN                                                     00127100          
-      X := STATUS (STATION, I)                                          00127200          
-    ELSE IF I LEQ 6 THEN                                                00127300          
-      RELEASE (STATION)                                                 00127400          
-    ELSE IF I LEQ 8 THEN                                                00127500          
-    BEGIN                                                               00127600          
-      SEEK (TWXINPUT (STATION)) ;                                       00127625          
-      X := STATUS (STATION, 0) ;                                        00127650          
-    END                                                                 00127675          
-    ELSE IF I = 9 THEN                                                  00127700          
-    BEGIN                                                               00127800          
-      WRITE (TWXOUTPUT (STATION), NOROOM) ;                             00127900          
-      RELEASE (STATION) ;                                               00128000          
-    END                                                                 00128100          
-    ELSE IF I = 10 THEN                                                 00128200          
-    BEGIN                                                               00128300          
-      IF BOOLEAN (STATUS (STATION, 0)).[30:1] OR                        00128400          
-         USERCODEI NEQ STATUS (STATION) THEN                            00128500          
-        ABNORMALEND := 1 ;                                              00128600          
-    END ;                                                               00128700          
- END STATIONFIX ;                                                       00128800          
- DEFINE CHARGE (CHARGE1) = STATIONFIX (CHARGE1, 0)#,                    00128900          
-  FREEFILE (FREEFILE1) = STATIONFIX (FREEFILE1, 3)#,                    00129000          
-  UNFREEFILE (UNFREEFILE1) = STATIONFIX (UNFREEFILE1, 4)#,              00129100          
-  FORGET (FORGET1) = STATIONFIX (FORGET1, 5)#,                          00129200          
-  DETACH = STATIONFIX (STATION, 6)#,                                    00129300          
-  ATTACH = STATIONFIX (STATION, 7)#,                                    00129400          
-  REATTACH = STATIONFIX (STATION, 8)#,                                  00129500          
-  NOMOREROOM = STATIONFIX (STATION, 9)#,                                00129600          
-  CHECK (CHECK1) = STATIONFIX (CHECK1, 10)# ;                           00129700          
- % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        00129800          
- PROCEDURE OUTPUT ;                                                     00130000          
-    BEGIN                                                               00130200          
- STREAM PROCEDURE MOVE (S, D, W, C) ; VALUE W, C ;                      00130400          
- BEGIN                                                                  00130600          
-    SI := S ;                                                           00130800          
-    DI := D ;                                                           00131000          
-    DS := W WDS ;                                                       00131200          
-    DS := C CHR ;                                                       00131400          
- END MOVE ;                                                             00131600          
- INTEGER USER,                                                          00131800          
-   T,                                                                   00132200          
-   SPOT ;                                                               00132400          
- BOOLEAN X ;                                                            00132600          
- LABEL FAKEOUT,                                                         00132800          
-   NEXT ;                                                               00133000          
- DEFINE A = INPUT# ;                                                    00133200          
-      CHARGE (0) ;                                                      00133400          
-      TANKEDOUTPUT := FALSE ;                                           00133600          
-      A [WDSPERBUFFER] := "~   " ;                                      00133800          
-      FOR USER := 0 STEP 1 UNTIL BIGBIRD DO                             00134000          
-      BEGIN                                                             00134200          
-        IF COUNTI GEQ 0 THEN                                            00134600          
-        BEGIN                                                           00134800          
-          IF TIMEI - TIMEX GTR 180 THEN                                 00135000          
-            GO TO FAKEOUT ;                                             00135200          
-          SPOT := HEADI ;                                               00135400          
-          IF REAL ((X := BOOLEAN (STATUS (STATIONI, 0)).[22:9])         00135600          
-                   AND BOOLEAN ("6A")) NEQ 0 THEN                       00135800          
-          BEGIN                                                         00136000          
-            IF X.[39:1] THEN % BUSY                                     00136200          
-            BEGIN                                                       00136400          
-              T := 15 ;                                                 00136600          
-              GO TO FAKEOUT ;                                           00136800          
-            END ;                                                       00137000          
-            IF REAL (X AND BOOLEAN (10)) NEQ 0 AND NOT X THEN           00137200          
-              WRITE (TWXOUT, BROKEN) ; % CLEAR WRITE READY              00137400          
-            IF SPOT GEQ 0 THEN                                          00137600          
-            BEGIN                                                       00137800          
-              A [0] := FREEHEAD ;                                       00138000          
-              WRITE (IO [TAILI], 1, A [*]) ;                            00138200          
-              FREEHEAD := SPOT ;                                        00138400          
-            END ;                                                       00138600          
-            COUNTI := XDEX := -1 ;                                      00138800          
-            TIMEI := 0 ;                                                00139000          
-            BREAKI := 1 ;                                               00139200          
-            MOREINPUT := FALSE ;                                        00139400          
-            GO TO NEXT ;                                                00139600          
-          END ;                                                         00139800          
-          IF SPOT GEQ 0 THEN                                            00140000          
-          BEGIN                                                         00140200          
-            READ (IO [SPOT], 30, BUFF [*]) ;                            00140400          
-            MOVE (BUFF [BLOCK], A [1], 0, CHRSPERBUFFER) ;              00140600          
-            WRITE (TWXOUT, WORDSPERBUFFER, A [*]) [FAKEOUT] ;           00140800          
-            T := CHRSPERBUFFER ;                                        00141000          
-            IF BLOCK := BLOCK + WDSPERBUFFER GEQ 29 THEN                00141200          
-            BEGIN                                                       00141400          
-              BLOCK := 1 ;                                              00141600          
-              A [0] := FREEHEAD ;                                       00141800          
-              WRITE (IO [SPOT], 1, A [*]) ;                             00142000          
-              FREEHEAD := SPOT ;                                        00142200          
-              HEADI := BUFF[0] ;                                        00142400          
-            END ;                                                       00142600          
-          END ELSE                                                      00142800          
-          BEGIN                                                         00143000          
-            MOVE (BUFFER [1], A [1], 0, CHRSPERBUFFER) ;                00143200          
-            WRITE (TWXOUT, WORDSPERBUFFER, A [*]) [FAKEOUT] ;           00143400          
-            IF BLOC := BLOC - WDSPERBUFFER LSS 1 THEN                   00143600          
-            BEGIN                                                       00143800          
-              COUNTI := -1 ;                                            00144000          
-              IF ABNORMALEND GEQ 2 THEN                                 00144200          
-                ABNORMALEND := ABNORMALEND + 1 ;                        00144400          
-              GO TO NEXT ;                                              00144600          
-            END ;                                                       00144800          
-            T := CHRSPERBUFFER ;                                        00145000          
-            MOVE (BUFFER[WORDSPERBUFFER],BUFFER[1],29-WORDSPERBUFFER,0);00145200          
-          END;                                                          00145400          
- FAKEOUT:                                                               00145600          
-          IF TIMEI:=MAX(TIMEI,TIMEX)+T|6 LSS TN OR NOT OUTPUTREADY THEN 00145800          
-          BEGIN                                                         00146000          
-            TN := TIMEI ;                                               00146200          
-            TANKEDOUTPUT := TRUE ;                                      00146400          
-          END ;                                                         00146600          
- NEXT:                                                                  00146800          
-        END ;                                                           00147000          
-      END ;                                                             00147200          
-      IF OUTPUTREADY THEN                                               00147400          
-        NEXTCLOCK := CLOCK - T0 | (TN - TIMEX - 90) / 150               00147600          
-      ELSE                                                              00147800          
-        NEXTCLOCK := -99 ;                                              00148000          
-      CHARGE (STATION) ;                                                00148200          
-    END OUTPUT ;                                                        00148400          
- % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        00148600          
- PROCEDURE WRITETWX ;                                                   00148800          
-    BEGIN                                                               00149200          
- INTEGER STREAM PROCEDURE COUNT (S) ;                                   00149400          
- BEGIN                                                                  00149600          
-    SI := S ;                                                           00149800          
-    28 (IF SC = "~" THEN                                                00150000          
-          JUMP OUT ;                                                    00150200          
-        TALLY := TALLY + 1 ;                                            00150400          
-        SI := SI + 1) ;                                                 00150600          
-    S := SI ;                                                           00150800          
-    DI := S ;                                                           00151000          
-    DS := LIT "~" ;                                                     00151200          
-    COUNT := TALLY ;                                                    00151400          
- END COUNT ;                                                            00151600          
- STREAM PROCEDURE MOVE (S, D, SKPS, SKPD, N) ;                          00151800          
- VALUE SKPS, SKPD, N ;                                                  00152000          
- BEGIN                                                                  00152200          
-    SI := S ;                                                           00152400          
-    DI := D ;                                                           00152600          
-    SI := SI + SKPS ;                                                   00152800          
-    DI := DI + SKPD ;                                                   00153000          
-    DS := N CHR ;                                                       00153200          
- END MOVE ;                                                             00153400          
- INTEGER C, J, K ;                                                      00153600          
- DEFINE A = PRETANK# ;                                                  00153700          
- LABEL NOSKIP,                                                          00153800          
-   SKIP ;                                                               00154000          
-      IF BOOLEAN (ILFCRI) THEN                                          00154200          
-      BEGIN                                                             00154400          
-        ILFCRI := 0 ;                                                   00154600          
-        IF FIRSTCHAR (A [0]) = "{" THEN                                 00154800          
-          J := 2 ;                                                      00155000          
-      END ;                                                             00155200          
-      IF C := COUNT (A) - J NEQ 0 AND NOT BOOLEAN (BREAKI) THEN         00155400          
-      BEGIN                                                             00155600          
-        IF K := COUNTI LSS 0 THEN                                       00155800          
-        BEGIN                                                           00156000          
-          BUFFER [4] := "~   " ;                                        00156200          
-          MOVE (A [0], BUFFER [1], J, 0, 28);                           00156400          
-          IF TIMEI - TIMEX GEQ 180 THEN                                 00156600          
-            GO TO NOSKIP ;                                              00156800          
-          WRITE (TWXOUT, 5, BUFFER [*]) [NOSKIP : NOSKIP] ;             00157000          
-          TIMEI := MAX (TIMEI, TIMEX) + C | 6 ;                         00157200          
-          GO TO SKIP ;                                                  00157400          
- NOSKIP:                                                                00157600          
-          COUNTI := C ;                                                 00157800          
-          BLOCK := BLOC := 1;                                           00158000          
-          HEADI := -1 ;                                                 00158200          
-          IF TIMEI LSS TN OR NOT OUTPUTREADY THEN                       00158400          
-          BEGIN                                                         00158600          
-            NEXTCLOCK := CLOCK - T0 | ((TN:=TIMEI)-TIMEX-120) / 150 ;   00158800          
-            TANKEDOUTPUT := TRUE ;                                      00159000          
-          END ;                                                         00159200          
-          GO TO SKIP ;                                                  00159400          
-        END ;                                                           00159600          
-        IF K LSS CHRSPERBUFFER THEN                                     00159800          
-        BEGIN                                                           00160000          
-          MOVE (A, BUFFER [BLOC], J, K, CHRSPERBUFFER - K) ;            00160200          
-          J := J + CHRSPERBUFFER - K ;                                  00160400          
-          IF COUNTI := K := K + C LSS CHRSPERBUFFER THEN                00160600          
-            GO TO SKIP ;                                                00160800          
-          C := K - CHRSPERBUFFER ;                                      00161000          
-        END ;                                                           00161200          
-        IF BLOC := BLOC + WDSPERBUFFER GEQ 29 THEN                      00161400          
-        BEGIN                                                           00161600          
-          BLOC := 1 ;                                                   00161800          
-          IF FREEHEAD NEQ MAXFREEHEAD THEN                              00162000          
-          BEGIN                                                         00162200          
-            READ (IO [FREEHEAD], 1, BUFFER [*]) ;                       00162400          
-            K := BUFFER [0] ;                                           00162600          
-          END ELSE                                                      00162800          
-            K := MAXFREEHEAD := MAXFREEHEAD + 1 ;                       00163000          
-          BUFFER [0] := -1 ;                                            00163200          
-          WRITE (IO [FREEHEAD], 30, BUFFER [*]) ;                       00163400          
-          IF HEADI GEQ 0 THEN                                           00163600          
-          BEGIN                                                         00163800          
-            READ (IO [TAILI], 30, BUFFER [*]) ;                         00164000          
-            BUFFER [0] := FREEHEAD ;                                    00164200          
-            WRITE (IO [TAILI], 30, BUFFER [*]) ;                        00164400          
-          END ELSE                                                      00164600          
-            HEADI := FREEHEAD ;                                         00164800          
-          TAILI := FREEHEAD ;                                           00165000          
-          FREEHEAD := K ;                                               00165200          
-        END ;                                                           00165400          
-        MOVE (A, BUFFER [BLOC], J, 0, 29) ;                             00165600          
-        COUNTI := C ;                                                   00165800          
-      END ;                                                             00166000          
- SKIP:                                                                  00166200          
-    END WRITETWX ;                                                      00166400          
- % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        00170000          
- DEFINE ITSOLD (ITSOLD1) = BOOLEAN (KOUNT (ITSOLD1, 0, 0))#,            00170010          
-   LOC (LOC1) = KOUNT (LOC1, 1, 0)# ;                                   00170020          
- INTEGER PROCEDURE KOUNT (N, M, KK) ;                                   00170030          
- VALUE N, M, KK ;                                                       00170040          
- INTEGER N, M, KK ;                                                     00170050          
-    BEGIN                                                               00170060          
- INTEGER K ;                                                            00170070          
- REAL L ;                                                               00170080          
-      WHILE N LSS (L := LL [AT]).S DO                                   00170090          
-        AT := L.F ;                                                     00170100          
-      WHILE N GTR (L := LL [AT]).S DO                                   00170110          
-        AT := L.T ;                                                     00170120          
-      IF KK NEQ 0 THEN                                                  00170130          
-      BEGIN                                                             00170140          
-        IF M = INFINITY THEN M := M - 1 ;                               00170150          
-        WHILE M GEQ (L := LL [AT]).S AND K := K + 1 NEQ KK DO           00170160          
-          AT := L.T ;                                                   00170170          
-        KOUNT := K - REAL (M LSS L.S) ;                                 00170180          
-      END ELSE                                                          00170190          
-      IF BOOLEAN (M) THEN                                               00170200          
-        KOUNT := AT                                                     00170210          
-      ELSE                                                              00170220          
-        KOUNT := REAL (N = L.S) ;                                       00170230          
-    END KOUNT ;                                                         00170240          
- % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        00170500          
- DEFINE                                                                 00175000          
-   WRITESEQUENCE = WRITEALINE (0)#,                                     00175100          
-   WRITELFCR = WRITEALINE (1)#,                                         00175200          
-   WRITESEQ = WRITEALINE (2)#,                                          00175300          
-   WRITEQUEUED = WRITEALINE (5)#,                                       00175600          
-   WRITESEGMENT = WRITEALINE (6)#,                                      00175700          
-   WRITERELADDR = WRITEALINE (7)# ;                                     00175800          
- PROCEDURE WRITEALINE (K) ;                                             00175900          
- VALUE K ;                                                              00176000          
- INTEGER K ;                                                            00176100          
-    BEGIN                                                               00176200          
- STREAM PROCEDURE FORM (PRETANK, N, K, LFCR, COLON, F) ;                00176300          
- VALUE N, K, LFCR, COLON, F ;                                           00176400          
- BEGIN                                                                  00176500          
- LABEL EXIT ;                                                           00176600          
-    DI := PRETANK ;                                                     00176700          
-    LFCR (DS := 2 LIT "{!" ;                                            00176800          
-          K (SI := LOC N ;                                              00176900          
-             DS := K DEC ;                                              00177000          
-             F (PRETANK := DI ;                                         00177100          
-                DI := DI - K ;                                          00177200          
-                DS := K FILL ;                                          00177300          
-                DI := PRETANK) ;                                        00177400          
-             JUMP OUT) ;                                                00177500          
-          COLON (DS := LIT ":") ;                                       00177600          
-          JUMP OUT TO EXIT) ;                                           00177700          
-    COLON (SI := LOC N ;                                                00177800          
-           F (DS := 7 LIT "QUEUED(" ;                                   00177900          
-              DS := 2 DEC ;                                             00178000          
-              DS := LIT ")" ;                                           00178100          
-              JUMP OUT 2 TO EXIT) ;                                     00178200          
-           K (DS := 9 LIT "REL ADDR=" ;                                 00178300          
-              DS := 4 DEC ;                                             00178400          
-              JUMP OUT 2 TO EXIT) ;                                     00178500          
-           DS := 8 LIT "SEGMENT=" ;                                     00178600          
-           DS := 4 DEC ;                                                00178700          
-           JUMP OUT TO EXIT) ;                                          00178900          
-    F (N (DS := LIT " ") ; JUMP OUT TO EXIT) ;                          00179000          
-    DS := LIT ">" ;                                                     00179100          
- EXIT:                                                                  00179200          
-    DS := LIT "~" ;                                                     00179300          
- END FORM ;                                                             00179400          
- DEFINE XON = FORM (PRETANK, 0, 0, 0, 0, 0)#,                           00179500          
-   TABIT = FORM (PRETANK, I, 0, 0, 0, 1)#,                              00179600          
-   LFCR = FORM (PRETANK, 0, 0, 1, 0, 0)#,                               00179700          
-   COLON = FORM (PRETANK, 0, 0, 1, 1, 0)#,                              00179800          
-   SEQ = FORM (PRETANK, IF N = INFINITY THEN 99999999 ELSE N,           00179900          
-               IF COBOLFILE THEN 6 ELSE 8, 1,                           00180000          
-               IF COBOLFILE THEN 0 ELSE 1, 1)#,                         00180100          
-   OLDSEQ = FORM (PRETANK, IF N = INFINITY THEN 99999999 ELSE N,        00180200          
-                  IF COBOLFILE THEN 6 ELSE 8, 1,                        00180300          
-                  IF COBOLFILE THEN 0 ELSE 1, 1-REAL(ITSOLD (N)))#,     00180400          
-   QUEFORM = FORM (PRETANK, READYQTOP, 0, 0, 1, 1)#,                    00180500          
-   SEGMENT = FORM (PRETANK, PARAMETER2, 0, 0, 1, 0)#,                   00180600          
-   RELADDR = FORM (PRETANK, PARAMETER3, 1, 0, 1, 0)#,                   00180700          
-   TWX (TWX1) = BEGIN TWX1 ; WRITETWX ; END# ;                          00180800          
-      IF K = 0 THEN                                                     00181000          
-      BEGIN                                                             00181100          
-        IF FILEOPEN THEN                                                00181200          
-        BEGIN                                                           00181300          
-          TWX (OLDSEQ) ;                                                00181400          
-          IF INLINETOG AND EXTRALFCR THEN                               00181500          
-            TWX (LFCR) ;                                                00181600          
-          IF TABON AND TABAMOUNT NEQ 0 THEN                             00181700          
-          BEGIN                                                         00181800          
-            IF I := TABAMOUNT GTR 27 THEN                               00181900          
-            BEGIN                                                       00182000          
-              I := I - 27 ;                                             00182100          
-              TWX (TABIT) ;                                             00182200          
-              I := 27 ;                                                 00182300          
-            END ;                                                       00182400          
-            TWX (TABIT) ;                                               00182500          
-          END ;                                                         00182600          
-        END                                                             00182700          
-        ELSE                                                            00182800          
-          TWX (COLON) ;                                                 00182900          
-        IF XDEX LSS 0 AND NOT ERRTOG THEN                               00183000          
-          TWX (XON)                                                     00183100          
-        ELSE                                                            00183200          
-          ERRTOG := FALSE ;                                             00183300          
-      END                                                               00183400          
-      ELSE IF K = 1 THEN                                                00183500          
-      BEGIN                                                             00183600          
-        TWX (LFCR) ;                                                    00183700          
-        ILFCRI := 1 ;                                                   00183800          
-      END                                                               00183900          
-      ELSE                                                              00184000          
-        TWX (IF K=2 THEN SEQ ELSE IF K=5 THEN QUEFORM ELSE              00184100          
-             IF K=6 THEN SEGMENT ELSE IF K=7 THEN RELADDR) ;            00184200          
-    END WRITEALINE ;                                                    00184300          
- % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        00190500          
- PROCEDURE WRITEROW (ROW, Q, F) ;                                       00191000          
- VALUE Q,                                                               00191500          
-   F ;                                                                  00192000          
- BOOLEAN Q ;                                                            00192500          
- INTEGER F ;                                                            00193000          
- ARRAY ROW [0] ;                                                        00193500          
-    BEGIN                                                               00193600          
- STREAM PROCEDURE MOVE (S, D, SKPS, N) ;                                00193700          
- VALUE SKPS, N ;                                                        00193800          
- BEGIN                                                                  00193900          
-    SI := S ;                                                           00194000          
-    DI := D ;                                                           00194100          
-    SI := SI + SKPS ;                                                   00194200          
-    DS := N CHR ;                                                       00194300          
- END MOVE ;                                                             00194400          
- STREAM PROCEDURE BLANKOUTSPECIALCHARACTERS (S, D, N, K) ;              00195000          
- VALUE N,                                                               00195500          
-   K ;                                                                  00195600          
-    BEGIN                                                               00196000          
-      DI := LOC N ; DS := 6 LIT "!><}{~" ;                              00197500          
-      DI := D ;                                                         00198000          
-      DS := 8 LIT "        " ;                                          00198500          
-      SI := D ;                                                         00199000          
-      DS := 9 WDS ;                                                     00199500          
-      SI := S ;                                                         00200000          
-      DI := D ;                                                         00200500          
-      2 (K (IF SC = " " THEN                                            00201000          
-      BEGIN                                                             00201500          
-        N (SI := SI - 1 ;                                               00202000          
-        IF SC = " " THEN                                                00202500          
-          DI := DI - 1 ;                                                00203000          
-        SI := SI + 1) ;                                                 00203500          
-        DS := CHR ;                                                     00204000          
-      END ELSE                                                          00204500          
-      IF SC = ALPHA THEN                                                00205000          
-        DS := CHR                                                       00205500          
-      ELSE                                                              00206000          
-      BEGIN                                                             00206500          
-        D := DI ;                                                       00207000          
-        DI := LOC N ;                                                   00207500          
-        6 (IF SC = DC THEN JUMP OUT ; SI := SI - 1) ;                   00208000          
-        DI := D ;                                                       00208500          
-        IF TOGGLE THEN                                                  00209000          
-          DS := 1 LIT "$"                                               00209500          
-        ELSE                                                            00210000          
-          DS := CHR ;                                                   00210500          
-      END)) ;                                                           00211000          
-    END BLANKOUTSPECIALCHARACTERS ;                                     00219000          
- % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        00219500          
- BOOLEAN STREAM PROCEDURE ALLBLANK (S, SKP, N) ;                        00220000          
- VALUE SKP,                                                             00220500          
-   N ;                                                                  00221000          
-    BEGIN                                                               00221500          
- LABEL GRPMKIT ;                                                        00222000          
-      SI := S ;                                                         00222500          
-      SI := SI + SKP ;                                                  00223000          
-      SI := SI + N ;                                                    00223500          
-      N (SI := SI - 1 ;                                                 00224000          
-      IF SC NEQ " " THEN                                                00224500          
-        JUMP OUT TO GRPMKIT) ;                                          00225000          
-      TALLY := 1 ;                                                      00225500          
-      SI := SI - 1 ;                                                    00226000          
- GRPMKIT:                                                               00226500          
-      SI := SI + 1 ;                                                    00227000          
-      N := SI ;                                                         00227500          
-      DI := N ;                                                         00228000          
-      DS := 1 LIT "~" ;                                                 00228500          
-      ALLBLANK := TALLY ;                                               00229000          
-    END ALLBLANK ;                                                      00229500          
- BOOLEAN DATUM ;                                                        00229600          
- DEFINE FILEINFO = F# ;                                                 00229700          
- INTEGER Z ;                                                            00229800          
-      BLANKOUTSPECIALCHARACTERS (ROW, INPUT, Q, HALFFULLLENGTH) ;       00230000          
-      IF DATAFILE THEN                                                  00230100          
-      BEGIN                                                             00230200          
-        MOVE (INPUT [9], ZIPPY [15], 0, 8) ;                            00230300          
-        DATUM := NOT ALLBLANK (ZIPPY [15], 0, 8) ;                      00230400          
-      END ;                                                             00230500          
-      EXTRALFCR := NOT (COBOLFILE OR Q:=ALLBLANK (INPUT [Z:=7], 7, 9)) ;00231000          
-      IF EXTRALFCR OR COBOLFILE THEN                                    00231500          
-        WRITELFCR ;                                                     00232000          
-      IF Q THEN                                                         00232500          
-        IF Q := ALLBLANK (INPUT [7], 0, 7) THEN                         00233000          
-          IF Q := ALLBLANK (INPUT [Z:=3], 4, 28) THEN                   00233500          
-            Q := ALLBLANK (INPUT [Z:=0], 0, 28) ;                       00234000          
-      IF NOT Q THEN                                                     00234500          
-        FOR F := 0 STEP 3 UNTIL Z DO                                    00235000          
-        BEGIN                                                           00235500          
-          MOVE (INPUT [F], PRETANK [0], 4 | F DIV 3, 28) ;              00236000          
-          WRITETWX ;                                                    00236500          
-        END ;                                                           00237000          
-      IF DATUM THEN                                                     00237050          
-      BEGIN                                                             00237100          
-        WRITELFCR ;                                                     00237200          
-        MOVE (ZIPPY [15], PRETANK, 0, 9) ;                              00237300          
-        WRITETWX ;                                                      00237400          
-      END ;                                                             00237450          
-      WRITELFCR ;                                                       00237460          
-    END WRITEROW ;                                                      00237500          
- % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        00237510          
- PROCEDURE ERRORX (K, A, B) ;                                           00237512          
- VALUE K,                                                               00237514          
-   A,                                                                   00237516          
-   B ;                                                                  00237518          
- INTEGER K ;                                                            00237520          
- REAL A,                                                                00237522          
-   B ;                                                                  00237524          
-    BEGIN                                                               00237526          
- STREAM PROCEDURE CRUNCH (S, K, A, B) ; VALUE K, A, B ;                 00237528          
- BEGIN                                                                  00237530          
- LABEL E0, E1, E2, E3, E4, E5, E6, FILENAME, CRUNCH, DEBLANK ;          00237532          
-    SI := LOC A ;                                                       00237534          
-    SI := SI + 1 ;                                                      00237536          
-    DI := S ;                                                           00237538          
-    DS := 2 LIT "{!" ;                                                  00237540          
-    CI := CI + K ;                                                      00237542          
-    GO TO E0 ;                                                          00237544          
-    GO TO E1 ;                                                          00237546          
-    GO TO E2 ;                                                          00237548          
-    GO TO E3 ;                                                          00237550          
-    GO TO E4 ;                                                          00237552          
-    GO TO E5 ;                                                          00237554          
-    GO TO E6 ;                                                          00237556          
-    GO TO E0 ;                                                          00237558          
-    GO TO E0 ;                                                          00237560          
- E1:                                                                    00237562          
-    DS := 10 LIT "INV USER: " ;                                         00237564          
-    GO TO E6 ;                                                          00237566          
- E2:                                                                    00237568          
-    DS := 2 LIT "NO" ;                                                  00237570          
-    GO TO FILENAME ;                                                    00237572          
- E3:                                                                    00237574          
-    DS := 3 LIT "BAD" ;                                                 00237576          
-    GO TO FILENAME ;                                                    00237578          
- E5:                                                                    00237580          
-    DS := 8 LIT "NO FILE " ;                                            00237582          
- E0:                                                                    00237584          
-    DS := 7 CHR ;                                                       00237586          
-    SI := SI + 1 ;                                                      00237588          
-    DS := 7 CHR ;                                                       00237590          
-    GO TO CRUNCH ;                                                      00237592          
- E4:                                                                    00237594          
-    DS := 3 LIT "DUP" ;                                                 00237596          
- FILENAME:                                                              00237598          
-    DS := 7 LIT " FILE: " ;                                             00237600          
- E6:                                                                    00237602          
-    DS := 7 CHR ;                                                       00237604          
-    DS := LIT "/" ;                                                     00237606          
-    SI := SI + 1 ;                                                      00237608          
-    DS := 7 CHR ;                                                       00237610          
- CRUNCH:                                                                00237612          
-    DS := LIT "~" ;                                                     00237614          
-    SI := S ;                                                           00237616          
-    DI := S ;                                                           00237618          
-    28 (IF SC = " " THEN                                                00237620          
-        BEGIN                                                           00237622          
- DEBLANK:                                                               00237624          
-          SI := SI + 1 ;                                                00237626          
-          IF SC = " " THEN                                              00237628          
-            GO TO DEBLANK ;                                             00237630          
-          IF SC = ALPHA THEN                                            00237632          
-            DS := 1 LIT " " ;                                           00237634          
-        END ELSE                                                        00237636          
-          DS := CHR) ;                                                  00237638          
- END CRUNCH ;                                                           00237640          
-      IF A = "#000000" THEN A := "       " ;                            00237642          
-      IF B = "#000000" THEN B := "       " ;                            00237644          
-      CRUNCH (PRETANK, K, A, B) ;                                       00237646          
-      WRITETWX ;                                                        00237648          
-      IF K LEQ 6 THEN                                                   00237650          
-      BEGIN                                                             00237652          
-        ERRTOG := TRUE ;                                                00237654          
-        MOREINPUT := FALSE ;                                            00237656          
-        NOSTAR := FALSE ;                                               00237658          
-        XDEX := -1 ;                                                    00237660          
-      END ELSE IF K = 8 THEN                                            00237662          
-        ILFCRI := 1 ;                                                   00237664          
-    END ERRORX ;                                                        00237666          
- DEFINE ERROR (ERROR1, ERROR2, ERROR3, ERROR4) =                        00237668          
-    BEGIN                                                               00237670          
-      ERRORX (ERROR2, ERROR3, ERROR4) ;                                 00237672          
-      GO TO ERROR1 ;                                                    00237674          
-    END ERROR#,                                                         00237676          
-  SHOW (SHOW1, SHOW2) = ERRORX (8, SHOW1, SHOW2)# ;                     00237678          
- % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        00237700          
- BOOLEAN PROCEDURE FILECHECK (B) ;                                      00237740          
- VALUE B ;                                                              00237750          
- BOOLEAN B ;                                                            00237760          
- BEGIN                                                                  00237770          
- LABEL NEXT ;                                                           00237780          
-    IF B THEN                                                           00237790          
-    BEGIN                                                               00237800          
-      IF FILECLOSED THEN                                                00237810          
-        ERROR (NEXT, 5, " OPEN: ", PARAMETER0) ;                        00237820          
-      IF B.[46:1] AND READONLYFILE THEN                                 00237830          
-        ERROR (NEXT, 0, "READ ON", "LY FILE") ;                         00237840          
-    END ELSE                                                            00237850          
-      IF FILEOPEN THEN                                                  00237860          
-      BEGIN                                                             00237870          
-        SEARCH (DISC, INPUT [*]) ;                                      00237880          
-        IF INPUT [0] LSS FILEACCESS THEN                                00237890          
-        BEGIN                                                           00237900          
-          CHARGE (STATION) ;                                            00237905          
-          CLOSE (DISC) ;                                                00237910          
-          FILL DISC WITH PREFIX, SUFFIX ;                               00237920          
-          SEARCH (DISC, INPUT [*]) ;                                    00237930          
-          IF INPUT [0] LSS FILEACCESS THEN                              00237940          
-          BEGIN                                                         00237950          
-            FILEACCESS := 0 ;                                           00237960          
-            INORDER := TRUE ;                                           00237970          
-            ERROR (NEXT, 1 + REAL (INPUT [0] LSS 0), PREFIX, SUFFIX) ;  00237980          
-          END ;                                                         00238000          
-        END ;                                                           00238010          
-      END ;                                                             00238020          
-    IF FALSE THEN                                                       00238030          
- NEXT:                                                                  00238040          
-      FILECHECK := TRUE ;                                               00238050          
- END FILECHECK ;                                                        00238060          
- DEFINE OPENCHECK = IF FILECHECK (TRUE) THEN GO TO NEXT#,               00238070          
-   READONLYCHECK = IF FILECHECK (BOOLEAN (3)) THEN GO TO NEXT#,         00238080          
-   SECURITYCHECK = IF FILECHECK (FALSE) THEN GO TO NEXT# ;              00238090          
- PROCEDURE STATE (S) ;                                                  00238100          
- VALUE S ;                                                              00238200          
- BOOLEAN S ;                                                            00238300          
-    BEGIN                                                               00238400          
- STREAM PROCEDURE STUFFSTATE (N, RECORD, P0, C) ;                       00238500          
- VALUE N ;                                                              00238600          
-    BEGIN                                                               00239000          
- LABEL EXIT ;                                                           00239100          
-      N (DI := C ;                                                      00239200          
-         SI := P0 ;                                                     00239300          
-         DS := 25 WDS ;                                                 00239400          
-         SI := RECORD ;                                                 00239600          
-         DS := 10 WDS ;                                                 00239700          
-         JUMP OUT TO EXIT) ;                                            00240400          
-      SI := C ;                                                         00240500          
-      DI := P0 ;                                                        00240600          
-      DS := 25 WDS ;                                                    00240700          
-      DI := RECORD ;                                                    00240900          
-      DS := 10 WDS ;                                                    00241000          
- EXIT:                                                                  00241700          
-    END STUFFSTATE ;                                                    00246000          
- INTEGER I, K ;                                                         00247500          
-      CLOSE (DISC) ;                                                    00248000          
-      K := IF S.[46:1] THEN SLOTI ELSE 46 ;                             00248500          
-      IF S THEN                                                         00248600          
-      BEGIN                                                             00248700          
-        STUFFSTATE (1, RECORD, PARAMETER0, CONTROLS [38]) ;             00250000          
-        WRITE (R1 [K], 90, CONTROLS [*]) ;                              00250600          
-        IF S.[46:1] AND FILEOPEN AND REAL (MODIFIED) NEQ 0 THEN         00251000          
-        BEGIN                                                           00251500          
-          K := D.LEFTSIDE ;                                             00252000          
-          FOR I := 0 STEP 1 UNTIL K DO                                  00252500          
-          BEGIN                                                         00253000          
-            IF MODIFIED THEN                                            00253100          
-              WRITE (R2 [32|SLOTI + I], 256, LINKLISTS [USER32+I, *]) ; 00253200          
-            MODIFIED := MODIFIED.[16:31] ;                              00253500          
-          END ;                                                         00254000          
-          MODIFIED := FALSE ;                                           00254100          
-        END ;                                                           00254200          
-      END SAVESTATE ELSE                                                00254500          
-      BEGIN                                                             00255500          
-        READ (R1 [K], 90, CONTROLS [*]) ;                               00256500          
-        STUFFSTATE (0, RECORD, PARAMETER0, CONTROLS [38]) ;             00257500          
-        FILL DISC WITH PREFIX, SUFFIX ;                                 00258500          
-        IF S.[46:1] THEN                                                00259000          
-          MODIFIED := FALSE ;                                           00259500          
-        USER32 := USER | 32 ;                                           00260000          
-      END RESTORESTATE ;                                                00260500          
-      PREWHERE := -1 ;                                                  00261000          
-    END STATE ;                                                         00262000          
- DEFINE SAVESTATE = STATE (BOOLEAN(3))#,                                00262500          
-   RESTORESTATE = STATE (BOOLEAN (2))#,                                 00263000          
-   UNSWAPSTATE = STATE (FALSE)#,                                        00263500          
-   SWAPSTATE = STATE (TRUE)# ;                                          00264000          
- % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        00264500          
- DEFINE WAIT (WAIT1, WAIT2) =                                           00265000          
-   BEGIN                                                                00265100          
-     IF NOT WAITING THEN                                                00265150          
-       IF WAITX (WAIT1, WAIT2) THEN                                     00265200          
-         GO TO NEXT ;                                                   00265250          
-   END# ;                                                               00265300          
- BOOLEAN PROCEDURE WAITX (TOCKS, FORCED) ;                              00265500          
- VALUE TOCKS,                                                           00265600          
-   FORCED ;                                                             00265700          
- INTEGER TOCKS ;                                                        00265800          
- BOOLEAN FORCED ;                                                       00265900          
-    BEGIN                                                               00266000          
- DEFINE SEGMENT =# ;                                                    00266100          
-      IF TOCKS GEQ CLOCK OR FORCED THEN                                 00266200          
-        IF Q THEN                                                       00266300          
-        BEGIN                                                           00266400          
-          READYQ [READYQTOP := READYQTOP + 1] := USER ;                 00266500          
-          INREADYQ := 1 ;                                               00266600          
-          WRITEQUEUED ;                                                 00266700          
-          N := RESETN ;                                                 00266900          
-          IF NOTFIRSTINPUT THEN                                         00267000          
-            SAVESTATE ;                                                 00267100          
-          STATION := 0 ;                                                00267200          
-          WAITX := TRUE ;                                               00267300          
-        END ELSE                                                        00267400          
-        BEGIN                                                           00267500          
-          IF FORCED.[46:1] THEN                                         00267600          
-          BEGIN                                                         00267700          
-            WAITX := BOOLEAN (USER := READYQ [1]) ;                     00267800          
-            CHARGE (STATIONI) ;                                         00267900          
-            INREADYQ := 0 ;                                             00268000          
-            FOR I := 2 STEP 1 UNTIL READYQTOP DO                        00268100          
-              READYQ [I - 1] := READYQ [I] ;                            00268200          
-            READYQTOP := READYQTOP - 1 ;                                00268300          
-            RESTORESTATE ;                                              00268400          
-            READ (IO [USER], 30, IMAGE [*]) ;                           00268410          
-          END ;                                                         00268500          
-          WRITE (PRETANK [*], WAITF ) ;                                 00268600          
-          WRITETWX ;                                                    00268700          
-          WAITFLAG := TRUE ;                                            00268800          
-          READYQ [0] := USER ;                                          00268900          
-        END ;                                                           00269300          
-    END WAITX ;                                                         00269400          
- DEFINE INTERRUPT (INTERRUPT1) = INTERUPT (INTERRUPT1, 0, 0)#,          00282000          
-   INTERUPT (INTERUPT1, INTERUPT2, INTERUPT3) =                         00282100          
-    BEGIN                                                               00282500          
-      IF CLOCK := CLOCK - INTERUPT1 LEQ NEXTCLOCK THEN                  00283000          
-        OUTPUT ;                                                        00283100          
-      IF CLOCK LEQ 0 THEN                                               00283200          
-        IF INTERRUPTS (INTERUPT2, INTERUPT3) THEN                       00283500          
-          GO TO NEXT ;                                                  00284000          
-    END# ;                                                              00284500          
- BOOLEAN PROCEDURE INTERRUPTS (LIB, LOC) ;                              00285000          
- VALUE LIB, LOC ;                                                       00285100          
- INTEGER LIB, LOC ;                                                     00285200          
- BEGIN                                                                  00285500          
- LABEL NEWBIRD, NONE, NEXT ;                                            00286000          
-    T0 := CLOCK := MAX (50, T0 | 150 / (-T1 + T1 := TIMEX)) ;           00286500          
-    IF WAITING THEN                                                     00287000          
-    BEGIN                                                               00287500          
-      INPUT [5] := 0 & "~"[1:43:5] ;                                    00288000          
-      READ (TWXINPUT (0, 0), 8, INPUT [*]) [NONE] ;                     00288500          
-      QINPUT := TRUE ;                                                  00289000          
- NEWBIRD:                                                               00289500          
-      SWAPSTATE ;                                                       00290000          
-      CLOSE (LIBRARY) ;                                                 00290100          
-      CHARGE (STATION := 0) ;                                           00290500          
-      INREADYQ := 3 ;                                                   00291000          
-      Q := TRUE ;                                                       00291500          
-      PROGRAM ;                                                         00292000          
-      Q := FALSE ;                                                      00292500          
-      USER := READYQ [0] ;                                              00293000          
-      CHARGE (STATIONI) ;                                               00295500          
-      INREADYQ := 0 ;                                                   00296000          
-      UNSWAPSTATE ;                                                     00296500          
-      SECURITYCHECK ;                                                   00297000          
-      IF LIB NEQ 0 THEN                                                 00297100          
-      BEGIN                                                             00297200          
-        FILL LIBRARY WITH IF BOOLEAN (LIB) THEN PARAMETER1 ELSE PREFIX, 00297300          
-          IF BOOLEAN (LIB) THEN PARAMETER2 ELSE SUFFIX ;                00297400          
-        READ SEEK (LIBRARY [LOC]) ;                                     00297500          
-      END ;                                                             00297600          
- NONE:                                                                  00297700          
-      IF RATTLEINDEX := RATTLEINDEX + 1 = 5 THEN                        00298000          
-      BEGIN                                                             00298500          
-        FOR TINK := 0 STEP 1 UNTIL READYQTOP DO                         00299000          
-        BEGIN                                                           00299500          
-          USER := READYQ [TINK] ;                                       00300000          
-          IF COUNTI LSS 0 THEN                                          00300500          
-            IF REAL (BOOLEAN (STATUS (STATIONI, 0)).[22:9] AND          00301000          
-                     BOOLEAN ("6C")) = 0 THEN                           00301100          
-              WRITE (TWXOUT, RATTLE) ;                                  00301500          
-        END ;                                                           00302000          
-        USER := READYQ [RATTLEINDEX := 0] ;                             00302500          
-        CHARGE (STATION) ;                                              00302700          
-        IF 2 | BIGBIRD + 2 LSS STATUS (ZIPPY [*]) THEN                  00303000          
-          GO TO NEWBIRD ;                                               00303500          
-        IF FALSE THEN                                                   00304000          
- NEXT:                                                                  00304500          
-          INTERRUPTS := TRUE ;                                          00305000          
-      END ;                                                             00305500          
-    END ;                                                               00306000          
-    CLOCK := T0 ;                                                       00306100          
-    T1 := TIMEX ;                                                       00306200          
-    IF OUTPUTREADY THEN                                                 00306300          
-      NEXTCLOCK := CLOCK - T0 | (TN - T1 - 90) / 150 ;                  00306400          
- END INTERRUPTS ;                                                       00307000          
- % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        00318000          
- INTEGER PROCEDURE XFILE (P, S, FS) ;                                   00318100          
- VALUE P, S, FS ;                                                       00318110          
- REAL P, S, FS ;                                                        00318120          
- BEGIN                                                                  00318130          
- DEFINE SEGMENT = # ;                                                   00318140          
-    IF P = 12 THEN                                                      00318150          
-    BEGIN                                                               00318160          
-      IF NUM1 THEN                                                      00318170          
-      BEGIN                                                             00318180          
-        NUM1 := FALSE ;                                                 00318190          
-        P := PARAMETER1 := OCTDEC (PARAMETER1) ;                        00318200          
-      END ELSE                                                          00318210          
-        P := PARAMETER1 ;                                               00318220          
-      IF NUM2 THEN                                                      00318230          
-      BEGIN                                                             00318240          
-        NUM2 := FALSE ;                                                 00318250          
-        S := PARAMETER2 := OCTDEC (PARAMETER2) ;                        00318260          
-      END ELSE                                                          00318270          
-        S := PARAMETER2 ;                                               00318280          
-    END ;                                                               00318290          
-    FILL LIBRARY WITH P, S ;                                            00318300          
-    SEARCH (LIBRARY, INPUT [*]) ;                                       00318310          
-    IF XFILE := INPUT [0] LSS FS THEN                                   00318320          
-      ERRORX (1 + REAL (INPUT [0] LSS 0), P, S) ;                       00318330          
- END XFILE ;                                                            00318350          
- % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        00318360          
- PROCEDURE READIN ;                                                     00319000          
-    BEGIN                                                               00319100          
- BOOLEAN PROCEDURE MORE ;                                               00319210          
- BEGIN                                                                  00319220          
- LABEL NEXT,                                                            00319230          
-    EXIT ;                                                              00319240          
- INTEGER STREAM PROCEDURE TRAILINGBLANKS (S, N) ;                       00319250          
- VALUE N ;                                                              00319260          
- BEGIN                                                                  00319270          
- LABEL DONE ;                                                           00319280          
-    SI := S ;                                                           00319290          
-    SI := SI + 7 ;                                                      00319300          
-    S := TALLY ;                                                        00319310          
-    DI := S ;                                                           00319320          
-    2 (N (IF SC NEQ " " THEN JUMP OUT 2 TO DONE ;                       00319330          
-          SI := SI - 1 ;                                                00319340          
-          DI := DI + 8)) ;                                              00319350          
- DONE:                                                                  00319360          
-    TRAILINGBLANKS := DI ;                                              00319370          
- END TRAILINGBLANKS ;                                                   00319380          
- INTEGER XSUB ;                                                         00319390          
- DEFINE FILEINFO = XFILETYPE# ;                                         00319400          
-    IF FILEOPEN THEN                                                    00319410          
-    BEGIN                                                               00319420          
-      IF N GTR FINITY THEN                                              00319430          
-        IF N := LL [LAST.F].S + INC GTR FINITY THEN                     00319440          
-        BEGIN                                                           00319450          
-          N := FINITY ;                                                 00319460          
-          ERROR (NEXT, 0, "SEQ. OV", "ER-FLOW") ;                       00319470          
-        END ;                                                           00319480          
-      IF N LEQ 0 THEN                                                   00319490          
-        N := 1 ;                                                        00319500          
-    END ;                                                               00319510          
-    IF MOREINPUT THEN                                                   00319520          
-    BEGIN                                                               00319530          
-      READ (IO [USER + MAXUSERS], 30, IMAGE [*]) ;                      00319540          
-      CHRS := NCHRS ;                                                   00319545          
-      GO TO EXIT ;                                                      00319550          
-    END ;                                                               00319560          
-    IF XDEX LSS 0 THEN                                                  00319570          
-    BEGIN                                                               00319580          
- NEXT:                                                                  00319590          
-      IF NOT NOSTAR THEN                                                00319600          
-        WRITESEQUENCE ;                                                 00319610          
-      CHRS := 0 ;                                                       00319620          
-      SAVESTATE ;                                                       00319630          
-    END ELSE                                                            00319640          
-    BEGIN                                                               00319650          
-      XSUB := XDEX | 13 ;                                               00319660          
-      WHILE XN := XN + 1 GTR XLAST DO                                   00319670          
-        IF XREPEAT := XREPEAT - 1 GTR 0 THEN                            00319680          
-          XN := XSTART                                                  00319690          
-        ELSE                                                            00319700          
-        BEGIN                                                           00319710          
-          IF XSUFFIX = "#MACRO#" THEN                                   00319720          
-          BEGIN                                                         00319730          
-            IF XFILE (XPREFIX, XSUFFIX, 7) LSS 7 THEN                   00319740          
-              GO TO NEXT ;                                              00319750          
-            READ (LIBRARY) ;                                            00319760          
-            DETACH ;                                                    00319770          
-            CLOSE (LIBRARY, PURGE) ;                                    00319780          
-            REATTACH ;                                                  00319790          
-          END ;                                                         00319800          
-          IF BOOLEAN (XNCHRS.[1:1]) THEN                                00319810          
-          BEGIN                                                         00319820          
-            READ (IO [2|MAXUSERS+XMAX|USER+XDEX], 30, IMAGE [*]) ;      00319830          
-            CHRS := ABS (XNCHRS) ;                                      00319840          
-            XDEX := XDEX - 1 ;                                          00319850          
-            GO TO EXIT ;                                                00319860          
-          END ;                                                         00319870          
-          IF XDEX := XDEX - 1 LSS 0 THEN                                00319880          
-            GO TO NEXT ;                                                00319890          
-          XSUB := XDEX | 13 ;                                           00319900          
-        END ;                                                           00319910          
-      IF XFILE (XPREFIX, XSUFFIX, 2) LSS 2 THEN                         00319920          
-        GO TO NEXT ;                                                    00319930          
-      IF XECHO THEN                                                     00319940          
-        WRITESEQUENCE ;                                                 00319950          
-      SAVESTATE ;                                                       00319960          
-      INTERRUPT (3) ;                                                   00319970          
-      READ (LIBRARY [XN - 1], 10, IMAGE [*]) ;                          00319980          
-      CLOSE (LIBRARY) ;                                                 00319990          
-      CHRS := (I := FULLLENGTH) -                                       00320000          
-              TRAILINGBLANKS (IMAGE [I.[41:4]-1], I.[41:6]) ;           00320010          
-      IF XECHO THEN                                                     00320020          
-        WRITEROW (IMAGE [*], FALSE, XFILETYPE) ;                        00320030          
- EXIT:                                                                  00320040          
-      MORE := TRUE ;                                                    00320050          
-    END ;                                                               00320060          
- END MORE ;                                                             00320070          
- BOOLEAN STREAM PROCEDURE LINEEDIT (S, D, C, CHRS, P, OVER80, EIGHTY1) ;00321000          
- VALUE C,                                                               00321100          
-    P,                                                                  00321200          
-    OVER80,                                                             00321300          
-    EIGHTY1 ;                                                           00321400          
-      BEGIN                                                             00321500          
- LOCAL T,                                                               00321600          
-    PERCENT1, PERCENT ;                                                 00321700          
- LABEL AROUND, NEXT ;                                                   00321800          
-        P (DI := LOC PERCENT ; DS := 14 LIT "%?-~=!(<)>[{]}") ;         00321900          
-        SI := LOC C ;                                                   00322000          
-        DI := LOC T ;                                                   00322100          
-        SI := SI + 6 ;                                                  00322200          
-        DI := DI + 7 ;                                                  00322300          
-        DS := CHR ;                                                     00322400          
-        SI := S ;                                                       00322500          
-        DI := D ;                                                       00322600          
-        T (DI := DI + 32 ;  DI := DI + 32) ;                            00322700          
-        DI := DI + C ;                                                  00322800          
-        56(IF SC = "~" THEN                                             00322900          
-             GO TO AROUND ;                                             00323000          
-           IF SC = "}" THEN% DISCONNECT OR EXCLAMATION                  00323010          
-           BEGIN                                                        00323020          
-             TALLY := 1 ;                                               00323030          
-             GO TO AROUND ;                                             00323040          
-           END ;                                                        00323050          
-           IF SC = "!" THEN% LINE ERASE                                 00323100          
-           BEGIN                                                        00323200          
-             C := TALLY ;                                               00323300          
-             OVER80 := TALLY ;                                          00323400          
-             DI := D ;                                                  00323500          
-             GO TO AROUND ;                                             00323600          
-           END ;                                                        00323700          
-           IF SC = "{" THEN% BACKSPACE                                  00323800          
-           BEGIN                                                        00323900          
-             S := SI ;                                                  00324000          
-             T := DI ;                                                  00324100          
-             SI := LOC C ;                                              00324200          
-             DI := LOC LINEEDIT ;                                       00324300          
-             IF 8 SC NEQ DC THEN                                        00324400          
-             BEGIN                                                      00324500          
-               OVER80 (SI := SI - 8 ;                                   00324600          
-                       DI := LOC EIGHTY1 ;                              00324700          
-                       IF 8 SC = DC THEN                                00324800          
-                         OVER80 := TALLY) ;                             00324900          
-               SI := C ;                                                00325000          
-               SI := SI - 8 ;                                           00325100          
-               C := SI ;                                                00325200          
-               DI := T ;                                                00325300          
-               DI := DI - 1 ;                                           00325400          
-             END ELSE                                                   00325500          
-               DI := T ;                                                00325600          
-             SI := S ;                                                  00325700          
- AROUND:                                                                00325800          
-           END ELSE                                                     00325900          
-           BEGIN                                                        00326500          
-             S := SI ;                                                  00326600          
-             OVER80 (DI := DI + 1 ;                                     00326700          
-                     SI := C ;                                          00326900          
-                     SI := SI + 8 ;                                     00327000          
-                     C := SI ;                                          00327100          
-                     SI := S ;                                          00327200          
-                     JUMP OUT TO AROUND) ;                              00327300          
-             T := DI ;                                                  00327500          
-             P (DI := S ;                                               00327600          
-                SI := T ;                                               00327700          
-                SI := SI - 1 ;                                          00327800          
-                IF SC = "%" THEN                                        00327900          
-                BEGIN                                                   00328000          
-                  SI := LOC PERCENT ;                                   00328100          
-                  7 (IF SC = DC THEN                                    00328200          
-                     BEGIN                                              00328300          
-                       DI := T ;                                        00328400          
-                       DI := DI - 1 ;                                   00328500          
-                       DS := CHR ;                                      00328600          
-                       SI := S ;                                        00328700          
-                       JUMP OUT 2 TO AROUND ;                           00328900          
-                     END ;                                              00329000          
-                     SI := SI + 1 ;                                     00329100          
-                     DI := DI - 1) ;                                    00329200          
-                END) ;                                                  00329300          
-             SI := C ;                                                  00330600          
-             SI := SI + 8 ;                                             00330700          
-             C := SI ;                                                  00330800          
-             SI := LOC C ;                                              00330900          
-             DI := LOC EIGHTY1 ;                                        00331000          
-             IF 8 SC = DC THEN                                          00331100          
-             BEGIN                                                      00331200          
-               TALLY := 1 ;                                             00331300          
-               OVER80 := TALLY ;                                        00331400          
-               TALLY := 0 ;                                             00331500          
-             END ;                                                      00331600          
-             SI := S ;                                                  00331700          
-             DI := T ;                                                  00331800          
-             IF TOGGLE THEN                                             00331900          
-               DI := DI + 1                                             00332000          
-             ELSE BEGIN                                                 00332100          
-               DS := CHR ;                                              00332200          
-               SI := SI - 1 ;                                           00332300          
-             END ;                                                      00332400          
-             GO TO NEXT ;                                               00332500          
-           END ;                                                        00332550          
-           IF SC = "~" THEN JUMP OUT ;                                  00332560          
-           IF SC = "}" THEN JUMP OUT ;                                  00332570          
- NEXT:                                                                  00332580          
-           SI := SI + 1) ;                                              00332600          
-        SI := LOC C ;                                                   00332700          
-        DI := CHRS ;                                                    00332800          
-        DS := WDS ;                                                     00332900          
-        LINEEDIT := TALLY ;                                             00333100          
- END LINEEDIT ;                                                         00333200          
- BOOLEAN PROCEDURE FINALANALYSIS ;                                      00333210          
- BEGIN                                                                  00333220          
- STREAM PROCEDURE MOVE (S, D, SKPS, SKPD, N) ;                          00333230          
- VALUE SKPS, SKPD, N ;                                                  00333240          
-    BEGIN                                                               00333250          
- LOCAL T ;                                                              00333260          
-      SI := LOC N ;                                                     00333270          
-      DI := LOC T ;                                                     00333280          
-      SI := SI + 6 ;                                                    00333290          
-      DI := DI + 7 ;                                                    00333300          
-      DS := CHR ;                                                       00333310          
-      SI := S ;                                                         00333320          
-      DI := D ;                                                         00333330          
-      SI := SI + SKPS ;                                                 00333340          
-      DI := DI + SKPD ;                                                 00333350          
-      T (DS := 32 CHR ;  DS := 32 CHR) ;                                00333360          
-      DS := N CHR ;                                                     00333370          
-    END MOVE ;                                                          00333380          
- INTEGER STREAM PROCEDURE HUNT (S, D, C, N) ;                           00333390          
- VALUE C,                                                               00333400          
-   N ;                                                                  00333500          
-      BEGIN                                                             00333600          
- LABEL AGAIN,                                                           00333700          
-   XIT ;                                                                00333800          
-        SI := D ;                                                       00333900          
-        DI := D ;                                                       00334000          
-        DS := 8 LIT " " ;                                               00334100          
-        DS := 9 WDS ;                                                   00334200          
-        D := TALLY ;                                                    00334300          
-        DI := LOC D ;                                                   00334400          
-        SI := LOC C ;                                                   00334500          
-        SI := SI + 7 ;                                                  00334600          
-        DS := CHR ;                                                     00334700          
- AGAIN:                                                                 00334800          
-        SI := LOC N ;                                                   00334900          
-        SI := SI + 1 ;                                                  00335000          
-        IF 7 SC = DC THEN                                               00335100          
-          GO TO XIT ;                                                   00335200          
-        SI := N ;                                                       00335300          
-        SI := SI - 8 ;                                                  00335400          
-        N := SI ;                                                       00335500          
-        SI := S ;                                                       00335600          
-        DI := LOC D ;                                                   00335700          
-        IF SC = DC THEN                                                 00335800          
-          GO TO XIT ;                                                   00335900          
-        S := SI ;                                                       00336000          
-        SI := HUNT ;                                                    00336100          
-        SI := SI + 8 ;                                                  00336200          
-        HUNT := SI ;                                                    00336300          
-        GO TO AGAIN ;                                                   00336400          
- XIT:                                                                   00336500          
-      END HUNT ;                                                        00336600          
- BOOLEAN STREAM PROCEDURE MORE (IMAGE, INPUT, C, CHRS) ;                00344000          
- VALUE C ;                                                              00344010          
-      BEGIN                                                             00344500          
- LOCAL QUOTES,                                                          00345000          
-   ENDQUOTE,                                                            00345500          
-   ZERO,                                                                00345510          
-   TEMP ;                                                               00346000          
- LABEL NOTHINGYET,                                                      00346500          
-   BUMP,                                                                00347000          
-   FOUNDQUOTE,                                                          00347500          
-   FOUNDSEMICOLAN,                                                      00348000          
-   LOOP,                                                                00348500          
-   XIT,                                                                 00349000          
-   EXIT ;                                                               00349100          
-        SI := IMAGE ;                                                   00349500          
-        DI := LOC QUOTES ;                                              00350000          
-        DS := 2 LIT """ ;                                               00350500          
-        DS := 6 LIT "..()[]" ;                                          00351000          
-        DI := LOC ENDQUOTE ;                                            00351100          
-        DS := 2 LIT ";;" ;                                              00351200          
- LOOP:                                                                  00351300          
-        IMAGE := SI ;                                                   00351310          
-        SI := LOC C ;                                                   00351330          
-        DI := LOC ZERO ;                                                00351340          
-        IF 8 SC = DC THEN                                               00351350          
-          GO TO XIT ;                                                   00351360          
-        SI := C ;                                                       00351370          
-        SI := SI - 8 ;                                                  00351380          
-        C := SI ;                                                       00351390          
-        SI := IMAGE ;                                                   00351400          
-        CI := CI + MORE ;                                               00351500          
-        GO TO NOTHINGYET ;                                              00352000          
-        GO TO LOOP ;                                                    00352500          
-        GO TO FOUNDQUOTE ;                                              00353000          
- NOTHINGYET:                                                            00353500          
-        IF SC = ALPHA THEN                                              00354000          
-          GO TO BUMP ;                                                  00354500          
-        IF SC = " " THEN                                                00355000          
-          GO TO BUMP ;                                                  00355500          
-        DI := LOC QUOTES ;                                              00356000          
-        4 (IF SC = DC THEN                                              00356500          
-        BEGIN                                                           00359000          
-          TEMP := SI ;                                                  00359500          
-          ENDQUOTE := DI ;                                              00360000          
-          DI := LOC ENDQUOTE ;                                          00360500          
-          SI := ENDQUOTE ;                                              00361000          
-          DS := 1 CHR ;                                                 00361500          
-          TALLY := 2 ;                                                  00362000          
-          MORE := TALLY ;                                               00362500          
-          SI := TEMP ;                                                  00363000          
-          JUMP OUT TO LOOP ;                                            00363500          
-        END ;                                                           00364000          
-        SI := SI - 1 ;                                                  00364100          
-        DI := DI + 1) ;                                                 00364200          
-        IF SC = ";" THEN                                                00365500          
-          GO TO FOUNDSEMICOLAN ;                                        00369000          
- BUMP:                                                                  00371500          
-        SI := SI + 1 ;                                                  00372000          
-        GO TO LOOP ;                                                    00372500          
- FOUNDQUOTE:                                                            00374500          
-        DI := LOC ENDQUOTE ;                                            00375000          
-        IF SC = DC THEN                                                 00375500          
-        BEGIN                                                           00376000          
-          DI := DI - 1 ;                                                00376100          
-          DS := LIT ";" ;                                               00376200          
-          TALLY := 0 ;                                                  00376500          
-          MORE := TALLY ;                                               00377000          
-        END ;                                                           00377500          
-        GO TO LOOP ;                                                    00378000          
- XIT:                                                                   00378500          
-        SI := LOC ENDQUOTE ;                                            00378600          
-        DI := IMAGE ;                                                   00378700          
-        DS := 2 CHR ;                                                   00378800          
-        GO TO EXIT ;                                                    00378900          
- FOUNDSEMICOLAN:                                                        00378910          
-        TALLY := 1 ;                                                    00378920          
-        MORE := TALLY ;                                                 00378930          
-        SI := LOC C ;                                                   00378940          
-        DI := CHRS ;                                                    00378950          
-        DS := WDS ;                                                     00378960          
-        SI := LOC C ;                                                   00378970          
-        DI := LOC TEMP ;                                                00378980          
-        SI := SI + 6 ;                                                  00378990          
-        DI := DI + 7 ;                                                  00379000          
-        DS := CHR ;                                                     00379010          
-        SI := IMAGE ;                                                   00379020          
-        SI := SI + 1 ;                                                  00379030          
-        DI := INPUT ;                                                   00379040          
-        TEMP (DS := 32 CHR ; DS := 32 CHR) ;                            00379050          
-        DS := C CHR ;                                                   00379060          
- EXIT:                                                                  00379070          
-      END MORE ;                                                        00379500          
- INTEGER STREAM PROCEDURE FIX (IM, TAB, C, Z, P, Q) ;                   00380000          
- VALUE TAB,                                                             00380500          
-   C,                                                                   00381000          
-   P,                                                                   00381100          
-   Q ;                                                                  00381200          
-      BEGIN                                                             00381500          
- LOCAL T ;                                                              00382000          
-        P (SI := IM ;                                                   00382100          
-           IF SC = "%" THEN                                             00382110          
-           BEGIN                                                        00382120          
-             SI := SI + 1 ;                                             00382130          
-             IF SC = "*" THEN                                           00382140          
-             BEGIN                                                      00382150          
-               SI := C ;                                                00382180          
-               SI := SI - 8 ;                                           00382190          
-               C := SI ;                                                00382200          
-               TALLY := 1 ;                                             00382210          
-               FIX := TALLY ;                                           00382220          
-             END ;                                                      00382230          
-           END) ;                                                       00382240          
-        SI := Z ;                                                       00382500          
-        DI := Z ;                                                       00383000          
-        DS := 8 LIT "        " ;                                        00383500          
-        DS := 9 WDS ;                                                   00384000          
-        SI := LOC C ;                                                   00384100          
-        DI := LOC T ;                                                   00384200          
-        SI := SI + 6 ;                                                  00384300          
-        DI := DI + 7 ;                                                  00384400          
-        DS := CHR ;                                                     00384500          
-        SI := IM ;                                                      00384600          
-        SI := SI + FIX ;                                                00384650          
-        DI := Z ;                                                       00384700          
-        DI := DI + TAB ;                                                00384800          
-        T (DS := 32 CHR ;  DS := 32 CHR) ;                              00384900          
-        DS := C CHR ;                                                   00385000          
-        SI := Z ;                                                       00389000          
-        DI := IM ;                                                      00389500          
-        DS := 10 WDS ;                                                  00390000          
-        Q (DI := IM ; DS := 1 LIT "0") ;                                00390100          
-      END FIX ;                                                         00390500          
- INTEGER C,                                                             00390505          
-   H,                                                                   00390508          
-   K ;                                                                  00390510          
- LABEL ERR, NEXT ;                                                      00390520          
-      NOSTAR := (FIRSTCHAR (IMAGE [0]) NEQ "*" OR H := CHRS = 0)        00390540          
-                AND READWRITEFILE ;                                     00390550          
-      NOTFIRSTINPUT := MOREINPUT ;                                      00390560          
-      IF NOSTAR THEN                                                    00390570          
-      BEGIN                                                             00390580          
-        I := IF COBOLFILE THEN 6 ELSE 0 ;                               00390590          
-        IF XDEX GEQ 0 THEN IF BOOLEAN (XFILETYPE) THEN I := 0 ;         00390595          
-        MOREINPUT := FALSE ;                                            00390600          
-        IF H + TABAMOUNT GTR LENGTH THEN                                00390610          
-          GO TO ERR ;                                                   00390630          
-        H := H + TABAMOUNT + I - FIX (IMAGE, TABAMOUNT + I, H,          00390640          
-                     ZIPPY, TRANSLATING AND H GEQ 2, I = 6) ;           00390650          
-        IF COLUMNS THEN                                                 00390660          
-        BEGIN                                                           00390670          
-          FOR K := 1 STEP 1 UNTIL COLSTOPS DO                           00390680          
-            IF I := MIN (H, MAXCOLSTOP) NEQ                             00390690          
-               C := HUNT (IMAGE, ZIPPY, CHARACTER, I) THEN              00390700          
-            BEGIN                                                       00390710          
-              WHILE C GEQ I := COLSTOP [K] DO                           00390720          
-                K := K + 1 ;                                            00390730          
-              I := I - 1 ;                                              00390760          
-              MOVE (IMAGE, ZIPPY, 0, 0, C) ;                            00390770          
-              IF H := H + I - (C := C + 1) GTR FULLLENGTH THEN          00390780          
-              BEGIN                                                     00390785          
- ERR:                                                                   00390790          
-                FINALANALYSIS := TRUE ;                                 00390795          
-                ERROR (NEXT, 0, "INPUT  ", "OVERFLW") ;                 00390800          
-              END ;                                                     00390805          
-              MOVE (IMAGE [C.[41:4]], ZIPPY [I.[41:4]], C.[45:3],       00390810          
-                I.[45:3], H - I) ;                                      00390820          
-              MOVE (ZIPPY, IMAGE, 0, 0, 80) ;                           00390840          
-            END ELSE                                                    00390850          
-              K := 5 ;                                                  00390860          
-        END ;                                                           00390870          
-        CHRS := H ;                                                     00390875          
-        IF XDEX LSS 0 AND NOT INLINETOG AND N := N+INC LSS INFINITY THEN00390880          
-          WRITESEQUENCE ;                                               00390910          
-        N := N - INC ;                                                  00390920          
-      END                                                               00391110          
-      ELSE                                                              00391120          
-      BEGIN                                                             00391130          
-        IF H GTR 240 THEN                                               00391140          
-          GO TO ERR ;                                                   00391150          
-        INLINETOG := FALSE ;                                            00391160          
-        MOREINPUT := MORE (IMAGE, ZIPPY, H, NCHRS) ;                    00391170          
-        IF MOREINPUT THEN                                               00391175          
-          WRITE (IO [USER + MAXUSERS], 30, ZIPPY [*]) ;                 00391180          
-      END ;                                                             00391190          
- NEXT:                                                                  00391210          
- END FINALANALYSIS ;                                                    00391230          
- INTEGER C,                                                             00391240          
-   LASTUSER ;                                                           00391250          
- REAL X ;                                                               00391260          
- LABEL AGAIN,                                                           00392000          
-   INPUTFULL,                                                           00392500          
-   EXIT,                                                                00394500          
-   NEXT,                                                                00394600          
-   ESCAPE ;                                                             00394700          
- INTEGER PROCEDURE READTWX ;                                            00394800          
- BEGIN                                                                  00394900          
- LABEL NONE, TROUBLE, EXIT ;                                            00395000          
- REAL TIMEOUT, X ;                                                      00395100          
-    INPUT [5] := 0 & "~"[1:43:5] ;                                      00395200          
-    IF NOT Q THEN                                                       00395300          
-      TIMEOUT := IF OUTPUTREADY THEN MAX(0,MIN(15,(TN-TIMEX-60)/60))    00395400          
-                 ELSE 15 ;                                              00395500          
-    READ (TWXINPUT (0, TIMEOUT), 8, INPUT [*]) [NONE:TROUBLE] ;         00395600          
-    GO TO EXIT ;                                                        00395700          
- NONE:                                                                  00395800          
-    IF Q THEN                                                           00395900          
-    BEGIN                                                               00396000          
-      USER := MAXUSERS ;                                                00396100          
-      READTWX := 1 ;                  % ESCAPE                          00396200          
-      GO TO EXIT ;                                                      00396300          
-    END ;                                                               00396400          
-    IF OUTPUTREADY THEN                                                 00396500          
-      OUTPUT ;                                                          00396600          
-    T1 := TIMEX ;                                                       00396700          
-    FOR USER := 0 STEP 1 UNTIL BIGBIRD DO                               00396800          
-    BEGIN                                                               00396900          
-      CHECK (STATIONI) ;                                                00397100          
-      IF BOOLEAN (ABNORMALEND) THEN                                     00397200          
-      BEGIN                                                             00397300          
-        READTWX := 1 ;                                                  00397400          
-        GO TO EXIT ;                                                    00397500          
-      END ;                                                             00397600          
-      IF X := (T1 - TIMEI)/1000 LSS 0 THEN                              00397700          
-        X := X + 5184 ;                                                 00397800          
-      IF X GTR 15 AND X LSS 100 THEN                                    00397900          
-      BEGIN                                                             00398000          
-        IF X LSS 18 THEN                                                00398100          
-          FIRSTCHANCE := 0                                              00398200          
-        ELSE IF X GEQ 36 THEN                                           00398300          
-        BEGIN                                                           00398400          
-          WRITE (PRETANK [*], EOJ) ;                                    00398500          
-          WRITETWX ;                                                    00398600          
-          ABNORMALEND := READTWX := 1 ;                                 00398700          
-          GO TO EXIT ;                                                  00398800          
-        END ELSE IF FIRSTCHANCE = 0 THEN                                00398900          
-        BEGIN                                                           00399000          
-          FIRSTCHANCE := 1 ;                                            00399100          
-          X := TIMEI ;                                                  00399200          
-          ERRORX (7, "LOOK   ", "ALIVE. ") ;                            00399300          
-          TIMEI := X ;                                                  00399400          
-        END ;                                                           00399500          
-      END ;                                                             00399600          
-    END ;                                                               00399700          
-    READTWX := 2 ;                    % AGAIN                           00399800          
-    GO TO EXIT ;                                                        00399900          
- TROUBLE:                                                               00400000          
-    READ (TWXINPUT (0, 0), 1, INPUT [*]) ;                              00400100          
-    INPUT [1] := "}" ;                                                  00400200          
- EXIT:                                                                  00400300          
- END READTWX ;                                                          00400400          
- PROCEDURE INITIALIZE ;                                                 00406000          
-    BEGIN                                                               00407000          
- MONITOR INTOVR, FLAG ;                                                 00407500          
- INTEGER I,                                                             00408000          
-   C ;                                                                  00408100          
- REAL U ;                                                               00408200          
- BOOLEAN OLDUSER ;                                                      00408500          
- DEFINE DIRCTRY = CONTROLS# ;                                           00408600          
- LABEL OLD,                                                             00409000          
-   FAULT,                                                               00409500          
-   NEW,                                                                 00410000          
-   MAILCALL,                                                            00410500          
-   NEXT ;                                                               00410600          
-      USER := BIGBIRD := BIGBIRD + 1 ;                                  00420000          
-      ATTACH ;                                                          00421000          
-      STATIONI := STATION ;                                             00421500          
-      IF USERCODEI := USERCODE  = -1 THEN                               00422500          
-        USERCODE := OCTDEX (100|STATION.[9:4]+STATION.[14:4]) ;         00423000          
-      COUNTI := -1 ;                                                    00426000          
-      ILFCRI := 1 ;                                                     00426100          
-      ERRORX (7, "VERSION", OCTDEX (VERSION)) ;                         00427900          
- FAULT:                                                                 00427910          
-      READ (R1 [45], 90, DIRCTRY [*]) ;                                 00427920          
-      IF OLDUSER THEN                                                   00427930          
-      BEGIN                                                             00427940          
-        OLDUSER := FALSE ;                                              00427950          
-        I := C + C ;                                                    00427960          
-        ERROR (OLD, 0, "BACKUP ", "ERROR. ") ;                          00427970          
-      END ;                                                             00427980          
-      C := 200 ;                                                        00428000          
-      FOR I := 0 STEP 2 WHILE U := DIRCTRY [I] NEQ 12 DO                00428100          
-        IF USERCODE = U THEN                                            00428200          
-        BEGIN                                                           00428300          
-          OLDUSER := TRUE ;                                             00428400          
-          IF STATION = DIRCTRY [I + 1] THEN                             00428500          
-            GO TO OLD ;                                                 00428600          
-          C := I ;                                                      00428700          
-        END ELSE                                                        00428800          
-        IF U = 0 AND NOT OLDUSER THEN                                   00428900          
-          C := I ;                                                      00429000          
-      IF C NEQ 200 THEN                                                 00429100          
-        I := C                                                          00429300          
-      ELSE IF I LEQ 88 THEN                                             00432500          
-        DIRCTRY [I + 2] := 12                                           00433500          
-      ELSE                                                              00434500          
-        WHILE DIRCTRY [I := I - 2] LSS 0 DO ;                           00435000          
- OLD:                                                                   00436500          
-      C := SLOTI := I / 2 ;                                             00437000          
-      DIRCTRY [I] := - USERCODE ;                                       00437500          
-      DIRCTRY [I + 1] := STATION ;                                      00438000          
-      WRITE (R1 [45], 90, DIRCTRY [*]) ;                                00438500          
-      IF NOT OLDUSER THEN                                               00438600          
-        GO TO NEW ;                                                     00438700          
-      INTOVR := FAULT ;                                                 00439500          
-      FLAG := FAULT ;                                                   00440500          
-      RESTORESTATE ;                                                    00441000          
-      STATION := STATIONI ;                                             00441500          
-      IF VN LSS 94 OR VN GTR VERSION THEN                               00441800          
-        GO TO FAULT ;                                                   00441900          
-      IF FILECLOSED THEN                                                00443000          
-        GO TO MAILCALL ;                                                00444500          
-      IF D GTR MAXFILELENGTH THEN                                       00445100          
-        GO TO FAULT ;                                                   00445200          
-      READ SEEK (R2 [32 | C]) ;                                         00445300          
-      SECURITYCHECK ;                                                   00447000          
-      IF INPUT [5] + 2 LSS D OR INPUT [3] NEQ 10 THEN                   00450000          
-        ERROR (MAILCALL, 3, PREFIX, SUFFIX) ;                           00452500          
-      AT := D.LEFTSIDE ;                                                00453000          
-      FOR I := 0 STEP 1 UNTIL AT DO                                     00453100          
-        READ (R2, 256, LINKLISTS [USER32 + I, *]) [FAULT] ;             00453200          
-      AT := 0 ;                                                         00453500          
-      FOR I := 1 STEP 1 UNTIL D DO                                      00454000          
-      BEGIN                                                             00454100          
-        IF AT NEQ LL [AT := LL [AT] . T] . F THEN                       00454400          
-          I := D                                                        00454500          
-        ELSE IF AT = 1 THEN                                             00454600          
-          ERROR (NEXT, 6, PREFIX, SUFFIX) ;                             00455000          
-      END ;                                                             00455100          
-      ERROR (MAILCALL, 7, "LINKLIS", "T ERROR") ;                       00456500          
- NEW:                                                                   00458500          
-      WRITE (R2 [32 | C + 31], 1, IMAGE [*]) ;                          00459000          
-      LOCK (R2) ;                                                       00459500          
-      USER32 := USER | 32 ;                                             00460000          
-      BOOL := INITIALBOOL ;                                             00461000          
-      INC := 100 ;                                                      00462500          
-      MACROLIBRARY := "MACRO  " ;                                       00462900          
-      CHARACTER := "#" ;                                                00463000          
-      SAVEFACTOR := 7 ;                                                 00463500          
-      COLSTOPS := STRINGI := 0 ;                                        00465000          
-      FILL RSWD [*] WITH "EXECUTE", "DITTO  ", "COPY   ", "INLINE ",    00466000          
-        "ZIP    ", "CHANGE ", "EDIT   ", "SAVE   ", "RESEQ  ",          00466500          
-        "PUNCH  ", "PRINT  ", "DELETE ", "CLOSE  ", "COMPILE",          00467000          
-        "COLUMN ", "SCAN   ", "LISTING", "INC    ", "TAB    ",          00467500          
-        "PERCENT", "QUICK  ", "LIST   ", "OPEN   ", "MAIL   ",          00468000          
-        "TEACH  ", "REMOVE ", "REPLACE", "END    " ;                    00468500          
- MAILCALL:                                                              00469000          
-      FILEACCESS := 0 ;                                                 00469100          
-      INORDER := TRUE ;                                                 00469200          
- NEXT:                                                                  00469300          
-      TRANSLATEI := REAL (TRANSLATING) ;                                00472100          
-      VN := VERSION ;                                                   00472200          
-      ERRORX (0, (IF XFILE ("MAIL % ", USERCODE, -1) = 7 THEN "MAIL % " 00489500          
-        ELSE "HELLO  ") & REAL (NOT OLDUSER)[42:47:1], USERCODE) ;      00490000          
-    END INITIALIZE ;                                                    00490500          
-      LASTUSER := MAXUSERS ;                                            00490600          
-      IF QINPUT THEN                                                    00491000          
-      BEGIN                                                             00491100          
-        QINPUT := FALSE ;                                               00491200          
-        GO TO INPUTFULL ;                                               00491300          
-      END ;                                                             00491400          
-      IF STATION NEQ 0 THEN                                             00493200          
-      BEGIN                                                             00493300          
-        LASTUSER := USER ;                                              00493400          
- NEXT:                                                                  00493410          
-        IF MORE THEN                                                    00493500          
-          GO TO EXIT ;                                                  00494000          
-      END ;                                                             00494400          
-      IF NOT Q AND READYQTOP GTR 0 THEN                                 00494600          
-      BEGIN                                                             00494700          
-        LASTUSER := REAL (WAITX (0, BOOLEAN (3))) ;                     00494800          
-        SECURITYCHECK ;                                                 00494900          
-        GO TO EXIT ;                                                    00495000          
-      END ;                                                             00495100          
- AGAIN:                                                                 00495200          
-      CHARGE (0) ;                                                      00495300          
-      IF 2 | BIGBIRD LSS C := STATUS (ZIPPY [*]) - 2 THEN               00495500          
-      BEGIN                                                             00495600          
-        LASTUSER := BIGBIRD + 1 ;                                       00495650          
-        FOR X := 0 STEP 2 UNTIL C DO                                    00495700          
-        BEGIN                                                           00495800          
-          STATION := 0 & ZIPPY [X] [9:9:9] ;                            00495900          
-          FOR USER := 0 STEP 1 UNTIL BIGBIRD DO                         00496000          
-            IF STATION = STATIONI THEN                                  00496100          
-              USER := MAXUSERS ;                                        00496200          
-          IF USER LEQ MAXUSERS THEN                                     00496300          
-          BEGIN                                                         00496400          
-            IF BIGBIRD LSS MAXUSER THEN                                 00496500          
-            BEGIN                                                       00496600          
-              USERCODE := ZIPPY [X + 1] ;                               00496700          
-              INITIALIZE ;                                              00496800          
-              GO TO NEXT ;                                              00496900          
-            END ;                                                       00497000          
-            NOMOREROOM ;                                                00497100          
-          END ;                                                         00497300          
-        END ;                                                           00497400          
-      END ;                                                             00497500          
-      IF X := READTWX NEQ 0 THEN                                        00497600          
-      BEGIN                                                             00497700          
-        IF X = 2 THEN                                                   00497800          
-          GO TO AGAIN ;                                                 00497900          
-        GO TO ESCAPE ;                                                  00498100          
-      END ;                                                             00498300          
- INPUTFULL:                                                             00506000          
-      X := INPUT [0] ;                                                  00506100          
-      USER := 0 ;                                                       00506500          
-      WHILE STATIONI NEQ 0 & X[9:9:9] DO                                00507000          
-        IF USER := USER + 1 GTR BIGBIRD THEN                            00507500          
-          GO TO AGAIN ;                                                 00507600          
-      CHARGE (X) ;                                                      00508000          
-      IF C := CHRS NEQ 0 THEN                                           00508500          
-        READ (IO [USER], 30, IMAGE [*]) ;                               00509000          
-      BREAKI := 0 ;                                                     00511000          
-      IF LINEEDIT (INPUT [1], IMAGE, C, C,                              00512000          
-                   TRANSLATEI, C GTR 240, 241) THEN                     00512100          
-        ERROR (AGAIN, 7, "DEL{!~ ", CHRS := 0) ;                        00512300          
-      IF BOOLEAN (X.[25:1]) THEN                                        00512500          
-      BEGIN                                                             00512600          
-        IF FIRSTCHAR (INPUT [5]) = "~" THEN                             00513000          
-          C := C - 4 ;                                                  00513500          
-        CHRS := C ;                                                     00513700          
-        WRITE (IO [USER], 30, IMAGE [*]) ;                              00514000          
-        GO TO AGAIN ;                                                   00520000          
-      END ;                                                             00520500          
-      IF BOOLEAN (INREADYQ) THEN                                        00520600          
-        ERROR (AGAIN, 7, "PLEASE ", "WAIT...") ;                        00520700          
-      WRITELFCR ;                                                       00520800          
-      CHRS := C ;                                                       00520810          
-      CLOCK := T0 ;                                                     00520850          
-      T1 := TIMEX ;                                                     00520900          
-      IF OUTPUTREADY THEN                                               00520950          
-        NEXTCLOCK := CLOCK - T0 | (TN - T1 - 90) / 150 ;                00520960          
-      IF LASTUSER NEQ LASTUSER := USER THEN                             00522000          
-        RESTORESTATE ;                                                  00522500          
-      SECURITYCHECK ;                                                   00522600          
-      WAITFLAG := FALSE ;                                               00522700          
- EXIT:                                                                  00532000          
-      IF FINALANALYSIS THEN                                             00532500          
-        GO TO NEXT ;                                                    00533500          
-      IF OUTPUTREADY THEN                                               00533600          
-        IF TN - 60 LEQ TIMEX THEN                                       00533700          
-          OUTPUT ;                                                      00533800          
- ESCAPE:                                                                00534500          
-    END READIN ;                                                        00546500          
- % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        00547000          
- DEFINE RDISC (RDISC1, RDISC2) =                                        00547100          
-     IF RDISCX (RDISC1, RDISC2) THEN GO TO NEXT# ;                      00547200          
- BOOLEAN PROCEDURE RDISCX (WHERE, IMAGE) ;                              00547500          
- VALUE WHERE ;                                                          00548000          
- INTEGER WHERE ;                                                        00548500          
- ARRAY IMAGE [0] ;                                                      00549000          
-    BEGIN                                                               00549500          
- LABEL EOF ;                                                            00549600          
- STREAM PROCEDURE ZOT (D) ;                                             00549710          
- BEGIN                                                                  00549720          
-    DI := D ;                                                           00549730          
-    DS := RESET ;                                                       00549740          
- END ZOT ;                                                              00549750          
-      IF PREWHERE + 1 NEQ PREWHERE := ABS (WHERE) - 2 THEN              00550000          
-        READ SEEK (DISC [PREWHERE]) ;                                   00550500          
-      READ (DISC, 10, IMAGE [*]) [EOF] ;                                00551000          
-      IF COBOLFILE THEN                                                 00551010          
-        ZOT (IMAGE) ;                                                   00551020          
-      IF WHERE LSS 0 THEN                                               00551030          
-        SEQUENCE ;                                                      00551040          
-      IF FALSE THEN                                                     00551100          
-      BEGIN                                                             00551150          
- EOF:                                                                   00551200          
-        ERRORX (5, "AT SEQ#", OCTDEX (N)) ;                             00551250          
-        RDISCX := TRUE ;                                                00551350          
-        PREWHERE := -2 ;                                                00551400          
-      END ;                                                             00551450          
-    END RDISC ;                                                         00551500          
- % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        00552000          
- DEFINE WRITEAT =                                                       00552500          
-    IF WRITEATX (QUICK, -N, RECORD) THEN                                00552800          
-      GO TO NEXT# ;                                                     00552900          
- BOOLEAN PROCEDURE WRITEATX (QUICK, NN, RECORD) ;                       00553000          
- VALUE QUICK, NN ;                                                      00553100          
- BOOLEAN QUICK ;                                                        00553200          
- INTEGER NN ;                                                           00553300          
- ARRAY RECORD [0] ;                                                     00553400          
-    BEGIN                                                               00554000          
- LABEL NEXT ;                                                           00554100          
-      N := ABS (NN) ;                                                   00555500          
-      IF NOT COBOLFILE THEN                                             00556000          
-        WRITESEQ ;                                                      00556500          
-      IF NN LSS 0 THEN                                                  00556600          
-        RDISC (AT, RECORD) ;                                            00557000          
-      IF COBOLFILE THEN                                                 00557500          
-        RECORD [0].[1:35] := OCTDEC (N) ;                               00558000          
-      WRITEROW (RECORD, QUICK, FILEINFO) ;                              00558500          
-      IF BOOLEAN (BREAKI) THEN                                          00559600          
- NEXT:                                                                  00559700          
-        WRITEATX := TRUE ;                                              00559800          
-    END WRITEAX ;                                                       00560000          
- DEFINE WRITEME (WRITEME1, WRITEME2) =                                  00560100          
-    IF WRITEATX (QUICK, WRITEME1, WRITEME2) THEN                        00560200          
-      GO TO NEXT# ;                                                     00560300          
- % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        00560500          
- BOOLEAN PROCEDURE TOGGLE (OLDVALUE, I) ;                               00561000          
- VALUE OLDVALUE,                                                        00561500          
-   I ;                                                                  00562000          
- BOOLEAN OLDVALUE ;                                                     00562500          
- REAL I ;                                                               00563000          
- BEGIN                                                                  00563500          
- LABEL NEXT ;                                                           00564000          
-    IF I = 3 THEN                                                       00564100          
-    BEGIN                                                               00564110          
-      IF REAL (OLDVALUE) = "ALGOL  " THEN                               00564120          
-        TOGGLE := BOOLEAN (ALGOL)                                       00564130          
-      ELSE IF REAL (OLDVALUE) = "XALGOL " THEN                          00564140          
-        TOGGLE := BOOLEAN (XALGOL)                                      00564150          
-      ELSE IF REAL (OLDVALUE) = "DATA   " THEN                          00564160          
-        TOGGLE := BOOLEAN (DATA)                                        00564170          
-      ELSE IF REAL (OLDVALUE) = "FORTRAN" THEN                          00564180          
-        TOGGLE := BOOLEAN (FORTRAN)                                     00564190          
-      ELSE IF REAL (OLDVALUE) = "COBOL  " THEN                          00564200          
-        TOGGLE := BOOLEAN (COBOL)                                       00564210          
-      ELSE IF REAL (OLDVALUE) = "BASIC  " THEN                          00564220          
-        TOGGLE := BOOLEAN (BASIC) ;                                     00564230          
-      GO TO NEXT ;                                                      00564240          
-    END ;                                                               00564250          
-    IF (IF I = 1 THEN EMPTY1 ELSE EMPTY2) THEN                          00564500          
-      ERROR (NEXT, 7, PARAMETER0, ONOFF (TOGGLE := OLDVALUE)) ;         00565000          
-    I := IF I = 1 THEN PARAMETER1 ELSE PARAMETER2 ;                     00565100          
-    IF NOT (TOGGLE := I = "ON     ") THEN                               00565500          
-      IF I NEQ "OFF    " THEN                                           00566000          
-        ERRORX (0, "MISSING", " ON/OFF") ;                              00566500          
- NEXT:                                                                  00567000          
- END TOGGLE ;                                                           00567500          
- DEFINE FILETYPE (FILETYPE1) = REAL (TOGGLE (BOOLEAN (FILETYPE1), 3))# ;00567600          
- % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        00568000          
- BOOLEAN PROCEDURE VERIFAX (XEROX, DD) ;                                00680000          
- VALUE XEROX, DD ;                                                      00680500          
- INTEGER XEROX,                                                         00681000          
-   DD ;                                                                 00681100          
-    BEGIN                                                               00681500          
- DEFINE                                                                 00681600          
-   PRINTING = XEROX = 2#,                                               00681700          
-   PUNCHING = XEROX = 4#,                                               00681800          
-   ZIPPING = XEROX = 8# ;                                               00681900          
- FILE COPY DISK SERIAL [20:DD] (2, 10, 150, SAVE SAVEFACTOR) ;          00682000          
- BOOLEAN B ;                                                            00683500          
- REAL L ;                                                               00684000          
- LABEL NEXT ;                                                           00684500          
-      XLOCKED := TRUE ;                                                 00687000          
-      IF BOOLEAN (XEROX) THEN                                           00687500          
-      BEGIN                                                             00688000          
-        FILL COPY WITH PREFIX, SUFFIX, *, *, *, 12 ;                    00689000          
-        L := FIRST ;                                                    00691000          
-        WHILE AT := L.T NEQ 1 DO                                        00692000          
-        BEGIN                                                           00692500          
-          N := (L := LL [AT]).S ;                                       00693000          
-          RDISC (-AT, ZIPPY) ;                                          00693500          
-          WRITE (COPY, 10, ZIPPY [*]) ;                                 00695500          
-          INTERRUPT (1) ;                                               00696000          
-        END ;                                                           00696500          
-        READ (DISC [0]) ;                                               00697500          
-        DETACH ;                                                        00698000          
-        CLOSE (DISC, PURGE) ;                                           00698500          
-        LOCK (COPY) ;                                                   00699500          
-        REATTACH ;                                                      00700000          
-        INORDER := TRUE ;                                               00702500          
-        FILEACCESS := 0 ;                                               00705500          
-        SAVESTATE ;                                                     00706000          
-      END XEROX                                                         00706500          
-      ELSE                                                              00707000          
-      BEGIN                                                             00708000          
-        FILL COPY WITH PARAMETER1, PARAMETER2, *, *, *,                 00709000          
-          IF PRINTING THEN 15 ELSE IF PUNCHING THEN 22 ELSE 12 ;        00709500          
-        IF PRINTING THEN                                                00713000          
-        BEGIN                                                           00713500          
-          WRITE (ZIPPY [*], DATE, PREFIX.[6:6], PREFIX,                 00714000          
-            SUFFIX.[6:6], SUFFIX, (L := TIME (1)) DIV 216000,           00714500          
-            L DIV 3600 MOD 60, TIME (6), MMDDYY,                        00715000          
-            USERCODE.[6:6], USERCODE) ;                                 00715500          
-          DETACH ;                                                      00716000          
-          WRITE (COPY [DBL], 17, ZIPPY [*]) ;                           00716500          
-          REATTACH ;                                                    00719000          
-        END ;                                                           00720000          
-        L := N ;                                                        00720500          
-        DD := M := 0 ;                                                  00721000          
-        B := PRINTING AND PARAMETER2 = "DOUBLE " ;                      00721100          
-        WHILE N := LL [DD := LL [DD].T].S LEQ PARAMETER4 DO             00721500          
-          IF PARAMETER3 LEQ N THEN                                      00722000          
-          BEGIN                                                         00723000          
-            RDISC (DD & (REAL (NOT ZIPPING))[1:47:1], ZIPPY) ;          00723500          
-            IF PRINTING THEN                                            00724000          
-              ZIPPY [14] := OCTDEX (M := M + 1) & "#"[1:43:5] ;         00724500          
-            IF B THEN                                                   00726000          
-              WRITE (COPY [DBL], 17, ZIPPY [*])                         00726500          
-            ELSE WRITE (COPY, 17, ZIPPY [*]) ;                          00727000          
-            INTERRUPT (1) ;                                             00727500          
-          END                                                           00728000          
-          ELSE M := M + 1 ;                                             00728500          
-        IF ZIPPING THEN                                                 00729000          
-          ZIP WITH COPY ;                                               00729500          
-        LOCK (COPY) ;                                                   00730000          
-        N := L ;                                                        00730500          
-      END THERMOFAX ;                                                   00731000          
-      IF FALSE THEN                                                     00731100          
- NEXT:                                                                  00731200          
-        VERIFAX := TRUE ;                                               00731300          
-      XLOCKED := FALSE ;                                                00731400          
-    END VERIFAX ;                                                       00731500          
- DEFINE THERMOFAX (THERMOFAX1, THERMOFAX2) =                            00731600          
-    BEGIN                                                               00731650          
-      WAIT (KOUNT (PARAMETER3, PARAMETER4, CLOCK), XLOCKED) ;           00731700          
-      IF VERIFAX (THERMOFAX1, THERMOFAX2) THEN                          00731750          
-        GO TO NEXT ;                                                    00731800          
-    END#,                                                               00731850          
-  CREATEFILE (CREATEFILE1) =                                            00731900          
-    BEGIN                                                               00731950          
-      LIBRARY.AREAS := 20 ;                                             00732000          
-      LIBRARY.AREASIZE := CREATEFILE1 ;                                 00732010          
-      LIBRARY.SAVE := SAVEFACTOR ;                                      00732020          
-      WRITE (LIBRARY, 10, RECORD [*]) ;                                 00732030          
-      LOCK (LIBRARY) ;                                                  00732040          
-      LIBRARY.AREASIZE := 0 ;                                           00732050          
-      LIBRARY.AREAS := 0 ;                                              00732060          
-    END#,                                                               00732100          
-  CLOSEMYFILE =                                                         00732150          
-    BEGIN                                                               00732200          
-      IF NOT INORDER THEN                                               00732250          
-      BEGIN                                                             00732300          
-        WAIT (KOUNT (1, FINITY, CLOCK), XLOCKED) ;                      00732350          
-        IF VERIFAX (17, (D + 14) DIV 15 | 15) THEN                      00732400          
-          GO TO NEXT ;                                                  00732450          
-      END ELSE                                                          00732500          
-      BEGIN                                                             00732550          
-        FILEACCESS := 0 ;                                               00732600          
-        CLOSE (DISC) ;                                                  00732650          
-      END ;                                                             00732700          
-    END# ;                                                              00732750          
- % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        00733000          
- DEFINE WDISC = IF WDISCX (IMAGE) THEN GO TO NEXT# ;                    00733500          
- BOOLEAN PROCEDURE WDISCX (IMAGE) ;                                     00734000          
- ARRAY IMAGE [0] ;                                                      00734500          
-    BEGIN                                                               00735000          
- REAL L ;                                                               00735100          
- LABEL EOT,                                                             00735500          
-   NEXT ;                                                               00735600          
-      WHILE N GTR (L := LL [AT]).S DO                                   00743500          
-        AT := L.T ;                                                     00744000          
-      WHILE N LSS (L := LL [AT]).S DO                                   00744500          
-        AT := L.F ;                                                     00745000          
-      IF N NEQ L.S THEN                                                 00745500          
-      BEGIN                                                             00746000          
-        IF D GEQ MAXFILELENGTH THEN                                     00746500          
-          ERROR (NEXT, 0, "FILE TO", " LONG. ") ;                       00747000          
-        IF PREWHERE NEQ PREWHERE := D - 2 THEN                          00747100          
-         READ SEEK (DISC [PREWHERE + 1]) ;                              00747200          
-        L := LL [D := D + 1] := (L.T) & N [SF] & AT [FF] ;              00747500          
-        MODIFY (D) ;                                                    00748000          
-        LL [AT] . T := D ;                                              00748500          
-        MODIFY (AT) ;                                                   00748600          
-        AT := L.T ;                                                     00749000          
-        IF AT NEQ 1 THEN                                                00749500          
-          INORDER := FALSE ;                                            00750000          
-        LL [AT] . F := D ;                                              00750500          
-        MODIFY (AT) ;                                                   00750600          
-        AT := D ;                                                       00751000          
-      END ;                                                             00751500          
-      SEQUENCE ;                                                        00752000          
-      IF PREWHERE + 1 NEQ PREWHERE := AT - 2 THEN                       00752500          
-        WRITE (DISC [PREWHERE], 10, IMAGE [*])                          00753000          
-      ELSE WRITE (DISC, 10, IMAGE [*]) [EOT] ;                          00753500          
-      N := N + INC ;                                                    00753510          
-      IF FALSE THEN                                                     00753600          
-      BEGIN                                                             00753610          
- EOT:                                                                   00753620          
-        LL [L.F] . T := AT := L.T ;                                     00753630          
-        LL [AT] . F := L.F ;                                            00753640          
-        D := D - 1 ;                                                    00753650          
-        INORDER := FALSE ;                                              00753660          
-        SHOW ("FILE   ", "FULL.  ") ;                                   00753670          
-        ERRORX (0, "PLEASE ", "REOPEN.") ;                              00753690          
- NEXT:                                                                  00753700          
-        WDISCX := TRUE ;                                                00753800          
-      END ;                                                             00753900          
-    END WDISC ;                                                         00754000          
- % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        00754500          
- INTEGER PROCEDURE GETPARAMETERS (N) ; VALUE N ; INTEGER N ;            00754600          
-      BEGIN                                                             00754650          
- INTEGER STREAM PROCEDURE STAR (S, D, E) ; VALUE E ;                    00754700          
-    BEGIN                                                               00754750          
- LOCAL N,                                                               00754800          
-   PLUS,                                                                00754850          
-   MINUS,                                                               00754900          
-   CROSSHATCH,                                                          00754950          
-   K ;                                                                  00755000          
- LABEL DEBLANK,                                                         00755050          
-   NALPHA,                                                              00755100          
-   BLANK,                                                               00755150          
-   NUMALPHA,                                                            00755200          
-   GETREPEAT ;                                                          00755250          
-      SI := S ;                                                         00755300          
-      SI := SI - 1 ;                                                    00755350          
-      DI := D ;                                                         00755400          
-      5 (DS := 8 LIT "+#000000") ;                                      00755450          
-      DI := D ;                                                         00755500          
-      E (IF SC = "(" THEN JUMP OUT ;                                    00755550          
-         IF SC = "@" THEN JUMP OUT TO GETREPEAT ;                       00755600          
-         IF SC = ";" THEN JUMP OUT TO GETREPEAT ;                       00755650          
-         SI := SI + 1) ;                                                00755700          
-      5 (TALLY := 0 ;                                                   00755750          
-      K := TALLY ;                                                      00755800          
-      PLUS := TALLY ;                                                   00755850          
-      MINUS := TALLY ;                                                  00755900          
-      CROSSHATCH := TALLY ;                                             00755950          
-      TALLY := 1 ;                                                      00756000          
- DEBLANK:                                                               00756050          
-      SI := SI + 1 ;                                                    00756100          
-      IF SC = " " THEN                                                  00756150          
-        GO TO DEBLANK ;                                                 00756200          
-      IF SC = ALPHA THEN                                                00756250          
-        TALLY := 0                                                      00756300          
-      ELSE                                                              00756350          
-      BEGIN                                                             00756400          
-        IF SC = ";" THEN                                                00756450          
-          JUMP OUT TO GETREPEAT ;                                       00756500          
-        IF SC = """ THEN                                                00756550          
-          JUMP OUT TO GETREPEAT ;                                       00756600          
-        IF SC = "(" THEN                                                00756650          
-          JUMP OUT TO GETREPEAT ;                                       00756700          
-        IF SC = "[" THEN                                                00756750          
-          JUMP OUT TO GETREPEAT ;                                       00756800          
-        IF SC = "." THEN                                                00756850          
-          JUMP OUT TO GETREPEAT ;                                       00756900          
-        IF SC = "@" THEN                                                00756950          
-          JUMP OUT TO GETREPEAT ;                                       00757000          
-        IF SC = "/" THEN                                                00757050          
-          K := TALLY                                                    00757100          
-        ELSE IF SC = "+" THEN                                           00757150          
-          PLUS := TALLY                                                 00757200          
-        ELSE IF SC = "#" THEN                                           00757250          
-          CROSSHATCH := TALLY                                           00757300          
-        ELSE IF SC = "-" THEN                                           00757350          
-          MINUS := TALLY ;                                              00757400          
-        GO TO DEBLANK ;                                                 00757450          
-      END ;                                                             00757500          
-      IF SC GEQ "0" THEN                                                00757550          
-      BEGIN                                                             00757600          
-        K (JUMP OUT TO NALPHA) ;                                        00757650          
-        K := SI ;                                                       00757700          
-        8 (IF SC LSS "0" THEN                                           00757750          
-          JUMP OUT ;                                                    00757800          
-        TALLY := TALLY + 1 ;                                            00757850          
-        SI := SI + 1) ;                                                 00757900          
-        N := TALLY ;                                                    00757950          
-        IF TOGGLE THEN                                                  00758000          
-        BEGIN                                                           00758050          
-          IF SC = ALPHA THEN                                            00758100          
-            GO TO NUMALPHA ;                                            00758150          
- BLANK:                                                                 00758200          
-          IF SC = " " THEN                                              00758250          
-          BEGIN                                                         00758300          
-            SI := SI + 1 ;                                              00758350          
-            GO TO BLANK ;                                               00758400          
-          END ;                                                         00758450          
-          IF SC = "/" THEN                                              00758500          
-          BEGIN                                                         00758550          
- NUMALPHA:                                                              00758600          
-            SI := K ;                                                   00758650          
-            GO TO NALPHA ;                                              00758700          
-          END ;                                                         00758750          
-        END ;                                                           00758800          
-        SI := K ;                                                       00758850          
-        DS := N OCT ;                                                   00758900          
-      END                                                               00758950          
-      ELSE                                                              00759000          
-      BEGIN                                                             00759050          
- NALPHA:                                                                00759100          
-        DS := 1 LIT "+" ;                                               00759150          
-        7 (IF SC = ALPHA THEN                                           00759200          
-          DS := 1 CHR                                                   00759250          
-        ELSE DS := 1 LIT " ") ;                                         00759300          
-      END ;                                                             00759350          
-      DI := DI - 8 ;                                                    00759400          
-      SKIP 2 DB ;                                                       00759450          
-      DS := PLUS SET ;                                                  00759500          
-      DI := DI - 1 ;                                                    00759550          
-      SKIP 3 DB ;                                                       00759600          
-      DS := MINUS SET ;                                                 00759650          
-      DI := DI - 1 ;                                                    00759700          
-      SKIP 4 DB ;                                                       00759750          
-      DS := CROSSHATCH SET ;                                            00759800          
-      DI := DI + 7 ;                                                    00759850          
-      SI := SI - 1) ;                                                   00759900          
- GETREPEAT:                                                             00759910          
-      E (IF SC = ")" THEN JUMP OUT ;                                    00759950          
-         IF SC = ";" THEN JUMP OUT ;                                    00760000          
-         IF SC = "@" THEN JUMP OUT ;                                    00760050          
-         SI := SI + 1) ;                                                00760100          
-      E (DI := LOC STAR ;                                               00760200          
-         DS := 8 LIT "00000001" ;                                       00760250          
-         DI := DI - 8 ;                                                 00760300          
-         10 (IF SC = ";" THEN JUMP OUT ;                                00760350          
-             IF SC GEQ "0" THEN                                         00760400          
-             BEGIN                                                      00760450          
-               TALLY := 1 ;                                             00760500          
-               3 (SI := SI + 1 ;                                        00760550          
-                  IF SC LSS "0" THEN JUMP OUT ;                         00760600          
-                  TALLY := TALLY + 1) ;                                 00760650          
-               K := TALLY ;                                             00760700          
-               SI := SI - K ;                                           00760750          
-               DS := K OCT ;                                            00760800          
-               JUMP OUT ;                                               00760850          
-             END ;                                                      00760900          
-             SI := SI + 1) ;                                            00760950          
-         JUMP OUT) ;                                                    00761000          
- END STAR ;                                                             00761050          
- DEFINE XSUB = (XDEX + 1) | 13# ;                                       00761100          
-    IF N = 0 THEN                                                       00761150          
-      GETPARAMETERS := STAR (IMAGE, PARAMETER0, 0)                      00761200          
-    ELSE                                                                00761250          
-      GETPARAMETERS := STAR (IMAGE, XPARAMETERS [0], 63) ;              00761300          
- END GET PARAMETERS ;                                                   00761350          
- % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        00761400          
- INTEGER PROCEDURE VERB ;                                               00763900          
- BEGIN                                                                  00764000          
- BOOLEAN PROCEDURE NUMBER (N, C) ;                                      00764100          
- INTEGER N ;                                                            00764300          
- REAL C ;                                                               00764400          
-  BEGIN                                                                 00764500          
- INTEGER XDEXX ;                                                        00764510          
- LABEL ZERO ;                                                           00764520          
-   IF XDEX GEQ 0 THEN                                                   00764530          
-   BEGIN                                                                00764540          
-     XDEXX := XDEX + 1 ;                                                00764550          
-     WHILE BOOLEAN (C.[4:1]) AND XDEXX := XDEXX - 1 GEQ 0 DO            00764560          
-       C := XARRAY [USER, XDEXX|13 + ABS (C&0[1:44:4]-1) MOD 5] ;       00764570          
-   END ;                                                                00764580          
-   C.[4:1] := 0 ;                                                       00764600          
-   IF NUMBER := (NOT BOOLEAN (C.[1:1])) & (C = -"#000000")[46:47:1] THEN00764610          
-   BEGIN                                                                00764620          
-    IF C . [2:2] NEQ 0 AND FILEOPEN THEN                                00764700          
-    BEGIN                                                               00764800          
-      C . [1:3] := C . [3:3] ;                                          00764900          
-      IF C = 0 THEN                                                     00765100          
-      BEGIN                                                             00765200          
-        C := N ;                                                        00765300          
-        GO TO ZERO ;                                                    00765400          
-      END ;                                                             00765500          
-      IF NOT (ITSOLD (N) OR BOOLEAN (C . [1:1])) THEN                   00765600          
-        C := C - 1 ;                                                    00765700          
-      FOR N := 1 - C STEP 1 UNTIL 0 DO                                  00765800          
-        IF AT := LL [AT] . T = 1 THEN                                   00765900          
-        BEGIN                                                           00766000          
-          N := 0 ;                                                      00766100          
-          AT := LAST . F ;                                              00766200          
-        END ;                                                           00766300          
-      FOR N := C + 1 STEP 1 UNTIL 0 DO                                  00766400          
-        IF AT := LL [AT] . F = 0 THEN                                   00766500          
-        BEGIN                                                           00766600          
-          N := 0 ;                                                      00766700          
-          AT := FIRST . T ;                                             00766800          
-        END ;                                                           00766900          
-      C := LL [AT] . S ;                                                00767000          
-    END ELSE C.[2:2] := 0 ;                                             00767100          
- ZERO:                                                                  00767200          
-    C := MIN (FINITY, MAX (1, N := C)) ;                                00767300          
-   END ELSE                                                             00767310          
-     C.[1:3] := 0 ;                                                     00767320          
-  END NUMBER ;                                                          00767400          
- % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        00767500          
- INTEGER STREAM PROCEDURE INLINEEDIT (S, D, T, C, N, BIDR, INITIAL) ;   00767600          
- VALUE INITIAL,                                                         00767700          
-   C,                                                                   00767800          
-   N,                                                                   00767900          
-   BIDR ;                                                               00768000          
-    BEGIN                                                               00768100          
- LABEL SEARCH,                                                          00768200          
-   INSERT,                                                              00768300          
-   DELETE,                                                              00768400          
-   REPLACE,                                                             00768500          
-   WRAPUP,                                                              00768600          
-   LOOP,                                                                00768700          
-   ERROR1,                                                              00768710          
-   HERE,                                                                00768720          
-   THERE,                                                               00768730          
-   IDR,                                                                 00768800          
-   XIT ;                                                                00768900          
-      BIDR (SI := S ; SI := SI + 6 ; S := SI ;                          00769000          
-            SI := D ; SI := SI + 6 ; D := SI ;                          00769100          
-            DI := T ; DS := 6 LIT "0" ; T := DI ;                       00769200          
-            SI := C ; SI := SI - 48 ; C := SI) ;                        00769300          
-      DI := LOC BIDR ;                                                  00769400          
-      DS := 4 LIT " IDR" ;                                              00769500          
-      DI := T ;                                                         00769600          
-      SI := T ;                                                         00769700          
-      DS := 8 LIT " " ;                                                 00769800          
-      DS := 9 WDS ;                                                     00769900          
-      2 (N (CI := CI + INITIAL ;                                        00770400          
-      GO TO SEARCH ;                                                    00770500          
-      GO TO IDR ;                                                       00770600          
-      GO TO IDR ;                                                       00770700          
-      GO TO IDR ;                                                       00770800          
-      GO TO WRAPUP ;                                                    00770900          
- SEARCH:                                                                00771000          
-      SI := LOC C ;                                                     00771100          
-      SI := SI + 6 ;                                                    00771200          
-      DI := LOC N ;                                                     00771300          
-      IF 2 SC = DC THEN                                                 00771400          
-        GO TO ERROR1 ;                                                  00771500          
-      SI := C ;                                                         00771900          
-      SI := SI - 8 ;                                                    00772000          
-      C := SI ;                                                         00772100          
-      SI := D ;                                                         00772200          
-      DI := T ;                                                         00772300          
-      DS := 1 CHR ;                                                     00772400          
-      D := SI ;                                                         00772500          
-      T := DI ;                                                         00772600          
-      SI := S ;                                                         00772700          
-      DI := LOC BIDR ;                                                  00772800          
-      4 (IF SC = DC THEN                                                00772900          
-         JUMP OUT ;                                                     00773000          
-      SI := SI - 1 ;                                                    00773100          
-      TALLY := TALLY + 1) ;                                             00773200          
-      IF TOGGLE THEN                                                    00773300          
-      ELSE                                                              00773400          
-      BEGIN                                                             00773500          
- ERROR1:                                                                00773510          
-        TALLY := 1 ;                                                    00773600          
-        JUMP OUT 2 TO HERE ;                                            00773700          
-      END ;                                                             00773800          
-      INITIAL := TALLY ;                                                00773900          
-      TALLY := 0 ;                                                      00774000          
-      S := SI ;                                                         00774100          
-      GO TO LOOP ;                                                      00774200          
- IDR:                                                                   00774300          
-      SI := LOC C ;                                                     00774400          
-      SI := SI + 6 ;                                                    00774500          
-      DI := LOC N ;                                                     00774600          
-      IF 2 SC = DC THEN                                                 00774700          
-      BEGIN                                                             00774800          
-        SI := D ;                                                       00774900          
-        DI := T ;                                                       00775000          
-        TALLY := 4 ;                                                    00775100          
-        INITIAL := TALLY ;                                              00775200          
- WRAPUP:                                                                00775300          
-        DS := 1 CHR ;                                                   00775400          
-        GO TO LOOP ;                                                    00775500          
-      END ;                                                             00775600          
-      SI := C ;                                                         00775700          
-      SI := SI - 8 ;                                                    00775800          
-      C := SI ;                                                         00775900          
-      SI := S ;                                                         00776000          
-      CI := CI + INITIAL ;                                              00776100          
-      GO TO WRAPUP ;                                                    00776200          
-      GO TO INSERT ;                                                    00776300          
-      GO TO DELETE ;                                                    00776400          
-      GO TO REPLACE ;                                                   00776500          
- INSERT:                                                                00776600          
-      DI := T ;                                                         00776700          
-      DS := 1 CHR ;                                                     00776800          
-      S := SI ;                                                         00776900          
-      T := DI ;                                                         00777000          
-      DI := INLINEEDIT ;                                                00777100          
-      DI := DI + 8 ;                                                    00777200          
-      INLINEEDIT := DI ;                                                00777300          
-      GO TO LOOP ;                                                      00777400          
- DELETE:                                                                00777500          
-      DI := D ;                                                         00777600          
-      DI := DI + 1 ;                                                    00777700          
-      D := DI ;                                                         00777800          
-      SI := SI + 1 ;                                                    00777900          
-      S := SI ;                                                         00778000          
-      GO TO LOOP ;                                                      00778100          
- REPLACE:                                                               00778200          
-      DI := T ;                                                         00778300          
-      DS := 1 CHR ;                                                     00778400          
-      S := SI ;                                                         00778500          
-      T := DI ;                                                         00778600          
-      SI := D ;                                                         00778700          
-      SI := SI + 1 ;                                                    00778800          
-      D := SI ;                                                         00778900          
- LOOP:                                                                  00779000          
-     )) ;                                                               00779100          
-      GO TO THERE ;                                                     00779110          
- HERE:                                                                  00779120          
-      GO TO XIT ;                                                       00779130          
- THERE:                                                                 00779140          
-      TALLY := 0 ;                                                      00779200          
-      S := SI ;                                                         00779300          
-      SI := LOC INLINEEDIT ;                                            00779400          
-      DI := LOC BIDR ;                                                  00779500          
-      SI := SI + 6 ;                                                    00779600          
-      DI := DI + 7 ;                                                    00779700          
-      DS := 1 CHR ;                                                     00779800          
-      SI := S ;                                                         00779900          
-      BIDR (2 (32 (IF SC NEQ " " THEN                                   00780000          
-                   BEGIN                                                00780100          
-                     TALLY := 2 ;                                       00780200          
-                     JUMP OUT 3 TO XIT ;                                00780300          
-                   END ;                                                00780400          
-                   SI := SI + 1))) ;                                    00780500          
-      INLINEEDIT (IF SC NEQ " " THEN                                    00780600          
-                  BEGIN                                                 00780700          
-                    TALLY := 2 ;                                        00780800          
-                    JUMP OUT 1 TO XIT ;                                 00780900          
-                  END ;                                                 00781000          
-                  SI := SI + 1) ;                                       00781100          
- XIT:                                                                   00781200          
-      INLINEEDIT := TALLY ;                                             00781300          
-    END INLINE ;                                                        00781400          
- % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        00781500          
- LABEL NEXT,                                                            00786000          
-   VERBEXIT ;                                                           00786100          
- DEFINE QUICK = FALSE# ;                                                00786110          
- NEXT:                                                                  00806500          
-        READIN ;                                                        00807000          
-        IF BOOLEAN (ABNORMALEND) OR USER = MAXUSERS THEN                00807500          
-        BEGIN                                                           00808000          
-          VERB := RSWDM + REAL (USER = MAXUSERS) ;                      00809000          
-          GO TO VERBEXIT ;                                              00809500          
-        END ;                                                           00810000          
-        IF INLINETOG THEN                                               00811000          
-        BEGIN                                                           00811500          
-          INLINETOG := FALSE ;                                          00811600          
-          IF M := INLINEEDIT (IMAGE, RECORD, ZIPPY, CHRS,               00813000          
-            HALFLENGTH, FILEINFO = COBOL, M) = 0 THEN                   00813500          
-          BEGIN                                                         00814000          
-            IF INLINEECHO EQV TEMPTOG THEN                              00814100          
-              WRITEME (N, ZIPPY) ;                                      00814200          
-            IF WDISCX (ZIPPY) THEN ;                                    00814500          
-            NOSTAR := FALSE ;                                           00815000          
-            GO TO NEXT ;                                                00815200          
-          END ;                                                         00815500          
-          IF M = 2 THEN                                                 00816000          
-            ERROR (NEXT, 0, PARAMETER0, " OVRFLW") ;                    00816100          
-          ERROR (NEXT, 0, "NEEDS I", ",R OR D") ;                       00816500          
-        END ;                                                           00817500          
-        IF NOSTAR THEN                                                  00818000          
-        BEGIN                                                           00818500          
-          IF WDISCX (IMAGE) THEN ;                                      00822500          
-          GO TO NEXT ;                                                  00826000          
-        END ;                                                           00826500          
-        WRITE (IO [USER], 30, IMAGE [*]) ;                              00827000          
-        I := GETPARAMETERS (0) ;                                        00828000          
-        TEMPTOG := PARAMETER0.[2:2] = 0 ;                               00828100          
-        IF NUMBER (N, PARAMETER0) THEN                                  00837000          
-        BEGIN                                                           00837100          
-          IF FILECLOSED THEN                                            00837500          
-            ERROR (NEXT, 5, " OPEN: ", OCTDEX (PARAMETER0)) ;           00838000          
-          IF NOT MOREINPUT AND ITSOLD (N := PARAMETER0) THEN            00838500          
-            WRITEAT ;                                                   00838600          
-          GO TO NEXT ;                                                  00839000          
-        END ;                                                           00839500          
-        M := RESETN := N ;                                              00839700          
-        FOR I := 0 STEP 1 UNTIL RSWDM DO                                00840000          
-          IF PARAMETER0 = RSWD [I] THEN                                 00840500          
-          BEGIN                                                         00840600          
-            RELATIVENUMBER := PARAMETER1 ;                              00840605          
-            NUM1 := NUMBER (M, PARAMETER1) ;                            00840610          
-            NUM2 := NUMBER (M, PARAMETER2) ;                            00840620          
-            NUM3 := NUMBER (M, PARAMETER3) ;                            00840630          
-            NUM4 := NUMBER (M, PARAMETER4) ;                            00840640          
-            VERB := I ;                                                 00840700          
-            GO TO VERBEXIT ;                                            00841000          
-          END ;                                                         00841010          
-        IF I := XFILE (PARAMETER0, MACROLIBRARY, -1) LSS 2              00841100          
-          AND MACROLIBRARY NEQ "MACRO  " THEN                           00841200          
-          I := XFILE (PARAMETER0, "MACRO  ", -1) ;                      00841220          
-        IF I LSS 2 OR INPUT [3] NEQ 10 THEN                             00841300          
-        BEGIN                                                           00841320          
-          SHOW (PARAMETER0, " INVALI") ;                                00841360          
-          ERROR (NEXT, 0, "D:*    ", RWTEACH) ;                         00841400          
-        END ;                                                           00841500          
- VERBEXIT:                                                              00844500          
-      END ;                                                             00845000          
- % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        00846000          
- DEFINE QUICKLIST = LISTIT (1)#,                                        00850000          
-  SCAN = LISTIT (2)#,                                                   00850100          
-  CHANGE = LISTIT (4)#,                                                 00850200          
-  EDIT = LISTIT (8)# ;                                                  00850300          
- PROCEDURE LISTIT (LISTTYPE) ; VALUE LISTTYPE ; INTEGER LISTTYPE ;      00850400          
-      BEGIN                                                             00850500          
- LABEL NEXT ;                                                           00850600          
- DEFINE QUICK = BOOLEAN (LISTTYPE) AND TRUE#,                           00850700          
-   SCANTOG = LISTTYPE = 2#,                                             00850800          
-   CHANGETOG = LISTTYPE = 4#,                                           00850900          
-   EDITTOG = LISTTYPE = 8#,                                             00851000          
-   POSTING = LISTTYPE GEQ 16# ;                                         00851100          
- BOOLEAN PROCEDURE STRINGFOUND ;                                        00851110          
- BEGIN                                                                  00851120          
- BOOLEAN STREAM PROCEDURE PRESENT (S, R, I, SR, T, ID, K) ;             00851200          
- VALUE I,                                                               00851300          
-   SR,                                                                  00851400          
-   ID,                                                                  00851500          
-   K,                                                                   00851600          
-   T ;                                                                  00851700          
-        BEGIN                                                           00851800          
- LABEL XIT ;                                                            00851900          
-          SI := S ;                                                     00852000          
-          SI := SI + K ;                                                00852100          
-          S := SI ;                                                     00852200          
-          SI := LOC SR ;                                                00852300          
-          DI := LOC K ;                                                 00852400          
-          SI := SI + 6 ;                                                00852500          
-          DI := DI + 7 ;                                                00852600          
-          DS := CHR ;                                                   00852700          
-          DI := R ;                                                     00852800          
-          K (DI := DI + 32 ; DI := DI + 32) ;                           00852900          
-          DI := DI + SR ;                                               00853000          
-          R := DI ;                                                     00853100          
-          TALLY := 1 ;                                                  00853200          
-          SI := LOC T ;                                                 00853300          
-          DI := LOC K ;                                                 00853400          
-          SI := SI + 6 ;                                                00853500          
-          DI := DI + 7 ;                                                00853600          
-          DS := 1 CHR ;                                                 00853700          
-          DI := R ;                                                     00853800          
-          K (2 (32 (                                                    00853900          
-          SI := S ;                                                     00854000          
-          IF I SC = DC THEN                                             00854100          
-          BEGIN                                                         00854200          
-            ID (JUMP OUT 4 TO XIT) ;                                    00854300          
-            R := DI ;                                                   00854400          
-            SI := R ;                                                   00854500          
-            IF SC = ALPHA THEN ELSE                                     00854600          
-            BEGIN                                                       00854700          
-              SI := SI - I ;                                            00854800          
-              SI := SI - 1 ;                                            00854900          
-              IF SC = ALPHA THEN ELSE                                   00855000          
-                JUMP OUT 3 TO XIT ;                                     00855100          
-            END ;                                                       00855200          
-          END ;                                                         00855300          
-          DI := DI - I ;                                                00855400          
-          DI := DI + 1))) ;                                             00855500          
-          T (                                                           00855600          
-          SI := S ;                                                     00855700          
-          IF I SC = DC THEN                                             00855800          
-          BEGIN                                                         00855900          
-            ID (JUMP OUT 2 TO XIT) ;                                    00856000          
-            R := DI ;                                                   00856100          
-            SI := R ;                                                   00856200          
-            IF SC = ALPHA THEN ELSE                                     00856300          
-            BEGIN                                                       00856400          
-              SI := SI - I ;                                            00856500          
-              SI := SI - 1 ;                                            00856600          
-              IF SC = ALPHA THEN ELSE                                   00856700          
-                JUMP OUT TO XIT ;                                       00856800          
-            END ;                                                       00856900          
-          END ;                                                         00857000          
-          DI := DI - I ;                                                00857100          
-          DI := DI + 1) ;                                               00857200          
-          TALLY := 0 ;                                                  00857300          
- XIT:                                                                   00857400          
-          PRESENT := TALLY ;                                            00857500          
-        END PRESENT ;                                                   00857600          
-    IF PRESENT (STRING, ZIPPY, STRINGI, STRINGILEFT, STRINGIREPEAT,     00857610          
-                1-STRINGID, 0) EQV TEMPTOG THEN                         00857620          
-      STRINGFOUND := TRUE                                               00857630          
-    ELSE IF STRINGJ NEQ 0 THEN                                          00857640          
-      STRINGFOUND :=                                                    00857650          
-        PRESENT (STRING, ZIPPY, STRINGJ, STRINGJLEFT, STRINGJREPEAT,    00857660          
-                 1-STRINGJD, STRINGI) EQV TEMPTOG ;                     00857670          
- END STRINGFOUND ;                                                      00857680          
- DEFINE GETSTRINGS = IF ISOLATESTRINGS (LISTTYPE) THEN GO TO NEXT# ;    00857700          
- BOOLEAN PROCEDURE ISOLATESTRINGS (LISTTYPE) ;                          00857800          
- VALUE LISTTYPE ;                                                       00857900          
- INTEGER LISTTYPE ;                                                     00858000          
- BEGIN                                                                  00858100          
- STREAM PROCEDURE ISOLATE (S, D, L1, L2) ;                              00858200          
-        BEGIN                                                           00858300          
- LOCAL STOPCHR,                                                         00858400          
-   DX,                                                                  00858500          
-   QUOTES ;                                                             00858600          
- LABEL OK,                                                              00858700          
-   NOSTRING,                                                            00858800          
-   STRING,                                                              00858900          
-   JUMPOUT,                                                             00858910          
-   NO,                                                                  00859000          
-   NEXTNO ;                                                             00859100          
-          TALLY := 63 ;                                                 00859200          
-          STOPCHR := TALLY ;                                            00859300          
-          DI := LOC QUOTES ;                                            00859400          
-          DS := 2 LIT """ ;                                             00859500          
-          DS := 6 LIT "..()[]" ;                                        00859600          
-          2 (SI := S ;                                                  00859700          
-          63 (SI := SI + 1 ;                                            00859800          
-              IF SC = ALPHA THEN                                        00859900          
-              ELSE IF SC NEQ " " THEN                                   00860000          
-              BEGIN                                                     00860100          
-                DI := LOC QUOTES ;                                      00860200          
-                4 (IF SC = DC THEN JUMP OUT 2 TO OK ;                   00860300          
-                   SI := SI - 1 ;                                       00860400          
-                   DI := DI + 1) ;                                      00860500          
-                IF SC = ";" THEN JUMP OUT ;                             00860600          
-              END) ;                                                    00860700          
-          GO TO NOSTRING ;                                              00860800          
- OK:                                                                    00861200          
-          DX := DI ;                                                    00861300          
-          SI := SI - 1 ;                                                00861400          
-          IF SC = "." THEN                                              00861500          
-          BEGIN                                                         00861600          
-            DI := L1 ;                                                  00861700          
-            DS := LIT "+" ;                                             00861800          
-          END ;                                                         00861900          
-          SI := SI + 1 ;                                                00862000          
-          TALLY := 0 ;                                                  00862100          
-          STOPCHR (DI := DX ;                                           00862200          
-                   IF SC = DC THEN                                      00862300          
-                     JUMP OUT 1 TO STRING ;                             00862400          
-                   SI := SI - 1 ;                                       00862500          
-                   DI := D ;                                            00862600          
-                   DS := 1 CHR ;                                        00862700          
-                   D := DI ;                                            00862800          
-                   TALLY := TALLY + 1) ;                                00862900          
- NOSTRING:                                                              00863000          
-          DI := L1 ;                                                    00863010          
-          DS := 8 LIT "00000010" ;                                      00863020          
-          GO TO JUMPOUT ;                                               00863030          
- STRING:                                                                00863100          
-          DI := L1 ;                                                    00863200          
-          DI := DI + 2 ;                                                00863300          
-          2 (DX := DI ;                                                 00863400          
-             10  (IF SC GEQ "0" THEN                                    00863500          
-                  BEGIN                                                 00863600          
-                    DI := DX ;                                          00863700          
-                    DS := LIT "0" ;                                     00863800          
-                    DS := CHR ;                                         00863900          
-                    IF SC GEQ "0" THEN                                  00864000          
-                    BEGIN                                               00864100          
-                      SI := SI - 1 ;                                    00864200          
-                      DI := DI - 2 ;                                    00864300          
-                      DS := 2 CHR ;                                     00864400          
-                    END ;                                               00864500          
-                    JUMP OUT 1 TO NEXTNO ;                              00864600          
-                  END ;                                                 00864700          
-                  IF SC = ALPHA THEN                                    00864800          
-                  ELSE IF SC NEQ " " THEN                               00864900          
-                  BEGIN                                                 00865000          
-                    IF SC = ";" THEN JUMP OUT 2 TO NO ;                 00865100          
-                    DI := LOC QUOTES ;                                  00865200          
-                    4 (IF SC = DC THEN                                  00865300          
-                       BEGIN                                            00865400          
-                         SI := SI - 1 ;                                 00865500          
-                         JUMP OUT 3 TO NO ;                             00865600          
-                       END ;                                            00865700          
-                       SI := SI - 1 ;                                   00865800          
-                       DI := DI + 1) ;                                  00865900          
-                  END ;                                                 00866000          
-                  SI := SI + 1) ;                                       00866100          
-             JUMP OUT TO NO ;                                           00866200          
- NEXTNO:                                                                00866300          
-           ) ;                                                          00866400          
-          GO TO NO ;                                                    00866410          
- JUMPOUT:                                                               00866420          
-          JUMP OUT ;                                                    00866430          
- NO:                                                                    00866500          
-          SI := SI - 1 ;                                                00866600          
-          S := SI ;                                                     00866700          
-          DI := L1 ;                                                    00866800          
-          L1 := TALLY ;                                                 00866900          
-          TALLY := STOPCHR ;                                            00867000          
-          L1 (TALLY := TALLY + 63) ;                                    00867100          
-          STOPCHR := TALLY ;                                            00867200          
-          SI := LOC L1 ;                                                00867300          
-          DI := DI + 7 ;                                                00867400          
-          SI := SI + 7 ;                                                00867500          
-          DS := 1 CHR ;                                                 00867600          
-          DI := L2 ;                                                    00867700          
-          L1 := DI) ;                                                   00867800          
-        END ISOLATE ;                                                   00867900          
- LABEL NEXT ;                                                           00868000          
- INTEGER PROCEDURE DEFINESTRING (I, LEFT, RIGHT) ;                      00868010          
- VALUE LEFT, RIGHT ; INTEGER I, LEFT, RIGHT ;                           00868020          
- BEGIN                                                                  00868030          
-        IF LEFT := 10|I.[12:6] + I.[18:6] = 99 THEN                     00868060          
-        BEGIN                                                           00868070          
-          LEFT := 1 ;                                                   00868080          
-          RIGHT := 80 ;                                                 00868090          
-        END ELSE                                                        00868100          
-        IF RIGHT := 10|I.[24:6] + I.[30:6] = 99 THEN                    00868110          
-          RIGHT := LEFT ;                                               00868120          
-        I := FULLLENGTH + 1 - STRINGI ;                                 00868130          
-        LEFT := MIN (MAX (LEFT,IF COBOLFILE THEN 6 ELSE 1), I) ;        00868140          
-        RIGHT := MIN (MAX (LEFT,RIGHT), I) ;                            00868150          
-        DEFINESTRING := LEFT - 1 ;                                      00868160          
-        I := RIGHT - LEFT + 1 ;                                         00868170          
- END DEFINESTRING ;                                                     00868190          
-    IF NOT SCANTOG THEN                                                 00868200          
-    BEGIN                                                               00868300          
-      IF PARAMETER1 = "ECHO   " THEN                                    00868400          
-      BEGIN                                                             00868500          
-        IF CHANGETOG THEN                                               00868600          
-          CHANGEECHO := TOGGLE (CHANGEECHO, 2)                          00868700          
-        ELSE                                                            00868800          
-          EDITECHO := TOGGLE (EDITECHO, 2) ;                            00868900          
-        GO TO NEXT ;                                                    00869000          
-      END ;                                                             00869100          
-      READONLYCHECK ;                                                   00869200          
-    END ;                                                               00869300          
-    IF EDITTOG THEN                                                     00869400          
-    BEGIN                                                               00869500          
-      IF NOT (NUM1 AND NUM2 AND NUM3) THEN                              00869600          
-        ERROR (NEXT, 0, PARAMETER0, " ERROR.") ;                        00869700          
-      IF NOT ITSOLD (N := PARAMETER3) THEN                              00869800          
-        ERROR (NEXT, 0, "MISSING", " FORMAT") ;                         00869900          
-      RDISC (AT, RECORD) ;                                              00870000          
-      IF COBOLFILE THEN                                                 00870100          
-        RECORD [0].[1:35] := "@@@@@@" ;                                 00870200          
-    END ELSE                                                            00870300          
-    BEGIN                                                               00870400          
-      I := M := 0 & "9999" [12:24:24] ;                                 00870500          
-      ISOLATE (IMAGE, STRING, I, M) ;                                   00870600          
-      IF I NEQ 64 THEN                                                  00870700          
-      BEGIN                                                             00870800          
-        RELATIVENUMBER := FILEINFO ;                                    00870900          
-        IF SCANTOG THEN                                                 00871000          
-          IF NOT (EMPTY1 OR (NUM1 AND (NUM2 OR EMPTY2))) THEN           00871100          
-            FILEINFO := DATA ;                                          00871200          
-        STRINGI := I.[41:7] ;                                           00871300          
-        STRINGID := REAL (I LSS 0) ;                                    00871400          
-        STRINGILEFT := DEFINESTRING (I, 0, 0) ;                         00871500          
-        STRINGIREPEAT := I ;                                            00871600          
-        IF M NEQ 64 THEN                                                00871700          
-        BEGIN                                                           00871800          
-          STRINGJ := M.[41:7] ;                                         00871900          
-          STRINGJD := REAL (M LSS 0) ;                                  00872000          
-          STRINGJLEFT := DEFINESTRING (M, 0, 0) ;                       00872100          
-          STRINGJREPEAT := M ;                                          00872200          
-        END ELSE                                                        00872300          
-          STRINGJ := 64 ;                                               00872400          
-        FILEINFO := RELATIVENUMBER ;                                    00872500          
-      END ;                                                             00874100          
-      IF STRINGI = 0 OR (CHANGETOG AND STRINGJ = 64) THEN               00874200          
-        ERROR (NEXT, 0, "MISSING", " STRING") ;                         00874300          
-      IF STRINGJ = 64 THEN                                              00874400          
-        STRINGJ := 0 ;                                                  00874500          
-    END ;                                                               00874600          
-    IF FALSE THEN                                                       00874700          
- NEXT:                                                                  00874800          
-      ISOLATESTRINGS := TRUE ;                                          00874900          
- END ISOLATESTRINGS ;                                                   00875000          
- PROCEDURE EXTERNALFILE (LISTTYPE) ;                                    00875100          
- VALUE LISTTYPE ; INTEGER LISTTYPE ;                                    00875200          
-          BEGIN                                                         00875300          
- FILE RO DISK SERIAL (2, INPUT [3], INPUT [4]) ;                        00875400          
- LABEL MORE,                                                            00875600          
-   EOF,                                                                 00875700          
-   NEXT ;                                                               00875800          
- BOOLEAN POSTED,                                                        00875900          
-   B ;                                                                  00876000          
-            LOCKED := TRUE ;                                            00876100          
-            RESETN := N ;                                               00876300          
-            FILL RO WITH INPUT [1], INPUT [2], *, *, *,                 00876400          
-              12 + REAL (POSTED := PARAMETER1 = "MAIL % ") ;            00876500          
-            N := 0 ;                                                    00876600          
-            M := INPUT [5] + 1 ;                                        00876700          
-            B := POSTING ;                                              00876800          
-            IF NUM3 THEN                                                00876900          
-            BEGIN                                                       00877000          
-              IF N := PARAMETER3 - 1 GEQ M THEN                         00877100          
-                ERROR (NEXT, 0, "USE REC", "ORD #S.") ;                 00877110          
-              READ SEEK (RO [N]) ;                                      00877120          
-              IF NUM4 THEN                                              00877200          
-                M := PARAMETER4 ;                                       00877300          
-            END                                                         00877400          
-            ELSE IF NOT EMPTY3 THEN                                     00877500          
-              B := TRUE ;                                               00877600          
-            I := IF POSTING THEN ALGOL ELSE DATA ;                      00877700          
-            WRITE (ZIPPY [*], STAR) ;                                   00877750          
- MORE:                                                                  00877800          
-            INTERRUPT (1) ;                                             00877900          
-            IF N := N + 1 GTR M THEN                                    00878000          
-              GO TO EOF ;                                               00878100          
-            READ (RO, 10, ZIPPY [*]) [EOF] ;                            00878200          
-            IF SCANTOG THEN                                             00878300          
-              IF NOT STRINGFOUND THEN                                   00878400          
-                GO TO MORE ;                                            00878500          
-            IF B THEN                                                   00879100          
-            BEGIN                                                       00879200          
-              IF POSTING AND FIRSTCHAR (ZIPPY [0]) = "*" THEN           00879300          
-                GO TO MORE ;                                            00879400          
-              WRITELFCR ;                                               00879500          
-            END ELSE WRITESEQ ;                                         00879600          
-            WRITEROW (ZIPPY, QUICK, I) ;                                00879700          
-            IF POSTED THEN                                              00879800          
-              WRITE (RO, STAR) ;                                        00879900          
-            IF BREAKI = 0 THEN                                          00880000          
-            BEGIN                                                       00880100          
-              GO TO MORE ;                                              00880200          
- EOF:                                                                   00880300          
-              IF POSTED THEN                                            00880400          
-              BEGIN                                                     00880500          
-                DETACH ;                                                00880600          
-                CLOSE (RO, PURGE) ;                                     00880700          
-                REATTACH ;                                              00880800          
-              END ;                                                     00880900          
-            END ;                                                       00880910          
- NEXT:                                                                  00881000          
-            N := RESETN ;                                               00881100          
-            LOCKED := FALSE ;                                           00881200          
-          END EXTERNALFILE ;                                            00881300          
- PROCEDURE SPECIAL (LISTTYPE, ECHO) ;                                   00881400          
- VALUE LISTTYPE, ECHO ; INTEGER LISTTYPE ; BOOLEAN ECHO ;               00881500          
-           BEGIN                                                        00881600          
- LABEL                                                                  00881700          
-   REWRITE,                                                             00881800          
-   OVERFLOW,                                                            00881850          
-   NEXT ;                                                               00881900          
- DEFINE QUICK = FALSE# ;                                                00882100          
- INTEGER STREAM PROCEDURE CHANGED (S,D,I,J,STRING,SS,T,T1,SR,M,N,ID) ;  00882200          
- VALUE I,                                                               00882300          
-   J,                                                                   00882400          
-   SS,                                                                  00882500          
-   T,                                                                   00882600          
-   T1,                                                                  00882700          
-   SR,                                                                  00882800          
-   ID,                                                                  00882900          
-   M,                                                                   00883000          
-   N ;                                                                  00883100          
-        BEGIN                                                           00883200          
- LOCAL K,                                                               00883300          
-   TOTAL ;                                                              00883400          
- LABEL AROUND,                                                          00883500          
-   XIT,                                                                 00883600          
-   NO,                                                                  00883700          
-   UNDERFLOW,                                                           00883800          
-   HERE,                                                                00883900          
-   THERE,                                                               00883910          
-   EXIT ;                                                               00883920          
-          DI := D ;                                                     00884000          
-          DS := 8 LIT "        " ;                                      00884100          
-          SI := D ;                                                     00884200          
-          DS := 9 WDS ;                                                 00884300          
-          SI := LOC SS ;                                                00884400          
-          DI := LOC K ;                                                 00884500          
-          SI := SI + 6 ;                                                00884600          
-          DI := DI + 7 ;                                                00884700          
-          DS := CHR ;                                                   00884800          
-          SI := S ;                                                     00884900          
-          DI := D ;                                                     00885000          
-          K (DS := 32 CHR ; DS := 32 CHR) ;                             00885100          
-          DS := SS CHR ;                                                00885200          
-          S := SI ;                                                     00885300          
-          D := DI ;                                                     00885400          
-          K := TALLY ;                                                  00885500          
-          2 (T (K (DS := N CHR ;                                        00885600          
-                   TALLY := K ;                                         00885700          
-                   JUMP OUT TO HERE) ;                                  00886000          
-                DI := S ;                                               00886100          
-                SI := STRING ;                                          00886200          
-                IF I SC NEQ DC THEN                                     00886300          
-                BEGIN                                                   00886400          
- NO:                                                                    00886500          
-                  SI := S ;                                             00886600          
-                  DI := D ;                                             00886700          
-                  DS := CHR ;                                           00886800          
-                  S := SI ;                                             00886900          
-                  D := DI ;                                             00887000          
-                  SI := SR ;                                            00887100          
-                  SI := SI - 8 ;                                        00887200          
-                  SR := SI ;                                            00887300          
-                  TALLY := 1 ;                                          00887310          
-                  GO TO HERE ;                                          00887400          
-                END ;                                                   00887500          
-                ID (SS := DI ;                                          00887600          
-                    SI := SS ;                                          00887700          
-                    IF SC = ALPHA THEN                                  00887800          
-                      JUMP OUT TO NO ;                                  00887900          
-                    SI := SI - I ;                                      00888000          
-                    SI := SI - 1 ;                                      00888100          
-                    IF SC = ALPHA THEN                                  00888200          
-                      JUMP OUT TO NO ;                                  00888300          
-                    SI := STRING ;                                      00888400          
-                    SI := SI + I) ;                                     00888500          
-                TALLY := 1 ;                                            00888600          
-                CHANGED := TALLY ;                                      00888700          
-                S := DI ;                                               00888800          
-                DI := D ;                                               00888900          
-                GO TO THERE ;                                           00888910          
- HERE:                                                                  00888920          
-                GO TO AROUND ;                                          00888930          
- THERE:                                                                 00888940          
-                N (DI := DI + J ;                                       00889000          
-                   D := DI ;                                            00889100          
-                   DI := TOTAL ;                                        00889200          
-                   8 (DI := DI + J ;                                    00889300          
-                      DI := DI - I) ;                                   00889400          
-                   TOTAL := DI ;                                        00889500          
-                   DI := SR ;                                           00889600          
-                   8 (DI := DI - J) ;                                   00889700          
-                   SR := DI ;                                           00889800          
-                   DI := D ;                                            00889900          
-                   DI := DI - J ;                                       00890000          
-                   DS := CHR ;                                          00890100          
-                   TALLY := J ;                                         00890200          
-                   JUMP OUT TO AROUND) ;                                00890300          
-                DS := J CHR ;                                           00890400          
-                D := DI ;                                               00890500          
-                SI := SR ;                                              00890600          
-                8 (SI := SI - I) ;                                      00890700          
-                SR := SI ;                                              00890800          
-                TALLY := I ;                                            00890900          
- AROUND:                                                                00891000          
-                TALLY := TALLY + 63 ;                                   00891100          
-                K := TALLY) ;                                           00891200          
-             TALLY := T1 ;                                              00891600          
-             T := TALLY) ;                                              00891700          
-          CI := CI + CHANGED ;                                          00891800          
-          GO TO EXIT ;                                                  00891900          
-          M (K (DS := N CHR ;                                           00892000          
-                TALLY := K ;                                            00892100          
-                TALLY := TALLY + 63 ;                                   00892200          
-                K := TALLY ;                                            00892300          
-                JUMP OUT)) ;                                            00892400          
-          TALLY := 2 ;                                                  00892500          
-          K (CHANGED := TALLY ;                                         00892600          
-             JUMP OUT TO EXIT) ;                                        00892700          
-          SI := LOC SR ;                                                00892800          
-          DI := LOC SS ;                                                00892900          
-          6 (IF SC NEQ "0" THEN JUMP OUT TO UNDERFLOW ; SI := SI + 1) ; 00893000          
-          DI := DI + 7 ;                                                00893100          
-          DS := CHR ;                                                   00893200          
-          SI := S ;                                                     00893300          
-          DI := D ;                                                     00893400          
-          SS (DS := 32 CHR ; DS := 32 CHR) ;                            00893500          
-          DS := SR CHR ;                                                00893600          
-          S := SI ;                                                     00893700          
-          GO TO UNDERFLOW ;                                             00893710          
- EXIT:                                                                  00893720          
-          GO TO XIT ;                                                   00893730          
- UNDERFLOW:                                                             00893800          
-          N (SI := LOC TOTAL ;                                          00893900          
-             DI := LOC K ;                                              00894000          
-             SI := SI + 6 ;                                             00894100          
-             DI := DI + 7 ;                                             00894200          
-             DS := 1 CHR ;                                              00894300          
-             SI := S ;                                                  00894400          
-             K (2 (32 (IF SC NEQ " " THEN                               00894500          
-                       BEGIN                                            00894600          
-                         CHANGED := TALLY ;                             00894700          
-                         JUMP OUT 4 TO XIT ;                            00894800          
-                       END ;                                            00894900          
-                       SI := SI + 1))) ;                                00895000          
-             TOTAL (IF SC NEQ " " THEN                                  00895100          
-                    BEGIN                                               00895200          
-                      CHANGED := TALLY ;                                00895300          
-                      JUMP OUT 2 TO XIT ;                               00895400          
-                    END ;                                               00895500          
-                    SI := SI + 1)) ;                                    00895600          
- XIT:                                                                   00895700          
-        END CHANGED ;                                                   00895800          
- BOOLEAN STREAM PROCEDURE EDITS (F, S, D, N) ;                          00895900          
- VALUE N ;                                                              00896000          
-        BEGIN                                                           00896100          
- LABEL XIT ;                                                            00896200          
-          DI := D ;                                                     00896300          
-          DS := 8 LIT " " ;                                             00896400          
-          SI := D ;                                                     00896500          
-          DS := 9 WDS ;                                                 00896600          
-          DI := D ;                                                     00896700          
-          D := TALLY ;                                                  00896800          
-          2 (N (SI := F ;                                               00896900          
-          IF SC = "@" THEN                                              00897000          
-          BEGIN                                                         00897100          
-            SI := SI + 1 ;                                              00897200          
-            F := SI ;                                                   00897300          
-            SI := S ;                                                   00897400          
-            DS := CHR ;                                                 00897500          
-            S := SI ;                                                   00897600          
-          END                                                           00897700          
-          ELSE IF SC = "#" THEN                                         00897800          
-          BEGIN                                                         00897900          
-            SI := SI + 1 ;                                              00898000          
-            F := SI ;                                                   00898100          
-            SI := S ;                                                   00898200          
-            SI := SI + 1 ;                                              00898300          
-            S := SI ;                                                   00898400          
-          END                                                           00898500          
-          ELSE                                                          00898600          
-          BEGIN                                                         00898700          
-            DS := CHR ;                                                 00898800          
-            F := SI ;                                                   00898900          
-            SI := D ;                                                   00899000          
-            SI := SI + 8 ;                                              00899100          
-            D := SI ;                                                   00899200          
-          END)) ;                                                       00899300          
-          SI := LOC D ;                                                 00899400          
-          DI := LOC N ;                                                 00899500          
-          SI := SI + 6 ;                                                00899600          
-          DI := DI + 7 ;                                                00899700          
-          DS := 1 CHR ;                                                 00899800          
-          SI := S ;                                                     00899900          
-          N ( 2 ( 32 (IF SC NEQ " " THEN                                00900000          
-                      BEGIN                                             00900100          
-                        TALLY : = 1 ;                                   00900200          
-                        EDITS := TALLY ;                                00900300          
-                        JUMP OUT 3 TO XIT ;                             00900400          
-                      END ;                                             00900500          
-                      SI := SI + 1))) ;                                 00900600          
-          D (IF SC NEQ " " THEN                                         00900700          
-             BEGIN                                                      00900800          
-               TALLY := 1 ;                                             00900900          
-               EDITS := TALLY ;                                         00901000          
-               JUMP OUT ;                                               00901100          
-             END ;                                                      00901200          
-             SI := SI + 1) ;                                            00901300          
- XIT:                                                                   00901400          
-        END EDITS ;                                                     00901500          
- REAL L ;                                                               00901600          
-             IF CHANGETOG THEN                                          00901700          
-             BEGIN                                                      00901710          
-               PARAMETER1 := STRINGIREPEAT DIV 2 ;                      00901720          
-               PARAMETER2 := STRINGIREPEAT - PARAMETER1 ;               00901730          
-               PARAMETER3 := FULLLENGTH - STRINGILEFT ;                 00901740          
-               PARAMETER4 := MIN (PARAMETER3, 63) ;                     00901750          
-             END ;                                                      00901760          
-             WHILE N := (L := LL [AT]).S LEQ M DO                       00901900          
-             BEGIN                                                      00902000          
-              RDISC (AT, ZIPPY) ;                                       00902100          
-              IF SCANTOG THEN                                           00902200          
-              BEGIN                                                     00902300          
-                IF STRINGFOUND THEN                                     00902400          
-                BEGIN                                                   00902700          
-                  WRITEME (N, ZIPPY) ;                                  00902900          
-                  N := N + 1 ;                                          00902910          
-                  GO TO NEXT ;                                          00903000          
-                END ;                                                   00903100          
-              END                                                       00903700          
-              ELSE IF CHANGETOG THEN                                    00903800          
-              BEGIN                                                     00903900          
-                IF I := CHANGED (ZIPPY, IMAGE, STRINGI, STRINGJ,        00904000          
-                          STRING, STRINGILEFT, PARAMETER1, PARAMETER2,  00904100          
-                          PARAMETER3, PARAMETER4, STRINGI LSS STRINGJ,  00904200          
-                          STRINGID) = 1 THEN                            00904300          
-                BEGIN                                                   00904500          
-                  RESETN := N ;                                         00904600          
- REWRITE:                                                               00904700          
-                  IF ECHO THEN                                          00904800          
-                    WRITEME (N, IMAGE) ;                                00904900          
-                  WDISC ;                                               00905000          
-                END ELSE                                                00905100          
-                IF I = 2 THEN                                           00905200          
- OVERFLOW:                                                              00905250          
-                  ERROR (NEXT, 0, PARAMETER0, " OVRFLW") ;              00905300          
-              END                                                       00905400          
-              ELSE                                                      00905500          
-              BEGIN                                                     00905600          
-                IF EDITS (RECORD, ZIPPY, IMAGE, HALFFULLLENGTH) THEN    00905700          
-                  GO TO OVERFLOW ;                                      00905800          
-                GO TO REWRITE ;                                         00905900          
-              END ;                                                     00906000          
-              INTERRUPT (1) ;                                           00906100          
-              AT := L.T ;                                               00906110          
-             END ;                                                      00906200          
-             IF SCANTOG THEN                                            00906300          
-               ERRORX (0, "EOF NO ", "STRING.") ;                       00906400          
- NEXT:                                                                  00906500          
-             IF CHANGETOG THEN                                          00906600          
-               N := RESETN ;                                            00906700          
-           END SPECIAL ;                                                00906800          
- BOOLEAN COMPLEX ;                                                      00906900          
- REAL L ;                                                               00906910          
-        IF COMPLEX := SCANTOG OR CHANGETOG OR EDITTOG THEN              00907000          
-          GETSTRINGS ;                                                  00907100          
-        IF NUM1 AND (NUM2 OR EMPTY2 OR CHANGETOG) THEN                  00907200          
-        BEGIN                                                           00907300          
-          N := PARAMETER1 ;                                             00907400          
-          IF NUM2 THEN                                                  00907500          
-            M := PARAMETER2                                             00907600          
-          ELSE IF SCANTOG THEN                                          00907700          
-            M := FINITY                                                 00907800          
-          ELSE M := N ;                                                 00907900          
-        END                                                             00908000          
-        ELSE IF NOT (EMPTY1 OR CHANGETOG) THEN                          00908100          
-        BEGIN                                                           00908200          
-          IF XFILE (12, 0, 2) LSS 2 THEN                                00908300          
-            GO TO NEXT ;                                                00908400          
-          IF LOCKED OR NOT POSTING THEN                                 00908500          
-            WAIT ((IF NUM3 AND NUM4 THEN                                00908600          
-              MIN (PARAMETER4, INPUT [5]) ELSE INPUT [5]) -             00908700          
-              (IF NUM3 THEN PARAMETER3 ELSE 0), LOCKED) ;               00908800          
-          EXTERNALFILE (LISTTYPE) ;                                     00908900          
-          GO TO NEXT ;                                                  00909000          
-        END                                                             00909100          
-        ELSE                                                            00909200          
-        BEGIN                                                           00909300          
-          IF NOT COMPLEX THEN                                           00909400          
-          BEGIN                                                         00909500          
-            AT := 0 ;                                                   00909600          
-            N := 1 ;                                                    00909700          
-          END ;                                                         00909800          
-          IF CHANGETOG THEN                                             00909900          
-            M := N                                                      00910000          
-          ELSE                                                          00910100          
-            M := FINITY ;                                               00910200          
-        END ;                                                           00910300          
-        OPENCHECK ;                                                     00910400          
-        IF COMPLEX THEN                                                 00910500          
-          WAIT (KOUNT (N, M, CLOCK), FALSE) ;                           00910600          
-        IF ITSOLD (N) THEN ;                                            00910700          
-        IF COMPLEX THEN                                                 00910900          
-          SPECIAL (LISTTYPE, TEMPTOG EQV (IF CHANGETOG THEN CHANGEECHO  00911000          
-                                          ELSE EDITECHO))               00911050          
-        ELSE                                                            00911100          
-        BEGIN                                                           00911200          
-          WHILE N := (L := LL [AT]).S LEQ M DO                          00911300          
-          BEGIN                                                         00911310          
-            WRITEAT ;                                                   00911400          
-            INTERRUPT (1) ;                                             00911410          
-            AT := L.T ;                                                 00911420          
-          END ;                                                         00911500          
-          N := LL [L.F].S + INC ;                                       00911600          
-        END ;                                                           00911700          
- NEXT:                                                                  00911800          
-      END LISTIT ;                                                      00911900          
- % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        00912000          
- PROCEDURE EXECUTE ;                                                    00950000          
- BEGIN                                                                  00950100          
- LABEL NEXT ;                                                           00950200          
- INTEGER XSUB ;                                                         00950300          
- REAL YSTART,                                                           00950400          
-   YLAST,                                                               00950500          
-   YFILETYPE,                                                           00950600          
-   YREPEAT,                                                             00950700          
-   YNCHRS ;                                                             00950800          
- BOOLEAN VERBISEXECUTE ;                                                00950900          
-    IF VERBISEXECUTE := PARAMETER0 = RSWD [0] THEN                      00951000          
-      IF PARAMETER1 = "LIBRARY" THEN                                    00951100          
-      BEGIN                                                             00951200          
-        IF EMPTY2 THEN                                                  00951300          
-          ERROR (NEXT, 7, "MACRO=/", MACROLIBRARY) ;                    00951400          
-        IF NUM2 THEN                                                    00951500          
-          MACROLIBRARY := OCTDEC (PARAMETER2)                           00951600          
-        ELSE                                                            00951700          
-          MACROLIBRARY := PARAMETER2 ;                                  00951800          
-        GO TO NEXT ;                                                    00951900          
-      END ELSE                                                          00952000          
-      IF PARAMETER1 = "ECHO   " THEN                                    00952100          
-      BEGIN                                                             00952200          
-        EXECUTEECHO := TOGGLE (EXECUTEECHO, 2) ;                        00952300          
-        GO TO NEXT ;                                                    00952400          
-      END ;                                                             00952500          
-    IF XDEX + 1 GEQ XMAX THEN                                           00952600          
-      ERROR (NEXT, 0, PARAMETER0, " OVRFLW") ;                          00952700          
-    XSUB := (XDEX + 1) | 13 ;                                           00952800          
-    YFILETYPE := DATA ;                                                 00952900          
-    IF NOT VERBISEXECUTE THEN                                           00953000          
-    BEGIN                                                               00953100          
-      XPARAMETERS [0] := PARAMETER1 ;                                   00953200          
-      XPARAMETERS [1] := PARAMETER2 ;                                   00953300          
-      XPARAMETERS [2] := PARAMETER3 ;                                   00953400          
-      XPARAMETERS [3] := PARAMETER4 ;                                   00953500          
-      XPARAMETERS [4] := -"#000000" ;                                   00953600          
-      YREPEAT := 1 ;                                                    00953700          
-      PARAMETER2 := INPUT [2] ;                                         00953800          
-      PARAMETER1 := PARAMETER0 ;                                        00953900          
-      YLAST := INPUT [5] + 1 ;                                          00954000          
-    END ELSE                                                            00954100          
-    IF FILEOPEN AND (NUM1 OR EMPTY1) AND (NUM2 OR EMPTY2) THEN          00954200          
-    BEGIN                                                               00954300          
-      IF NUM1 THEN                                                      00954400          
-      BEGIN                                                             00954500          
-        PARAMETER3 := PARAMETER1 ;                                      00954600          
-        IF NUM2 THEN                                                    00954700          
-          PARAMETER4 := PARAMETER2                                      00954800          
-        ELSE                                                            00954900          
-          PARAMETER4 := PARAMETER3 ;                                    00955000          
-      END ELSE                                                          00955100          
-      BEGIN                                                             00955200          
-        PARAMETER3 := 1 ;                                               00955300          
-        PARAMETER4 := INFINITY ;                                        00955400          
-      END ;                                                             00955500          
-      PARAMETER1 := OCTDEC(XDEX+1+10|STATION.[14:4]+1000|STATION.[9:4]);00955600          
-      PARAMETER2 := "#MACRO#" ;                                         00955700          
-      IF YFILETYPE := XFILE (PARAMETER1, PARAMETER2, -1) = 7 THEN       00955800          
-      BEGIN                                                             00955900          
-        READ (LIBRARY) ;                                                00956000          
-        DETACH ;                                                        00956100          
-        CLOSE (LIBRARY, PURGE) ;                                        00956200          
-        REATTACH ;                                                      00956300          
-      END ELSE                                                          00956400          
-      IF YFILETYPE GEQ 0 THEN                                           00956500          
-        ERROR (NEXT, 4, PARAMETER1, PARAMETER2) ;                       00956600          
-      YLAST := KOUNT (PARAMETER3, PARAMETER4, -1) ;                     00956700          
-      I := SAVEFACTOR ;                                                 00956710          
-      FREEFILE (STATION) ;                                              00956800          
-      THERMOFAX (SAVEFACTOR := 0, (YLAST + 14) DIV 15 | 15) ;           00956900          
-      UNFREEFILE (STATION) ;                                            00957000          
-      SAVEFACTOR := I ;                                                 00957010          
-      YFILETYPE := FILEINFO ;                                           00957100          
-    END ELSE                                                            00957200          
-    BEGIN                                                               00957300          
-      IF XFILE (12, 0, 2) LSS 2 THEN                                    00957400          
-        GO TO NEXT ;                                                    00957500          
-      YLAST := INPUT [5] + 1 ;                                          00957600          
-      IF NUM3 THEN                                                      00957700          
-      BEGIN                                                             00957800          
-        IF YSTART := PARAMETER3 - 1 GTR YLAST THEN                      00957900          
-          ERROR (NEXT, 0, "USE REC", "ORD #S.") ;                       00958000          
-        IF NUM4 THEN                                                    00958100          
-          IF PARAMETER4 LSS YLAST THEN                                  00958200          
-            YLAST := PARAMETER4 ;                                       00958300          
-      END ;                                                             00958400          
-    END ;                                                               00958500          
-    IF XDEX LSS 0 THEN                                                  00958600          
-      XECHO := TEMPTOG EQV EXECUTEECHO ;                                00958700          
-    IF VERBISEXECUTE THEN                                               00958800          
-      IF YREPEAT := GETPARAMETERS (63) = 0 THEN                         00958900          
-        GO TO NEXT ;                                                    00959000          
-    WAIT ((YLAST - YSTART) | YREPEAT | 3, FALSE) ;                      00959100          
-    IF MOREINPUT THEN                                                   00959200          
-    BEGIN                                                               00959300          
-      READ (IO [USER + MAXUSERS], 30, IMAGE [*]) ;                      00959400          
-      WRITE (IO [2|MAXUSERS+XMAX|USER+XDEX+1], 30, IMAGE [*]) ;         00959410          
-      YNCHRS := NCHRS & 1[1:47:1] ;                                     00959500          
-      MOREINPUT := FALSE ;                                              00959600          
-    END ;                                                               00959700          
-    XDEX := XDEX + 1 ;                                                  00959800          
-    XN := XSTART := YSTART ;                                            00959900          
-    XLAST := YLAST ;                                                    00960000          
-    XFILETYPE := YFILETYPE ;                                            00960100          
-    XREPEAT := YREPEAT ;                                                00960200          
-    XNCHRS := YNCHRS ;                                                  00960300          
-    XPREFIX := PARAMETER1 ;                                             00960400          
-    XSUFFIX := PARAMETER2 ;                                             00960500          
- NEXT:                                                                  00960600          
- END EXECUTE ;                                                          00960700          
- % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        00970000          
- PROCEDURE XVERBS (K) ; VALUE K ; INTEGER K ;                           00970100          
- BEGIN                                                                  00970200          
- DEFINE                                                                 00970300          
-   REPLACE =                                                            00970400          
-    BEGIN                                                               00970500          
-      IF NUM2 OR EMPTY2 THEN                                            00970600          
-        ERROR (NEXT, 0, PARAMETER2, " IS BAD") ;                        00970700          
-      M := -1 ;                                                         00970800          
-      FOR I := 0 STEP 1 UNTIL RSWDM DO                                  00970900          
-        IF PARAMETER0 := RSWD [I] = PARAMETER1 THEN                     00971000          
-          M := I                                                        00971100          
-        ELSE IF PARAMETER0 = PARAMETER2 THEN                            00971200          
-          ERROR (NEXT, 0, "DUP    ", PARAMETER2) ;                      00971300          
-      IF M LSS 0 THEN                                                   00971400          
-        ERROR (NEXT, 0, "NO VERB", PARAMETER1) ;                        00971500          
-      RSWD [M] := PARAMETER2 ;                                          00971600          
-    END#,                                                               00971700          
-  DELETE =                                                              00971800          
-    BEGIN                                                               00971900          
-      OPENCHECK ;                                                       00972000          
-      IF NOT NUM1 THEN                                                  00972100          
-        PARAMETER1 := N ;                                               00972200          
-      INORDER := READONLYFILE ;                                         00972300          
-      IF NOT NUM2 OR PARAMETER2 LSS PARAMETER1 THEN                     00972400          
-        PARAMETER2 := PARAMETER1 ;                                      00972500          
-      I := LL [LOC (PARAMETER1)] . F ;                                  00972600          
-      IF ITSOLD (PARAMETER2) THEN                                       00972700          
-        AT := LL [AT] . T ;                                             00972800          
-      LL [I] . T := AT ;                                                00972900          
-      MODIFY (I) ;                                                      00973000          
-      LL [AT] . F := I ;                                                00973100          
-      MODIFY (AT) ;                                                     00973200          
-      N := LL [I] .S + INC ;                                            00973300          
-    END#,                                                               00973400          
-  PRINTORPUNCH =                                                        00973500          
-    BEGIN                                                               00973600          
-      OPENCHECK ;                                                       00973700          
-      IF NOT NUM3 THEN                                                  00973800          
-        PARAMETER3 := 1 ;                                               00973900          
-      IF NOT NUM4 THEN                                                  00974000          
-        PARAMETER4 := FINITY ;                                          00974100          
-      THERMOFAX (K, 0) ;                                                00974200          
-    END# ;                                                              00974300          
- LABEL NEXT ;                                                           00974400          
-    IF BOOLEAN (K) THEN                                                 00974500          
-      IF K = 1 THEN                                                     00974600          
-        REPLACE                                                         00974700          
-      ELSE                                                              00974800          
-        DELETE                                                          00974900          
-    ELSE IF K = 0 THEN                                                  00975000          
-      CLOSEMYFILE                                                       00975100          
-    ELSE                                                                00975200          
-      PRINTORPUNCH ;                                                    00975300          
- NEXT:                                                                  00975400          
- END XVERBS ;                                                           00975500          
- DEFINE CLOSEFILE = XVERBS (0)#,                                        00975600          
-   REPLACE = XVERBS (1)#,                                               00975700          
-   PRINT = XVERBS (2)#,                                                 00975800          
-   DELETE = XVERBS (3)#,                                                00975900          
-   PUNCH = XVERBS (4)# ;                                                00976000          
- % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        01023000          
- PROCEDURE MAIL ;                                                       01023500          
-    BEGIN                                                               01024000          
- LABEL NEXT ;                                                           01024100          
- BOOLEAN STREAM PROCEDURE POSTFROM (SENDER, MESSAGE, Z) ;               01024500          
-      BEGIN                                                             01025000          
- LABEL OK,                                                              01025500          
-   EXIT ;                                                               01026000          
-        SI := Z ;                                                       01026500          
-        DI := Z ;                                                       01027000          
-        DS := 8 LIT "        " ;                                        01027500          
-        DS := 8 WDS ;                                                   01028000          
-        SI := MESSAGE ;                                                 01028500          
-        20 (IF SC = ":" THEN                                            01029000          
-          JUMP OUT TO OK ;                                              01029500          
-        SI := SI + 1) ;                                                 01030000          
-        TALLY := 1 ;                                                    01030500          
-        POSTFROM := TALLY ;                                             01031000          
-        GO TO EXIT ;                                                    01031500          
- OK:                                                                    01032000          
-        SI := SI + 1 ;                                                  01032500          
-        DI := Z ;                                                       01033000          
-        63 (IF SC = ";" THEN                                            01033500          
-          JUMP OUT ;                                                    01034000          
-        DS := 1 CHR) ;                                                  01034500          
-        DS := 1 LIT "-" ;                                               01035000          
-        SI := SENDER ;                                                  01035500          
-        SI := SI + 1 ;                                                  01036000          
-        DS := 7 CHR ;                                                   01036500          
- EXIT:                                                                  01037000          
-      END POSTFROM ;                                                    01037500          
-      IF NUM2 THEN                                                      01038000          
-        PARAMETER2 := OCTDEC (PARAMETER2) ;                             01038500          
-      I := XFILE ("MAIL % ", IF EMPTY1 THEN USERCODE ELSE PARAMETER2,   01039000          
-           -1) ;                                                        01039500          
-      IF EMPTY1 THEN                                                    01040500          
-      BEGIN                                                             01041000          
-        IF I LSS 7 THEN                                                 01041500          
-          ERROR (NEXT, 0, "SORRY, ", "NO MAIL") ;                       01042000          
-        PARAMETER1 := "MAIL % " ;                                       01042500          
-        NUM1 := FALSE ;                                                 01043500          
-        PARAMETER2 := USERCODE ;                                        01044000          
-        NUM2 := FALSE ;                                                 01045000          
-        NUM3 := FALSE ;                                                 01045500          
-        LISTIT (17) ;% POSTING AND QUICK                                01046000          
-      END                                                               01047000          
-      ELSE                                                              01047500          
-      BEGIN                                                             01048000          
-        IF PARAMETER1 NEQ "TO     " THEN                                01048500          
-          ERROR (NEXT, 0, "MISSING", " TO.   ") ;                       01049000          
-        IF POSTFROM (USERCODE, IMAGE, RECORD) THEN                      01049500          
-          ERROR (NEXT, 0, "MISSING", " COLON.") ;                       01050000          
-        IF I LSS 0 THEN                                                 01050500          
-        BEGIN                                                           01051000          
-          FREEFILE (STATION) ;                                          01051500          
-          PARAMETER1 := "MAIL % " ;                                     01052000          
-          CREATEFILE (15) ;                                             01053000          
-          UNFREEFILE (STATION) ;                                        01053500          
-        END                                                             01054000          
-        ELSE IF I GTR 2 THEN                                            01054500          
-        BEGIN                                                           01055000          
-          WRITE (LIBRARY [INPUT [5] + 1], 10, RECORD [*]) ;             01055500          
-          CLOSE (LIBRARY) ;                                             01056000          
-        END ELSE                                                        01056500          
-          ERRORX (1, "MAIL % ", PARAMETER2) ;                           01056600          
-      END ;                                                             01057500          
- NEXT:                                                                  01058000          
-    END POSTMAN ;                                                       01058500          
- % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        01059000          
- PROCEDURE COPY ;                                                       01059500          
-    BEGIN                                                               01060000          
- BOOLEAN B,                                                             01060100          
-   MERGE ;                                                              01060200          
- LABEL NEXT ;                                                           01060500          
-      IF PARAMETER1 = "OVERITE" THEN                                    01060550          
-      BEGIN                                                             01060600          
-        COPYCLOBBER := TOGGLE (COPYCLOBBER, 2) ;                        01060700          
-        GO TO NEXT ;                                                    01060850          
-      END ;                                                             01060900          
-      READONLYCHECK ;                                                   01060950          
-      IF XFILE (12, 0, 2) LSS 2 THEN                                    01061500          
-        GO TO NEXT ;                                                    01062000          
-      IF INPUT [3] NEQ 10 OR INPUT [4] MOD 30 NEQ 0 THEN                01063500          
-        ERROR (NEXT, 3, PARAMETER1, PARAMETER2) ;                       01064000          
-      IF NUM3 THEN                                                      01064500          
-      BEGIN                                                             01065000          
-        I := PARAMETER3 - 1 ;                                           01065500          
-        IF I GTR INPUT [5] THEN                                         01066000          
-          ERROR (NEXT, 0, "USE REC", "ORD #S.") ;                       01066500          
-        IF NUM4 THEN                                                    01067000          
-          M := MIN (PARAMETER4 - 1, INPUT [5])                          01067500          
-        ELSE M := I ;                                                   01070000          
-      END                                                               01070500          
-      ELSE                                                              01071000          
-      BEGIN                                                             01071500          
-        I := 0 ;                                                        01072000          
-        M := INPUT [5] ;                                                01072500          
-        IF DATAFILE AND MERGE := PARAMETER3 = "MERGE  " THEN            01072600          
-          ERROR (NEXT, 5, " TYPE: ", PARAMETER3) ;                      01072700          
-      END ;                                                             01073000          
-      WAIT (M - I, FALSE) ;                                             01073500          
-      READ SEEK (LIBRARY [I]) ;                                         01075000          
-      B := NOT (COPYCLOBBER EQV TEMPTOG) ;                              01075100          
-      FOR I := I STEP 1 UNTIL M DO                                      01075500          
-      BEGIN                                                             01076000          
-        READ (LIBRARY, 10, IMAGE [*]) ;                                 01076100          
-        IF MERGE THEN                                                   01076200          
-          N := IF COBOLFILE THEN DEC (IMAGE [0], 6)                     01076300          
-                       ELSE DEC (IMAGE [9], 8) ;                        01076400          
-        IF ITSOLD (N) AND B THEN                                        01076500          
-          ERROR (NEXT, 0, "OVERITE", " IS OFF") ;                       01076600          
-        WDISC ;                                                         01077000          
-        INTERUPT (1, 1, I + 1) ;                                        01078000          
-      END ;                                                             01078500          
- NEXT:                                                                  01079500          
-      CLOSE (LIBRARY) ;                                                 01079600          
-    END ;                                                               01080000          
- % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        01086500          
- PROCEDURE ZIPIT ;                                                      01087000          
-   BEGIN                                                                01087500          
- ALPHA STREAM PROCEDURE ENDCHECK (S) ;                                  01087550          
- BEGIN                                                                  01087600          
-    SI := S ;                                                           01087650          
-    IF SC = "?" THEN                                                    01087700          
-    BEGIN                                                               01087710          
-      DI := LOC ENDCHECK ;                                              01087750          
-      DI := DI + 3 ;                                                    01087800          
-      DS := CHR ;                                                       01087810          
-      63 (IF SC NEQ " " THEN JUMP OUT ;                                 01087850          
-          SI := SI + 1) ;                                               01087900          
-      4 (IF SC = ALPHA THEN DS := 1 CHR ELSE JUMP OUT) ;                01087950          
-    END ;                                                               01087960          
- END ENDCHECK ;                                                         01088000          
- LABEL NEXT ;                                                           01088050          
-      READONLYCHECK ;                                                   01088100          
-      RDISC (FIRST . T, RECORD) ;                                       01089500          
-      IF ENDCHECK (RECORD) = 0 THEN                                     01090000          
-        ERROR (NEXT, 0, "INV FIR", "ST CARD") ;                         01090500          
-      RDISC (LAST . F, IMAGE) ;                                         01092000          
-      IF ENDCHECK (IMAGE) NEQ "?END0" THEN                              01093100          
-        ERROR (NEXT, 0, "NO END ", "CARD.  ") ;                         01093200          
-      WAIT (KOUNT (1, FINITY, CLOCK) | 2, XLOCKED) ;                    01095500          
-      FILL LIBRARY WITH PREFIX, SUFFIX ;                                01096000          
-      READ SEEK (LIBRARY [M := (AT := FIRST.T) - 2]) ;                  01096500          
-      I := 0 ;                                                          01096600          
-      WHILE AT := LL [AT] . T NEQ 1 DO                                  01097000          
-      BEGIN                                                             01097500          
-        RDISC (AT, IMAGE) ;                                             01098000          
-        I := I + 1 ;                                                    01098100          
-        IF ENDCHECK (IMAGE) NEQ 0 THEN                                  01098500          
-        BEGIN                                                           01099000          
-          RECORD [9] := I ;                                             01100000          
-          WRITE (LIBRARY, 10, RECORD [*]) ;                             01100500          
-          IF M + 1 NEQ M := AT - 2 THEN                                 01100510          
-            READ SEEK (LIBRARY [M]) ;                                   01100600          
-          READ (IMAGE [*], 10, RECORD [*]) ;                            01101600          
-        END ;                                                           01102000          
-        INTERUPT (1, 2, M) ;                                            01102500          
-      END ;                                                             01103000          
-      IMAGE [9] := I ;                                                  01104000          
-      WRITE (LIBRARY, 10, IMAGE [*]) ;                                  01104500          
-      CLOSE (LIBRARY) ;                                                 01104600          
-      IF NOT EMPTY1 THEN                                                01105000          
-      BEGIN                                                             01105500          
-        PARAMETER3 := 1 ;                                               01106100          
-        PARAMETER4 := FINITY ;                                          01106200          
-        THERMOFAX (8, (D + 14) DIV 15 | 15) ;                           01107500          
-      END                                                               01108500          
-      ELSE                                                              01109000          
-      BEGIN                                                             01109500          
-        FILEINFO := DATA ;                                              01109600          
-        CLOSEFILE ;                                                     01110000          
-        ZIP WITH DISC ;                                                 01111000          
-      END ;                                                             01111500          
- NEXT:                                                                  01111600          
-      CLOSE (LIBRARY) ;                                                 01111700          
-   END ;                                                                01112000          
- % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        01113000          
- DEFINE CLOSEIT =                                                       01113500          
-    BEGIN                                                               01113600          
-      OPENCHECK ;                                                       01113700          
-      CLOSEFILE ;                                                       01114000          
-    END# ;                                                              01116500          
- % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        01117000          
- PROCEDURE OPEN ;                                                       01117500          
-      BEGIN                                                             01118000          
- LABEL NEXT ;                                                           01118500          
-        IF FILEOPEN THEN CLOSEFILE ;                                    01119000          
-        TABAMOUNT := 0 ;                                                01119500          
-        PREWHERE := - 1 ;                                               01121000          
-        IF FILEINFO := FILETYPE (PARAMETER3) = 0 THEN                   01122000          
-          ERROR (NEXT, 5, " TYPE: ", PARAMETER3) ;                      01126000          
-        I := XFILE (12, 0, -1) ;                                        01126100          
-        FILL DISC WITH PREFIX := PARAMETER1, SUFFIX := PARAMETER2 ;     01126200          
-        IF PARAMETER4 = "NEW    " THEN                                  01126500          
-        BEGIN                                                           01127000          
-          IF I GEQ 0 THEN                                               01128500          
-            ERROR (NEXT, 4, PARAMETER1, PARAMETER2) ;                   01129000          
-          CREATEFILE (450) ;                                            01130000          
-          FILEACCESS := 7 ;                                             01130500          
-          FIRST := D := 1 ;                                             01130650          
-          LAST := 1 & INFINITY [SF] ;                                   01130700          
-          MODIFIED := TRUE ;                                            01130750          
-          N := 0 ;                                                      01130800          
-          INORDER := FALSE ;                                            01130850          
-          GO TO NEXT ;                                                  01130900          
-        END ;                                                           01131000          
-        IF I LEQ 0 THEN                                                 01133500          
-          ERROR (NEXT, 1 - I, PARAMETER1, PARAMETER2) ;                 01134000          
-        IF INPUT [3] NEQ 10 OR INPUT [4] MOD 30 NEQ 0 THEN              01134500          
-          ERROR (NEXT, 3, PARAMETER1, PARAMETER2) ;                     01135000          
-        IF INPUT [6] NEQ 0 THEN                                         01135500          
-          ERROR (NEXT, 0, "FILE IN", " USE.  ") ;                       01136000          
-        IF D := INPUT [5] + 2 GTR MAXFILELENGTH THEN                    01146000          
-          ERROR (NEXT, 0, "FILE TO", " LONG. ") ;                       01147500          
-        IF PARAMETER4 = "OLD    " OR DATAFILE THEN                      01155000          
-        BEGIN                                                           01155500          
-          INORDER := DATAFILE OR READONLYFILE ;                         01156000          
-          N := 0 ;                                                      01157500          
-          FOR AT := 2 STEP 1 UNTIL D DO                                 01157600          
-            LL [AT] := (AT+1) & (N:=N+INC)[SF] & (AT-1)[FF] ;           01157700          
-        END ELSE                                                        01158000          
-        BEGIN                                                           01158500          
-          WAIT (D, FALSE) ;                                             01158600          
-          M := 0 ;                                                      01159000          
-          FOR AT := 2 STEP 1 UNTIL D DO                                 01160000          
-          BEGIN                                                         01160500          
-            READ (LIBRARY, 10, IMAGE [*]) ;                             01161000          
-            N := IF COBOLFILE THEN DEC (IMAGE [0], 6)                   01161500          
-                          ELSE DEC (IMAGE [9], 8) ;                     01162000          
-            IF M GTR N THEN                                             01164500          
-              ERROR (NEXT, 0, "SEQERR ", OCTDEX (M)) ;                  01166000          
-            LL [AT] := (AT+1) & (M:=N)[SF] & (AT-1)[FF] ;               01167500          
-            INTERUPT (1, 2, AT - 1) ;                                   01167600          
-          END ;                                                         01168000          
-        END ;                                                           01168100          
-        FILEACCESS := I ;                                               01168200          
-        MODIFIED := NOT FALSE ;                                         01168210          
-        LL [D] . T := 1 ;                                               01168220          
-        FIRST := 2 ;                                                    01168230          
-        LAST := 1 & INFINITY [SF] & D [FF] ;                            01168240          
-        LL [2] . F := 0 ;                                               01168250          
- NEXT:                                                                  01168500          
-        CLOSE (LIBRARY) ;                                               01168600          
-        N := N + INC ;                                                  01169000          
-        AT := 0 ;                                                       01169100          
-        IF READONLYFILE THEN                                            01169500          
-          ERRORX (7, "READ ON", "LY FILE") ;                            01170000          
-      END ;                                                             01171000          
- % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        01171500          
- DEFINE INCREMENT =                                                     01172000          
-    BEGIN                                                               01172100          
-      IF NOT NUM1 THEN                                                  01172500          
-        ERRORX (7, PARAMETER0, OCTDEX (INC))                            01173000          
-      ELSE INC := PARAMETER1 ;                                          01173500          
-    END# ;                                                              01174000          
- % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        01174500          
- PROCEDURE RESEQ ;                                                      01175000          
-    BEGIN                                                               01175500          
- REAL L ;                                                               01175600          
- LABEL NEXT ;                                                           01176000          
-      OPENCHECK ;                                                       01176100          
-      IF NUM2 THEN                                                      01176500          
-      BEGIN                                                             01177000          
-        IF NOT NUM1 THEN                                                01177500          
-          ERROR (NEXT, 0, PARAMETER1, "INVALID") ;                      01178000          
-        IF NUM4 THEN                                                    01178500          
-          INC := PARAMETER4 ;                                           01179000          
-        IF NUM3 THEN                                                    01179500          
-          M := PARAMETER3 - INC                                         01180000          
-        ELSE M := PARAMETER1 - INC ;                                    01180500          
-        IF M + INC | KOUNT (PARAMETER1,PARAMETER2,-1) GEQ LL [AT].S THEN01180600          
-          ERROR (NEXT, 0, PARAMETER0, " ERROR.") ;                      01180700          
-        AT := LOC (PARAMETER1) ;                                        01181000          
-        IF M + INC LEQ LL [LL [AT].F].S THEN                            01181010          
-          ERROR (NEXT, 0, PARAMETER0, " ERROR.") ;                      01181020          
-        N := M ;                                                        01181500          
-        WHILE (L := LL [AT]).S LEQ PARAMETER2 DO                        01182000          
-        BEGIN                                                           01182500          
-          LL [AT] . S := N := N + INC ;                                 01183000          
-          MODIFY (AT) ;                                                 01183500          
-          AT := L.T ;                                                   01183600          
-        END ;                                                           01184000          
-      END                                                               01185500          
-      ELSE                                                              01186000          
-      BEGIN                                                             01186500          
-        IF NUM1 THEN                                                    01187000          
-          INC := PARAMETER1 ; ;                                         01187500          
-        IF INC | KOUNT (1, FINITY, -1) GEQ INFINITY THEN                01187600          
-          ERROR (NEXT, 0, PARAMETER0, " ERROR.") ;                      01187700          
-        N := 0 ;                                                        01188000          
-        AT := 0 ;                                                       01188500          
-        WHILE AT := LL [AT] . T NEQ 1 DO                                01189000          
-          LL [AT] . S := N := N + INC ;                                 01189500          
-        MODIFIED := NOT FALSE ;                                         01189600          
-      END ;                                                             01190000          
-      N := N + INC ;                                                    01190500          
-      IF NOT DATAFILE THEN                                              01191000          
-        INORDER := READONLYFILE ;                                       01191500          
- NEXT:                                                                  01192000          
-    END RESEQ ;                                                         01192500          
- % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        01193000          
- DEFINE TAB =                                                           01193500          
-    BEGIN                                                               01193600          
-      IF NOT NUM1 THEN                                                  01194000          
-      BEGIN                                                             01194010          
-        IF NOT EMPTY1 THEN                                              01194100          
-          TABON := TOGGLE (TABON, 1)                                    01194300          
-        ELSE                                                            01194450          
-          ERRORX (7, PARAMETER0, ONOFF (TABON) &                        01194500          
-            OCTDEX (IF COBOLFILE THEN TABAMOUNT + 7 ELSE TABAMOUNT + 1) 01194600          
-            [36:36:12]) ;                                               01194700          
-      END ELSE                                                          01194800          
-      BEGIN                                                             01194900          
-        IF RELATIVENUMBER.[2:2] NEQ 0 THEN                              01194910          
-          PARAMETER1 := TABAMOUNT + 1 +                                 01194920          
-             (RELATIVENUMBER & RELATIVENUMBER[1:3:3])                   01194930          
-        ELSE IF COBOLFILE THEN                                          01194940          
-          PARAMETER1 := PARAMETER1 - 6 ;                                01194950          
-        IF TABAMOUNT := PARAMETER1 GTR 55 THEN                          01195000          
-          TABAMOUNT := 55 ;                                             01195500          
-        IF TABAMOUNT := TABAMOUNT - 1 LSS 0 THEN                        01197000          
-          TABAMOUNT := 0 ;                                              01197500          
-      END ;                                                             01197600          
-    END#,                                                               01198000          
- % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        01198500          
-  SAVEIT =                                                              01199000          
-    BEGIN                                                               01199100          
-      IF NOT NUM1 THEN                                                  01199500          
-        ERRORX (7, PARAMETER0, OCTDEX (SAVEFACTOR))                     01200000          
-      ELSE SAVEFACTOR := PARAMETER1 ;                                   01200500          
-    END # ;                                                             01201000          
- % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        01211500          
- PROCEDURE COMPILE ;                                                    01212000          
-   BEGIN                                                                01212500          
- LABEL NEXT ;                                                           01213000          
-      OPENCHECK ;                                                       01213100          
-      IF EMPTY2 THEN                                                    01213500          
-        ERROR (NEXT, 3, PARAMETER1, PARAMETER2) ;                       01214000          
-      IF DATAFILE AND EMPTY3 THEN                                       01216000          
-        ERROR (NEXT, 3, PREFIX, SUFFIX) ;                               01216500          
-      IF NOT EMPTY3 THEN                                                01217000          
-        IF XFILE (PARAMETER3, "DISK   ", 2) LSS 2 THEN                  01218000          
-          GO TO NEXT ;                                                  01218500          
-      IF PARAMETER0 := XFILE ("LINE   ", USERCODE, -1) = 7 THEN         01221500          
-      BEGIN                                                             01223000          
-        READ (LIBRARY) ;                                                01223500          
-        DETACH ;                                                        01224000          
-        CLOSE (LIBRARY, PURGE) ;                                        01224500          
-        REATTACH ;                                                      01225000          
-      END ELSE                                                          01225500          
-      IF PARAMETER0 GEQ 0 THEN                                          01226000          
-        ERROR (NEXT, 4, "LINE   ", USERCODE) ;                          01226500          
-      IF XFILE (12, 0, -1) GEQ 0 THEN                                   01227000          
-        ERROR (NEXT, 4, PARAMETER1, PARAMETER2) ;                       01228500          
-      CLOSEFILE ;                                                       01229000          
-      IF EMPTY3 THEN                                                    01230000          
-        IF COMPILER = ALGOL THEN                                        01230500          
-          PARAMETER3 := "ALGOL  "                                       01231000          
-        ELSE IF COMPILER = FORTRAN THEN                                 01231500          
-          PARAMETER3 := "FORTRAN"                                       01232000          
-        ELSE IF COMPILER = XALGOL THEN                                  01232500          
-          PARAMETER3 := "XALGOL "                                       01233000          
-        ELSE IF COMPILER = BASIC THEN                                   01233500          
-          PARAMETER3 := "BASIC  "                                       01234000          
-        ELSE                                                            01234500          
-          PARAMETER3 := "COBOL  " ;                                     01235000          
-      WRITE (ZIPPY [*], ZIPPER, PARAMETER1.[6:6],                       01238000          
-        PARAMETER1, PARAMETER2.[6:6], PARAMETER2, PARAMETER3.[6:6],     01238500          
-        PARAMETER3, PREFIX.[6:6], PREFIX, SUFFIX.[6:6], SUFFIX,         01239000          
-        USERCODE . [6 : 6], USERCODE) ;                                 01239500          
-      ZIP WITH ZIPPY [*] ;                                              01240000          
- NEXT:                                                                  01242000          
-   END COMPILE ;                                                        01242500          
- % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        01243000          
- PROCEDURE DITTO ;                                                      01243500          
-    BEGIN                                                               01244000          
- BOOLEAN B ;                                                            01244100          
- REAL L ;                                                               01244200          
- PROCEDURE LINK (X, Y) ; VALUE X, Y ; INTEGER X, Y ;                    01244300          
- BEGIN                                                                  01244310          
-    LL [X].T := Y ;                                                     01244320          
-    MODIFY (X) ;                                                        01244330          
-    LL [Y].F := X ;                                                     01244340          
-    MODIFY (Y) ;                                                        01244350          
- END LINK ;                                                             01244360          
- LABEL NEXT ;                                                           01244500          
-      IF PARAMETER1 = "OVERITE" THEN                                    01244550          
-      BEGIN                                                             01244600          
-        DITTOCLOBBER := TOGGLE (DITTOCLOBBER, 2) ;                      01244700          
-        GO TO NEXT ;                                                    01244850          
-      END ;                                                             01244900          
-      READONLYCHECK ;                                                   01245000          
-      IF NOT NUM1 THEN                                                  01246000          
-        ERROR (NEXT, 0, PARAMETER0, " ERROR.") ;                        01246500          
-      IF PARAMETER2 = "MOVE   " OR PARAMETER3 = "MOVE   " THEN          01246510          
-      BEGIN                                                             01246520          
-        IF NOT NUM2 THEN                                                01246530          
-          PARAMETER2 := PARAMETER1 ;                                    01246540          
-        B := ITSOLD (N) ;                                               01246550          
-        PARAMETER4 := LL [PARAMETER3 := AT] ;                           01246560          
-        M := LL [I := LOC (PARAMETER1)].F ;                             01246570          
-        IF PARAMETER0 := KOUNT (PARAMETER1,PARAMETER2,-1) - 1 LSS 0 THEN01246580          
-          GO TO NEXT ;                                                  01246590          
-        IF ITSOLD (PARAMETER2) THEN                                     01246600          
-          L := LL [AT].T                                                01246610          
-        ELSE                                                            01246620          
-          AT := LL [L := AT].F ;                                        01246630          
-        IF (B AND B := LL [M].S GEQ N OR N GEQ LL [L].S) OR             01246640          
-          N+INC|PARAMETER0 GEQ (IF B THEN PARAMETER4 ELSE LL [L]).S THEN01246650          
-          ERROR (NEXT, 0, "NO ROOM", ": MOVE ") ;                       01246660          
-        IF B THEN                                                       01246670          
-        BEGIN                                                           01246680          
-          LINK (M, L) ;                                                 01246690          
-          LINK (AT, PARAMETER3) ;                                       01246700          
-          LINK (PARAMETER4.F, I) ;                                      01246710          
-        END ELSE                                                        01246720          
-          PARAMETER3 := L ;                                             01246730          
-        DO BEGIN                                                        01246740          
-          LL [I].S := N ;                                               01246750          
-          N := N + INC ;                                                01246760          
-          MODIFY (I) ;                                                  01246770          
-        END UNTIL I := LL [I].T = PARAMETER3 ;                          01246780          
-        INORDER := FALSE ;                                              01246790          
-        GO TO NEXT ;                                                    01246800          
-      END ;                                                             01246810          
-      CLOSE (DISC) ;                                                    01247000          
-      PREWHERE := PARAMETER3 := -1 ;                                    01247100          
-      IF NUM2 THEN                                                      01247500          
-        WAIT (KOUNT (PARAMETER1, PARAMETER2, CLOCK), FALSE)             01248500          
-      ELSE PARAMETER2 := PARAMETER1 ;                                   01250000          
-      FILL LIBRARY WITH PREFIX, SUFFIX ;                                01250500          
-      I := LOC (PARAMETER1) ;                                           01251600          
-      M := D ;                                                          01252000          
-      B := NOT (DITTOCLOBBER EQV TEMPTOG) ;                             01252100          
-      WHILE (L := LL [I]).S LEQ PARAMETER2 AND I LEQ M DO               01252500          
-      BEGIN                                                             01253500          
-        IF PARAMETER3 + 1 NEQ PARAMETER3 := I THEN                      01254000          
-          READ SEEK (LIBRARY [I - 2]) ;                                 01254500          
-        IF ITSOLD (N) AND B THEN                                        01255000          
-          ERROR (NEXT, 0, "OVERITE", " IS OFF") ;                       01255500          
-        I := L.T ;                                                      01256000          
-        READ (LIBRARY, 10, IMAGE [*]) ;                                 01256500          
-        WDISC ;                                                         01257000          
-        INTERUPT (1, 2, I - 2) ;                                        01257500          
-      END ;                                                             01258000          
- NEXT:                                                                  01259500          
-      CLOSE (LIBRARY) ;                                                 01260000          
-    END DITTO ;                                                         01261000          
- % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        01261500          
- PROCEDURE REMOVE ;                                                     01262000          
-    BEGIN                                                               01262500          
- LABEL NEXT ;                                                           01263000          
-      IF EMPTY2 AND PARAMETER1 = "LISTING" THEN                         01263100          
-      BEGIN                                                             01263200          
-        PARAMETER1 := "LINE   " ;                                       01263300          
-        PARAMETER2 := USERCODE ;                                        01263400          
-      END ;                                                             01263500          
-      IF XFILE (12, 0, 4) LSS 4 THEN                                    01263600          
-        GO TO NEXT ;                                                    01263700          
-      IF PARAMETER1 = PREFIX THEN                                       01264000          
-        IF PARAMETER2 = SUFFIX AND READWRITEFILE THEN                   01264500          
-        BEGIN                                                           01265000          
-          READ (DISC [0]) ;                                             01265500          
-          DETACH ;                                                      01266000          
-          CLOSE (DISC, PURGE) ;                                         01266500          
-          REATTACH ;                                                    01267500          
-          FILEACCESS := 0 ;                                             01268000          
-          INORDER := TRUE ;                                             01268500          
-          GO TO NEXT ;                                                  01269000          
-        END ;                                                           01269500          
-      IF INPUT [6] NEQ 0 THEN                                           01273000          
-        ERROR (NEXT, 0, "FILE IN", " USE.  ") ;                         01273500          
-      READ (LIBRARY) ;                                                  01274000          
-      DETACH ;                                                          01274500          
-      CLOSE (LIBRARY, PURGE) ;                                          01275000          
-      REATTACH ;                                                        01275500          
- NEXT:                                                                  01276000          
-    END REMOVE ;                                                        01276500          
- % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        01277000          
- PROCEDURE LISTING ;                                                    01277200          
-    BEGIN                                                               01277400          
- BOOLEAN LOCKED ;                                                       01277500          
- INTEGER P5 ;                                                           01277510          
- LABEL NEXT ;                                                           01277600          
- FILE LINE 15 (2, 15) ;                                                 01277800          
- FILE FEEDBACK DISK SERIAL (2, 15, 30) ;                                01278000          
- REAL STREAM PROCEDURE READZ (Z, SKP, A, N) ;                           01278200          
- VALUE SKP, A, N ;                                                      01278210          
- BEGIN                                                                  01278220          
- LABEL EXIT ;                                                           01278230          
-    SI := Z ;                                                           01278240          
-    SI := SI + SKP ;                                                    01278250          
-    DI := LOC READZ ;                                                   01278260          
-    A (DI := DI + 8 ; DI := DI - N ; DS := N CHR ; JUMP OUT TO EXIT) ;  01278270          
-    DS := N OCT ;                                                       01278280          
- EXIT:                                                                  01278290          
- END READZ ;                                                            01278300          
-      IF XFILE ("LINE   ", USERCODE, 1) LSS 1 THEN                      01278400          
-        GO TO NEXT ;                                                    01278600          
-      IF NOT EMPTY1 THEN                                                01279200          
-        IF I := FILETYPE (PARAMETER1) = 0 OR I = DATA THEN              01279400          
-          ERROR (NEXT, 5, "TYPE:  ", PARAMETER1) ;                      01281600          
-      WAIT (INPUT [5], YLOCKED) ;                                       01281800          
-      YLOCKED := LOCKED := TRUE ;                                       01282000          
-      FILL FEEDBACK WITH "LINE   ", USERCODE ;                          01282200          
-      IF NUM2 AND NUM3 AND NUM4 THEN                                    01282400          
-      BEGIN                                                             01282600          
-        PARAMETER1 := 1 ;                                               01282800          
-        WRITESEGMENT ;                                                  01283200          
-        PARAMETER0 := IF I=FORTRAN THEN 10 ELSE REAL(I GEQ ALGOL)+12 ;  01283300          
-        P5 := IF I GEQ ALGOL THEN PARAMETER0 - 1 ELSE 0 ;               01283310          
-      END                                                               01283600          
-      ELSE IF PARAMETER2.[6:30] = "ERROR" OR PARAMETER2                 01283800          
-        = "SYNTAX " THEN                                                01284000          
-      BEGIN                                                             01284100          
-        PARAMETER1 := 2 ;                                               01284200          
-        P5 := IF I=FORTRAN THEN 9 ELSE 12 ;                             01284300          
-      END                                                               01284310          
-      ELSE IF EMPTY2 THEN                                               01284400          
-      BEGIN                                                             01284600          
-        FILL LINE WITH "LINE   ", USERCODE ;                            01284800          
-        DETACH ;                                                        01285000          
-        WRITE (LINE) ;                                                  01285200          
-        REATTACH ;                                                      01285400          
-        PARAMETER1 := 3 ;                                               01285600          
-      END                                                               01285800          
-      ELSE                                                              01286000          
-        ERROR (NEXT, 0, PARAMETER0, " ERROR.") ;                        01286200          
-      DO BEGIN                                                          01286400          
-        READ (FEEDBACK, 15, ZIPPY [*]) [NEXT] ;                         01287000          
-        IF PARAMETER1 = 1 THEN                                          01287200          
-        BEGIN                                                           01287400          
-          IF I = FORTRAN THEN                                           01287600          
-          BEGIN                                                         01287800          
-            IF N := READZ (ZIPPY [11], 4, 1, 4) NEQ "LONG" THEN         01288000          
-              IF N := READZ (ZIPPY [11], 3, 0, 4) NEQ 0 THEN            01288200          
-                M := N ;                                                01288400          
-          END                                                           01288800          
-          ELSE IF I GEQ ALGOL THEN                                      01289000          
-          BEGIN                                                         01289200          
-            IF N := READZ (ZIPPY [14], 4, 0, 4) NEQ 0 THEN              01289400          
-              M := N ;                                                  01289600          
-          END                                                           01289800          
-          ELSE M := READZ (ZIPPY [12], N := 0, 0, 4) ;                  01293000          
-          IF M = PARAMETER2 AND N = 0 THEN                              01293200          
-          BEGIN                                                         01293400          
-            N := READZ (ZIPPY [PARAMETER0], REAL (I=COBOL) + 4, 0, 4) ; 01293600          
-            IF N GTR PARAMETER4 THEN                                    01294600          
-              GO TO NEXT ;                                              01294800          
-            IF PARAMETER3 LEQ N THEN                                    01295000          
-            BEGIN                                                       01295200          
-              PARAMETER3 := N ;                                         01295400          
-              N := READZ (ZIPPY [P5], IF I=COBOL THEN 3 ELSE 0, 0, 8) ; 01295600          
-              WRITESEQ ;                                                01296600          
-              WRITERELADDR ;                                            01297000          
-            END ;                                                       01297200          
-          END ;                                                         01297400          
-        END                                                             01297600          
-        ELSE IF PARAMETER1 = 2 THEN                                     01297800          
-        BEGIN                                                           01298000          
-          IF I = COBOL THEN                                             01298200          
-          BEGIN                                                         01298400          
-            M := READZ (ZIPPY [0], 0, 1, 1) ;                           01298600          
-            IF M = " " OR M = "[" THEN                                  01298800          
-              M := READZ (ZIPPY [0], 5, 0, 6)                           01299000          
-            ELSE M := 0 ;                                               01299200          
-          END                                                           01299400          
-          ELSE M := READZ (ZIPPY [P5], 0, 0, 8) ;                       01300000          
-          IF M = 0 AND N GTR 0 THEN                                     01300200          
-          BEGIN                                                         01301200          
-            WRITESEQ ;                                                  01301600          
-            WRITEROW (ZIPPY, TRUE, DATA) ;                              01301800          
-          END ELSE N := M ;                                             01302000          
-        END                                                             01302200          
-        ELSE                                                            01302400          
-          WRITE (LINE [DBL], 15, ZIPPY [*]) ;                           01302600          
-        INTERRUPT (1) ;                                                 01302800          
-      END UNTIL BOOLEAN (BREAKI) ;                                      01303000          
- NEXT:                                                                  01303200          
-      N := RESETN ;                                                     01303400          
-      IF LOCKED THEN                                                    01303500          
-        YLOCKED := FALSE ;                                              01303600          
-    END LISTING ;                                                       01303800          
- % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        01345000          
- PROCEDURE INLINE ;                                                     01345500          
-    BEGIN                                                               01345550          
- LABEL NEXT ;                                                           01345560          
- DEFINE QUICK = FALSE# ;                                                01345570          
-      IF PARAMETER1 = "ECHO   " THEN                                    01345600          
-      BEGIN                                                             01345610          
-        INLINEECHO := TOGGLE (INLINEECHO, 2) ;                          01345620          
-        GO TO NEXT ;                                                    01345660          
-      END ;                                                             01345670          
-      READONLYCHECK ;                                                   01345700          
-      IF NUM1 THEN                                                      01346000          
-      BEGIN                                                             01346500          
-        N := PARAMETER1 ;                                               01347000          
-        IF NOT ITSOLD (N) THEN                                          01347500          
-          ERROR (NEXT, 0, "MISSING", OCTDEX (N)) ;                      01348000          
-        IF NOT MOREINPUT THEN                                           01348500          
-          WRITEAT ;                                                     01349000          
-        I := PARAMETER2.[6:6] ;                                         01349500          
-      END                                                               01350000          
-      ELSE                                                              01350500          
-      BEGIN                                                             01351000          
-        AT := LL [LOC (N)].F ;                                          01351500          
-        N := LL [AT].S ;                                                01352500          
-        I := PARAMETER1.[6:6] ;                                         01353000          
-      END ;                                                             01353500          
-      IF NOT NUM1 OR MOREINPUT THEN                                     01353600          
-        RDISC (AT, RECORD) ;                                            01354000          
-      INLINETOG := TRUE ;                                               01354500          
-      IF I = "I" THEN                                                   01356000          
-        M := 1                                                          01356500          
-      ELSE IF I = "D" THEN                                              01357000          
-        M := 2                                                          01357500          
-      ELSE IF I = "R" THEN                                              01358000          
-        M := 3                                                          01358500          
-      ELSE M := 0 ;                                                     01359000          
- NEXT:                                                                  01359500          
-    END INLINE;                                                         01359600          
- % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        01360000          
- PROCEDURE COLUMN ;                                                     01360100          
-      BEGIN                                                             01360150          
-        INTEGER STREAM PROCEDURE GETCHAR (S) ;                          01360200          
-        BEGIN                                                           01360250          
-         LABEL NOPE, YES, XIT ;                                         01360300          
-             DI := LOC GETCHAR ;                                        01360350          
-             SI := S ;                                                  01360400          
-             2(40(IF SC = ALPHA THEN ELSE IF SC = " " THEN ELSE         01360450          
-                  IF SC = """ THEN                                      01360500          
-                    JUMP OUT 2 TO YES                                   01360550          
-                  ELSE IF SC = "." THEN                                 01360600          
-                    JUMP OUT 2 TO YES                                   01360650          
-                  ELSE IF SC = "(" THEN                                 01360700          
-                    JUMP OUT 2 TO YES                                   01360750          
-                  ELSE IF SC = "[" THEN                                 01360800          
-                    JUMP OUT 2 TO YES                                   01360850          
-                  ELSE IF SC = ";" THEN                                 01360900          
-                    JUMP OUT 2 TO NOPE ;                                01360950          
-                  SI := SI + 1)) ;                                      01361000          
- NOPE:                                                                  01361050          
-             DS := 8 LIT "+0000001" ;                                   01361100          
-             GO TO XIT ;                                                01361150          
- YES:                                                                   01361200          
-             SI := SI + 1 ;                                             01361250          
-             DI := DI + 7 ;                                             01361300          
-             DS := CHR ;                                                01361350          
- XIT:                                                                   01361400          
-        END GETCHAR ;                                                   01361450          
-        IF I := GETCHAR (IMAGE) GEQ 0 THEN                              01361500          
-          CHARACTER := I ;                                              01361550          
-        IF NUM1 THEN                                                    01361600          
-        BEGIN                                                           01361650          
-          COLSTOP1 := MIN (PARAMETER1, 80) ;                            01361700          
-          IF NUM2 THEN                                                  01361900          
-          BEGIN                                                         01361950          
-            COLSTOP2 := MIN (MAX (PARAMETER2, COLSTOP1), 80) ;          01362000          
-            IF NUM3 THEN                                                01362050          
-            BEGIN                                                       01362100          
-              COLSTOP3 := MIN (MAX (PARAMETER3, COLSTOP2), 80) ;        01362150          
-              IF NUM4 THEN                                              01362200          
-              BEGIN                                                     01362250          
-                COLSTOP4 := MIN (MAX (PARAMETER4, COLSTOP3), 80) ;      01362300          
-                COLSTOPS := 4 ;                                         01362350          
-              END ELSE                                                  01362400          
-                COLSTOPS := 3 ;                                         01362450          
-            END ELSE                                                    01362500          
-              COLSTOPS := 2 ;                                           01362550          
-          END ELSE                                                      01362600          
-            COLSTOPS := 1 ;                                             01362650          
-          MAXCOLSTOP := COLSTOP [COLSTOPS] ;                            01362675          
-        END ELSE                                                        01362700          
-        IF EMPTY1 THEN                                                  01362750          
-        BEGIN                                                           01363100          
-          SHOW (PARAMETER0, ONOFF (COLUMNS) & (CHARACTER)[42:42:6]) ;   01363200          
-          IF COLSTOPS LSS 1 THEN                                        01363210          
-            PARAMETER1 := 0 & "#"[6:42:6]                               01363220          
-          ELSE PARAMETER1 := OCTDEX (COLSTOP1) ;                        01363230          
-          IF COLSTOPS LSS 2 THEN                                        01363240          
-            PARAMETER2 := 0 & "#"[6:42:6]                               01363250          
-          ELSE PARAMETER2 := OCTDEX (COLSTOP2) ;                        01363260          
-          SHOW (PARAMETER1, PARAMETER2) ;                               01363270          
-          IF COLSTOPS LSS 3 THEN                                        01363280          
-            PARAMETER3 := 0 & "#"[6:42:6]                               01363290          
-          ELSE PARAMETER3 := OCTDEX (COLSTOP3) ;                        01363300          
-          IF COLSTOPS LSS 4 THEN                                        01363310          
-            PARAMETER4 := 0 & "#"[6:42:6]                               01363320          
-          ELSE PARAMETER4 := OCTDEX (COLSTOP4) ;                        01363330          
-          ERRORX (7, PARAMETER3, PARAMETER4) ;                          01363410          
-        END ELSE                                                        01363420          
-          COLUMNS := TOGGLE (COLUMNS, 1) ;                              01363430          
-      END COLUMN ;                                                      01364500          
- % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        01365000          
- PROCEDURE TEACH ;                                                      01365500          
-    BEGIN                                                               01366000          
- LABEL NEXT ;                                                           01366500          
-      IF NOT EMPTY1 THEN                                                01367000          
-      BEGIN                                                             01367500          
-        M := -1 ;                                                       01368000          
-        FOR I := 0 STEP 1 UNTIL RSWDM DO                                01368500          
-          IF PARAMETER1 = RSWD [I] THEN                                 01369000          
-          BEGIN                                                         01369500          
-            M := I ;                                                    01370000          
-            I := RSWDM ;                                                01370500          
-          END ;                                                         01371000          
-        IF M LSS 0 THEN                                                 01371500          
-        BEGIN                                                           01371600          
-          IF I := XFILE (PARAMETER1, PARAMETER2:=MACROLIBRARY, -1) LSS 201371700          
-            AND MACROLIBRARY NEQ "MACRO  " THEN                         01371800          
-            I := XFILE (PARAMETER1, PARAMETER2:="MACRO  ", -1) ;        01371830          
-          IF I LSS 2 THEN                                               01371900          
-          BEGIN                                                         01372000          
-            SHOW (PARAMETER1, " INVALI") ;                              01372020          
-            ERROR (NEXT, 0, "D: *   ", RWTEACH) ;                       01372040          
-          END ;                                                         01372050          
-          NUM2 := FALSE ;                                               01372100          
-          NUM3 := BOOLEAN (2) ;                                         01372200          
-          LISTIT (0) ;                                                  01372300          
-          GO TO NEXT ;                                                  01372400          
-        END ;                                                           01372450          
-        PARAMETER1 := "TEACHER" ;                                       01372500          
-        PARAMETER2 := OCTDEC (VERSION) ;                                01373000          
-        IF XFILE (PARAMETER1, PARAMETER2, 2) LSS 2 THEN                 01373500          
-          GO TO NEXT ;                                                  01374000          
-        READ (LIBRARY [M], 1, IMAGE [*]) ;                              01375000          
-        N := DEC (IMAGE [0], 8) ;                                       01376000          
-        CLOSE (LIBRARY) ;                                               01376500          
-        PARAMETER3 := N DIV 10000 ;                                     01377000          
-        NUM3 := TRUE ;                                                  01377500          
-        PARAMETER4 := N MOD 10000 ;                                     01378000          
-        NUM4 := TRUE ;                                                  01378500          
-        N := RESETN ;                                                   01379000          
-        LISTIT (17) ;% POSTING AND QUICK                                01379500          
-      END ELSE                                                          01380500          
-      BEGIN                                                             01380600          
-        WRITE (PRETANK [*], TEACH1) ;                                   01381500          
-        WRITETWX ;                                                      01382000          
-        FOR I := 0 STEP 7 UNTIL RSWDM DO                                01382500          
-        BEGIN                                                           01383000          
-          WRITE (IMAGE [*], TEACH2, FOR M := 0 STEP 1 UNTIL 6 DO        01383500          
-            [(PARAMETER0 := RSWD [I + M]).[6:6], PARAMETER0]) ;         01384000          
-          WRITEROW (IMAGE, FALSE, COBOL) ;                              01384500          
-        END ;                                                           01386500          
-        WRITE (IMAGE [*], TEACH3) ;                                     01387000          
-        WRITEROW (IMAGE, FALSE, COBOL) ;                                01387500          
-      END ;                                                             01390500          
- NEXT:                                                                  01390600          
-    END TEACH ;                                                         01390700          
- % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        01391500          
- DEFINE PERCENT =                                                       01392000          
-    BEGIN                                                               01392500          
-      TRANSLATING := BOOLEAN (I := REAL (TOGGLE (TRANSLATING, 1))) ;    01393000          
-      TRANSLATEI := I ;                                                 01393500          
-    END# ;                                                              01394500          
- % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        01402000          
- PROCEDURE STOP ;                                                       01402500          
-    BEGIN                                                               01403000          
- DEFINE DIRCTRY = CONTROLS# ;                                           01403100          
- LABEL NEXT ;                                                           01403500          
-      IF BOOLEAN (ABNORMALEND) THEN                                     01403600          
-      BEGIN                                                             01403610          
-        EMPTY1 := ABNORMALEND = 3 ;                                     01403620          
-        ABNORMALEND := BREAKI := 0 ;                                    01403630          
-        IF BOOLEAN (INREADYQ) THEN                                      01403650          
-        BEGIN                                                           01403690          
-          FOR I := 1 STEP 1 WHILE READYQ [I] NEQ USER DO ;              01403700          
-          FOR I := I + 1 STEP 1 UNTIL READYQTOP DO                      01403750          
-            READYQ [I - 1] := READYQ [I] ;                              01403755          
-          READYQTOP := READYQTOP - 1 ;                                  01403800          
-          INREADYQ := 0 ;                                               01403810          
-        END ;                                                           01403825          
-      END ELSE                                                          01403850          
-      BEGIN                                                             01403875          
-        IF FILEOPEN AND PARAMETER1 NEQ "DS     " THEN                   01403900          
-          CLOSEFILE ;                                                   01404500          
-        WRITE (PRETANK [*], EOJ) ;                                      01407000          
-        WRITETWX ;                                                      01407500          
-        IF NOT EMPTY1 THEN                                              01407600          
-          SAVESTATE ;                                                   01407700          
-        IF COUNTI GEQ 0 THEN                                            01407710          
-        BEGIN                                                           01407720          
-          ABNORMALEND := IF EMPTY1 THEN 2 ELSE 4 ;                      01407730          
-          STATION := 0 ;                                                01407740          
-          GO TO NEXT ;                                                  01407750          
-        END ;                                                           01407760          
-      END ;                                                             01407800          
-      FORGET (STATIONI) ;                                               01407900          
-      I := 2 | SLOTI ;                                                  01408000          
-      READ (R1 [45], 90, DIRCTRY [*]) ;                                 01408100          
-      IF EMPTY1 THEN                                                    01408500          
-        DIRCTRY [I] := 0                                                01408600          
-      ELSE                                                              01408700          
-        DIRCTRY [I].[1:1] := 0 ;                                        01408800          
-      DIRCTRY [I + 1] := 0 ;                                            01409000          
-      WRITE (R1 [45], 90, DIRCTRY [*]) ;                                01409500          
-      STATION := 0 ;                                                    01410500          
-      IF USER NEQ BIGBIRD THEN                                          01415100          
-      BEGIN                                                             01415110          
-        WRITE (BUFFERS [USER, *], 45, BUFFERS [BIGBIRD, *]) ;           01415130          
-        IF BOOLEAN (INREADYQ) THEN                                      01415140          
-          FOR I := 0 STEP 1 UNTIL READYQTOP DO                          01415150          
-            IF READYQ [I] = BIGBIRD THEN                                01415160          
-              READYQ [I] := USER ;                                      01415170          
-        READ (R1 [IF INREADYQ=3 THEN 46 ELSE SLOTI], 90, CONTROLS [*]) ;01415180          
-        FILEACCESS := CONTROLS [51] ;                                   01415190          
-        IF FILEOPEN THEN                                                01415200          
-        BEGIN                                                           01415210          
-          N := BIGBIRD | 32 ;                                           01415215          
-          M := CONTROLS [57].LEFTSIDE ;                                 01415220          
-          FOR I := 0 STEP 1 UNTIL M DO                                  01415230          
-            WRITE (LINKLISTS [USER32 + I, *], 256,                      01415240          
-                     LINKLISTS [N + I, *]) ;                            01415250          
-        END ;                                                           01415260          
-        IF XDEX := CONTROLS [62] GEQ 0 THEN                             01415265          
-        BEGIN                                                           01415270          
-          WRITE (XARRAY [USER, *], XMAX | 13, XARRAY [BIGBIRD, *]) ;    01415275          
-          FOR XDEX := XDEX STEP -1 UNTIL 0 DO                           01415280          
-            IF BOOLEAN (XNCHRS).[1:1] THEN                              01415285          
-            BEGIN                                                       01415290          
-              READ (IO [2|MAXUSERS+XMAX|BIGBIRD+XDEX], 30, IMAGE [*]) ; 01415295          
-              WRITE (IO [2|MAXUSERS+XMAX|USER+XDEX], 30, IMAGE [*]) ;   01415300          
-            END ;                                                       01415305          
-        END ;                                                           01415310          
-      END ;                                                             01415315          
-      BIGBIRD := BIGBIRD - 1 ;                                          01415500          
- NEXT:                                                                  01416500          
-    END ;                                                               01417000          
- PROCEDURE PROGRAM ;                                                    01417100          
- BEGIN                                                                  01417110          
- LABEL NEXT, EXIT ;                                                     01417120          
- NEXT:                                                                  01417150          
-      CASE VERB OF                                                      01417160          
-      BEGIN                                                             01417170          
-        EXECUTE ;                                                       01417175          
-        DITTO ;                                                         01417180          
-        COPY ;                                                          01417190          
-        INLINE ;                                                        01417200          
-        ZIPIT ;                                                         01417210          
-        CHANGE ;                                                        01417220          
-        EDIT ;                                                          01417230          
-        SAVEIT ;                                                        01417240          
-        RESEQ ;                                                         01417250          
-        PUNCH ;                                                         01417260          
-        PRINT ;                                                         01417270          
-        DELETE ;                                                        01417280          
-        CLOSEIT ;                                                       01417300          
-        COMPILE ;                                                       01417310          
-        COLUMN ;                                                        01417320          
-        SCAN ;                                                          01417330          
-        LISTING ;                                                       01417340          
-        INCREMENT ;                                                     01417350          
-        TAB ;                                                           01417360          
-        PERCENT ;                                                       01417370          
-        QUICKLIST ;                                                     01417380          
-        LISTIT (0) ;                                                    01417390          
-        OPEN ;                                                          01417400          
-        MAIL ;                                                          01417410          
-        TEACH ;                                                         01417420          
-        REMOVE ;                                                        01417430          
-        REPLACE ;                                                       01417440          
-        STOP ;                                                          01417450          
-        GO TO EXIT ;                                                    01417460          
-      END ;                                                             01417470          
-      IF BIGBIRD GEQ 0 THEN                                             01417480          
-        GO TO NEXT ;                                                    01417490          
- EXIT:                                                                  01417500          
- END PROGRAM ;                                                          01418000          
- BOOLEAN PROCEDURE RC (START) ;                                         01418100          
- VALUE START ;                                                          01418200          
- BOOLEAN START ;                                                        01418300          
- BEGIN                                                                  01418500          
- SAVE FILE OUT RONE DISK SERIAL [1:47] "R/C" "#1" (1, 90, SAVE 99) ;    01418600          
- SAVE FILE OUT RTWO DISK SERIAL [15:96] "R/C" "#2" (1, 256, SAVE 99) ;  01418700          
- ARRAY DIRCTRY, NEWDIRCTRY [0:90],                                      01418800          
-   LINKLIST [0:255] ;                                                   01418900          
- LABEL ENDOFPROGRAM ;                                                   01419000          
-    CHARGE (0) ;                                                        01419100          
-    FREEFILE (0) ;                                                      01419150          
-    IF START THEN                                                       01419200          
-    BEGIN                                                               01419300          
-      SEARCH (RONE, IMAGE [*]) ;                                        01419500          
-      IF IMAGE [6] GTR 0 THEN                                           01420000          
-      BEGIN                                                             01420100          
-        I := STATUS (IMAGE [*]) ;                                       01420200          
-        WRITE (TWXOUTPUT (IMAGE [0]), USERUN) ;                         01420300          
-        GO TO ENDOFPROGRAM ;                                            01420500          
-      END ;                                                             01420600          
-      IF IMAGE [0] GEQ 0 THEN                                           01421000          
-      BEGIN                                                             01421500          
-        READ (R1 [45], 90, DIRCTRY [*]) ;                               01422000          
-        DIRCTRY [90] := 12 ;                                            01422500          
-        FOR I := 0 STEP 2 WHILE USERCODE := DIRCTRY [I] NEQ 12 DO       01423000          
-          DIRCTRY [I] := ABS (USERCODE) ;                               01423500          
-        WRITE (R1 [45], 90, DIRCTRY [*]) ;                              01424000          
-      END ELSE                                                          01424500          
-      BEGIN                                                             01425000          
-        DIRCTRY [0] := 12 ;                                             01425500          
-        WRITE (RONE [45], 90, DIRCTRY [*]) ;                            01426000          
-      END ;                                                             01426500          
-      SEARCH (RTWO, IMAGE [*]) ;                                        01432500          
-      IF IMAGE [0] LSS 0 THEN                                           01433000          
-        WRITE (RTWO[0], 1, IMAGE [*]) ;                                 01433500          
-    END ELSE                                                            01436500          
-    BEGIN                                                               01436600          
-      READ (R1 [45], 90, DIRCTRY [*]) ;                                 01437300          
-      USER := -2 ;                                                      01437500          
-      FOR N := 0 STEP 1 UNTIL 1 DO                                      01437600          
-        FOR I := 0 STEP 2 WHILE USERCODE := DIRCTRY [I] NEQ 12 DO       01438000          
-          IF USERCODE NEQ 0 THEN                                        01439000          
-          BEGIN                                                         01439500          
-            READ (R1 [I/2], 90, CONTROLS [*]) ;                         01440000          
-            FILEACCESS := CONTROLS [51] ;                               01440100          
-            IF FILEOPEN OR BOOLEAN (N) THEN                             01440500          
-            BEGIN                                                       01441000          
-              NEWDIRCTRY [USER := USER + 2] := USERCODE ;               01441500          
-              WRITE (RONE, 90, CONTROLS [*]) ;                          01442500          
-              IF FILEOPEN THEN                                          01442600          
-              BEGIN                                                     01442700          
-                READ SEEK (R2 [16 | I]) ;                               01443000          
-                NEWDIRCTRY [USER + 1] := DIRCTRY [I + 1] ;              01443100          
-                M := CONTROLS [57].LEFTSIDE ;                           01444100          
-                FOR D := 0 STEP 1 UNTIL M DO                            01444500          
-                BEGIN                                                   01445000          
-                  READ (R2, 256, LINKLIST [*]) ;                        01445500          
-                  WRITE (RTWO, 256, LINKLIST [*]) ;                     01446000          
-                END ;                                                   01446500          
-                IF M NEQ 31 THEN                                        01446600          
-                  WRITE (RTWO [16 | USER + 31], 1, CONTROLS [*]) ;      01446700          
-                DIRCTRY [I] := 0 ;                                      01447000          
-              END ;                                                     01447100          
-            END ;                                                       01447500          
-          END ;                                                         01448000          
-      NEWDIRCTRY [USER + 2] := 12 ;                                     01455000          
-      IF USER GEQ 0 THEN                                                01455500          
-        WRITE (RONE [45], 90, NEWDIRCTRY [*]) ;                         01456000          
-      CLOSE (R1, PURGE) ;                                               01456500          
-      READ (R2 [0]) ;                                                   01456600          
-      CLOSE (R2, PURGE) ;                                               01457000          
- ENDOFPROGRAM:                                                          01458100          
-      RC := TRUE ;                                                      01458200          
-    END ;                                                               01458300          
-  END RC ;                                                              01458500          
-    CONTROLS [90] := 12 ;                                               01458900          
-    IF NOT RC (TRUE) THEN                                               01459000          
-    BEGIN                                                               01459100          
-      BIGBIRD := -1 ;                                                   01459110          
-      T0 := 150 ;                                                       01459120          
-      FREEHEAD := MAXFREEHEAD := (XMAX + 2) | MAXUSERS ;                01459130          
-      PROGRAM ;                                                         01459200          
-      BOOL := RC (FALSE) ;                                              01459300          
-      IF XFILE ("TEACHER", OCTDEC (VERSION), -1) GTR 0 THEN             01459310          
-        READ (LIBRARY) ;                                                01459320          
-    END ;                                                               01459400          
-END.                                                                    01459500          
-                                                                        99999990          
+              R / C  -- A MULTI USER REMOTE/CARD.                       00000500
+  WRITTEN BY RON BRODY;  BURROUGHS CORP.; PAOLI, PA. 215-NI4-4700 X219  00001000
+BEGIN                                                                   00001500
+ DEFINE VERSION = 94# ;  % NOVEMBER 18, 1971.                           00002000
+ DEFINE MAXUSERS = 3#, MAXUSER = 2# ; % MAXUSERS LEQ 31                 00002500
+ DEFINE CHRSPERBUFFER = 56#,       % OR 28                              00002600
+   WORDSPERBUFFER = 8#,            % OR 5                               00002700
+   WDSPERBUFFER = 7# ;             % OR 4                               00002800
+ % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        00003000
+ ALPHA FILE IN TWXINPUT 14 (MAXUSER + MAXUSER, 8) ;                     00003500
+ ALPHA FILE OUT TWXOUTPUT 14 (MAXUSERS, WORDSPERBUFFER) ;               00004000
+ DEFINE TWXOUT = TWXOUTPUT (STATIONI, 0)# ;                             00008500
+ ARRAY PRETANK [0 : 3],                                                 00009500
+   BUFFERS [0 : MAXUSERS, 0 : 44] ;                                     00010000
+ DEFINE BUFFER [BUFFER1] = BUFFERS [USER, BUFFER1]#,                    00010200
+   BLOC = BUFFER [29]#,                                                 00010300
+   BUFF [BUFF1] = BUFFERS [MAXUSERS, BUFF1]# ;                          00010400
+ INTEGER ARRAY READYQ [0 : MAXUSERS] ;                                  00011000
+ DEFINE RATTLEINDEX = READYQ [MAXUSERS]# ;                              00011500
+ INTEGER USER,                                                          00012000
+   USER32,                                                              00012200
+   CLOCK,                                                               00013000
+   READYQTOP,                                                           00013500
+   NEXTCLOCK,                                                           00014500
+   TINK,                                                                00015000
+   BIGBIRD ;                                                            00016000
+ BOOLEAN GLOBALBOOL ;                                                   00016500
+ DEFINE                                                                 00017000
+   TANKEDOUTPUT = GLOBALBOOL . [47 : 1]#,                               00017010
+   OUTPUTREADY = (GLOBALBOOL)#,                                         00017020
+   Q = GLOBALBOOL . [46 : 1]#,                                          00017100
+   LOCKED = GLOBALBOOL . [45 : 1]#,                                     00017200
+   XLOCKED = GLOBALBOOL . [44 : 1]#,                                    00017210
+   YLOCKED = GLOBALBOOL . [43 : 1]#,                                    00017220
+   QINPUT = GLOBALBOOL . [42 : 1]#,                                     00017300
+   ERRTOG = GLOBALBOOL . [1 : 1]# ;                                     00017500
+ ARRAY INPUT [0 : 14] ;                                                 00018000
+ DEFINE T0 = INPUT [10]#,                                               00018100
+   T1 = INPUT [11]#,                                                    00018200
+   TN = INPUT [12]#,                                                    00018300
+   FREEHEAD = INPUT [13]#,                                              00018400
+   MAXFREEHEAD = INPUT [14]# ;                                          00018500
+ DEFINE CHRS = BUFFER [30]#,                                            00019000
+   NCHRS = BUFFER [31]#,                                                00019100
+   USERCODEI = BUFFER [32]#,                                            00019500
+   STATIONI = BUFFER [33]#,                                             00020000
+   BREAKI = BUFFER [34]#,                                               00020500
+   ABNORMALEND = BUFFER [35]#,                                          00020600
+   INREADYQ = BUFFER [36]#,                                             00020700
+   FIRSTCHANCE = BUFFER [37]#,                                          00020710
+   ILFCRI = BUFFER [38]#,                                               00020800
+   TRANSLATEI = BUFFER [39]#,                                           00020900
+   HEADI = BUFFER [40]#,                                                00021000
+   TIMEI = BUFFER [41]#,                                                00021100
+   TAILI = BUFFER [42]#,                                                00021500
+   SLOTI = BUFFER [43]#,                                                00022000
+   BLOCK = BUFFER [44]#,                                                00022100
+   COUNTI = BUFFER [0]# ;                                               00022500
+ ALPHA ARRAY RECORD [0 : 9] ;                                           00023000
+ REAL ARRAY LINKLISTS [0 : 32 | MAXUSERS - 1, 0 : 255] ;                00023500
+ DEFINE TIMEX = TIME (1)#,                                              00023600
+   FIRST = LINKLISTS [USER32, 0]#,                                      00023800
+   LAST = LINKLISTS [USER32, 1]#,                                       00023900
+   LEFTSIDE = [35 : 5]#,                                                00024000
+   RIGHTSIDE = [40 : 8]#,                                               00024500
+   LL [LL1] =                                                           00025000
+     LINKLISTS [(TINK := LL1).LEFTSIDE + USER32, TINK.RIGHTSIDE]#,      00025500
+   S = [1 : 21]#,                                                       00026000
+   SF = 1 : 27 : 21#,                                                   00026500
+   F = [22 : 13]#,                                                      00027000
+   FF = 22 : 35 : 13#,                                                  00027500
+   T = [35 : 13]#,                                                      00028000
+   TF = 35 : 35 : 13#,                                                  00028500
+   INFINITY = 2097151#,  %MAXIMUM SEQUENCE NUMBER = 2*21-1.             00029000
+   FINITY = 2097150#,                                                   00029010
+   MAXFILELENGTH = 8191# ;% = 2*13-1.                                   00029500
+ DEFINE MODIFY (MODIFY1) =                                              00029700
+     MODIFIED := MODIFIED OR TWO ((MODIFY1).LEFTSIDE)# ;                00029800
+ DEFINE WAITFLAG = BOOL . [47 : 1]#,  WAITING = (BOOL)#,                00030500
+   INLINETOG = BOOL . [46 : 1]#,                                        00031000
+   EXTRALFCR = BOOL . [45 : 1]#,                                        00031500
+   EXECUTEECHO = BOOL . [44 : 1]#,                                      00032000
+   TRANSLATING = BOOL . [43 : 1]#,     % INITIALLY ON                   00032500
+   XECHO = BOOL . [42 : 1]#,                                            00033000
+   NUM1 = BOOL . [36 : 2]#,                                             00035000
+   NUM2 = BOOL . [34 : 2]#,                                             00035500
+   NUM3 = BOOL . [32 : 2]#,                                             00036000
+   NUM4 = BOOL . [30 : 2]#,                                             00036500
+   EMPTY1 = BOOL . [36 : 1]#,                                           00037500
+   EMPTY2 = BOOL . [34 : 1]#,                                           00038000
+   EMPTY3 = BOOL . [32 : 1]#,                                           00038500
+   EMPTY4 = BOOL . [30 : 1]#,                                           00039000
+   NOSTAR = BOOL . [29 : 1]#,                                           00039500
+   MOREINPUT = BOOL . [23 : 1]#,                                        00042500
+   NOTFIRSTINPUT = BOOL . [22 : 1]#,                                    00043000
+   INLINEECHO = BOOL . [21 : 1]#,      % INITIALLY ON                   00043010
+   CHANGEECHO = BOOL . [20 : 1]#,                                       00043020
+   EDITECHO = BOOL . [19 : 1]#,                                         00043030
+   COPYCLOBBER = BOOL . [18 : 1]#,                                      00043040
+   DITTOCLOBBER = BOOL . [17 : 1]#,                                     00043050
+   TEMPTOG = BOOL . [16 : 1]#,                                          00043060
+   TABON = BOOL . [15 : 1]#,           % INITIALLY ON                   00043070
+   COLUMNS = BOOL . [12 : 1]#,                                          00043100
+   INORDER = BOOL . [1 : 1]#,                                           00043500
+   INITIALBOOL = BOOLEAN ("44000+")# ;                                  00043600
+ ARRAY CONTROLS [0 : 90] ;                                              00043700
+ DEFINE VN                  =      CONTROLS [89]#,                      00043800
+   STRINGI                  =      CONTROLS [88]#,                      00043900
+   STRINGID                 =      CONTROLS [87]#,                      00044000
+   STRINGILEFT              =      CONTROLS [86]#,                      00044100
+   STRINGIREPEAT            =      CONTROLS [85]#,                      00044200
+   STRINGJ                  =      CONTROLS [84]#,                      00044300
+   STRINGJD                 =      CONTROLS [83]#,                      00044400
+   STRINGJLEFT              =      CONTROLS [82]#,                      00044500
+   STRINGJREPEAT            =      CONTROLS [81]#,                      00044600
+   CHARACTER                =      CONTROLS [80]#,                      00044700
+   MAXCOLSTOP               =      CONTROLS [79]#,                      00044800
+   COLSTOPS                 =      CONTROLS [78]#,                      00044900
+   COLSTOP4                 =      CONTROLS [77]#,                      00045000
+   COLSTOP3                 =      CONTROLS [76]#,                      00045100
+   COLSTOP2                 =      CONTROLS [75]#,                      00045200
+   COLSTOP1                 =      CONTROLS [74]#,                      00045300
+   COLSTOP [COLSTOP1]       =      CONTROLS [73 + COLSTOP1]#,           00045400
+   RELATIVENUMBER           =      CONTROLS [73]#,                      00045500
+   STRING                   =      CONTROLS [30]# ; % - CONTROLS [37]   00046600
+ REAL PARAMETER0,           %      CONTROLS [38]                        00046610
+   PARAMETER1,              %      CONTROLS [39]                        00046620
+   PARAMETER2,              %      CONTROLS [40]                        00046630
+   PARAMETER3,              %      CONTROLS [41]                        00046640
+   PARAMETER4,              %      CONTROLS [42]                        00046650
+   USERCODE,                %      CONTROLS [43]                        00046700
+   STATION,                 %      CONTROLS [44]                        00046800
+   PREFIX,                  %      CONTROLS [45]                        00046900
+   SUFFIX,                  %      CONTROLS [46]                        00047000
+   MACROLIBRARY ;           %      CONTROLS [47]                        00047100
+ BOOLEAN MODIFIED ;         %      CONTROLS [48]                        00047200
+ INTEGER FILEINFO,          %      CONTROLS [49]                        00047300
+   TABAMOUNT,               %      CONTROLS [50]                        00047400
+   FILEACCESS,              %      CONTROLS [51]                        00047500
+   SAVEFACTOR,              %      CONTROLS [52]                        00047600
+   PREWHERE,                %      CONTROLS [53]                        00047700
+   XDEX,                    %      CONTROLS [54]                        00047800
+   N,                       %      CONTROLS [55]                        00047900
+   AT,                      %      CONTROLS [56]                        00048000
+   D,                       %      CONTROLS [57]                        00048100
+   M,                       %      CONTROLS [58]                        00048200
+   INC,                     %      CONTROLS [59]                        00048300
+   I,                       %      CONTROLS [60]                        00048400
+   RESETN ;                 %      CONTROLS [61]                        00048500
+ BOOLEAN BOOL ;             %      CONTROLS [62]                        00048800
+ DEFINE COBOLFILE = BOOLEAN (FILEINFO)#,                                00048820
+   DATAFILE = FILEINFO = DATA#,                                         00048830
+   ALGOLFILE = FILEINFO GEQ ALGOL#,                                     00048840
+   COMPILER = FILEINFO#,                                                00048850
+   LENGTH = (IF ALGOLFILE THEN 72 ELSE IF COBOLFILE THEN 66 ELSE 80)#,  00048860
+   HALFLENGTH=(IF ALGOLFILE THEN 36 ELSE IF COBOLFILE THEN 33 ELSE 40)#,00048870
+   FULLLENGTH = (IF DATAFILE THEN 80 ELSE 72)#,                         00048880
+   HALFFULLLENGTH = (IF DATAFILE THEN 40 ELSE 36)#,                     00048890
+   COBOL = 1#,                                                          00049600
+   DATA = 2#,                                                           00049610
+   ALGOL = 4#,                                                          00049620
+   XALGOL = 6#,                                                         00049630
+   FORTRAN = 8#,                                                        00049640
+   BASIC = 10#,                                                         00049650
+   FILEOPEN = FILEACCESS GTR 0#,                                        00050710
+   FILECLOSED = FILEACCESS LEQ 0#,                                      00050720
+   READONLYFILE = FILEACCESS = 2#,                                      00050730
+   READWRITEFILE = FILEACCESS GEQ 3# ;                                  00050740
+ SAVE ARRAY IMAGE [0 : 29] ;                                            00058000
+ DEFINE RSWDM = 27#,                                                    00058500
+   RSWD [RSWD1] = CONTROLS [RSWD1]#,                                    00061500
+   RWTEACH = RSWD [24]# ;                                               00062000
+ FILE DISC DISK SERIAL (2, 10, 30) ;                                    00064000
+ FILE LIBRARY DISK SERIAL (2, 10, 30) ;                                 00065500
+ FILE R1 DISK SERIAL "R/C" "#1" (1, 90) ;                               00069500
+ FILE R2 DISK SERIAL "R/C" "#2" (1, 256) ;                              00070000
+ FILE IO DISK RANDOM [20:150] (1, 30) ;                                 00070500
+ ARRAY ZIPPY [0 : MAX (29, MAXUSERS + MAXUSERS + 1)] ;                  00071500
+ FORMAT ZIPPER ("CC COMPILE ", A1, A6, "/", A1, A6, " WITH ",           00072000
+      A1, A6, " LIBRARY; ALGOL FILE CARD=", A1, A6, "/", A1, A6,        00072500
+      " SERIAL; ALGOL FILE LINE=LINE/", A1, A6, " SERIAL; END."),       00073000
+   EOJ ("{!GOOD BYE{!!!~"),                                             00073600
+   NOROOM (X8, "SORRY, FULL UP.{!BYE{!~"),                              00073700
+   USERUN (X8, "USE:{!?? RUN ...~"),                                    00078600
+   STAR ("*", X79),                                                     00079000
+   DATE (X6, A1, A6, "/", A1, A6, " LISTED AT", I3, ":", I2, " ON ",    00079300
+         A6, "DAY ", O, " BY ", A1, A6, X62),                           00079400
+   WAITF ("WAIT...~"),                                                  00085000
+   RATTLE (X8, "<<<~"),                                                 00087000
+   TEACH1 ("{!THE VALID VERBS ARE:~"),                                  00087500
+   TEACH2 (7 (A1, A6, X2)),                                             00088000
+   TEACH3 ("FOR SYNTAX OF A VERB (E.G. TAB), INPUT: * TEACH",           00088500
+           " VERB. (E.G. * TEACH TAB) "),                               00089000
+   BROKEN (X8, "{!BREAK{!~") ;                                          00092000
+ DEFINE ONOFF (ONOFF1) = (IF ONOFF1 THEN " ON    " ELSE " OFF   ")# ;   00097100
+ DEFINE XMAX = 5# ;                                                     00099600
+ ARRAY XARRAY [0:MAXUSER, 0:XMAX | 13 - 1] ;                            00099700
+ DEFINE                                                                 00099800
+  XSUB = XDEX | 13#,                                                    00099810
+  XPARAMETERS [XPARAMETERS1] = XARRAY [USER, XSUB + XPARAMETERS1]#,     00099900
+  XSTART = XARRAY [USER, XSUB + 5]#,                                    00100000
+  XLAST = XARRAY [USER, XSUB + 6]#,                                     00100100
+  XN = XARRAY [USER, XSUB + 7]#,                                        00100200
+  XREPEAT = XARRAY [USER, XSUB + 8]#,                                   00100300
+  XPREFIX = XARRAY [USER, XSUB + 9]#,                                   00100400
+  XSUFFIX = XARRAY [USER, XSUB + 10]#,                                  00100500
+  XFILETYPE = XARRAY [USER, XSUB + 11]#,                                00100600
+  XNCHRS = XARRAY [USER, XSUB + 12]# ;                                  00100700
+ PROCEDURE PROGRAM ; FORWARD ;                                          00101000
+ ALPHA PROCEDURE OCTDECIMAL (N, M, F) ;                                 00101100
+ VALUE N, F ;                                                           00101200
+ INTEGER N, M, F ;                                                      00101300
+ BEGIN                                                                  00101400
+ ALPHA STREAM PROCEDURE OCTDECX (N, F, Q, T) ;                          00101500
+ VALUE F, Q, T ;                                                        00101600
+    BEGIN                                                               00102500
+ LABEL EXIT ;                                                           00102600
+      DI := LOC OCTDECX ;                                               00103000
+      SI := N ;                                                         00103100
+      T (Q (DS := F OCT ; JUMP OUT 2 TO EXIT) ;                         00103200
+         SKIP F DB ; DS := SET ; JUMP OUT TO EXIT) ;                    00103500
+      Q (F (SI := SI + 2 ; DS := 2 CHR ; DS := LIT "/" ; DS := 2 CHR ;  00103600
+            DS := LIT "/" ; DS := 2 CHR ; JUMP OUT 2 TO EXIT) ;         00103700
+         DI := DI + 7 ; DS := CHR ; JUMP OUT TO EXIT) ;                 00103800
+      DS := 8 DEC ;                                                     00104000
+      F (DI := DI - 7 ; DS := 6 FILL) ;                                 00104100
+ EXIT:                                                                  00104200
+    END OCTDECX ;                                                       00104300
+    IF F LEQ 1 THEN                                                     00104400
+    BEGIN                                                               00104500
+      N := N ;                                                          00104600
+      OCTDECIMAL := OCTDECX (N, F, 0, 0) ;                              00104700
+    END ELSE IF F = 2 THEN                                              00104800
+      OCTDECIMAL := OCTDECX (M, 0, 1, 0)                                00104900
+    ELSE IF F = 3 THEN                                                  00104910
+      OCTDECIMAL := OCTDECX (N, 1, 1, 0)                                00104920
+    ELSE IF F = 4 THEN                                                  00104930
+      OCTDECIMAL := OCTDECX (M, N, 1, 1)                                00104940
+    ELSE                                                                00105000
+      OCTDECIMAL := OCTDECX (M, N := 47 - N, 0, 1) ;                    00105100
+ END OCTDECIMAL ;                                                       00105200
+ DEFINE OCTDEC (OCTDEC1) = OCTDECIMAL (OCTDEC1, M, 0)#,                 00105300
+   OCTDEX (OCTDEX1) = OCTDECIMAL (OCTDEX1, M, 1)#,                      00105400
+   FIRSTCHAR (FIRSTCHAR1) = OCTDECIMAL (0, FIRSTCHAR1, 2)#,             00105500
+   MMDDYY = OCTDECIMAL (TIME (5), M, 3)#,                               00105600
+   DEC (DEC1, DEC2) = OCTDECIMAL (DEC2, DEC1, 4)#,                      00105700
+   TWO (TWO1) = BOOLEAN (OCTDECIMAL (TWO1, M, 5))# ;                    00105800
+ % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        00120500
+ DEFINE SEQUENCE =                                                      00121000
+    IF ALGOLFILE THEN                                                   00121500
+      IMAGE [9] := OCTDEC (IF N = FINITY THEN 99999999 ELSE N)          00122000
+    ELSE IF COBOLFILE THEN                                              00122500
+    BEGIN                                                               00123000
+      IMAGE [0].[1:35] := OCTDEC (N) ;                                  00124000
+      IMAGE [9] := SUFFIX & "."[1:43:5] ;                               00124500
+    END# ;                                                              00125500
+ % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        00126000
+ PROCEDURE STATIONFIX (STATION, I) ;                                    00126500
+ VALUE STATION, I ;                                                     00126600
+ REAL STATION ;                                                         00126700
+ INTEGER I ;                                                            00126800
+ BEGIN                                                                  00126900
+ REAL X ;                                                               00127000
+    IF I LEQ 4 THEN                                                     00127100
+      X := STATUS (STATION, I)                                          00127200
+    ELSE IF I LEQ 6 THEN                                                00127300
+      RELEASE (STATION)                                                 00127400
+    ELSE IF I LEQ 8 THEN                                                00127500
+    BEGIN                                                               00127600
+      SEEK (TWXINPUT (STATION)) ;                                       00127625
+      X := STATUS (STATION, 0) ;                                        00127650
+    END                                                                 00127675
+    ELSE IF I = 9 THEN                                                  00127700
+    BEGIN                                                               00127800
+      WRITE (TWXOUTPUT (STATION), NOROOM) ;                             00127900
+      RELEASE (STATION) ;                                               00128000
+    END                                                                 00128100
+    ELSE IF I = 10 THEN                                                 00128200
+    BEGIN                                                               00128300
+      IF BOOLEAN (STATUS (STATION, 0)).[30:1] OR                        00128400
+         USERCODEI NEQ STATUS (STATION) THEN                            00128500
+        ABNORMALEND := 1 ;                                              00128600
+    END ;                                                               00128700
+ END STATIONFIX ;                                                       00128800
+ DEFINE CHARGE (CHARGE1) = STATIONFIX (CHARGE1, 0)#,                    00128900
+  FREEFILE (FREEFILE1) = STATIONFIX (FREEFILE1, 3)#,                    00129000
+  UNFREEFILE (UNFREEFILE1) = STATIONFIX (UNFREEFILE1, 4)#,              00129100
+  FORGET (FORGET1) = STATIONFIX (FORGET1, 5)#,                          00129200
+  DETACH = STATIONFIX (STATION, 6)#,                                    00129300
+  ATTACH = STATIONFIX (STATION, 7)#,                                    00129400
+  REATTACH = STATIONFIX (STATION, 8)#,                                  00129500
+  NOMOREROOM = STATIONFIX (STATION, 9)#,                                00129600
+  CHECK (CHECK1) = STATIONFIX (CHECK1, 10)# ;                           00129700
+ % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        00129800
+ PROCEDURE OUTPUT ;                                                     00130000
+    BEGIN                                                               00130200
+ STREAM PROCEDURE MOVE (S, D, W, C) ; VALUE W, C ;                      00130400
+ BEGIN                                                                  00130600
+    SI := S ;                                                           00130800
+    DI := D ;                                                           00131000
+    DS := W WDS ;                                                       00131200
+    DS := C CHR ;                                                       00131400
+ END MOVE ;                                                             00131600
+ INTEGER USER,                                                          00131800
+   T,                                                                   00132200
+   SPOT ;                                                               00132400
+ BOOLEAN X ;                                                            00132600
+ LABEL FAKEOUT,                                                         00132800
+   NEXT ;                                                               00133000
+ DEFINE A = INPUT# ;                                                    00133200
+      CHARGE (0) ;                                                      00133400
+      TANKEDOUTPUT := FALSE ;                                           00133600
+      A [WDSPERBUFFER] := "~   " ;                                      00133800
+      FOR USER := 0 STEP 1 UNTIL BIGBIRD DO                             00134000
+      BEGIN                                                             00134200
+        IF COUNTI GEQ 0 THEN                                            00134600
+        BEGIN                                                           00134800
+          IF TIMEI - TIMEX GTR 180 THEN                                 00135000
+            GO TO FAKEOUT ;                                             00135200
+          SPOT := HEADI ;                                               00135400
+          IF REAL ((X := BOOLEAN (STATUS (STATIONI, 0)).[22:9])         00135600
+                   AND BOOLEAN ("6A")) NEQ 0 THEN                       00135800
+          BEGIN                                                         00136000
+            IF X.[39:1] THEN % BUSY                                     00136200
+            BEGIN                                                       00136400
+              T := 15 ;                                                 00136600
+              GO TO FAKEOUT ;                                           00136800
+            END ;                                                       00137000
+            IF REAL (X AND BOOLEAN (10)) NEQ 0 AND NOT X THEN           00137200
+              WRITE (TWXOUT, BROKEN) ; % CLEAR WRITE READY              00137400
+            IF SPOT GEQ 0 THEN                                          00137600
+            BEGIN                                                       00137800
+              A [0] := FREEHEAD ;                                       00138000
+              WRITE (IO [TAILI], 1, A [*]) ;                            00138200
+              FREEHEAD := SPOT ;                                        00138400
+            END ;                                                       00138600
+            COUNTI := XDEX := -1 ;                                      00138800
+            TIMEI := 0 ;                                                00139000
+            BREAKI := 1 ;                                               00139200
+            MOREINPUT := FALSE ;                                        00139400
+            GO TO NEXT ;                                                00139600
+          END ;                                                         00139800
+          IF SPOT GEQ 0 THEN                                            00140000
+          BEGIN                                                         00140200
+            READ (IO [SPOT], 30, BUFF [*]) ;                            00140400
+            MOVE (BUFF [BLOCK], A [1], 0, CHRSPERBUFFER) ;              00140600
+            WRITE (TWXOUT, WORDSPERBUFFER, A [*]) [FAKEOUT] ;           00140800
+            T := CHRSPERBUFFER ;                                        00141000
+            IF BLOCK := BLOCK + WDSPERBUFFER GEQ 29 THEN                00141200
+            BEGIN                                                       00141400
+              BLOCK := 1 ;                                              00141600
+              A [0] := FREEHEAD ;                                       00141800
+              WRITE (IO [SPOT], 1, A [*]) ;                             00142000
+              FREEHEAD := SPOT ;                                        00142200
+              HEADI := BUFF [0] ;                                       00142400
+            END ;                                                       00142600
+          END ELSE                                                      00142800
+          BEGIN                                                         00143000
+            MOVE (BUFFER [1], A [1], 0, CHRSPERBUFFER) ;                00143200
+            WRITE (TWXOUT, WORDSPERBUFFER, A [*]) [FAKEOUT] ;           00143400
+            IF BLOC := BLOC - WDSPERBUFFER LSS 1 THEN                   00143600
+            BEGIN                                                       00143800
+              COUNTI := -1 ;                                            00144000
+              IF ABNORMALEND GEQ 2 THEN                                 00144200
+                ABNORMALEND := ABNORMALEND + 1 ;                        00144400
+              GO TO NEXT ;                                              00144600
+            END ;                                                       00144800
+            T := CHRSPERBUFFER ;                                        00145000
+            MOVE (BUFFER[WORDSPERBUFFER],BUFFER[1],29-WORDSPERBUFFER,0);00145200
+          END ;                                                         00145400
+ FAKEOUT:                                                               00145600
+          IF TIMEI:=MAX(TIMEI,TIMEX)+T|6 LSS TN OR NOT OUTPUTREADY THEN 00145800
+          BEGIN                                                         00146000
+            TN := TIMEI ;                                               00146200
+            TANKEDOUTPUT := TRUE ;                                      00146400
+          END ;                                                         00146600
+ NEXT:                                                                  00146800
+        END ;                                                           00147000
+      END ;                                                             00147200
+      IF OUTPUTREADY THEN                                               00147400
+        NEXTCLOCK := CLOCK - T0 | (TN - TIMEX - 90) / 150               00147600
+      ELSE                                                              00147800
+        NEXTCLOCK := -99 ;                                              00148000
+      CHARGE (STATION) ;                                                00148200
+    END OUTPUT ;                                                        00148400
+ % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        00148600
+ PROCEDURE WRITETWX ;                                                   00148800
+    BEGIN                                                               00149200
+ INTEGER STREAM PROCEDURE COUNT (S) ;                                   00149400
+ BEGIN                                                                  00149600
+    SI := S ;                                                           00149800
+    28 (IF SC = "~" THEN                                                00150000
+          JUMP OUT ;                                                    00150200
+        TALLY := TALLY + 1 ;                                            00150400
+        SI := SI + 1) ;                                                 00150600
+    S := SI ;                                                           00150800
+    DI := S ;                                                           00151000
+    DS := LIT "~" ;                                                     00151200
+    COUNT := TALLY ;                                                    00151400
+ END COUNT ;                                                            00151600
+ STREAM PROCEDURE MOVE (S, D, SKPS, SKPD, N) ;                          00151800
+ VALUE SKPS, SKPD, N ;                                                  00152000
+ BEGIN                                                                  00152200
+    SI := S ;                                                           00152400
+    DI := D ;                                                           00152600
+    SI := SI + SKPS ;                                                   00152800
+    DI := DI + SKPD ;                                                   00153000
+    DS := N CHR ;                                                       00153200
+ END MOVE ;                                                             00153400
+ INTEGER C, J, K ;                                                      00153600
+ DEFINE A = PRETANK# ;                                                  00153700
+ LABEL NOSKIP,                                                          00153800
+   SKIP ;                                                               00154000
+      IF BOOLEAN (ILFCRI) THEN                                          00154200
+      BEGIN                                                             00154400
+        ILFCRI := 0 ;                                                   00154600
+        IF FIRSTCHAR (A [0]) = "{" THEN                                 00154800
+          J := 2 ;                                                      00155000
+      END ;                                                             00155200
+      IF C := COUNT (A) - J NEQ 0 AND NOT BOOLEAN (BREAKI) THEN         00155400
+      BEGIN                                                             00155600
+        IF K := COUNTI LSS 0 THEN                                       00155800
+        BEGIN                                                           00156000
+          BUFFER [4] := "~   " ;                                        00156200
+          MOVE (A [0], BUFFER [1], J, 0, 28) ;                          00156400
+          IF TIMEI - TIMEX GEQ 180 THEN                                 00156600
+            GO TO NOSKIP ;                                              00156800
+          WRITE (TWXOUT, 5, BUFFER [*]) [NOSKIP : NOSKIP] ;             00157000
+          TIMEI := MAX (TIMEI, TIMEX) + C | 6 ;                         00157200
+          GO TO SKIP ;                                                  00157400
+ NOSKIP:                                                                00157600
+          COUNTI := C ;                                                 00157800
+          BLOCK := BLOC := 1 ;                                          00158000
+          HEADI := -1 ;                                                 00158200
+          IF TIMEI LSS TN OR NOT OUTPUTREADY THEN                       00158400
+          BEGIN                                                         00158600
+            NEXTCLOCK := CLOCK - T0 | ((TN:=TIMEI)-TIMEX-120) / 150 ;   00158800
+            TANKEDOUTPUT := TRUE ;                                      00159000
+          END ;                                                         00159200
+          GO TO SKIP ;                                                  00159400
+        END ;                                                           00159600
+        IF K LSS CHRSPERBUFFER THEN                                     00159800
+        BEGIN                                                           00160000
+          MOVE (A, BUFFER [BLOC], J, K, CHRSPERBUFFER - K) ;            00160200
+          J := J + CHRSPERBUFFER - K ;                                  00160400
+          IF COUNTI := K := K + C LSS CHRSPERBUFFER THEN                00160600
+            GO TO SKIP ;                                                00160800
+          C := K - CHRSPERBUFFER ;                                      00161000
+        END ;                                                           00161200
+        IF BLOC := BLOC + WDSPERBUFFER GEQ 29 THEN                      00161400
+        BEGIN                                                           00161600
+          BLOC := 1 ;                                                   00161800
+          IF FREEHEAD NEQ MAXFREEHEAD THEN                              00162000
+          BEGIN                                                         00162200
+            READ (IO [FREEHEAD], 1, BUFFER [*]) ;                       00162400
+            K := BUFFER [0] ;                                           00162600
+          END ELSE                                                      00162800
+            K := MAXFREEHEAD := MAXFREEHEAD + 1 ;                       00163000
+          BUFFER [0] := -1 ;                                            00163200
+          WRITE (IO [FREEHEAD], 30, BUFFER [*]) ;                       00163400
+          IF HEADI GEQ 0 THEN                                           00163600
+          BEGIN                                                         00163800
+            READ (IO [TAILI], 30, BUFFER [*]) ;                         00164000
+            BUFFER [0] := FREEHEAD ;                                    00164200
+            WRITE (IO [TAILI], 30, BUFFER [*]) ;                        00164400
+          END ELSE                                                      00164600
+            HEADI := FREEHEAD ;                                         00164800
+          TAILI := FREEHEAD ;                                           00165000
+          FREEHEAD := K ;                                               00165200
+        END ;                                                           00165400
+        MOVE (A, BUFFER [BLOC], J, 0, 29) ;                             00165600
+        COUNTI := C ;                                                   00165800
+      END ;                                                             00166000
+ SKIP:                                                                  00166200
+    END WRITETWX ;                                                      00166400
+ % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        00170000
+ DEFINE ITSOLD (ITSOLD1) = BOOLEAN (KOUNT (ITSOLD1, 0, 0))#,            00170010
+   LOC (LOC1) = KOUNT (LOC1, 1, 0)# ;                                   00170020
+ INTEGER PROCEDURE KOUNT (N, M, KK) ;                                   00170030
+ VALUE N, M, KK ;                                                       00170040
+ INTEGER N, M, KK ;                                                     00170050
+    BEGIN                                                               00170060
+ INTEGER K ;                                                            00170070
+ REAL L ;                                                               00170080
+      WHILE N LSS (L := LL [AT]).S DO                                   00170090
+        AT := L.F ;                                                     00170100
+      WHILE N GTR (L := LL [AT]).S DO                                   00170110
+        AT := L.T ;                                                     00170120
+      IF KK NEQ 0 THEN                                                  00170130
+      BEGIN                                                             00170140
+        IF M = INFINITY THEN M := M - 1 ;                               00170150
+        WHILE M GEQ (L := LL [AT]).S AND K := K + 1 NEQ KK DO           00170160
+          AT := L.T ;                                                   00170170
+        KOUNT := K - REAL (M LSS L.S) ;                                 00170180
+      END ELSE                                                          00170190
+      IF BOOLEAN (M) THEN                                               00170200
+        KOUNT := AT                                                     00170210
+      ELSE                                                              00170220
+        KOUNT := REAL (N = L.S) ;                                       00170230
+    END KOUNT ;                                                         00170240
+ % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        00170500
+ DEFINE                                                                 00175000
+   WRITESEQUENCE = WRITEALINE (0)#,                                     00175100
+   WRITELFCR = WRITEALINE (1)#,                                         00175200
+   WRITESEQ = WRITEALINE (2)#,                                          00175300
+   WRITEQUEUED = WRITEALINE (5)#,                                       00175600
+   WRITESEGMENT = WRITEALINE (6)#,                                      00175700
+   WRITERELADDR = WRITEALINE (7)# ;                                     00175800
+ PROCEDURE WRITEALINE (K) ;                                             00175900
+ VALUE K ;                                                              00176000
+ INTEGER K ;                                                            00176100
+    BEGIN                                                               00176200
+ STREAM PROCEDURE FORM (PRETANK, N, K, LFCR, COLON, F) ;                00176300
+ VALUE N, K, LFCR, COLON, F ;                                           00176400
+ BEGIN                                                                  00176500
+ LABEL EXIT ;                                                           00176600
+    DI := PRETANK ;                                                     00176700
+    LFCR (DS := 2 LIT "{!" ;                                            00176800
+          K (SI := LOC N ;                                              00176900
+             DS := K DEC ;                                              00177000
+             F (PRETANK := DI ;                                         00177100
+                DI := DI - K ;                                          00177200
+                DS := K FILL ;                                          00177300
+                DI := PRETANK) ;                                        00177400
+             JUMP OUT) ;                                                00177500
+          COLON (DS := LIT ":") ;                                       00177600
+          JUMP OUT TO EXIT) ;                                           00177700
+    COLON (SI := LOC N ;                                                00177800
+           F (DS := 7 LIT "QUEUED(" ;                                   00177900
+              DS := 2 DEC ;                                             00178000
+              DS := LIT ")" ;                                           00178100
+              JUMP OUT 2 TO EXIT) ;                                     00178200
+           K (DS := 9 LIT "REL ADDR=" ;                                 00178300
+              DS := 4 DEC ;                                             00178400
+              JUMP OUT 2 TO EXIT) ;                                     00178500
+           DS := 8 LIT "SEGMENT=" ;                                     00178600
+           DS := 4 DEC ;                                                00178700
+           JUMP OUT TO EXIT) ;                                          00178900
+    F (N (DS := LIT " ") ; JUMP OUT TO EXIT) ;                          00179000
+    DS := LIT ">" ;                                                     00179100
+ EXIT:                                                                  00179200
+    DS := LIT "~" ;                                                     00179300
+ END FORM ;                                                             00179400
+ DEFINE XON = FORM (PRETANK, 0, 0, 0, 0, 0)#,                           00179500
+   TABIT = FORM (PRETANK, I, 0, 0, 0, 1)#,                              00179600
+   LFCR = FORM (PRETANK, 0, 0, 1, 0, 0)#,                               00179700
+   COLON = FORM (PRETANK, 0, 0, 1, 1, 0)#,                              00179800
+   SEQ = FORM (PRETANK, IF N = INFINITY THEN 99999999 ELSE N,           00179900
+               IF COBOLFILE THEN 6 ELSE 8, 1,                           00180000
+               IF COBOLFILE THEN 0 ELSE 1, 1)#,                         00180100
+   OLDSEQ = FORM (PRETANK, IF N = INFINITY THEN 99999999 ELSE N,        00180200
+                  IF COBOLFILE THEN 6 ELSE 8, 1,                        00180300
+                  IF COBOLFILE THEN 0 ELSE 1, 1-REAL(ITSOLD (N)))#,     00180400
+   QUEFORM = FORM (PRETANK, READYQTOP, 0, 0, 1, 1)#,                    00180500
+   SEGMENT = FORM (PRETANK, PARAMETER2, 0, 0, 1, 0)#,                   00180600
+   RELADDR = FORM (PRETANK, PARAMETER3, 1, 0, 1, 0)#,                   00180700
+   TWX (TWX1) = BEGIN TWX1 ; WRITETWX ; END# ;                          00180800
+      IF K = 0 THEN                                                     00181000
+      BEGIN                                                             00181100
+        IF FILEOPEN THEN                                                00181200
+        BEGIN                                                           00181300
+          TWX (OLDSEQ) ;                                                00181400
+          IF INLINETOG AND EXTRALFCR THEN                               00181500
+            TWX (LFCR) ;                                                00181600
+          IF TABON AND TABAMOUNT NEQ 0 THEN                             00181700
+          BEGIN                                                         00181800
+            IF I := TABAMOUNT GTR 27 THEN                               00181900
+            BEGIN                                                       00182000
+              I := I - 27 ;                                             00182100
+              TWX (TABIT) ;                                             00182200
+              I := 27 ;                                                 00182300
+            END ;                                                       00182400
+            TWX (TABIT) ;                                               00182500
+          END ;                                                         00182600
+        END                                                             00182700
+        ELSE                                                            00182800
+          TWX (COLON) ;                                                 00182900
+        IF XDEX LSS 0 AND NOT ERRTOG THEN                               00183000
+          TWX (XON)                                                     00183100
+        ELSE                                                            00183200
+          ERRTOG := FALSE ;                                             00183300
+      END                                                               00183400
+      ELSE IF K = 1 THEN                                                00183500
+      BEGIN                                                             00183600
+        TWX (LFCR) ;                                                    00183700
+        ILFCRI := 1 ;                                                   00183800
+      END                                                               00183900
+      ELSE                                                              00184000
+        TWX (IF K=2 THEN SEQ ELSE IF K=5 THEN QUEFORM ELSE              00184100
+             IF K=6 THEN SEGMENT ELSE IF K=7 THEN RELADDR) ;            00184200
+    END WRITEALINE ;                                                    00184300
+ % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        00190500
+ PROCEDURE WRITEROW (ROW, Q, F) ;                                       00191000
+ VALUE Q,                                                               00191500
+   F ;                                                                  00192000
+ BOOLEAN Q ;                                                            00192500
+ INTEGER F ;                                                            00193000
+ ARRAY ROW [0] ;                                                        00193500
+    BEGIN                                                               00193600
+ STREAM PROCEDURE MOVE (S, D, SKPS, N) ;                                00193700
+ VALUE SKPS, N ;                                                        00193800
+ BEGIN                                                                  00193900
+    SI := S ;                                                           00194000
+    DI := D ;                                                           00194100
+    SI := SI + SKPS ;                                                   00194200
+    DS := N CHR ;                                                       00194300
+ END MOVE ;                                                             00194400
+ STREAM PROCEDURE BLANKOUTSPECIALCHARACTERS (S, D, N, K) ;              00195000
+ VALUE N,                                                               00195500
+   K ;                                                                  00195600
+    BEGIN                                                               00196000
+      DI := LOC N ; DS := 6 LIT "!><}{~" ;                              00197500
+      DI := D ;                                                         00198000
+      DS := 8 LIT "        " ;                                          00198500
+      SI := D ;                                                         00199000
+      DS := 9 WDS ;                                                     00199500
+      SI := S ;                                                         00200000
+      DI := D ;                                                         00200500
+      2 (K (IF SC = " " THEN                                            00201000
+      BEGIN                                                             00201500
+        N (SI := SI - 1 ;                                               00202000
+        IF SC = " " THEN                                                00202500
+          DI := DI - 1 ;                                                00203000
+        SI := SI + 1) ;                                                 00203500
+        DS := CHR ;                                                     00204000
+      END ELSE                                                          00204500
+      IF SC = ALPHA THEN                                                00205000
+        DS := CHR                                                       00205500
+      ELSE                                                              00206000
+      BEGIN                                                             00206500
+        D := DI ;                                                       00207000
+        DI := LOC N ;                                                   00207500
+        6 (IF SC = DC THEN JUMP OUT ; SI := SI - 1) ;                   00208000
+        DI := D ;                                                       00208500
+        IF TOGGLE THEN                                                  00209000
+          DS := 1 LIT "$"                                               00209500
+        ELSE                                                            00210000
+          DS := CHR ;                                                   00210500
+      END)) ;                                                           00211000
+    END BLANKOUTSPECIALCHARACTERS ;                                     00219000
+ % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        00219500
+ BOOLEAN STREAM PROCEDURE ALLBLANK (S, SKP, N) ;                        00220000
+ VALUE SKP,                                                             00220500
+   N ;                                                                  00221000
+    BEGIN                                                               00221500
+ LABEL GRPMKIT ;                                                        00222000
+      SI := S ;                                                         00222500
+      SI := SI + SKP ;                                                  00223000
+      SI := SI + N ;                                                    00223500
+      N (SI := SI - 1 ;                                                 00224000
+      IF SC NEQ " " THEN                                                00224500
+        JUMP OUT TO GRPMKIT) ;                                          00225000
+      TALLY := 1 ;                                                      00225500
+      SI := SI - 1 ;                                                    00226000
+ GRPMKIT:                                                               00226500
+      SI := SI + 1 ;                                                    00227000
+      N := SI ;                                                         00227500
+      DI := N ;                                                         00228000
+      DS := 1 LIT "~" ;                                                 00228500
+      ALLBLANK := TALLY ;                                               00229000
+    END ALLBLANK ;                                                      00229500
+ BOOLEAN DATUM ;                                                        00229600
+ DEFINE FILEINFO = F# ;                                                 00229700
+ INTEGER Z ;                                                            00229800
+      BLANKOUTSPECIALCHARACTERS (ROW, INPUT, Q, HALFFULLLENGTH) ;       00230000
+      IF DATAFILE THEN                                                  00230100
+      BEGIN                                                             00230200
+        MOVE (INPUT [9], ZIPPY [15], 0, 8) ;                            00230300
+        DATUM := NOT ALLBLANK (ZIPPY [15], 0, 8) ;                      00230400
+      END ;                                                             00230500
+      EXTRALFCR := NOT (COBOLFILE OR Q:=ALLBLANK (INPUT [Z:=7], 7, 9)) ;00231000
+      IF EXTRALFCR OR COBOLFILE THEN                                    00231500
+        WRITELFCR ;                                                     00232000
+      IF Q THEN                                                         00232500
+        IF Q := ALLBLANK (INPUT [7], 0, 7) THEN                         00233000
+          IF Q := ALLBLANK (INPUT [Z:=3], 4, 28) THEN                   00233500
+            Q := ALLBLANK (INPUT [Z:=0], 0, 28) ;                       00234000
+      IF NOT Q THEN                                                     00234500
+        FOR F := 0 STEP 3 UNTIL Z DO                                    00235000
+        BEGIN                                                           00235500
+          MOVE (INPUT [F], PRETANK [0], 4 | F DIV 3, 28) ;              00236000
+          WRITETWX ;                                                    00236500
+        END ;                                                           00237000
+      IF DATUM THEN                                                     00237050
+      BEGIN                                                             00237100
+        WRITELFCR ;                                                     00237200
+        MOVE (ZIPPY [15], PRETANK, 0, 9) ;                              00237300
+        WRITETWX ;                                                      00237400
+      END ;                                                             00237450
+      WRITELFCR ;                                                       00237460
+    END WRITEROW ;                                                      00237500
+ % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        00237510
+ PROCEDURE ERRORX (K, A, B) ;                                           00237512
+ VALUE K,                                                               00237514
+   A,                                                                   00237516
+   B ;                                                                  00237518
+ INTEGER K ;                                                            00237520
+ REAL A,                                                                00237522
+   B ;                                                                  00237524
+    BEGIN                                                               00237526
+ STREAM PROCEDURE CRUNCH (S, K, A, B) ; VALUE K, A, B ;                 00237528
+ BEGIN                                                                  00237530
+ LABEL E0, E1, E2, E3, E4, E5, E6, FILENAME, CRUNCH, DEBLANK ;          00237532
+    SI := LOC A ;                                                       00237534
+    SI := SI + 1 ;                                                      00237536
+    DI := S ;                                                           00237538
+    DS := 2 LIT "{!" ;                                                  00237540
+    CI := CI + K ;                                                      00237542
+    GO TO E0 ;                                                          00237544
+    GO TO E1 ;                                                          00237546
+    GO TO E2 ;                                                          00237548
+    GO TO E3 ;                                                          00237550
+    GO TO E4 ;                                                          00237552
+    GO TO E5 ;                                                          00237554
+    GO TO E6 ;                                                          00237556
+    GO TO E0 ;                                                          00237558
+    GO TO E0 ;                                                          00237560
+ E1:                                                                    00237562
+    DS := 10 LIT "INV USER: " ;                                         00237564
+    GO TO E6 ;                                                          00237566
+ E2:                                                                    00237568
+    DS := 2 LIT "NO" ;                                                  00237570
+    GO TO FILENAME ;                                                    00237572
+ E3:                                                                    00237574
+    DS := 3 LIT "BAD" ;                                                 00237576
+    GO TO FILENAME ;                                                    00237578
+ E5:                                                                    00237580
+    DS := 8 LIT "NO FILE " ;                                            00237582
+ E0:                                                                    00237584
+    DS := 7 CHR ;                                                       00237586
+    SI := SI + 1 ;                                                      00237588
+    DS := 7 CHR ;                                                       00237590
+    GO TO CRUNCH ;                                                      00237592
+ E4:                                                                    00237594
+    DS := 3 LIT "DUP" ;                                                 00237596
+ FILENAME:                                                              00237598
+    DS := 7 LIT " FILE: " ;                                             00237600
+ E6:                                                                    00237602
+    DS := 7 CHR ;                                                       00237604
+    DS := LIT "/" ;                                                     00237606
+    SI := SI + 1 ;                                                      00237608
+    DS := 7 CHR ;                                                       00237610
+ CRUNCH:                                                                00237612
+    DS := LIT "~" ;                                                     00237614
+    SI := S ;                                                           00237616
+    DI := S ;                                                           00237618
+    28 (IF SC = " " THEN                                                00237620
+        BEGIN                                                           00237622
+ DEBLANK:                                                               00237624
+          SI := SI + 1 ;                                                00237626
+          IF SC = " " THEN                                              00237628
+            GO TO DEBLANK ;                                             00237630
+          IF SC = ALPHA THEN                                            00237632
+            DS := 1 LIT " " ;                                           00237634
+        END ELSE                                                        00237636
+          DS := CHR) ;                                                  00237638
+ END CRUNCH ;                                                           00237640
+      IF A = "#000000" THEN A := "       " ;                            00237642
+      IF B = "#000000" THEN B := "       " ;                            00237644
+      CRUNCH (PRETANK, K, A, B) ;                                       00237646
+      WRITETWX ;                                                        00237648
+      IF K LEQ 6 THEN                                                   00237650
+      BEGIN                                                             00237652
+        ERRTOG := TRUE ;                                                00237654
+        MOREINPUT := FALSE ;                                            00237656
+        NOSTAR := FALSE ;                                               00237658
+        XDEX := -1 ;                                                    00237660
+      END ELSE IF K = 8 THEN                                            00237662
+        ILFCRI := 1 ;                                                   00237664
+    END ERRORX ;                                                        00237666
+ DEFINE ERROR (ERROR1, ERROR2, ERROR3, ERROR4) =                        00237668
+    BEGIN                                                               00237670
+      ERRORX (ERROR2, ERROR3, ERROR4) ;                                 00237672
+      GO TO ERROR1 ;                                                    00237674
+    END ERROR#,                                                         00237676
+  SHOW (SHOW1, SHOW2) = ERRORX (8, SHOW1, SHOW2)# ;                     00237678
+ % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        00237700
+ BOOLEAN PROCEDURE FILECHECK (B) ;                                      00237740
+ VALUE B ;                                                              00237750
+ BOOLEAN B ;                                                            00237760
+ BEGIN                                                                  00237770
+ LABEL NEXT ;                                                           00237780
+    IF B THEN                                                           00237790
+    BEGIN                                                               00237800
+      IF FILECLOSED THEN                                                00237810
+        ERROR (NEXT, 5, " OPEN: ", PARAMETER0) ;                        00237820
+      IF B.[46:1] AND READONLYFILE THEN                                 00237830
+        ERROR (NEXT, 0, "READ ON", "LY FILE") ;                         00237840
+    END ELSE                                                            00237850
+      IF FILEOPEN THEN                                                  00237860
+      BEGIN                                                             00237870
+        SEARCH (DISC, INPUT [*]) ;                                      00237880
+        IF INPUT [0] LSS FILEACCESS THEN                                00237890
+        BEGIN                                                           00237900
+          CHARGE (STATION) ;                                            00237905
+          CLOSE (DISC) ;                                                00237910
+          FILL DISC WITH PREFIX, SUFFIX ;                               00237920
+          SEARCH (DISC, INPUT [*]) ;                                    00237930
+          IF INPUT [0] LSS FILEACCESS THEN                              00237940
+          BEGIN                                                         00237950
+            FILEACCESS := 0 ;                                           00237960
+            INORDER := TRUE ;                                           00237970
+            ERROR (NEXT, 1 + REAL (INPUT [0] LSS 0), PREFIX, SUFFIX) ;  00237980
+          END ;                                                         00238000
+        END ;                                                           00238010
+      END ;                                                             00238020
+    IF FALSE THEN                                                       00238030
+ NEXT:                                                                  00238040
+      FILECHECK := TRUE ;                                               00238050
+ END FILECHECK ;                                                        00238060
+ DEFINE OPENCHECK = IF FILECHECK (TRUE) THEN GO TO NEXT#,               00238070
+   READONLYCHECK = IF FILECHECK (BOOLEAN (3)) THEN GO TO NEXT#,         00238080
+   SECURITYCHECK = IF FILECHECK (FALSE) THEN GO TO NEXT# ;              00238090
+ PROCEDURE STATE (S) ;                                                  00238100
+ VALUE S ;                                                              00238200
+ BOOLEAN S ;                                                            00238300
+    BEGIN                                                               00238400
+ STREAM PROCEDURE STUFFSTATE (N, RECORD, P0, C) ;                       00238500
+ VALUE N ;                                                              00238600
+    BEGIN                                                               00239000
+ LABEL EXIT ;                                                           00239100
+      N (DI := C ;                                                      00239200
+         SI := P0 ;                                                     00239300
+         DS := 25 WDS ;                                                 00239400
+         SI := RECORD ;                                                 00239600
+         DS := 10 WDS ;                                                 00239700
+         JUMP OUT TO EXIT) ;                                            00240400
+      SI := C ;                                                         00240500
+      DI := P0 ;                                                        00240600
+      DS := 25 WDS ;                                                    00240700
+      DI := RECORD ;                                                    00240900
+      DS := 10 WDS ;                                                    00241000
+ EXIT:                                                                  00241700
+    END STUFFSTATE ;                                                    00246000
+ INTEGER I, K ;                                                         00247500
+      CLOSE (DISC) ;                                                    00248000
+      K := IF S.[46:1] THEN SLOTI ELSE 46 ;                             00248500
+      IF S THEN                                                         00248600
+      BEGIN                                                             00248700
+        STUFFSTATE (1, RECORD, PARAMETER0, CONTROLS [38]) ;             00250000
+        WRITE (R1 [K], 90, CONTROLS [*]) ;                              00250600
+        IF S.[46:1] AND FILEOPEN AND REAL (MODIFIED) NEQ 0 THEN         00251000
+        BEGIN                                                           00251500
+          K := D.LEFTSIDE ;                                             00252000
+          FOR I := 0 STEP 1 UNTIL K DO                                  00252500
+          BEGIN                                                         00253000
+            IF MODIFIED THEN                                            00253100
+              WRITE (R2 [32|SLOTI + I], 256, LINKLISTS [USER32+I, *]) ; 00253200
+            MODIFIED := MODIFIED.[16:31] ;                              00253500
+          END ;                                                         00254000
+          MODIFIED := FALSE ;                                           00254100
+        END ;                                                           00254200
+      END SAVESTATE ELSE                                                00254500
+      BEGIN                                                             00255500
+        READ (R1 [K], 90, CONTROLS [*]) ;                               00256500
+        STUFFSTATE (0, RECORD, PARAMETER0, CONTROLS [38]) ;             00257500
+        FILL DISC WITH PREFIX, SUFFIX ;                                 00258500
+        IF S.[46:1] THEN                                                00259000
+          MODIFIED := FALSE ;                                           00259500
+        USER32 := USER | 32 ;                                           00260000
+      END RESTORESTATE ;                                                00260500
+      PREWHERE := -1 ;                                                  00261000
+    END STATE ;                                                         00262000
+ DEFINE SAVESTATE = STATE (BOOLEAN (3))#,                               00262500
+   RESTORESTATE = STATE (BOOLEAN (2))#,                                 00263000
+   UNSWAPSTATE = STATE (FALSE)#,                                        00263500
+   SWAPSTATE = STATE (TRUE)# ;                                          00264000
+ % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        00264500
+ DEFINE WAIT (WAIT1, WAIT2) =                                           00265000
+   BEGIN                                                                00265100
+     IF NOT WAITING THEN                                                00265150
+       IF WAITX (WAIT1, WAIT2) THEN                                     00265200
+         GO TO NEXT ;                                                   00265250
+   END# ;                                                               00265300
+ BOOLEAN PROCEDURE WAITX (TOCKS, FORCED) ;                              00265500
+ VALUE TOCKS,                                                           00265600
+   FORCED ;                                                             00265700
+ INTEGER TOCKS ;                                                        00265800
+ BOOLEAN FORCED ;                                                       00265900
+    BEGIN                                                               00266000
+ DEFINE SEGMENT =# ;                                                    00266100
+      IF TOCKS GEQ CLOCK OR FORCED THEN                                 00266200
+        IF Q THEN                                                       00266300
+        BEGIN                                                           00266400
+          READYQ [READYQTOP := READYQTOP + 1] := USER ;                 00266500
+          INREADYQ := 1 ;                                               00266600
+          WRITEQUEUED ;                                                 00266700
+          N := RESETN ;                                                 00266900
+          IF NOTFIRSTINPUT THEN                                         00267000
+            SAVESTATE ;                                                 00267100
+          STATION := 0 ;                                                00267200
+          WAITX := TRUE ;                                               00267300
+        END ELSE                                                        00267400
+        BEGIN                                                           00267500
+          IF FORCED.[46:1] THEN                                         00267600
+          BEGIN                                                         00267700
+            WAITX := BOOLEAN (USER := READYQ [1]) ;                     00267800
+            CHARGE (STATIONI) ;                                         00267900
+            INREADYQ := 0 ;                                             00268000
+            FOR I := 2 STEP 1 UNTIL READYQTOP DO                        00268100
+              READYQ [I - 1] := READYQ [I] ;                            00268200
+            READYQTOP := READYQTOP - 1 ;                                00268300
+            RESTORESTATE ;                                              00268400
+            READ (IO [USER], 30, IMAGE [*]) ;                           00268410
+          END ;                                                         00268500
+          WRITE (PRETANK [*], WAITF) ;                                  00268600
+          WRITETWX ;                                                    00268700
+          WAITFLAG := TRUE ;                                            00268800
+          READYQ [0] := USER ;                                          00268900
+        END ;                                                           00269300
+    END WAITX ;                                                         00269400
+ DEFINE INTERRUPT (INTERRUPT1) = INTERUPT (INTERRUPT1, 0, 0)#,          00282000
+   INTERUPT (INTERUPT1, INTERUPT2, INTERUPT3) =                         00282100
+    BEGIN                                                               00282500
+      IF CLOCK := CLOCK - INTERUPT1 LEQ NEXTCLOCK THEN                  00283000
+        OUTPUT ;                                                        00283100
+      IF CLOCK LEQ 0 THEN                                               00283200
+        IF INTERRUPTS (INTERUPT2, INTERUPT3) THEN                       00283500
+          GO TO NEXT ;                                                  00284000
+    END# ;                                                              00284500
+ BOOLEAN PROCEDURE INTERRUPTS (LIB, LOC) ;                              00285000
+ VALUE LIB, LOC ;                                                       00285100
+ INTEGER LIB, LOC ;                                                     00285200
+ BEGIN                                                                  00285500
+ LABEL NEWBIRD, NONE, NEXT ;                                            00286000
+    T0 := CLOCK := MAX (50, T0 | 150 / (-T1 + T1 := TIMEX)) ;           00286500
+    IF WAITING THEN                                                     00287000
+    BEGIN                                                               00287500
+      INPUT [5] := 0 & "~"[1:43:5] ;                                    00288000
+      READ (TWXINPUT (0, 0), 8, INPUT [*]) [NONE] ;                     00288500
+      QINPUT := TRUE ;                                                  00289000
+ NEWBIRD:                                                               00289500
+      SWAPSTATE ;                                                       00290000
+      CLOSE (LIBRARY) ;                                                 00290100
+      CHARGE (STATION := 0) ;                                           00290500
+      INREADYQ := 3 ;                                                   00291000
+      Q := TRUE ;                                                       00291500
+      PROGRAM ;                                                         00292000
+      Q := FALSE ;                                                      00292500
+      USER := READYQ [0] ;                                              00293000
+      CHARGE (STATIONI) ;                                               00295500
+      INREADYQ := 0 ;                                                   00296000
+      UNSWAPSTATE ;                                                     00296500
+      SECURITYCHECK ;                                                   00297000
+      IF LIB NEQ 0 THEN                                                 00297100
+      BEGIN                                                             00297200
+        FILL LIBRARY WITH IF BOOLEAN (LIB) THEN PARAMETER1 ELSE PREFIX, 00297300
+          IF BOOLEAN (LIB) THEN PARAMETER2 ELSE SUFFIX ;                00297400
+        READ SEEK (LIBRARY [LOC]) ;                                     00297500
+      END ;                                                             00297600
+ NONE:                                                                  00297700
+      IF RATTLEINDEX := RATTLEINDEX + 1 = 5 THEN                        00298000
+      BEGIN                                                             00298500
+        FOR TINK := 0 STEP 1 UNTIL READYQTOP DO                         00299000
+        BEGIN                                                           00299500
+          USER := READYQ [TINK] ;                                       00300000
+          IF COUNTI LSS 0 THEN                                          00300500
+            IF REAL (BOOLEAN (STATUS (STATIONI, 0)).[22:9] AND          00301000
+                     BOOLEAN ("6C")) = 0 THEN                           00301100
+              WRITE (TWXOUT, RATTLE) ;                                  00301500
+        END ;                                                           00302000
+        USER := READYQ [RATTLEINDEX := 0] ;                             00302500
+        CHARGE (STATION) ;                                              00302700
+        IF 2 | BIGBIRD + 2 LSS STATUS (ZIPPY [*]) THEN                  00303000
+          GO TO NEWBIRD ;                                               00303500
+        IF FALSE THEN                                                   00304000
+ NEXT:                                                                  00304500
+          INTERRUPTS := TRUE ;                                          00305000
+      END ;                                                             00305500
+    END ;                                                               00306000
+    CLOCK := T0 ;                                                       00306100
+    T1 := TIMEX ;                                                       00306200
+    IF OUTPUTREADY THEN                                                 00306300
+      NEXTCLOCK := CLOCK - T0 | (TN - T1 - 90) / 150 ;                  00306400
+ END INTERRUPTS ;                                                       00307000
+ % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        00318000
+ INTEGER PROCEDURE XFILE (P, S, FS) ;                                   00318100
+ VALUE P, S, FS ;                                                       00318110
+ REAL P, S, FS ;                                                        00318120
+ BEGIN                                                                  00318130
+ DEFINE SEGMENT = # ;                                                   00318140
+    IF P = 12 THEN                                                      00318150
+    BEGIN                                                               00318160
+      IF NUM1 THEN                                                      00318170
+      BEGIN                                                             00318180
+        NUM1 := FALSE ;                                                 00318190
+        P := PARAMETER1 := OCTDEC (PARAMETER1) ;                        00318200
+      END ELSE                                                          00318210
+        P := PARAMETER1 ;                                               00318220
+      IF NUM2 THEN                                                      00318230
+      BEGIN                                                             00318240
+        NUM2 := FALSE ;                                                 00318250
+        S := PARAMETER2 := OCTDEC (PARAMETER2) ;                        00318260
+      END ELSE                                                          00318270
+        S := PARAMETER2 ;                                               00318280
+    END ;                                                               00318290
+    FILL LIBRARY WITH P, S ;                                            00318300
+    SEARCH (LIBRARY, INPUT [*]) ;                                       00318310
+    IF XFILE := INPUT [0] LSS FS THEN                                   00318320
+      ERRORX (1 + REAL (INPUT [0] LSS 0), P, S) ;                       00318330
+ END XFILE ;                                                            00318350
+ % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        00318360
+ PROCEDURE READIN ;                                                     00319000
+    BEGIN                                                               00319100
+ BOOLEAN PROCEDURE MORE ;                                               00319210
+ BEGIN                                                                  00319220
+ LABEL NEXT,                                                            00319230
+   EXIT ;                                                               00319240
+ INTEGER STREAM PROCEDURE TRAILINGBLANKS (S, N) ;                       00319250
+ VALUE N ;                                                              00319260
+ BEGIN                                                                  00319270
+ LABEL DONE ;                                                           00319280
+    SI := S ;                                                           00319290
+    SI := SI + 7 ;                                                      00319300
+    S := TALLY ;                                                        00319310
+    DI := S ;                                                           00319320
+    2 (N (IF SC NEQ " " THEN JUMP OUT 2 TO DONE ;                       00319330
+          SI := SI - 1 ;                                                00319340
+          DI := DI + 8)) ;                                              00319350
+ DONE:                                                                  00319360
+    TRAILINGBLANKS := DI ;                                              00319370
+ END TRAILINGBLANKS ;                                                   00319380
+ INTEGER XSUB ;                                                         00319390
+ DEFINE FILEINFO = XFILETYPE# ;                                         00319400
+    IF FILEOPEN THEN                                                    00319410
+    BEGIN                                                               00319420
+      IF N GTR FINITY THEN                                              00319430
+        IF N := LL [LAST.F].S + INC GTR FINITY THEN                     00319440
+        BEGIN                                                           00319450
+          N := FINITY ;                                                 00319460
+          ERROR (NEXT, 0, "SEQ. OV", "ER-FLOW") ;                       00319470
+        END ;                                                           00319480
+      IF N LEQ 0 THEN                                                   00319490
+        N := 1 ;                                                        00319500
+    END ;                                                               00319510
+    IF MOREINPUT THEN                                                   00319520
+    BEGIN                                                               00319530
+      READ (IO [USER + MAXUSERS], 30, IMAGE [*]) ;                      00319540
+      CHRS := NCHRS ;                                                   00319545
+      GO TO EXIT ;                                                      00319550
+    END ;                                                               00319560
+    IF XDEX LSS 0 THEN                                                  00319570
+    BEGIN                                                               00319580
+ NEXT:                                                                  00319590
+      IF NOT NOSTAR THEN                                                00319600
+        WRITESEQUENCE ;                                                 00319610
+      CHRS := 0 ;                                                       00319620
+      SAVESTATE ;                                                       00319630
+    END ELSE                                                            00319640
+    BEGIN                                                               00319650
+      XSUB := XDEX | 13 ;                                               00319660
+      WHILE XN := XN + 1 GTR XLAST DO                                   00319670
+        IF XREPEAT := XREPEAT - 1 GTR 0 THEN                            00319680
+          XN := XSTART                                                  00319690
+        ELSE                                                            00319700
+        BEGIN                                                           00319710
+          IF XSUFFIX = "#MACRO#" THEN                                   00319720
+          BEGIN                                                         00319730
+            IF XFILE (XPREFIX, XSUFFIX, 7) LSS 7 THEN                   00319740
+              GO TO NEXT ;                                              00319750
+            READ (LIBRARY) ;                                            00319760
+            DETACH ;                                                    00319770
+            CLOSE (LIBRARY, PURGE) ;                                    00319780
+            REATTACH ;                                                  00319790
+          END ;                                                         00319800
+          IF BOOLEAN (XNCHRS.[1:1]) THEN                                00319810
+          BEGIN                                                         00319820
+            READ (IO [2|MAXUSERS+XMAX|USER+XDEX], 30, IMAGE [*]) ;      00319830
+            CHRS := ABS (XNCHRS) ;                                      00319840
+            XDEX := XDEX - 1 ;                                          00319850
+            GO TO EXIT ;                                                00319860
+          END ;                                                         00319870
+          IF XDEX := XDEX - 1 LSS 0 THEN                                00319880
+            GO TO NEXT ;                                                00319890
+          XSUB := XDEX | 13 ;                                           00319900
+        END ;                                                           00319910
+      IF XFILE (XPREFIX, XSUFFIX, 2) LSS 2 THEN                         00319920
+        GO TO NEXT ;                                                    00319930
+      IF XECHO THEN                                                     00319940
+        WRITESEQUENCE ;                                                 00319950
+      SAVESTATE ;                                                       00319960
+      INTERRUPT (3) ;                                                   00319970
+      READ (LIBRARY [XN - 1], 10, IMAGE [*]) ;                          00319980
+      CLOSE (LIBRARY) ;                                                 00319990
+      CHRS := (I := FULLLENGTH) -                                       00320000
+              TRAILINGBLANKS (IMAGE [I.[41:4]-1], I.[41:6]) ;           00320010
+      IF XECHO THEN                                                     00320020
+        WRITEROW (IMAGE [*], FALSE, XFILETYPE) ;                        00320030
+ EXIT:                                                                  00320040
+      MORE := TRUE ;                                                    00320050
+    END ;                                                               00320060
+ END MORE ;                                                             00320070
+ BOOLEAN STREAM PROCEDURE LINEEDIT (S, D, C, CHRS, P, OVER80, EIGHTY1) ;00321000
+ VALUE C,                                                               00321100
+    P,                                                                  00321200
+    OVER80,                                                             00321300
+    EIGHTY1 ;                                                           00321400
+      BEGIN                                                             00321500
+ LOCAL T,                                                               00321600
+    PERCENT1, PERCENT ;                                                 00321700
+ LABEL AROUND, NEXT ;                                                   00321800
+        P (DI := LOC PERCENT ; DS := 14 LIT "%?-~=!(<)>[{]}") ;         00321900
+        SI := LOC C ;                                                   00322000
+        DI := LOC T ;                                                   00322100
+        SI := SI + 6 ;                                                  00322200
+        DI := DI + 7 ;                                                  00322300
+        DS := CHR ;                                                     00322400
+        SI := S ;                                                       00322500
+        DI := D ;                                                       00322600
+        T (DI := DI + 32 ;  DI := DI + 32) ;                            00322700
+        DI := DI + C ;                                                  00322800
+        56(IF SC = "~" THEN                                             00322900
+             GO TO AROUND ;                                             00323000
+           IF SC = "}" THEN% DISCONNECT OR EXCLAMATION                  00323010
+           BEGIN                                                        00323020
+             TALLY := 1 ;                                               00323030
+             GO TO AROUND ;                                             00323040
+           END ;                                                        00323050
+           IF SC = "!" THEN% LINE ERASE                                 00323100
+           BEGIN                                                        00323200
+             C := TALLY ;                                               00323300
+             OVER80 := TALLY ;                                          00323400
+             DI := D ;                                                  00323500
+             GO TO AROUND ;                                             00323600
+           END ;                                                        00323700
+           IF SC = "{" THEN% BACKSPACE                                  00323800
+           BEGIN                                                        00323900
+             S := SI ;                                                  00324000
+             T := DI ;                                                  00324100
+             SI := LOC C ;                                              00324200
+             DI := LOC LINEEDIT ;                                       00324300
+             IF 8 SC NEQ DC THEN                                        00324400
+             BEGIN                                                      00324500
+               OVER80 (SI := SI - 8 ;                                   00324600
+                       DI := LOC EIGHTY1 ;                              00324700
+                       IF 8 SC = DC THEN                                00324800
+                         OVER80 := TALLY) ;                             00324900
+               SI := C ;                                                00325000
+               SI := SI - 8 ;                                           00325100
+               C := SI ;                                                00325200
+               DI := T ;                                                00325300
+               DI := DI - 1 ;                                           00325400
+             END ELSE                                                   00325500
+               DI := T ;                                                00325600
+             SI := S ;                                                  00325700
+ AROUND:                                                                00325800
+           END ELSE                                                     00325900
+           BEGIN                                                        00326500
+             S := SI ;                                                  00326600
+             OVER80 (DI := DI + 1 ;                                     00326700
+                     SI := C ;                                          00326900
+                     SI := SI + 8 ;                                     00327000
+                     C := SI ;                                          00327100
+                     SI := S ;                                          00327200
+                     JUMP OUT TO AROUND) ;                              00327300
+             T := DI ;                                                  00327500
+             P (DI := S ;                                               00327600
+                SI := T ;                                               00327700
+                SI := SI - 1 ;                                          00327800
+                IF SC = "%" THEN                                        00327900
+                BEGIN                                                   00328000
+                  SI := LOC PERCENT ;                                   00328100
+                  7 (IF SC = DC THEN                                    00328200
+                     BEGIN                                              00328300
+                       DI := T ;                                        00328400
+                       DI := DI - 1 ;                                   00328500
+                       DS := CHR ;                                      00328600
+                       SI := S ;                                        00328700
+                       JUMP OUT 2 TO AROUND ;                           00328900
+                     END ;                                              00329000
+                     SI := SI + 1 ;                                     00329100
+                     DI := DI - 1) ;                                    00329200
+                END) ;                                                  00329300
+             SI := C ;                                                  00330600
+             SI := SI + 8 ;                                             00330700
+             C := SI ;                                                  00330800
+             SI := LOC C ;                                              00330900
+             DI := LOC EIGHTY1 ;                                        00331000
+             IF 8 SC = DC THEN                                          00331100
+             BEGIN                                                      00331200
+               TALLY := 1 ;                                             00331300
+               OVER80 := TALLY ;                                        00331400
+               TALLY := 0 ;                                             00331500
+             END ;                                                      00331600
+             SI := S ;                                                  00331700
+             DI := T ;                                                  00331800
+             IF TOGGLE THEN                                             00331900
+               DI := DI + 1                                             00332000
+             ELSE BEGIN                                                 00332100
+               DS := CHR ;                                              00332200
+               SI := SI - 1 ;                                           00332300
+             END ;                                                      00332400
+             GO TO NEXT ;                                               00332500
+           END ;                                                        00332550
+           IF SC = "~" THEN JUMP OUT ;                                  00332560
+           IF SC = "}" THEN JUMP OUT ;                                  00332570
+ NEXT:                                                                  00332580
+           SI := SI + 1) ;                                              00332600
+        SI := LOC C ;                                                   00332700
+        DI := CHRS ;                                                    00332800
+        DS := WDS ;                                                     00332900
+        LINEEDIT := TALLY ;                                             00333100
+ END LINEEDIT ;                                                         00333200
+ BOOLEAN PROCEDURE FINALANALYSIS ;                                      00333210
+ BEGIN                                                                  00333220
+ STREAM PROCEDURE MOVE (S, D, SKPS, SKPD, N) ;                          00333230
+ VALUE SKPS, SKPD, N ;                                                  00333240
+    BEGIN                                                               00333250
+ LOCAL T ;                                                              00333260
+      SI := LOC N ;                                                     00333270
+      DI := LOC T ;                                                     00333280
+      SI := SI + 6 ;                                                    00333290
+      DI := DI + 7 ;                                                    00333300
+      DS := CHR ;                                                       00333310
+      SI := S ;                                                         00333320
+      DI := D ;                                                         00333330
+      SI := SI + SKPS ;                                                 00333340
+      DI := DI + SKPD ;                                                 00333350
+      T (DS := 32 CHR ;  DS := 32 CHR) ;                                00333360
+      DS := N CHR ;                                                     00333370
+    END MOVE ;                                                          00333380
+ INTEGER STREAM PROCEDURE HUNT (S, D, C, N) ;                           00333390
+ VALUE C,                                                               00333400
+   N ;                                                                  00333500
+      BEGIN                                                             00333600
+ LABEL AGAIN,                                                           00333700
+   XIT ;                                                                00333800
+        SI := D ;                                                       00333900
+        DI := D ;                                                       00334000
+        DS := 8 LIT " " ;                                               00334100
+        DS := 9 WDS ;                                                   00334200
+        D := TALLY ;                                                    00334300
+        DI := LOC D ;                                                   00334400
+        SI := LOC C ;                                                   00334500
+        SI := SI + 7 ;                                                  00334600
+        DS := CHR ;                                                     00334700
+ AGAIN:                                                                 00334800
+        SI := LOC N ;                                                   00334900
+        SI := SI + 1 ;                                                  00335000
+        IF 7 SC = DC THEN                                               00335100
+          GO TO XIT ;                                                   00335200
+        SI := N ;                                                       00335300
+        SI := SI - 8 ;                                                  00335400
+        N := SI ;                                                       00335500
+        SI := S ;                                                       00335600
+        DI := LOC D ;                                                   00335700
+        IF SC = DC THEN                                                 00335800
+          GO TO XIT ;                                                   00335900
+        S := SI ;                                                       00336000
+        SI := HUNT ;                                                    00336100
+        SI := SI + 8 ;                                                  00336200
+        HUNT := SI ;                                                    00336300
+        GO TO AGAIN ;                                                   00336400
+ XIT:                                                                   00336500
+      END HUNT ;                                                        00336600
+ BOOLEAN STREAM PROCEDURE MORE (IMAGE, INPUT, C, CHRS) ;                00344000
+ VALUE C ;                                                              00344010
+      BEGIN                                                             00344500
+ LOCAL QUOTES,                                                          00345000
+   ENDQUOTE,                                                            00345500
+   ZERO,                                                                00345510
+   TEMP ;                                                               00346000
+ LABEL NOTHINGYET,                                                      00346500
+   BUMP,                                                                00347000
+   FOUNDQUOTE,                                                          00347500
+   FOUNDSEMICOLAN,                                                      00348000
+   LOOP,                                                                00348500
+   XIT,                                                                 00349000
+   EXIT ;                                                               00349100
+        SI := IMAGE ;                                                   00349500
+        DI := LOC QUOTES ;                                              00350000
+        DS := 2 LIT """ ;                                               00350500
+        DS := 6 LIT "..()[]" ;                                          00351000
+        DI := LOC ENDQUOTE ;                                            00351100
+        DS := 2 LIT ";;" ;                                              00351200
+ LOOP:                                                                  00351300
+        IMAGE := SI ;                                                   00351310
+        SI := LOC C ;                                                   00351330
+        DI := LOC ZERO ;                                                00351340
+        IF 8 SC = DC THEN                                               00351350
+          GO TO XIT ;                                                   00351360
+        SI := C ;                                                       00351370
+        SI := SI - 8 ;                                                  00351380
+        C := SI ;                                                       00351390
+        SI := IMAGE ;                                                   00351400
+        CI := CI + MORE ;                                               00351500
+        GO TO NOTHINGYET ;                                              00352000
+        GO TO LOOP ;                                                    00352500
+        GO TO FOUNDQUOTE ;                                              00353000
+ NOTHINGYET:                                                            00353500
+        IF SC = ALPHA THEN                                              00354000
+          GO TO BUMP ;                                                  00354500
+        IF SC = " " THEN                                                00355000
+          GO TO BUMP ;                                                  00355500
+        DI := LOC QUOTES ;                                              00356000
+        4 (IF SC = DC THEN                                              00356500
+        BEGIN                                                           00359000
+          TEMP := SI ;                                                  00359500
+          ENDQUOTE := DI ;                                              00360000
+          DI := LOC ENDQUOTE ;                                          00360500
+          SI := ENDQUOTE ;                                              00361000
+          DS := 1 CHR ;                                                 00361500
+          TALLY := 2 ;                                                  00362000
+          MORE := TALLY ;                                               00362500
+          SI := TEMP ;                                                  00363000
+          JUMP OUT TO LOOP ;                                            00363500
+        END ;                                                           00364000
+        SI := SI - 1 ;                                                  00364100
+        DI := DI + 1) ;                                                 00364200
+        IF SC = ";" THEN                                                00365500
+          GO TO FOUNDSEMICOLAN ;                                        00369000
+ BUMP:                                                                  00371500
+        SI := SI + 1 ;                                                  00372000
+        GO TO LOOP ;                                                    00372500
+ FOUNDQUOTE:                                                            00374500
+        DI := LOC ENDQUOTE ;                                            00375000
+        IF SC = DC THEN                                                 00375500
+        BEGIN                                                           00376000
+          DI := DI - 1 ;                                                00376100
+          DS := LIT ";" ;                                               00376200
+          TALLY := 0 ;                                                  00376500
+          MORE := TALLY ;                                               00377000
+        END ;                                                           00377500
+        GO TO LOOP ;                                                    00378000
+ XIT:                                                                   00378500
+        SI := LOC ENDQUOTE ;                                            00378600
+        DI := IMAGE ;                                                   00378700
+        DS := 2 CHR ;                                                   00378800
+        GO TO EXIT ;                                                    00378900
+ FOUNDSEMICOLAN:                                                        00378910
+        TALLY := 1 ;                                                    00378920
+        MORE := TALLY ;                                                 00378930
+        SI := LOC C ;                                                   00378940
+        DI := CHRS ;                                                    00378950
+        DS := WDS ;                                                     00378960
+        SI := LOC C ;                                                   00378970
+        DI := LOC TEMP ;                                                00378980
+        SI := SI + 6 ;                                                  00378990
+        DI := DI + 7 ;                                                  00379000
+        DS := CHR ;                                                     00379010
+        SI := IMAGE ;                                                   00379020
+        SI := SI + 1 ;                                                  00379030
+        DI := INPUT ;                                                   00379040
+        TEMP (DS := 32 CHR ; DS := 32 CHR) ;                            00379050
+        DS := C CHR ;                                                   00379060
+ EXIT:                                                                  00379070
+      END MORE ;                                                        00379500
+ INTEGER STREAM PROCEDURE FIX (IM, TAB, C, Z, P, Q) ;                   00380000
+ VALUE TAB,                                                             00380500
+   C,                                                                   00381000
+   P,                                                                   00381100
+   Q ;                                                                  00381200
+      BEGIN                                                             00381500
+ LOCAL T ;                                                              00382000
+        P (SI := IM ;                                                   00382100
+           IF SC = "%" THEN                                             00382110
+           BEGIN                                                        00382120
+             SI := SI + 1 ;                                             00382130
+             IF SC = "*" THEN                                           00382140
+             BEGIN                                                      00382150
+               SI := C ;                                                00382180
+               SI := SI - 8 ;                                           00382190
+               C := SI ;                                                00382200
+               TALLY := 1 ;                                             00382210
+               FIX := TALLY ;                                           00382220
+             END ;                                                      00382230
+           END) ;                                                       00382240
+        SI := Z ;                                                       00382500
+        DI := Z ;                                                       00383000
+        DS := 8 LIT "        " ;                                        00383500
+        DS := 9 WDS ;                                                   00384000
+        SI := LOC C ;                                                   00384100
+        DI := LOC T ;                                                   00384200
+        SI := SI + 6 ;                                                  00384300
+        DI := DI + 7 ;                                                  00384400
+        DS := CHR ;                                                     00384500
+        SI := IM ;                                                      00384600
+        SI := SI + FIX ;                                                00384650
+        DI := Z ;                                                       00384700
+        DI := DI + TAB ;                                                00384800
+        T (DS := 32 CHR ;  DS := 32 CHR) ;                              00384900
+        DS := C CHR ;                                                   00385000
+        SI := Z ;                                                       00389000
+        DI := IM ;                                                      00389500
+        DS := 10 WDS ;                                                  00390000
+        Q (DI := IM ; DS := 1 LIT "0") ;                                00390100
+      END FIX ;                                                         00390500
+ INTEGER C,                                                             00390505
+   H,                                                                   00390508
+   K ;                                                                  00390510
+ LABEL ERR, NEXT ;                                                      00390520
+      NOSTAR := (FIRSTCHAR (IMAGE [0]) NEQ "*" OR H := CHRS = 0)        00390540
+                AND READWRITEFILE ;                                     00390550
+      NOTFIRSTINPUT := MOREINPUT ;                                      00390560
+      IF NOSTAR THEN                                                    00390570
+      BEGIN                                                             00390580
+        I := IF COBOLFILE THEN 6 ELSE 0 ;                               00390590
+        IF XDEX GEQ 0 THEN IF BOOLEAN (XFILETYPE) THEN I := 0 ;         00390595
+        MOREINPUT := FALSE ;                                            00390600
+        IF H + TABAMOUNT GTR LENGTH THEN                                00390610
+          GO TO ERR ;                                                   00390630
+        H := H + TABAMOUNT + I - FIX (IMAGE, TABAMOUNT + I, H,          00390640
+                     ZIPPY, TRANSLATING AND H GEQ 2, I = 6) ;           00390650
+        IF COLUMNS THEN                                                 00390660
+        BEGIN                                                           00390670
+          FOR K := 1 STEP 1 UNTIL COLSTOPS DO                           00390680
+            IF I := MIN (H, MAXCOLSTOP) NEQ                             00390690
+               C := HUNT (IMAGE, ZIPPY, CHARACTER, I) THEN              00390700
+            BEGIN                                                       00390710
+              WHILE C GEQ I := COLSTOP [K] DO                           00390720
+                K := K + 1 ;                                            00390730
+              I := I - 1 ;                                              00390760
+              MOVE (IMAGE, ZIPPY, 0, 0, C) ;                            00390770
+              IF H := H + I - (C := C + 1) GTR FULLLENGTH THEN          00390780
+              BEGIN                                                     00390785
+ ERR:                                                                   00390790
+                FINALANALYSIS := TRUE ;                                 00390795
+                ERROR (NEXT, 0, "INPUT  ", "OVERFLW") ;                 00390800
+              END ;                                                     00390805
+              MOVE (IMAGE [C.[41:4]], ZIPPY [I.[41:4]], C.[45:3],       00390810
+                I.[45:3], H - I) ;                                      00390820
+              MOVE (ZIPPY, IMAGE, 0, 0, 80) ;                           00390840
+            END ELSE                                                    00390850
+              K := 5 ;                                                  00390860
+        END ;                                                           00390870
+        CHRS := H ;                                                     00390875
+        IF XDEX LSS 0 AND NOT INLINETOG AND N := N+INC LSS INFINITY THEN00390880
+          WRITESEQUENCE ;                                               00390910
+        N := N - INC ;                                                  00390920
+      END                                                               00391110
+      ELSE                                                              00391120
+      BEGIN                                                             00391130
+        IF H GTR 240 THEN                                               00391140
+          GO TO ERR ;                                                   00391150
+        INLINETOG := FALSE ;                                            00391160
+        MOREINPUT := MORE (IMAGE, ZIPPY, H, NCHRS) ;                    00391170
+        IF MOREINPUT THEN                                               00391175
+          WRITE (IO [USER + MAXUSERS], 30, ZIPPY [*]) ;                 00391180
+      END ;                                                             00391190
+ NEXT:                                                                  00391210
+ END FINALANALYSIS ;                                                    00391230
+ INTEGER C,                                                             00391240
+   LASTUSER ;                                                           00391250
+ REAL X ;                                                               00391260
+ LABEL AGAIN,                                                           00392000
+   INPUTFULL,                                                           00392500
+   EXIT,                                                                00394500
+   NEXT,                                                                00394600
+   ESCAPE ;                                                             00394700
+ INTEGER PROCEDURE READTWX ;                                            00394800
+ BEGIN                                                                  00394900
+ LABEL NONE, TROUBLE, EXIT ;                                            00395000
+ REAL TIMEOUT, X ;                                                      00395100
+    INPUT [5] := 0 & "~"[1:43:5] ;                                      00395200
+    IF NOT Q THEN                                                       00395300
+      TIMEOUT := IF OUTPUTREADY THEN MAX(0,MIN(15,(TN-TIMEX-60)/60))    00395400
+                 ELSE 15 ;                                              00395500
+    READ (TWXINPUT (0, TIMEOUT), 8, INPUT [*]) [NONE:TROUBLE] ;         00395600
+    GO TO EXIT ;                                                        00395700
+ NONE:                                                                  00395800
+    IF Q THEN                                                           00395900
+    BEGIN                                                               00396000
+      USER := MAXUSERS ;                                                00396100
+      READTWX := 1 ;                  % ESCAPE                          00396200
+      GO TO EXIT ;                                                      00396300
+    END ;                                                               00396400
+    IF OUTPUTREADY THEN                                                 00396500
+      OUTPUT ;                                                          00396600
+    T1 := TIMEX ;                                                       00396700
+    FOR USER := 0 STEP 1 UNTIL BIGBIRD DO                               00396800
+    BEGIN                                                               00396900
+      CHECK (STATIONI) ;                                                00397100
+      IF BOOLEAN (ABNORMALEND) THEN                                     00397200
+      BEGIN                                                             00397300
+        READTWX := 1 ;                                                  00397400
+        GO TO EXIT ;                                                    00397500
+      END ;                                                             00397600
+      IF X := (T1 - TIMEI)/1000 LSS 0 THEN                              00397700
+        X := X + 5184 ;                                                 00397800
+      IF X GTR 15 AND X LSS 100 THEN                                    00397900
+      BEGIN                                                             00398000
+        IF X LSS 18 THEN                                                00398100
+          FIRSTCHANCE := 0                                              00398200
+        ELSE IF X GEQ 36 THEN                                           00398300
+        BEGIN                                                           00398400
+          WRITE (PRETANK [*], EOJ) ;                                    00398500
+          WRITETWX ;                                                    00398600
+          ABNORMALEND := READTWX := 1 ;                                 00398700
+          GO TO EXIT ;                                                  00398800
+        END ELSE IF FIRSTCHANCE = 0 THEN                                00398900
+        BEGIN                                                           00399000
+          FIRSTCHANCE := 1 ;                                            00399100
+          X := TIMEI ;                                                  00399200
+          ERRORX (7, "LOOK   ", "ALIVE. ") ;                            00399300
+          TIMEI := X ;                                                  00399400
+        END ;                                                           00399500
+      END ;                                                             00399600
+    END ;                                                               00399700
+    READTWX := 2 ;                    % AGAIN                           00399800
+    GO TO EXIT ;                                                        00399900
+ TROUBLE:                                                               00400000
+    READ (TWXINPUT (0, 0), 1, INPUT [*]) ;                              00400100
+    INPUT [1] := "}" ;                                                  00400200
+ EXIT:                                                                  00400300
+ END READTWX ;                                                          00400400
+ PROCEDURE INITIALIZE ;                                                 00406000
+    BEGIN                                                               00407000
+ MONITOR INTOVR, FLAG ;                                                 00407500
+ INTEGER I,                                                             00408000
+   C ;                                                                  00408100
+ REAL U ;                                                               00408200
+ BOOLEAN OLDUSER ;                                                      00408500
+ DEFINE DIRCTRY = CONTROLS# ;                                           00408600
+ LABEL OLD,                                                             00409000
+   FAULT,                                                               00409500
+   NEW,                                                                 00410000
+   MAILCALL,                                                            00410500
+   NEXT ;                                                               00410600
+      USER := BIGBIRD := BIGBIRD + 1 ;                                  00420000
+      ATTACH ;                                                          00421000
+      STATIONI := STATION ;                                             00421500
+      IF USERCODEI := USERCODE  = - 1 THEN                              00422500
+        USERCODE := OCTDEX (100|STATION.[9:4]+STATION.[14:4]) ;         00423000
+      COUNTI := -1 ;                                                    00426000
+      ILFCRI := 1 ;                                                     00426100
+      ERRORX (7, "VERSION", OCTDEX (VERSION)) ;                         00427900
+ FAULT:                                                                 00427910
+      READ (R1 [45], 90, DIRCTRY [*]) ;                                 00427920
+      IF OLDUSER THEN                                                   00427930
+      BEGIN                                                             00427940
+        OLDUSER := FALSE ;                                              00427950
+        I := C + C ;                                                    00427960
+        ERROR (OLD, 0, "BACKUP ", "ERROR. ") ;                          00427970
+      END ;                                                             00427980
+      C := 200 ;                                                        00428000
+      FOR I := 0 STEP 2 WHILE U := DIRCTRY [I] NEQ 12 DO                00428100
+        IF USERCODE = U THEN                                            00428200
+        BEGIN                                                           00428300
+          OLDUSER := TRUE ;                                             00428400
+          IF STATION = DIRCTRY [I + 1] THEN                             00428500
+            GO TO OLD ;                                                 00428600
+          C := I ;                                                      00428700
+        END ELSE                                                        00428800
+        IF U = 0 AND NOT OLDUSER THEN                                   00428900
+          C := I ;                                                      00429000
+      IF C NEQ 200 THEN                                                 00429100
+        I := C                                                          00429300
+      ELSE IF I LEQ 88 THEN                                             00432500
+        DIRCTRY [I + 2] := 12                                           00433500
+      ELSE                                                              00434500
+        WHILE DIRCTRY [I := I - 2] LSS 0 DO ;                           00435000
+ OLD:                                                                   00436500
+      C := SLOTI := I / 2 ;                                             00437000
+      DIRCTRY [I] := - USERCODE ;                                       00437500
+      DIRCTRY [I + 1] := STATION ;                                      00438000
+      WRITE (R1 [45], 90, DIRCTRY [*]) ;                                00438500
+      IF NOT OLDUSER THEN                                               00438600
+        GO TO NEW ;                                                     00438700
+      INTOVR := FAULT ;                                                 00439500
+      FLAG := FAULT ;                                                   00440500
+      RESTORESTATE ;                                                    00441000
+      STATION := STATIONI ;                                             00441500
+      IF VN LSS 94 OR VN GTR VERSION THEN                               00441800
+        GO TO FAULT ;                                                   00441900
+      IF FILECLOSED THEN                                                00443000
+        GO TO MAILCALL ;                                                00444500
+      IF D GTR MAXFILELENGTH THEN                                       00445100
+        GO TO FAULT ;                                                   00445200
+      READ SEEK (R2 [32 | C]) ;                                         00445300
+      SECURITYCHECK ;                                                   00447000
+      IF INPUT [5] + 2 LSS D OR INPUT [3] NEQ 10 THEN                   00450000
+        ERROR (MAILCALL, 3, PREFIX, SUFFIX) ;                           00452500
+      AT := D.LEFTSIDE ;                                                00453000
+      FOR I := 0 STEP 1 UNTIL AT DO                                     00453100
+        READ (R2, 256, LINKLISTS [USER32 + I, *]) [FAULT] ;             00453200
+      AT := 0 ;                                                         00453500
+      FOR I := 1 STEP 1 UNTIL D DO                                      00454000
+      BEGIN                                                             00454100
+        IF AT NEQ LL [AT := LL [AT] . T] . F THEN                       00454400
+          I := D                                                        00454500
+        ELSE IF AT = 1 THEN                                             00454600
+          ERROR (NEXT, 6, PREFIX, SUFFIX) ;                             00455000
+      END ;                                                             00455100
+      ERROR (MAILCALL, 7, "LINKLIS", "T ERROR") ;                       00456500
+ NEW:                                                                   00458500
+      WRITE (R2 [32 | C + 31], 1, IMAGE [*]) ;                          00459000
+      LOCK (R2) ;                                                       00459500
+      USER32 := USER | 32 ;                                             00460000
+      BOOL := INITIALBOOL ;                                             00461000
+      INC := 100 ;                                                      00462500
+      MACROLIBRARY := "MACRO  " ;                                       00462900
+      CHARACTER := "#" ;                                                00463000
+      SAVEFACTOR := 7 ;                                                 00463500
+      COLSTOPS := STRINGI := 0 ;                                        00465000
+      FILL RSWD [*] WITH "EXECUTE", "DITTO  ", "COPY   ", "INLINE ",    00466000
+        "ZIP    ", "CHANGE ", "EDIT   ", "SAVE   ", "RESEQ  ",          00466500
+        "PUNCH  ", "PRINT  ", "DELETE ", "CLOSE  ", "COMPILE",          00467000
+        "COLUMN ", "SCAN   ", "LISTING", "INC    ", "TAB    ",          00467500
+        "PERCENT", "QUICK  ", "LIST   ", "OPEN   ", "MAIL   ",          00468000
+        "TEACH  ", "REMOVE ", "REPLACE", "END    " ;                    00468500
+ MAILCALL:                                                              00469000
+      FILEACCESS := 0 ;                                                 00469100
+      INORDER := TRUE ;                                                 00469200
+ NEXT:                                                                  00469300
+      TRANSLATEI := REAL (TRANSLATING) ;                                00472100
+      VN := VERSION ;                                                   00472200
+      ERRORX (0, (IF XFILE ("MAIL % ", USERCODE, -1) = 7 THEN "MAIL % " 00489500
+        ELSE "HELLO  ") & REAL (NOT OLDUSER)[42:47:1], USERCODE) ;      00490000
+    END INITIALIZE ;                                                    00490500
+      LASTUSER := MAXUSERS ;                                            00490600
+      IF QINPUT THEN                                                    00491000
+      BEGIN                                                             00491100
+        QINPUT := FALSE ;                                               00491200
+        GO TO INPUTFULL ;                                               00491300
+      END ;                                                             00491400
+      IF STATION NEQ 0 THEN                                             00493200
+      BEGIN                                                             00493300
+        LASTUSER := USER ;                                              00493400
+ NEXT:                                                                  00493410
+        IF MORE THEN                                                    00493500
+          GO TO EXIT ;                                                  00494000
+      END ;                                                             00494400
+      IF NOT Q AND READYQTOP GTR 0 THEN                                 00494600
+      BEGIN                                                             00494700
+        LASTUSER := REAL (WAITX (0, BOOLEAN (3))) ;                     00494800
+        SECURITYCHECK ;                                                 00494900
+        GO TO EXIT ;                                                    00495000
+      END ;                                                             00495100
+ AGAIN:                                                                 00495200
+      CHARGE (0) ;                                                      00495300
+      IF 2 | BIGBIRD LSS C := STATUS (ZIPPY [*]) - 2 THEN               00495500
+      BEGIN                                                             00495600
+        LASTUSER := BIGBIRD + 1 ;                                       00495650
+        FOR X := 0 STEP 2 UNTIL C DO                                    00495700
+        BEGIN                                                           00495800
+          STATION := 0 & ZIPPY [X] [9:9:9] ;                            00495900
+          FOR USER := 0 STEP 1 UNTIL BIGBIRD DO                         00496000
+            IF STATION = STATIONI THEN                                  00496100
+              USER := MAXUSERS ;                                        00496200
+          IF USER LEQ MAXUSERS THEN                                     00496300
+          BEGIN                                                         00496400
+            IF BIGBIRD LSS MAXUSER THEN                                 00496500
+            BEGIN                                                       00496600
+              USERCODE := ZIPPY [X + 1] ;                               00496700
+              INITIALIZE ;                                              00496800
+              GO TO NEXT ;                                              00496900
+            END ;                                                       00497000
+            NOMOREROOM ;                                                00497100
+          END ;                                                         00497300
+        END ;                                                           00497400
+      END ;                                                             00497500
+      IF X := READTWX NEQ 0 THEN                                        00497600
+      BEGIN                                                             00497700
+        IF X = 2 THEN                                                   00497800
+          GO TO AGAIN ;                                                 00497900
+        GO TO ESCAPE ;                                                  00498100
+      END ;                                                             00498300
+ INPUTFULL:                                                             00506000
+      X := INPUT [0] ;                                                  00506100
+      USER := 0 ;                                                       00506500
+      WHILE STATIONI NEQ 0 & X[9:9:9] DO                                00507000
+        IF USER := USER + 1 GTR BIGBIRD THEN                            00507500
+          GO TO AGAIN ;                                                 00507600
+      CHARGE (X) ;                                                      00508000
+      IF C := CHRS NEQ 0 THEN                                           00508500
+        READ (IO [USER], 30, IMAGE [*]) ;                               00509000
+      BREAKI := 0 ;                                                     00511000
+      IF LINEEDIT (INPUT [1], IMAGE, C, C,                              00512000
+                   TRANSLATEI, C GTR 240, 241) THEN                     00512100
+        ERROR (AGAIN, 7, "DEL{!~ ", CHRS := 0) ;                        00512300
+      IF BOOLEAN (X.[25:1]) THEN                                        00512500
+      BEGIN                                                             00512600
+        IF FIRSTCHAR (INPUT [5]) = "~" THEN                             00513000
+          C := C - 4 ;                                                  00513500
+        CHRS := C ;                                                     00513700
+        WRITE (IO [USER], 30, IMAGE [*]) ;                              00514000
+        GO TO AGAIN ;                                                   00520000
+      END ;                                                             00520500
+      IF BOOLEAN (INREADYQ) THEN                                        00520600
+        ERROR (AGAIN, 7, "PLEASE ", "WAIT...") ;                        00520700
+      WRITELFCR ;                                                       00520800
+      CHRS := C ;                                                       00520810
+      CLOCK := T0 ;                                                     00520850
+      T1 := TIMEX ;                                                     00520900
+      IF OUTPUTREADY THEN                                               00520950
+        NEXTCLOCK := CLOCK - T0 | (TN - T1 - 90) / 150 ;                00520960
+      IF LASTUSER NEQ LASTUSER := USER THEN                             00522000
+        RESTORESTATE ;                                                  00522500
+      SECURITYCHECK ;                                                   00522600
+      WAITFLAG := FALSE ;                                               00522700
+ EXIT:                                                                  00532000
+      IF FINALANALYSIS THEN                                             00532500
+        GO TO NEXT ;                                                    00533500
+      IF OUTPUTREADY THEN                                               00533600
+        IF TN - 60 LEQ TIMEX THEN                                       00533700
+          OUTPUT ;                                                      00533800
+ ESCAPE:                                                                00534500
+    END READIN ;                                                        00546500
+ % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        00547000
+ DEFINE RDISC (RDISC1, RDISC2) =                                        00547100
+     IF RDISCX (RDISC1, RDISC2) THEN GO TO NEXT# ;                      00547200
+ BOOLEAN PROCEDURE RDISCX (WHERE, IMAGE) ;                              00547500
+ VALUE WHERE ;                                                          00548000
+ INTEGER WHERE ;                                                        00548500
+ ARRAY IMAGE [0] ;                                                      00549000
+    BEGIN                                                               00549500
+ LABEL EOF ;                                                            00549600
+ STREAM PROCEDURE ZOT (D) ;                                             00549710
+ BEGIN                                                                  00549720
+    DI := D ;                                                           00549730
+    DS := RESET ;                                                       00549740
+ END ZOT ;                                                              00549750
+      IF PREWHERE + 1 NEQ PREWHERE := ABS (WHERE) - 2 THEN              00550000
+        READ SEEK (DISC [PREWHERE]) ;                                   00550500
+      READ (DISC, 10, IMAGE [*]) [EOF] ;                                00551000
+      IF COBOLFILE THEN                                                 00551010
+        ZOT (IMAGE) ;                                                   00551020
+      IF WHERE LSS 0 THEN                                               00551030
+        SEQUENCE ;                                                      00551040
+      IF FALSE THEN                                                     00551100
+      BEGIN                                                             00551150
+ EOF:                                                                   00551200
+        ERRORX (5, "AT SEQ#", OCTDEX (N)) ;                             00551250
+        RDISCX := TRUE ;                                                00551350
+        PREWHERE := -2 ;                                                00551400
+      END ;                                                             00551450
+    END RDISC ;                                                         00551500
+ % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        00552000
+ DEFINE WRITEAT =                                                       00552500
+    IF WRITEATX (QUICK, -N, RECORD) THEN                                00552800
+      GO TO NEXT# ;                                                     00552900
+ BOOLEAN PROCEDURE WRITEATX (QUICK, NN, RECORD) ;                       00553000
+ VALUE QUICK, NN ;                                                      00553100
+ BOOLEAN QUICK ;                                                        00553200
+ INTEGER NN ;                                                           00553300
+ ARRAY RECORD [0] ;                                                     00553400
+    BEGIN                                                               00554000
+ LABEL NEXT ;                                                           00554100
+      N := ABS (NN) ;                                                   00555500
+      IF NOT COBOLFILE THEN                                             00556000
+        WRITESEQ ;                                                      00556500
+      IF NN LSS 0 THEN                                                  00556600
+        RDISC (AT, RECORD) ;                                            00557000
+      IF COBOLFILE THEN                                                 00557500
+        RECORD [0].[1:35] := OCTDEC (N) ;                               00558000
+      WRITEROW (RECORD, QUICK, FILEINFO) ;                              00558500
+      IF BOOLEAN (BREAKI) THEN                                          00559600
+ NEXT:                                                                  00559700
+        WRITEATX := TRUE ;                                              00559800
+    END WRITEAT ;                                                       00560000
+ DEFINE WRITEME (WRITEME1, WRITEME2) =                                  00560100
+    IF WRITEATX (QUICK, WRITEME1, WRITEME2) THEN                        00560200
+      GO TO NEXT# ;                                                     00560300
+ % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        00560500
+ BOOLEAN PROCEDURE TOGGLE (OLDVALUE, I) ;                               00561000
+ VALUE OLDVALUE,                                                        00561500
+   I ;                                                                  00562000
+ BOOLEAN OLDVALUE ;                                                     00562500
+ REAL I ;                                                               00563000
+ BEGIN                                                                  00563500
+ LABEL NEXT ;                                                           00564000
+    IF I = 3 THEN                                                       00564100
+    BEGIN                                                               00564110
+      IF REAL (OLDVALUE) = "ALGOL  " THEN                               00564120
+        TOGGLE := BOOLEAN (ALGOL)                                       00564130
+      ELSE IF REAL (OLDVALUE) = "XALGOL " THEN                          00564140
+        TOGGLE := BOOLEAN (XALGOL)                                      00564150
+      ELSE IF REAL (OLDVALUE) = "DATA   " THEN                          00564160
+        TOGGLE := BOOLEAN (DATA)                                        00564170
+      ELSE IF REAL (OLDVALUE) = "FORTRAN" THEN                          00564180
+        TOGGLE := BOOLEAN (FORTRAN)                                     00564190
+      ELSE IF REAL (OLDVALUE) = "COBOL  " THEN                          00564200
+        TOGGLE := BOOLEAN (COBOL)                                       00564210
+      ELSE IF REAL (OLDVALUE) = "BASIC  " THEN                          00564220
+        TOGGLE := BOOLEAN (BASIC) ;                                     00564230
+      GO TO NEXT ;                                                      00564240
+    END ;                                                               00564250
+    IF (IF I = 1 THEN EMPTY1 ELSE EMPTY2) THEN                          00564500
+      ERROR (NEXT, 7, PARAMETER0, ONOFF (TOGGLE := OLDVALUE)) ;         00565000
+    I := IF I = 1 THEN PARAMETER1 ELSE PARAMETER2 ;                     00565100
+    IF NOT (TOGGLE := I = "ON     ") THEN                               00565500
+      IF I NEQ "OFF    " THEN                                           00566000
+        ERRORX (0, "MISSING", " ON/OFF") ;                              00566500
+ NEXT:                                                                  00567000
+ END TOGGLE ;                                                           00567500
+ DEFINE FILETYPE (FILETYPE1) = REAL (TOGGLE (BOOLEAN (FILETYPE1), 3))# ;00567600
+ % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        00568000
+ BOOLEAN PROCEDURE VERIFAX (XEROX, DD) ;                                00680000
+ VALUE XEROX, DD ;                                                      00680500
+ INTEGER XEROX,                                                         00681000
+   DD ;                                                                 00681100
+    BEGIN                                                               00681500
+ DEFINE                                                                 00681600
+   PRINTING = XEROX = 2#,                                               00681700
+   PUNCHING = XEROX = 4#,                                               00681800
+   ZIPPING = XEROX = 8# ;                                               00681900
+ FILE COPY DISK SERIAL [20:DD] (2, 10, 150, SAVE SAVEFACTOR) ;          00682000
+ BOOLEAN B ;                                                            00683500
+ REAL L ;                                                               00684000
+ LABEL NEXT ;                                                           00684500
+      XLOCKED := TRUE ;                                                 00687000
+      IF BOOLEAN (XEROX) THEN                                           00687500
+      BEGIN                                                             00688000
+        FILL COPY WITH PREFIX, SUFFIX, *, *, *, 12 ;                    00689000
+        L := FIRST ;                                                    00691000
+        WHILE AT := L.T NEQ 1 DO                                        00692000
+        BEGIN                                                           00692500
+          N := (L := LL [AT]).S ;                                       00693000
+          RDISC (-AT, ZIPPY) ;                                          00693500
+          WRITE (COPY, 10, ZIPPY [*]) ;                                 00695500
+          INTERRUPT (1) ;                                               00696000
+        END ;                                                           00696500
+        READ (DISC [0]) ;                                               00697500
+        DETACH ;                                                        00698000
+        CLOSE (DISC, PURGE) ;                                           00698500
+        LOCK (COPY) ;                                                   00699500
+        REATTACH ;                                                      00700000
+        INORDER := TRUE ;                                               00702500
+        FILEACCESS := 0 ;                                               00705500
+        SAVESTATE ;                                                     00706000
+      END XEROX                                                         00706500
+      ELSE                                                              00707000
+      BEGIN                                                             00708000
+        FILL COPY WITH PARAMETER1, PARAMETER2, *, *, *,                 00709000
+          IF PRINTING THEN 15 ELSE IF PUNCHING THEN 22 ELSE 12 ;        00709500
+        IF PRINTING THEN                                                00713000
+        BEGIN                                                           00713500
+          WRITE (ZIPPY [*], DATE, PREFIX.[6:6], PREFIX,                 00714000
+            SUFFIX.[6:6], SUFFIX, (L := TIME (1)) DIV 216000,           00714500
+            L DIV 3600 MOD 60, TIME (6), MMDDYY,                        00715000
+            USERCODE.[6:6], USERCODE) ;                                 00715500
+          DETACH ;                                                      00716000
+          WRITE (COPY [DBL], 17, ZIPPY [*]) ;                           00716500
+          REATTACH ;                                                    00719000
+        END ;                                                           00720000
+        L := N ;                                                        00720500
+        DD := M := 0 ;                                                  00721000
+        B := PRINTING AND PARAMETER2 = "DOUBLE " ;                      00721100
+        WHILE N := LL [DD := LL [DD].T].S LEQ PARAMETER4 DO             00721500
+          IF PARAMETER3 LEQ N THEN                                      00722000
+          BEGIN                                                         00723000
+            RDISC (DD & (REAL (NOT ZIPPING))[1:47:1], ZIPPY) ;          00723500
+            IF PRINTING THEN                                            00724000
+              ZIPPY [14] := OCTDEX (M := M + 1) & "#"[1:43:5] ;         00724500
+            IF B THEN                                                   00726000
+              WRITE (COPY [DBL], 17, ZIPPY [*])                         00726500
+            ELSE WRITE (COPY, 17, ZIPPY [*]) ;                          00727000
+            INTERRUPT (1) ;                                             00727500
+          END                                                           00728000
+          ELSE M := M + 1 ;                                             00728500
+        IF ZIPPING THEN                                                 00729000
+          ZIP WITH COPY ;                                               00729500
+        LOCK (COPY) ;                                                   00730000
+        N := L ;                                                        00730500
+      END THERMOFAX ;                                                   00731000
+      IF FALSE THEN                                                     00731100
+ NEXT:                                                                  00731200
+        VERIFAX := TRUE ;                                               00731300
+      XLOCKED := FALSE ;                                                00731400
+    END VERIFAX ;                                                       00731500
+ DEFINE THERMOFAX (THERMOFAX1, THERMOFAX2) =                            00731600
+    BEGIN                                                               00731650
+      WAIT (KOUNT (PARAMETER3, PARAMETER4, CLOCK), XLOCKED) ;           00731700
+      IF VERIFAX (THERMOFAX1, THERMOFAX2) THEN                          00731750
+        GO TO NEXT ;                                                    00731800
+    END#,                                                               00731850
+  CREATEFILE (CREATEFILE1) =                                            00731900
+    BEGIN                                                               00731950
+      LIBRARY.AREAS := 20 ;                                             00732000
+      LIBRARY.AREASIZE := CREATEFILE1 ;                                 00732010
+      LIBRARY.SAVE := SAVEFACTOR ;                                      00732020
+      WRITE (LIBRARY, 10, RECORD [*]) ;                                 00732030
+      LOCK (LIBRARY) ;                                                  00732040
+      LIBRARY.AREASIZE := 0 ;                                           00732050
+      LIBRARY.AREAS := 0 ;                                              00732060
+    END#,                                                               00732100
+  CLOSEMYFILE =                                                         00732150
+    BEGIN                                                               00732200
+      IF NOT INORDER THEN                                               00732250
+      BEGIN                                                             00732300
+        WAIT (KOUNT (1, FINITY, CLOCK), XLOCKED) ;                      00732350
+        IF VERIFAX (17, (D + 14) DIV 15 | 15) THEN                      00732400
+          GO TO NEXT ;                                                  00732450
+      END ELSE                                                          00732500
+      BEGIN                                                             00732550
+        FILEACCESS := 0 ;                                               00732600
+        CLOSE (DISC) ;                                                  00732650
+      END ;                                                             00732700
+    END# ;                                                              00732750
+ % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        00733000
+ DEFINE WDISC = IF WDISCX (IMAGE) THEN GO TO NEXT# ;                    00733500
+ BOOLEAN PROCEDURE WDISCX (IMAGE) ;                                     00734000
+ ARRAY IMAGE [0] ;                                                      00734500
+    BEGIN                                                               00735000
+ REAL L ;                                                               00735100
+ LABEL EOT,                                                             00735500
+   NEXT ;                                                               00735600
+      WHILE N GTR (L := LL [AT]).S DO                                   00743500
+        AT := L.T ;                                                     00744000
+      WHILE N LSS (L := LL [AT]).S DO                                   00744500
+        AT := L.F ;                                                     00745000
+      IF N NEQ L.S THEN                                                 00745500
+      BEGIN                                                             00746000
+        IF D GEQ MAXFILELENGTH THEN                                     00746500
+          ERROR (NEXT, 0, "FILE TO", " LONG. ") ;                       00747000
+        IF PREWHERE NEQ PREWHERE := D - 2 THEN                          00747100
+         READ SEEK (DISC [PREWHERE + 1]) ;                              00747200
+        L := LL [D := D + 1] := (L.T) & N [SF] & AT [FF] ;              00747500
+        MODIFY (D) ;                                                    00748000
+        LL [AT] . T := D ;                                              00748500
+        MODIFY (AT) ;                                                   00748600
+        AT := L.T ;                                                     00749000
+        IF AT NEQ 1 THEN                                                00749500
+          INORDER := FALSE ;                                            00750000
+        LL [AT] . F := D ;                                              00750500
+        MODIFY (AT) ;                                                   00750600
+        AT := D ;                                                       00751000
+      END ;                                                             00751500
+      SEQUENCE ;                                                        00752000
+      IF PREWHERE + 1 NEQ PREWHERE := AT - 2 THEN                       00752500
+        WRITE (DISC [PREWHERE], 10, IMAGE [*])                          00753000
+      ELSE WRITE (DISC, 10, IMAGE [*]) [EOT] ;                          00753500
+      N := N + INC ;                                                    00753510
+      IF FALSE THEN                                                     00753600
+      BEGIN                                                             00753610
+ EOT:                                                                   00753620
+        LL [L.F] . T := AT := L.T ;                                     00753630
+        LL [AT] . F := L.F ;                                            00753640
+        D := D - 1 ;                                                    00753650
+        INORDER := FALSE ;                                              00753660
+        SHOW ("FILE   ", "FULL.  ") ;                                   00753670
+        ERRORX (0, "PLEASE ", "REOPEN.") ;                              00753690
+ NEXT:                                                                  00753700
+        WDISCX := TRUE ;                                                00753800
+      END ;                                                             00753900
+    END WDISC ;                                                         00754000
+ % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        00754500
+ INTEGER PROCEDURE GETPARAMETERS (N) ; VALUE N ; INTEGER N ;            00754600
+      BEGIN                                                             00754650
+ INTEGER STREAM PROCEDURE STAR (S, D, E) ; VALUE E ;                    00754700
+    BEGIN                                                               00754750
+ LOCAL N,                                                               00754800
+   PLUS,                                                                00754850
+   MINUS,                                                               00754900
+   CROSSHATCH,                                                          00754950
+   K ;                                                                  00755000
+ LABEL DEBLANK,                                                         00755050
+   NALPHA,                                                              00755100
+   BLANK,                                                               00755150
+   NUMALPHA,                                                            00755200
+   GETREPEAT ;                                                          00755250
+      SI := S ;                                                         00755300
+      SI := SI - 1 ;                                                    00755350
+      DI := D ;                                                         00755400
+      5 (DS := 8 LIT "+#000000") ;                                      00755450
+      DI := D ;                                                         00755500
+      E (IF SC = "(" THEN JUMP OUT ;                                    00755550
+         IF SC = "@" THEN JUMP OUT TO GETREPEAT ;                       00755600
+         IF SC = ";" THEN JUMP OUT TO GETREPEAT ;                       00755650
+         SI := SI + 1) ;                                                00755700
+      5 (TALLY := 0 ;                                                   00755750
+      K := TALLY ;                                                      00755800
+      PLUS := TALLY ;                                                   00755850
+      MINUS := TALLY ;                                                  00755900
+      CROSSHATCH := TALLY ;                                             00755950
+      TALLY := 1 ;                                                      00756000
+ DEBLANK:                                                               00756050
+      SI := SI + 1 ;                                                    00756100
+      IF SC = " " THEN                                                  00756150
+        GO TO DEBLANK ;                                                 00756200
+      IF SC = ALPHA THEN                                                00756250
+        TALLY := 0                                                      00756300
+      ELSE                                                              00756350
+      BEGIN                                                             00756400
+        IF SC = ";" THEN                                                00756450
+          JUMP OUT TO GETREPEAT ;                                       00756500
+        IF SC = """ THEN                                                00756550
+          JUMP OUT TO GETREPEAT ;                                       00756600
+        IF SC = "(" THEN                                                00756650
+          JUMP OUT TO GETREPEAT ;                                       00756700
+        IF SC = "[" THEN                                                00756750
+          JUMP OUT TO GETREPEAT ;                                       00756800
+        IF SC = "." THEN                                                00756850
+          JUMP OUT TO GETREPEAT ;                                       00756900
+        IF SC = "@" THEN                                                00756950
+          JUMP OUT TO GETREPEAT ;                                       00757000
+        IF SC = "/" THEN                                                00757050
+          K := TALLY                                                    00757100
+        ELSE IF SC = "+" THEN                                           00757150
+          PLUS := TALLY                                                 00757200
+        ELSE IF SC = "#" THEN                                           00757250
+          CROSSHATCH := TALLY                                           00757300
+        ELSE IF SC = "-" THEN                                           00757350
+          MINUS := TALLY ;                                              00757400
+        GO TO DEBLANK ;                                                 00757450
+      END ;                                                             00757500
+      IF SC GEQ "0" THEN                                                00757550
+      BEGIN                                                             00757600
+        K (JUMP OUT TO NALPHA) ;                                        00757650
+        K := SI ;                                                       00757700
+        8 (IF SC LSS "0" THEN                                           00757750
+          JUMP OUT ;                                                    00757800
+        TALLY := TALLY + 1 ;                                            00757850
+        SI := SI + 1) ;                                                 00757900
+        N := TALLY ;                                                    00757950
+        IF TOGGLE THEN                                                  00758000
+        BEGIN                                                           00758050
+          IF SC = ALPHA THEN                                            00758100
+            GO TO NUMALPHA ;                                            00758150
+ BLANK:                                                                 00758200
+          IF SC = " " THEN                                              00758250
+          BEGIN                                                         00758300
+            SI := SI + 1 ;                                              00758350
+            GO TO BLANK ;                                               00758400
+          END ;                                                         00758450
+          IF SC = "/" THEN                                              00758500
+          BEGIN                                                         00758550
+ NUMALPHA:                                                              00758600
+            SI := K ;                                                   00758650
+            GO TO NALPHA ;                                              00758700
+          END ;                                                         00758750
+        END ;                                                           00758800
+        SI := K ;                                                       00758850
+        DS := N OCT ;                                                   00758900
+      END                                                               00758950
+      ELSE                                                              00759000
+      BEGIN                                                             00759050
+ NALPHA:                                                                00759100
+        DS := 1 LIT "+" ;                                               00759150
+        7 (IF SC = ALPHA THEN                                           00759200
+          DS := 1 CHR                                                   00759250
+        ELSE DS := 1 LIT " ") ;                                         00759300
+      END ;                                                             00759350
+      DI := DI - 8 ;                                                    00759400
+      SKIP 2 DB ;                                                       00759450
+      DS := PLUS SET ;                                                  00759500
+      DI := DI - 1 ;                                                    00759550
+      SKIP 3 DB ;                                                       00759600
+      DS := MINUS SET ;                                                 00759650
+      DI := DI - 1 ;                                                    00759700
+      SKIP 4 DB ;                                                       00759750
+      DS := CROSSHATCH SET ;                                            00759800
+      DI := DI + 7 ;                                                    00759850
+      SI := SI - 1) ;                                                   00759900
+ GETREPEAT:                                                             00759910
+      E (IF SC = ")" THEN JUMP OUT ;                                    00759950
+         IF SC = ";" THEN JUMP OUT ;                                    00760000
+         IF SC = "@" THEN JUMP OUT ;                                    00760050
+         SI := SI + 1) ;                                                00760100
+      E (DI := LOC STAR ;                                               00760200
+         DS := 8 LIT "00000001" ;                                       00760250
+         DI := DI - 8 ;                                                 00760300
+         10 (IF SC = ";" THEN JUMP OUT ;                                00760350
+             IF SC GEQ "0" THEN                                         00760400
+             BEGIN                                                      00760450
+               TALLY := 1 ;                                             00760500
+               3 (SI := SI + 1 ;                                        00760550
+                  IF SC LSS "0" THEN JUMP OUT ;                         00760600
+                  TALLY := TALLY + 1) ;                                 00760650
+               K := TALLY ;                                             00760700
+               SI := SI - K ;                                           00760750
+               DS := K OCT ;                                            00760800
+               JUMP OUT ;                                               00760850
+             END ;                                                      00760900
+             SI := SI + 1) ;                                            00760950
+         JUMP OUT) ;                                                    00761000
+ END STAR ;                                                             00761050
+ DEFINE XSUB = (XDEX + 1) | 13# ;                                       00761100
+    IF N = 0 THEN                                                       00761150
+      GETPARAMETERS := STAR (IMAGE, PARAMETER0, 0)                      00761200
+    ELSE                                                                00761250
+      GETPARAMETERS := STAR (IMAGE, XPARAMETERS [0], 63) ;              00761300
+ END GETPARAMETERS ;                                                    00761350
+ % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        00761400
+ INTEGER PROCEDURE VERB ;                                               00763900
+ BEGIN                                                                  00764000
+ BOOLEAN PROCEDURE NUMBER (N, C) ;                                      00764100
+ INTEGER N ;                                                            00764300
+ REAL C ;                                                               00764400
+  BEGIN                                                                 00764500
+ INTEGER XDEXX ;                                                        00764510
+ LABEL ZERO ;                                                           00764520
+   IF XDEX GEQ 0 THEN                                                   00764530
+   BEGIN                                                                00764540
+     XDEXX := XDEX + 1 ;                                                00764550
+     WHILE BOOLEAN (C.[4:1]) AND XDEXX := XDEXX - 1 GEQ 0 DO            00764560
+       C := XARRAY [USER, XDEXX|13 + ABS (C&0[1:44:4]-1) MOD 5] ;       00764570
+   END ;                                                                00764580
+   C.[4:1] := 0 ;                                                       00764600
+   IF NUMBER := (NOT BOOLEAN (C.[1:1])) & (C = -"#000000")[46:47:1] THEN00764610
+   BEGIN                                                                00764620
+    IF C . [2:2] NEQ 0 AND FILEOPEN THEN                                00764700
+    BEGIN                                                               00764800
+      C . [1:3] := C . [3:3] ;                                          00764900
+      IF C = 0 THEN                                                     00765100
+      BEGIN                                                             00765200
+        C := N ;                                                        00765300
+        GO TO ZERO ;                                                    00765400
+      END ;                                                             00765500
+      IF NOT (ITSOLD (N) OR BOOLEAN (C . [1:1])) THEN                   00765600
+        C := C - 1 ;                                                    00765700
+      FOR N := 1 - C STEP 1 UNTIL 0 DO                                  00765800
+        IF AT := LL [AT] . T = 1 THEN                                   00765900
+        BEGIN                                                           00766000
+          N := 0 ;                                                      00766100
+          AT := LAST . F ;                                              00766200
+        END ;                                                           00766300
+      FOR N := C + 1 STEP 1 UNTIL 0 DO                                  00766400
+        IF AT := LL [AT] . F = 0 THEN                                   00766500
+        BEGIN                                                           00766600
+          N := 0 ;                                                      00766700
+          AT := FIRST . T ;                                             00766800
+        END ;                                                           00766900
+      C := LL [AT] . S ;                                                00767000
+    END ELSE C.[2:2] := 0 ;                                             00767100
+ ZERO:                                                                  00767200
+    C := MIN (FINITY, MAX (1, N := C)) ;                                00767300
+   END ELSE                                                             00767310
+     C.[1:3] := 0 ;                                                     00767320
+  END NUMBER ;                                                          00767400
+ % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        00767500
+ INTEGER STREAM PROCEDURE INLINEEDIT (S, D, T, C, N, BIDR, INITIAL) ;   00767600
+ VALUE INITIAL,                                                         00767700
+   C,                                                                   00767800
+   N,                                                                   00767900
+   BIDR ;                                                               00768000
+    BEGIN                                                               00768100
+ LABEL SEARCH,                                                          00768200
+   INSERT,                                                              00768300
+   DELETE,                                                              00768400
+   REPLACE,                                                             00768500
+   WRAPUP,                                                              00768600
+   LOOP,                                                                00768700
+   ERROR1,                                                              00768710
+   HERE,                                                                00768720
+   THERE,                                                               00768730
+   IDR,                                                                 00768800
+   XIT ;                                                                00768900
+      BIDR (SI := S ; SI := SI + 6 ; S := SI ;                          00769000
+            SI := D ; SI := SI + 6 ; D := SI ;                          00769100
+            DI := T ; DS := 6 LIT "0" ; T := DI ;                       00769200
+            SI := C ; SI := SI - 48 ; C := SI) ;                        00769300
+      DI := LOC BIDR ;                                                  00769400
+      DS := 4 LIT " IDR" ;                                              00769500
+      DI := T ;                                                         00769600
+      SI := T ;                                                         00769700
+      DS := 8 LIT " " ;                                                 00769800
+      DS := 9 WDS ;                                                     00769900
+      2 (N (CI := CI + INITIAL ;                                        00770400
+      GO TO SEARCH ;                                                    00770500
+      GO TO IDR ;                                                       00770600
+      GO TO IDR ;                                                       00770700
+      GO TO IDR ;                                                       00770800
+      GO TO WRAPUP ;                                                    00770900
+ SEARCH:                                                                00771000
+      SI := LOC C ;                                                     00771100
+      SI := SI + 6 ;                                                    00771200
+      DI := LOC N ;                                                     00771300
+      IF 2 SC = DC THEN                                                 00771400
+        GO TO ERROR1 ;                                                  00771500
+      SI := C ;                                                         00771900
+      SI := SI - 8 ;                                                    00772000
+      C := SI ;                                                         00772100
+      SI := D ;                                                         00772200
+      DI := T ;                                                         00772300
+      DS := 1 CHR ;                                                     00772400
+      D := SI ;                                                         00772500
+      T := DI ;                                                         00772600
+      SI := S ;                                                         00772700
+      DI := LOC BIDR ;                                                  00772800
+      4 (IF SC = DC THEN                                                00772900
+        JUMP OUT ;                                                      00773000
+      SI := SI - 1 ;                                                    00773100
+      TALLY := TALLY + 1) ;                                             00773200
+      IF TOGGLE THEN                                                    00773300
+      ELSE                                                              00773400
+      BEGIN                                                             00773500
+ ERROR1:                                                                00773510
+        TALLY := 1 ;                                                    00773600
+        JUMP OUT 2 TO HERE ;                                            00773700
+      END ;                                                             00773800
+      INITIAL := TALLY ;                                                00773900
+      TALLY := 0 ;                                                      00774000
+      S := SI ;                                                         00774100
+      GO TO LOOP ;                                                      00774200
+ IDR:                                                                   00774300
+      SI := LOC C ;                                                     00774400
+      SI := SI + 6 ;                                                    00774500
+      DI := LOC N ;                                                     00774600
+      IF 2 SC = DC THEN                                                 00774700
+      BEGIN                                                             00774800
+        SI := D ;                                                       00774900
+        DI := T ;                                                       00775000
+        TALLY := 4 ;                                                    00775100
+        INITIAL := TALLY ;                                              00775200
+ WRAPUP:                                                                00775300
+        DS := 1 CHR ;                                                   00775400
+        GO TO LOOP ;                                                    00775500
+      END ;                                                             00775600
+      SI := C ;                                                         00775700
+      SI := SI - 8 ;                                                    00775800
+      C := SI ;                                                         00775900
+      SI := S ;                                                         00776000
+      CI := CI + INITIAL ;                                              00776100
+      GO TO WRAPUP ;                                                    00776200
+      GO TO INSERT ;                                                    00776300
+      GO TO DELETE ;                                                    00776400
+      GO TO REPLACE ;                                                   00776500
+ INSERT:                                                                00776600
+      DI := T ;                                                         00776700
+      DS := 1 CHR ;                                                     00776800
+      S := SI ;                                                         00776900
+      T := DI ;                                                         00777000
+      DI := INLINEEDIT ;                                                00777100
+      DI := DI + 8 ;                                                    00777200
+      INLINEEDIT := DI ;                                                00777300
+      GO TO LOOP ;                                                      00777400
+ DELETE:                                                                00777500
+      DI := D ;                                                         00777600
+      DI := DI + 1 ;                                                    00777700
+      D := DI ;                                                         00777800
+      SI := SI + 1 ;                                                    00777900
+      S := SI ;                                                         00778000
+      GO TO LOOP ;                                                      00778100
+ REPLACE:                                                               00778200
+      DI := T ;                                                         00778300
+      DS := 1 CHR ;                                                     00778400
+      S := SI ;                                                         00778500
+      T := DI ;                                                         00778600
+      SI := D ;                                                         00778700
+      SI := SI + 1 ;                                                    00778800
+      D := SI ;                                                         00778900
+ LOOP:                                                                  00779000
+     )) ;                                                               00779100
+      GO TO THERE ;                                                     00779110
+ HERE:                                                                  00779120
+      GO TO XIT ;                                                       00779130
+ THERE:                                                                 00779140
+      TALLY := 0 ;                                                      00779200
+      S := SI ;                                                         00779300
+      SI := LOC INLINEEDIT ;                                            00779400
+      DI := LOC BIDR ;                                                  00779500
+      SI := SI + 6 ;                                                    00779600
+      DI := DI + 7 ;                                                    00779700
+      DS := 1 CHR ;                                                     00779800
+      SI := S ;                                                         00779900
+      BIDR (2 (32 (IF SC NEQ " " THEN                                   00780000
+                   BEGIN                                                00780100
+                     TALLY := 2 ;                                       00780200
+                     JUMP OUT 3 TO XIT ;                                00780300
+                   END ;                                                00780400
+                   SI := SI + 1))) ;                                    00780500
+      INLINEEDIT (IF SC NEQ " " THEN                                    00780600
+                  BEGIN                                                 00780700
+                    TALLY := 2 ;                                        00780800
+                    JUMP OUT 1 TO XIT ;                                 00780900
+                  END ;                                                 00781000
+                  SI := SI + 1) ;                                       00781100
+ XIT:                                                                   00781200
+      INLINEEDIT := TALLY ;                                             00781300
+    END INLINE ;                                                        00781400
+ % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        00781500
+ LABEL NEXT,                                                            00786000
+   VERBEXIT ;                                                           00786100
+ DEFINE QUICK = FALSE# ;                                                00786110
+ NEXT:                                                                  00806500
+        READIN ;                                                        00807000
+        IF BOOLEAN (ABNORMALEND) OR USER = MAXUSERS THEN                00807500
+        BEGIN                                                           00808000
+          VERB := RSWDM + REAL (USER = MAXUSERS) ;                      00809000
+          GO TO VERBEXIT ;                                              00809500
+        END ;                                                           00810000
+        IF INLINETOG THEN                                               00811000
+        BEGIN                                                           00811500
+          INLINETOG := FALSE ;                                          00811600
+          IF M := INLINEEDIT (IMAGE, RECORD, ZIPPY, CHRS,               00813000
+            HALFLENGTH, FILEINFO = COBOL, M) = 0 THEN                   00813500
+          BEGIN                                                         00814000
+            IF INLINEECHO EQV TEMPTOG THEN                              00814100
+              WRITEME (N, ZIPPY) ;                                      00814200
+            IF WDISCX (ZIPPY) THEN ;                                    00814500
+            NOSTAR := FALSE ;                                           00815000
+            GO TO NEXT ;                                                00815200
+          END ;                                                         00815500
+          IF M = 2 THEN                                                 00816000
+            ERROR (NEXT, 0, PARAMETER0, " OVRFLW") ;                    00816100
+          ERROR (NEXT, 0, "NEEDS I", ",R OR D") ;                       00816500
+        END ;                                                           00817500
+        IF NOSTAR THEN                                                  00818000
+        BEGIN                                                           00818500
+          IF WDISCX (IMAGE) THEN ;                                      00822500
+          GO TO NEXT ;                                                  00826000
+        END ;                                                           00826500
+        WRITE (IO [USER], 30, IMAGE [*]) ;                              00827000
+        I := GETPARAMETERS (0) ;                                        00828000
+        TEMPTOG := PARAMETER0.[2:2] = 0 ;                               00828100
+        IF NUMBER (N, PARAMETER0) THEN                                  00837000
+        BEGIN                                                           00837100
+          IF FILECLOSED THEN                                            00837500
+            ERROR (NEXT, 5, " OPEN: ", OCTDEX (PARAMETER0)) ;           00838000
+          IF NOT MOREINPUT AND ITSOLD (N := PARAMETER0) THEN            00838500
+            WRITEAT ;                                                   00838600
+          GO TO NEXT ;                                                  00839000
+        END ;                                                           00839500
+        M := RESETN := N ;                                              00839700
+        FOR I := 0 STEP 1 UNTIL RSWDM DO                                00840000
+          IF PARAMETER0 = RSWD [I] THEN                                 00840500
+          BEGIN                                                         00840600
+            RELATIVENUMBER := PARAMETER1 ;                              00840605
+            NUM1 := NUMBER (M, PARAMETER1) ;                            00840610
+            NUM2 := NUMBER (M, PARAMETER2) ;                            00840620
+            NUM3 := NUMBER (M, PARAMETER3) ;                            00840630
+            NUM4 := NUMBER (M, PARAMETER4) ;                            00840640
+            VERB := I ;                                                 00840700
+            GO TO VERBEXIT ;                                            00841000
+          END ;                                                         00841010
+        IF I := XFILE (PARAMETER0, MACROLIBRARY, -1) LSS 2              00841100
+          AND MACROLIBRARY NEQ "MACRO  " THEN                           00841200
+          I := XFILE (PARAMETER0, "MACRO  ", -1) ;                      00841220
+        IF I LSS 2 OR INPUT [3] NEQ 10 THEN                             00841300
+        BEGIN                                                           00841320
+          SHOW (PARAMETER0, " INVALI") ;                                00841360
+          ERROR (NEXT, 0, "D:*    ", RWTEACH) ;                         00841400
+        END ;                                                           00841500
+ VERBEXIT:                                                              00844500
+      END ;                                                             00845000
+ % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        00846000
+ DEFINE QUICKLIST = LISTIT (1)#,                                        00850000
+  SCAN = LISTIT (2)#,                                                   00850100
+  CHANGE = LISTIT (4)#,                                                 00850200
+  EDIT = LISTIT (8)# ;                                                  00850300
+ PROCEDURE LISTIT (LISTTYPE) ; VALUE LISTTYPE ; INTEGER LISTTYPE ;      00850400
+      BEGIN                                                             00850500
+ LABEL NEXT ;                                                           00850600
+ DEFINE QUICK = BOOLEAN (LISTTYPE) AND TRUE#,                           00850700
+   SCANTOG = LISTTYPE = 2#,                                             00850800
+   CHANGETOG = LISTTYPE = 4#,                                           00850900
+   EDITTOG = LISTTYPE = 8#,                                             00851000
+   POSTING = LISTTYPE GEQ 16# ;                                         00851100
+ BOOLEAN PROCEDURE STRINGFOUND ;                                        00851110
+ BEGIN                                                                  00851120
+ BOOLEAN STREAM PROCEDURE PRESENT (S, R, I, SR, T, ID, K) ;             00851200
+ VALUE I,                                                               00851300
+   SR,                                                                  00851400
+   ID,                                                                  00851500
+   K,                                                                   00851600
+   T ;                                                                  00851700
+        BEGIN                                                           00851800
+ LABEL XIT ;                                                            00851900
+          SI := S ;                                                     00852000
+          SI := SI + K ;                                                00852100
+          S := SI ;                                                     00852200
+          SI := LOC SR ;                                                00852300
+          DI := LOC K ;                                                 00852400
+          SI := SI + 6 ;                                                00852500
+          DI := DI + 7 ;                                                00852600
+          DS := CHR ;                                                   00852700
+          DI := R ;                                                     00852800
+          K (DI := DI + 32 ; DI := DI + 32) ;                           00852900
+          DI := DI + SR ;                                               00853000
+          R := DI ;                                                     00853100
+          TALLY := 1 ;                                                  00853200
+          SI := LOC T ;                                                 00853300
+          DI := LOC K ;                                                 00853400
+          SI := SI + 6 ;                                                00853500
+          DI := DI + 7 ;                                                00853600
+          DS := 1 CHR ;                                                 00853700
+          DI := R ;                                                     00853800
+          K (2 (32 (                                                    00853900
+          SI := S ;                                                     00854000
+          IF I SC = DC THEN                                             00854100
+          BEGIN                                                         00854200
+            ID (JUMP OUT 4 TO XIT) ;                                    00854300
+            R := DI ;                                                   00854400
+            SI := R ;                                                   00854500
+            IF SC = ALPHA THEN ELSE                                     00854600
+            BEGIN                                                       00854700
+              SI := SI - I ;                                            00854800
+              SI := SI - 1 ;                                            00854900
+              IF SC = ALPHA THEN ELSE                                   00855000
+                JUMP OUT 3 TO XIT ;                                     00855100
+            END ;                                                       00855200
+          END ;                                                         00855300
+          DI := DI - I ;                                                00855400
+          DI := DI + 1))) ;                                             00855500
+          T (                                                           00855600
+          SI := S ;                                                     00855700
+          IF I SC = DC THEN                                             00855800
+          BEGIN                                                         00855900
+            ID (JUMP OUT 2 TO XIT) ;                                    00856000
+            R := DI ;                                                   00856100
+            SI := R ;                                                   00856200
+            IF SC = ALPHA THEN ELSE                                     00856300
+            BEGIN                                                       00856400
+              SI := SI - I ;                                            00856500
+              SI := SI - 1 ;                                            00856600
+              IF SC = ALPHA THEN ELSE                                   00856700
+                JUMP OUT TO XIT ;                                       00856800
+            END ;                                                       00856900
+          END ;                                                         00857000
+          DI := DI - I ;                                                00857100
+          DI := DI + 1) ;                                               00857200
+          TALLY := 0 ;                                                  00857300
+ XIT:                                                                   00857400
+          PRESENT := TALLY ;                                            00857500
+        END PRESENT ;                                                   00857600
+    IF PRESENT (STRING, ZIPPY, STRINGI, STRINGILEFT, STRINGIREPEAT,     00857610
+                1-STRINGID, 0) EQV TEMPTOG THEN                         00857620
+      STRINGFOUND := TRUE                                               00857630
+    ELSE IF STRINGJ NEQ 0 THEN                                          00857640
+      STRINGFOUND :=                                                    00857650
+        PRESENT (STRING, ZIPPY, STRINGJ, STRINGJLEFT, STRINGJREPEAT,    00857660
+                 1-STRINGJD, STRINGI) EQV TEMPTOG ;                     00857670
+ END STRINGFOUND ;                                                      00857680
+ DEFINE GETSTRINGS = IF ISOLATESTRINGS (LISTTYPE) THEN GO TO NEXT# ;    00857700
+ BOOLEAN PROCEDURE ISOLATESTRINGS (LISTTYPE) ;                          00857800
+ VALUE LISTTYPE ;                                                       00857900
+ INTEGER LISTTYPE ;                                                     00858000
+ BEGIN                                                                  00858100
+ STREAM PROCEDURE ISOLATE (S, D, L1, L2) ;                              00858200
+        BEGIN                                                           00858300
+ LOCAL STOPCHR,                                                         00858400
+   DX,                                                                  00858500
+   QUOTES ;                                                             00858600
+ LABEL OK,                                                              00858700
+   NOSTRING,                                                            00858800
+   STRING,                                                              00858900
+   JUMPOUT,                                                             00858910
+   NO,                                                                  00859000
+   NEXTNO ;                                                             00859100
+          TALLY := 63 ;                                                 00859200
+          STOPCHR := TALLY ;                                            00859300
+          DI := LOC QUOTES ;                                            00859400
+          DS := 2 LIT """ ;                                             00859500
+          DS := 6 LIT "..()[]" ;                                        00859600
+          2 (SI := S ;                                                  00859700
+          63 (SI := SI + 1 ;                                            00859800
+              IF SC = ALPHA THEN                                        00859900
+              ELSE IF SC NEQ " " THEN                                   00860000
+              BEGIN                                                     00860100
+                DI := LOC QUOTES ;                                      00860200
+                4 (IF SC = DC THEN JUMP OUT 2 TO OK ;                   00860300
+                   SI := SI - 1 ;                                       00860400
+                   DI := DI + 1) ;                                      00860500
+                IF SC = ";" THEN JUMP OUT ;                             00860600
+              END) ;                                                    00860700
+          GO TO NOSTRING ;                                              00860800
+ OK:                                                                    00861200
+          DX := DI ;                                                    00861300
+          SI := SI - 1 ;                                                00861400
+          IF SC = "." THEN                                              00861500
+          BEGIN                                                         00861600
+            DI := L1 ;                                                  00861700
+            DS := LIT "+" ;                                             00861800
+          END ;                                                         00861900
+          SI := SI + 1 ;                                                00862000
+          TALLY := 0 ;                                                  00862100
+          STOPCHR (DI := DX ;                                           00862200
+                   IF SC = DC THEN                                      00862300
+                     JUMP OUT 1 TO STRING ;                             00862400
+                   SI := SI - 1 ;                                       00862500
+                   DI := D ;                                            00862600
+                   DS := 1 CHR ;                                        00862700
+                   D := DI ;                                            00862800
+                   TALLY := TALLY + 1) ;                                00862900
+ NOSTRING:                                                              00863000
+          DI := L1 ;                                                    00863010
+          DS := 8 LIT "00000010" ;                                      00863020
+          GO TO JUMPOUT ;                                               00863030
+ STRING:                                                                00863100
+          DI := L1 ;                                                    00863200
+          DI := DI + 2 ;                                                00863300
+          2 (DX := DI ;                                                 00863400
+             10  (IF SC GEQ "0" THEN                                    00863500
+                  BEGIN                                                 00863600
+                    DI := DX ;                                          00863700
+                    DS := LIT "0" ;                                     00863800
+                    DS := CHR ;                                         00863900
+                    IF SC GEQ "0" THEN                                  00864000
+                    BEGIN                                               00864100
+                      SI := SI - 1 ;                                    00864200
+                      DI := DI - 2 ;                                    00864300
+                      DS := 2 CHR ;                                     00864400
+                    END ;                                               00864500
+                    JUMP OUT 1 TO NEXTNO ;                              00864600
+                  END ;                                                 00864700
+                  IF SC = ALPHA THEN                                    00864800
+                  ELSE IF SC NEQ " " THEN                               00864900
+                  BEGIN                                                 00865000
+                    IF SC = ";" THEN JUMP OUT 2 TO NO ;                 00865100
+                    DI := LOC QUOTES ;                                  00865200
+                    4 (IF SC = DC THEN                                  00865300
+                       BEGIN                                            00865400
+                         SI := SI - 1 ;                                 00865500
+                         JUMP OUT 3 TO NO ;                             00865600
+                       END ;                                            00865700
+                       SI := SI - 1 ;                                   00865800
+                       DI := DI + 1) ;                                  00865900
+                  END ;                                                 00866000
+                  SI := SI + 1) ;                                       00866100
+             JUMP OUT TO NO ;                                           00866200
+ NEXTNO:                                                                00866300
+           ) ;                                                          00866400
+          GO TO NO ;                                                    00866410
+ JUMPOUT:                                                               00866420
+          JUMP OUT ;                                                    00866430
+ NO:                                                                    00866500
+          SI := SI - 1 ;                                                00866600
+          S := SI ;                                                     00866700
+          DI := L1 ;                                                    00866800
+          L1 := TALLY ;                                                 00866900
+          TALLY := STOPCHR ;                                            00867000
+          L1 (TALLY := TALLY + 63) ;                                    00867100
+          STOPCHR := TALLY ;                                            00867200
+          SI := LOC L1 ;                                                00867300
+          DI := DI + 7 ;                                                00867400
+          SI := SI + 7 ;                                                00867500
+          DS := 1 CHR ;                                                 00867600
+          DI := L2 ;                                                    00867700
+          L1 := DI) ;                                                   00867800
+        END ISOLATE ;                                                   00867900
+ LABEL NEXT ;                                                           00868000
+ INTEGER PROCEDURE DEFINESTRING (I, LEFT, RIGHT) ;                      00868010
+ VALUE LEFT, RIGHT ; INTEGER I, LEFT, RIGHT ;                           00868020
+ BEGIN                                                                  00868030
+        IF LEFT := 10|I.[12:6] + I.[18:6] = 99 THEN                     00868060
+        BEGIN                                                           00868070
+          LEFT := 1 ;                                                   00868080
+          RIGHT := 80 ;                                                 00868090
+        END ELSE                                                        00868100
+        IF RIGHT := 10|I.[24:6] + I.[30:6] = 99 THEN                    00868110
+          RIGHT := LEFT ;                                               00868120
+        I := FULLLENGTH + 1 - STRINGI ;                                 00868130
+        LEFT := MIN (MAX (LEFT,IF COBOLFILE THEN 6 ELSE 1), I) ;        00868140
+        RIGHT := MIN (MAX (LEFT,RIGHT), I) ;                            00868150
+        DEFINESTRING := LEFT - 1 ;                                      00868160
+        I := RIGHT - LEFT + 1 ;                                         00868170
+ END DEFINESTRING ;                                                     00868190
+    IF NOT SCANTOG THEN                                                 00868200
+    BEGIN                                                               00868300
+      IF PARAMETER1 = "ECHO   " THEN                                    00868400
+      BEGIN                                                             00868500
+        IF CHANGETOG THEN                                               00868600
+          CHANGEECHO := TOGGLE (CHANGEECHO, 2)                          00868700
+        ELSE                                                            00868800
+          EDITECHO := TOGGLE (EDITECHO, 2) ;                            00868900
+        GO TO NEXT ;                                                    00869000
+      END ;                                                             00869100
+      READONLYCHECK ;                                                   00869200
+    END ;                                                               00869300
+    IF EDITTOG THEN                                                     00869400
+    BEGIN                                                               00869500
+      IF NOT (NUM1 AND NUM2 AND NUM3) THEN                              00869600
+        ERROR (NEXT, 0, PARAMETER0, " ERROR.") ;                        00869700
+      IF NOT ITSOLD (N := PARAMETER3) THEN                              00869800
+        ERROR (NEXT, 0, "MISSING", " FORMAT") ;                         00869900
+      RDISC (AT, RECORD) ;                                              00870000
+      IF COBOLFILE THEN                                                 00870100
+        RECORD [0].[1:35] := "@@@@@@" ;                                 00870200
+    END ELSE                                                            00870300
+    BEGIN                                                               00870400
+      I := M := 0 & "9999" [12:24:24] ;                                 00870500
+      ISOLATE (IMAGE, STRING, I, M) ;                                   00870600
+      IF I NEQ 64 THEN                                                  00870700
+      BEGIN                                                             00870800
+        RELATIVENUMBER := FILEINFO ;                                    00870900
+        IF SCANTOG THEN                                                 00871000
+          IF NOT (EMPTY1 OR (NUM1 AND (NUM2 OR EMPTY2))) THEN           00871100
+            FILEINFO := DATA ;                                          00871200
+        STRINGI := I.[41:7] ;                                           00871300
+        STRINGID := REAL (I LSS 0) ;                                    00871400
+        STRINGILEFT := DEFINESTRING (I, 0, 0) ;                         00871500
+        STRINGIREPEAT := I ;                                            00871600
+        IF M NEQ 64 THEN                                                00871700
+        BEGIN                                                           00871800
+          STRINGJ := M.[41:7] ;                                         00871900
+          STRINGJD := REAL (M LSS 0) ;                                  00872000
+          STRINGJLEFT := DEFINESTRING (M, 0, 0) ;                       00872100
+          STRINGJREPEAT := M ;                                          00872200
+        END ELSE                                                        00872300
+          STRINGJ := 64 ;                                               00872400
+        FILEINFO := RELATIVENUMBER ;                                    00872500
+      END ;                                                             00874100
+      IF STRINGI = 0 OR (CHANGETOG AND STRINGJ = 64) THEN               00874200
+        ERROR (NEXT, 0, "MISSING", " STRING") ;                         00874300
+      IF STRINGJ = 64 THEN                                              00874400
+        STRINGJ := 0 ;                                                  00874500
+    END ;                                                               00874600
+    IF FALSE THEN                                                       00874700
+ NEXT:                                                                  00874800
+      ISOLATESTRINGS := TRUE ;                                          00874900
+ END ISOLATESTRINGS ;                                                   00875000
+ PROCEDURE EXTERNALFILE (LISTTYPE) ;                                    00875100
+ VALUE LISTTYPE ; INTEGER LISTTYPE ;                                    00875200
+          BEGIN                                                         00875300
+ FILE RO DISK SERIAL (2, INPUT [3], INPUT [4]) ;                        00875400
+ LABEL MORE,                                                            00875600
+   EOF,                                                                 00875700
+   NEXT ;                                                               00875800
+ BOOLEAN POSTED,                                                        00875900
+   B ;                                                                  00876000
+            LOCKED := TRUE ;                                            00876100
+            RESETN := N ;                                               00876300
+            FILL RO WITH INPUT [1], INPUT [2], *, *, *,                 00876400
+              12 + REAL (POSTED := PARAMETER1 = "MAIL % ") ;            00876500
+            N := 0 ;                                                    00876600
+            M := INPUT [5] + 1 ;                                        00876700
+            B := POSTING ;                                              00876800
+            IF NUM3 THEN                                                00876900
+            BEGIN                                                       00877000
+              IF N := PARAMETER3 - 1 GEQ M THEN                         00877100
+                ERROR (NEXT, 0, "USE REC", "ORD #S.") ;                 00877110
+              READ SEEK (RO [N]) ;                                      00877120
+              IF NUM4 THEN                                              00877200
+                M := PARAMETER4 ;                                       00877300
+            END                                                         00877400
+            ELSE IF NOT EMPTY3 THEN                                     00877500
+              B := TRUE ;                                               00877600
+            I := IF POSTING THEN ALGOL ELSE DATA ;                      00877700
+            WRITE (ZIPPY [*], STAR) ;                                   00877750
+ MORE:                                                                  00877800
+            INTERRUPT (1) ;                                             00877900
+            IF N := N + 1 GTR M THEN                                    00878000
+              GO TO EOF ;                                               00878100
+            READ (RO, 10, ZIPPY [*]) [EOF] ;                            00878200
+            IF SCANTOG THEN                                             00878300
+              IF NOT STRINGFOUND THEN                                   00878400
+                GO TO MORE ;                                            00878500
+            IF B THEN                                                   00879100
+            BEGIN                                                       00879200
+              IF POSTING AND FIRSTCHAR (ZIPPY [0]) = "*" THEN           00879300
+                GO TO MORE ;                                            00879400
+              WRITELFCR ;                                               00879500
+            END ELSE WRITESEQ ;                                         00879600
+            WRITEROW (ZIPPY, QUICK, I) ;                                00879700
+            IF POSTED THEN                                              00879800
+              WRITE (RO, STAR) ;                                        00879900
+            IF BREAKI = 0 THEN                                          00880000
+            BEGIN                                                       00880100
+              GO TO MORE ;                                              00880200
+ EOF:                                                                   00880300
+              IF POSTED THEN                                            00880400
+              BEGIN                                                     00880500
+                DETACH ;                                                00880600
+                CLOSE (RO, PURGE) ;                                     00880700
+                REATTACH ;                                              00880800
+              END ;                                                     00880900
+            END ;                                                       00880910
+ NEXT:                                                                  00881000
+            N := RESETN ;                                               00881100
+            LOCKED := FALSE ;                                           00881200
+          END EXTERNALFILE ;                                            00881300
+ PROCEDURE SPECIAL (LISTTYPE, ECHO) ;                                   00881400
+ VALUE LISTTYPE, ECHO ; INTEGER LISTTYPE ; BOOLEAN ECHO ;               00881500
+           BEGIN                                                        00881600
+ LABEL                                                                  00881700
+   REWRITE,                                                             00881800
+   OVERFLOW,                                                            00881850
+   NEXT ;                                                               00881900
+ DEFINE QUICK = FALSE# ;                                                00882100
+ INTEGER STREAM PROCEDURE CHANGED (S,D,I,J,STRING,SS,T,T1,SR,M,N,ID) ;  00882200
+ VALUE I,                                                               00882300
+   J,                                                                   00882400
+   SS,                                                                  00882500
+   T,                                                                   00882600
+   T1,                                                                  00882700
+   SR,                                                                  00882800
+   ID,                                                                  00882900
+   M,                                                                   00883000
+   N ;                                                                  00883100
+        BEGIN                                                           00883200
+ LOCAL K,                                                               00883300
+   TOTAL ;                                                              00883400
+ LABEL AROUND,                                                          00883500
+   XIT,                                                                 00883600
+   NO,                                                                  00883700
+   UNDERFLOW,                                                           00883800
+   HERE,                                                                00883900
+   THERE,                                                               00883910
+   EXIT ;                                                               00883920
+          DI := D ;                                                     00884000
+          DS := 8 LIT "        " ;                                      00884100
+          SI := D ;                                                     00884200
+          DS := 9 WDS ;                                                 00884300
+          SI := LOC SS ;                                                00884400
+          DI := LOC K ;                                                 00884500
+          SI := SI + 6 ;                                                00884600
+          DI := DI + 7 ;                                                00884700
+          DS := CHR ;                                                   00884800
+          SI := S ;                                                     00884900
+          DI := D ;                                                     00885000
+          K (DS := 32 CHR ; DS := 32 CHR) ;                             00885100
+          DS := SS CHR ;                                                00885200
+          S := SI ;                                                     00885300
+          D := DI ;                                                     00885400
+          K := TALLY ;                                                  00885500
+          2 (T (K (DS := N CHR ;                                        00885600
+                   TALLY := K ;                                         00885700
+                   JUMP OUT TO HERE) ;                                  00886000
+                DI := S ;                                               00886100
+                SI := STRING ;                                          00886200
+                IF I SC NEQ DC THEN                                     00886300
+                BEGIN                                                   00886400
+ NO:                                                                    00886500
+                  SI := S ;                                             00886600
+                  DI := D ;                                             00886700
+                  DS := CHR ;                                           00886800
+                  S := SI ;                                             00886900
+                  D := DI ;                                             00887000
+                  SI := SR ;                                            00887100
+                  SI := SI - 8 ;                                        00887200
+                  SR := SI ;                                            00887300
+                  TALLY := 1 ;                                          00887310
+                  GO TO HERE ;                                          00887400
+                END ;                                                   00887500
+                ID (SS := DI ;                                          00887600
+                    SI := SS ;                                          00887700
+                    IF SC = ALPHA THEN                                  00887800
+                      JUMP OUT TO NO ;                                  00887900
+                    SI := SI - I ;                                      00888000
+                    SI := SI - 1 ;                                      00888100
+                    IF SC = ALPHA THEN                                  00888200
+                      JUMP OUT TO NO ;                                  00888300
+                    SI := STRING ;                                      00888400
+                    SI := SI + I) ;                                     00888500
+                TALLY := 1 ;                                            00888600
+                CHANGED := TALLY ;                                      00888700
+                S := DI ;                                               00888800
+                DI := D ;                                               00888900
+                GO TO THERE ;                                           00888910
+ HERE:                                                                  00888920
+                GO TO AROUND ;                                          00888930
+ THERE:                                                                 00888940
+                N (DI := DI + J ;                                       00889000
+                   D := DI ;                                            00889100
+                   DI := TOTAL ;                                        00889200
+                   8 (DI := DI + J ;                                    00889300
+                      DI := DI - I) ;                                   00889400
+                   TOTAL := DI ;                                        00889500
+                   DI := SR ;                                           00889600
+                   8 (DI := DI - J) ;                                   00889700
+                   SR := DI ;                                           00889800
+                   DI := D ;                                            00889900
+                   DI := DI - J ;                                       00890000
+                   DS := CHR ;                                          00890100
+                   TALLY := J ;                                         00890200
+                   JUMP OUT TO AROUND) ;                                00890300
+                DS := J CHR ;                                           00890400
+                D := DI ;                                               00890500
+                SI := SR ;                                              00890600
+                8 (SI := SI - I) ;                                      00890700
+                SR := SI ;                                              00890800
+                TALLY := I ;                                            00890900
+ AROUND:                                                                00891000
+                TALLY := TALLY + 63 ;                                   00891100
+                K := TALLY) ;                                           00891200
+             TALLY := T1 ;                                              00891600
+             T := TALLY) ;                                              00891700
+          CI := CI + CHANGED ;                                          00891800
+          GO TO EXIT ;                                                  00891900
+          M (K (DS := N CHR ;                                           00892000
+                TALLY := K ;                                            00892100
+                TALLY := TALLY + 63 ;                                   00892200
+                K := TALLY ;                                            00892300
+                JUMP OUT)) ;                                            00892400
+          TALLY := 2 ;                                                  00892500
+          K (CHANGED := TALLY ;                                         00892600
+             JUMP OUT TO EXIT) ;                                        00892700
+          SI := LOC SR ;                                                00892800
+          DI := LOC SS ;                                                00892900
+          6 (IF SC NEQ "0" THEN JUMP OUT TO UNDERFLOW ; SI := SI + 1) ; 00893000
+          DI := DI + 7 ;                                                00893100
+          DS := CHR ;                                                   00893200
+          SI := S ;                                                     00893300
+          DI := D ;                                                     00893400
+          SS (DS := 32 CHR ; DS := 32 CHR) ;                            00893500
+          DS := SR CHR ;                                                00893600
+          S := SI ;                                                     00893700
+          GO TO UNDERFLOW ;                                             00893710
+ EXIT:                                                                  00893720
+          GO TO XIT ;                                                   00893730
+ UNDERFLOW:                                                             00893800
+          N (SI := LOC TOTAL ;                                          00893900
+             DI := LOC K ;                                              00894000
+             SI := SI + 6 ;                                             00894100
+             DI := DI + 7 ;                                             00894200
+             DS := 1 CHR ;                                              00894300
+             SI := S ;                                                  00894400
+             K (2 (32 (IF SC NEQ " " THEN                               00894500
+                       BEGIN                                            00894600
+                         CHANGED := TALLY ;                             00894700
+                         JUMP OUT 4 TO XIT ;                            00894800
+                       END ;                                            00894900
+                       SI := SI + 1))) ;                                00895000
+             TOTAL (IF SC NEQ " " THEN                                  00895100
+                    BEGIN                                               00895200
+                      CHANGED := TALLY ;                                00895300
+                      JUMP OUT 2 TO XIT ;                               00895400
+                    END ;                                               00895500
+                    SI := SI + 1)) ;                                    00895600
+ XIT:                                                                   00895700
+        END CHANGED ;                                                   00895800
+ BOOLEAN STREAM PROCEDURE EDITS (F, S, D, N) ;                          00895900
+ VALUE N ;                                                              00896000
+        BEGIN                                                           00896100
+ LABEL XIT ;                                                            00896200
+          DI := D ;                                                     00896300
+          DS := 8 LIT " " ;                                             00896400
+          SI := D ;                                                     00896500
+          DS := 9 WDS ;                                                 00896600
+          DI := D ;                                                     00896700
+          D := TALLY ;                                                  00896800
+          2 (N (SI := F ;                                               00896900
+          IF SC = "@" THEN                                              00897000
+          BEGIN                                                         00897100
+            SI := SI + 1 ;                                              00897200
+            F := SI ;                                                   00897300
+            SI := S ;                                                   00897400
+            DS := CHR ;                                                 00897500
+            S := SI ;                                                   00897600
+          END                                                           00897700
+          ELSE IF SC = "#" THEN                                         00897800
+          BEGIN                                                         00897900
+            SI := SI + 1 ;                                              00898000
+            F := SI ;                                                   00898100
+            SI := S ;                                                   00898200
+            SI := SI + 1 ;                                              00898300
+            S := SI ;                                                   00898400
+          END                                                           00898500
+          ELSE                                                          00898600
+          BEGIN                                                         00898700
+            DS := CHR ;                                                 00898800
+            F := SI ;                                                   00898900
+            SI := D ;                                                   00899000
+            SI := SI + 8 ;                                              00899100
+            D := SI ;                                                   00899200
+          END)) ;                                                       00899300
+          SI := LOC D ;                                                 00899400
+          DI := LOC N ;                                                 00899500
+          SI := SI + 6 ;                                                00899600
+          DI := DI + 7 ;                                                00899700
+          DS := 1 CHR ;                                                 00899800
+          SI := S ;                                                     00899900
+          N ( 2 ( 32 (IF SC NEQ " " THEN                                00900000
+                      BEGIN                                             00900100
+                        TALLY := 1 ;                                    00900200
+                        EDITS := TALLY ;                                00900300
+                        JUMP OUT 3 TO XIT ;                             00900400
+                      END ;                                             00900500
+                      SI := SI + 1))) ;                                 00900600
+          D (IF SC NEQ " " THEN                                         00900700
+             BEGIN                                                      00900800
+               TALLY := 1 ;                                             00900900
+               EDITS := TALLY ;                                         00901000
+               JUMP OUT ;                                               00901100
+             END ;                                                      00901200
+             SI := SI + 1) ;                                            00901300
+ XIT:                                                                   00901400
+        END EDITS ;                                                     00901500
+ REAL L ;                                                               00901600
+             IF CHANGETOG THEN                                          00901700
+             BEGIN                                                      00901710
+               PARAMETER1 := STRINGIREPEAT DIV 2 ;                      00901720
+               PARAMETER2 := STRINGIREPEAT - PARAMETER1 ;               00901730
+               PARAMETER3 := FULLLENGTH - STRINGILEFT ;                 00901740
+               PARAMETER4 := MIN (PARAMETER3, 63) ;                     00901750
+             END ;                                                      00901760
+             WHILE N := (L := LL [AT]).S LEQ M DO                       00901900
+             BEGIN                                                      00902000
+              RDISC (AT, ZIPPY) ;                                       00902100
+              IF SCANTOG THEN                                           00902200
+              BEGIN                                                     00902300
+                IF STRINGFOUND THEN                                     00902400
+                BEGIN                                                   00902700
+                  WRITEME (N, ZIPPY) ;                                  00902900
+                  N := N + 1 ;                                          00902910
+                  GO TO NEXT ;                                          00903000
+                END ;                                                   00903100
+              END                                                       00903700
+              ELSE IF CHANGETOG THEN                                    00903800
+              BEGIN                                                     00903900
+                IF I := CHANGED (ZIPPY, IMAGE, STRINGI, STRINGJ,        00904000
+                          STRING, STRINGILEFT, PARAMETER1, PARAMETER2,  00904100
+                          PARAMETER3, PARAMETER4, STRINGI LSS STRINGJ,  00904200
+                          STRINGID) = 1 THEN                            00904300
+                BEGIN                                                   00904500
+                  RESETN := N ;                                         00904600
+ REWRITE:                                                               00904700
+                  IF ECHO THEN                                          00904800
+                    WRITEME (N, IMAGE) ;                                00904900
+                  WDISC ;                                               00905000
+                END ELSE                                                00905100
+                IF I = 2 THEN                                           00905200
+ OVERFLOW:                                                              00905250
+                  ERROR (NEXT, 0, PARAMETER0, " OVRFLW") ;              00905300
+              END                                                       00905400
+              ELSE                                                      00905500
+              BEGIN                                                     00905600
+                IF EDITS (RECORD, ZIPPY, IMAGE, HALFFULLLENGTH) THEN    00905700
+                  GO TO OVERFLOW ;                                      00905800
+                GO TO REWRITE ;                                         00905900
+              END ;                                                     00906000
+              INTERRUPT (1) ;                                           00906100
+              AT := L.T ;                                               00906110
+             END ;                                                      00906200
+             IF SCANTOG THEN                                            00906300
+               ERRORX (0, "EOF NO ", "STRING.") ;                       00906400
+ NEXT:                                                                  00906500
+             IF CHANGETOG THEN                                          00906600
+               N := RESETN ;                                            00906700
+           END SPECIAL ;                                                00906800
+ BOOLEAN COMPLEX ;                                                      00906900
+ REAL L ;                                                               00906910
+        IF COMPLEX := SCANTOG OR CHANGETOG OR EDITTOG THEN              00907000
+          GETSTRINGS ;                                                  00907100
+        IF NUM1 AND (NUM2 OR EMPTY2 OR CHANGETOG) THEN                  00907200
+        BEGIN                                                           00907300
+          N := PARAMETER1 ;                                             00907400
+          IF NUM2 THEN                                                  00907500
+            M := PARAMETER2                                             00907600
+          ELSE IF SCANTOG THEN                                          00907700
+            M := FINITY                                                 00907800
+          ELSE M := N ;                                                 00907900
+        END                                                             00908000
+        ELSE IF NOT (EMPTY1 OR CHANGETOG) THEN                          00908100
+        BEGIN                                                           00908200
+          IF XFILE (12, 0, 2) LSS 2 THEN                                00908300
+            GO TO NEXT ;                                                00908400
+          IF LOCKED OR NOT POSTING THEN                                 00908500
+            WAIT ((IF NUM3 AND NUM4 THEN                                00908600
+              MIN (PARAMETER4, INPUT [5]) ELSE INPUT [5]) -             00908700
+              (IF NUM3 THEN PARAMETER3 ELSE 0), LOCKED) ;               00908800
+          EXTERNALFILE (LISTTYPE) ;                                     00908900
+          GO TO NEXT ;                                                  00909000
+        END                                                             00909100
+        ELSE                                                            00909200
+        BEGIN                                                           00909300
+          IF NOT COMPLEX THEN                                           00909400
+          BEGIN                                                         00909500
+            AT := 0 ;                                                   00909600
+            N := 1 ;                                                    00909700
+          END ;                                                         00909800
+          IF CHANGETOG THEN                                             00909900
+            M := N                                                      00910000
+          ELSE                                                          00910100
+            M := FINITY ;                                               00910200
+        END ;                                                           00910300
+        OPENCHECK ;                                                     00910400
+        IF COMPLEX THEN                                                 00910500
+          WAIT (KOUNT (N, M, CLOCK), FALSE) ;                           00910600
+        IF ITSOLD (N) THEN ;                                            00910700
+        IF COMPLEX THEN                                                 00910900
+          SPECIAL (LISTTYPE, TEMPTOG EQV (IF CHANGETOG THEN CHANGEECHO  00911000
+                                          ELSE EDITECHO))               00911050
+        ELSE                                                            00911100
+        BEGIN                                                           00911200
+          WHILE N := (L := LL [AT]).S LEQ M DO                          00911300
+          BEGIN                                                         00911310
+            WRITEAT ;                                                   00911400
+            INTERRUPT (1) ;                                             00911410
+            AT := L.T ;                                                 00911420
+          END ;                                                         00911500
+          N := LL [L.F].S + INC ;                                       00911600
+        END ;                                                           00911700
+ NEXT:                                                                  00911800
+      END LISTIT ;                                                      00911900
+ % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        00912000
+ PROCEDURE EXECUTE ;                                                    00950000
+ BEGIN                                                                  00950100
+ LABEL NEXT ;                                                           00950200
+ INTEGER XSUB ;                                                         00950300
+ REAL YSTART,                                                           00950400
+   YLAST,                                                               00950500
+   YFILETYPE,                                                           00950600
+   YREPEAT,                                                             00950700
+   YNCHRS ;                                                             00950800
+ BOOLEAN VERBISEXECUTE ;                                                00950900
+    IF VERBISEXECUTE := PARAMETER0 = RSWD [0] THEN                      00951000
+      IF PARAMETER1 = "LIBRARY" THEN                                    00951100
+      BEGIN                                                             00951200
+        IF EMPTY2 THEN                                                  00951300
+          ERROR (NEXT, 7, "MACRO=/", MACROLIBRARY) ;                    00951400
+        IF NUM2 THEN                                                    00951500
+          MACROLIBRARY := OCTDEC (PARAMETER2)                           00951600
+        ELSE                                                            00951700
+          MACROLIBRARY := PARAMETER2 ;                                  00951800
+        GO TO NEXT ;                                                    00951900
+      END ELSE                                                          00952000
+      IF PARAMETER1 = "ECHO   " THEN                                    00952100
+      BEGIN                                                             00952200
+        EXECUTEECHO := TOGGLE (EXECUTEECHO, 2) ;                        00952300
+        GO TO NEXT ;                                                    00952400
+      END ;                                                             00952500
+    IF XDEX + 1 GEQ XMAX THEN                                           00952600
+      ERROR (NEXT, 0, PARAMETER0, " OVRFLW") ;                          00952700
+    XSUB := (XDEX + 1) | 13 ;                                           00952800
+    YFILETYPE := DATA ;                                                 00952900
+    IF NOT VERBISEXECUTE THEN                                           00953000
+    BEGIN                                                               00953100
+      XPARAMETERS [0] := PARAMETER1 ;                                   00953200
+      XPARAMETERS [1] := PARAMETER2 ;                                   00953300
+      XPARAMETERS [2] := PARAMETER3 ;                                   00953400
+      XPARAMETERS [3] := PARAMETER4 ;                                   00953500
+      XPARAMETERS [4] := -"#000000" ;                                   00953600
+      YREPEAT := 1 ;                                                    00953700
+      PARAMETER2 := INPUT [2] ;                                         00953800
+      PARAMETER1 := PARAMETER0 ;                                        00953900
+      YLAST := INPUT [5] + 1 ;                                          00954000
+    END ELSE                                                            00954100
+    IF FILEOPEN AND (NUM1 OR EMPTY1) AND (NUM2 OR EMPTY2) THEN          00954200
+    BEGIN                                                               00954300
+      IF NUM1 THEN                                                      00954400
+      BEGIN                                                             00954500
+        PARAMETER3 := PARAMETER1 ;                                      00954600
+        IF NUM2 THEN                                                    00954700
+          PARAMETER4 := PARAMETER2                                      00954800
+        ELSE                                                            00954900
+          PARAMETER4 := PARAMETER3 ;                                    00955000
+      END ELSE                                                          00955100
+      BEGIN                                                             00955200
+        PARAMETER3 := 1 ;                                               00955300
+        PARAMETER4 := FINITY ;                                          00955400
+      END ;                                                             00955500
+      PARAMETER1 := OCTDEC(XDEX+1+10|STATION.[14:4]+1000|STATION.[9:4]);00955600
+      PARAMETER2 := "#MACRO#" ;                                         00955700
+      IF YFILETYPE := XFILE (PARAMETER1, PARAMETER2, -1) = 7 THEN       00955800
+      BEGIN                                                             00955900
+        READ (LIBRARY) ;                                                00956000
+        DETACH ;                                                        00956100
+        CLOSE (LIBRARY, PURGE) ;                                        00956200
+        REATTACH ;                                                      00956300
+      END ELSE                                                          00956400
+      IF YFILETYPE GEQ 0 THEN                                           00956500
+        ERROR (NEXT, 4, PARAMETER1, PARAMETER2) ;                       00956600
+      YLAST := KOUNT (PARAMETER3, PARAMETER4, -1) ;                     00956700
+      I := SAVEFACTOR ;                                                 00956710
+      FREEFILE (STATION) ;                                              00956800
+      THERMOFAX (SAVEFACTOR := 0, (YLAST + 14) DIV 15 | 15) ;           00956900
+      UNFREEFILE (STATION) ;                                            00957000
+      SAVEFACTOR := I ;                                                 00957010
+      YFILETYPE := FILEINFO ;                                           00957100
+    END ELSE                                                            00957200
+    BEGIN                                                               00957300
+      IF XFILE (12, 0, 2) LSS 2 THEN                                    00957400
+        GO TO NEXT ;                                                    00957500
+      YLAST := INPUT [5] + 1 ;                                          00957600
+      IF NUM3 THEN                                                      00957700
+      BEGIN                                                             00957800
+        IF YSTART := PARAMETER3 - 1 GTR YLAST THEN                      00957900
+          ERROR (NEXT, 0, "USE REC", "ORD #S.") ;                       00958000
+        IF NUM4 THEN                                                    00958100
+          IF PARAMETER4 LSS YLAST THEN                                  00958200
+            YLAST := PARAMETER4 ;                                       00958300
+      END ;                                                             00958400
+    END ;                                                               00958500
+    IF XDEX LSS 0 THEN                                                  00958600
+      XECHO := TEMPTOG EQV EXECUTEECHO ;                                00958700
+    IF VERBISEXECUTE THEN                                               00958800
+      IF YREPEAT := GETPARAMETERS (63) = 0 THEN                         00958900
+        GO TO NEXT ;                                                    00959000
+    WAIT ((YLAST - YSTART) | YREPEAT | 3, FALSE) ;                      00959100
+    IF MOREINPUT THEN                                                   00959200
+    BEGIN                                                               00959300
+      READ (IO [USER + MAXUSERS], 30, IMAGE [*]) ;                      00959400
+      WRITE (IO [2|MAXUSERS+XMAX|USER+XDEX+1], 30, IMAGE [*]) ;         00959410
+      YNCHRS := NCHRS & 1[1:47:1] ;                                     00959500
+      MOREINPUT := FALSE ;                                              00959600
+    END ;                                                               00959700
+    XDEX := XDEX + 1 ;                                                  00959800
+    XN := XSTART := YSTART ;                                            00959900
+    XLAST := YLAST ;                                                    00960000
+    XFILETYPE := YFILETYPE ;                                            00960100
+    XREPEAT := YREPEAT ;                                                00960200
+    XNCHRS := YNCHRS ;                                                  00960300
+    XPREFIX := PARAMETER1 ;                                             00960400
+    XSUFFIX := PARAMETER2 ;                                             00960500
+ NEXT:                                                                  00960600
+ END EXECUTE ;                                                          00960700
+ % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        00970000
+ PROCEDURE XVERBS (K) ; VALUE K ; INTEGER K ;                           00970100
+ BEGIN                                                                  00970200
+ DEFINE                                                                 00970300
+   REPLACE =                                                            00970400
+    BEGIN                                                               00970500
+      IF NUM2 OR EMPTY2 THEN                                            00970600
+        ERROR (NEXT, 0, PARAMETER2, " IS BAD") ;                        00970700
+      M := -1 ;                                                         00970800
+      FOR I := 0 STEP 1 UNTIL RSWDM DO                                  00970900
+        IF PARAMETER0 := RSWD [I] = PARAMETER1 THEN                     00971000
+          M := I                                                        00971100
+        ELSE IF PARAMETER0 = PARAMETER2 THEN                            00971200
+          ERROR (NEXT, 0, "DUP    ", PARAMETER2) ;                      00971300
+      IF M LSS 0 THEN                                                   00971400
+        ERROR (NEXT, 0, "NO VERB", PARAMETER1) ;                        00971500
+      RSWD [M] := PARAMETER2 ;                                          00971600
+    END#,                                                               00971700
+  DELETE =                                                              00971800
+    BEGIN                                                               00971900
+      OPENCHECK ;                                                       00972000
+      IF NOT NUM1 THEN                                                  00972100
+        PARAMETER1 := N ;                                               00972200
+      INORDER := READONLYFILE ;                                         00972300
+      IF NOT NUM2 OR PARAMETER2 LSS PARAMETER1 THEN                     00972400
+        PARAMETER2 := PARAMETER1 ;                                      00972500
+      I := LL [LOC (PARAMETER1)] . F ;                                  00972600
+      IF ITSOLD (PARAMETER2) THEN                                       00972700
+        AT := LL [AT] . T ;                                             00972800
+      LL [I] . T := AT ;                                                00972900
+      MODIFY (I) ;                                                      00973000
+      LL [AT] . F := I ;                                                00973100
+      MODIFY (AT) ;                                                     00973200
+      N := LL [I] . S + INC ;                                           00973300
+    END#,                                                               00973400
+  PRINTORPUNCH =                                                        00973500
+    BEGIN                                                               00973600
+      OPENCHECK ;                                                       00973700
+      IF NOT NUM3 THEN                                                  00973800
+        PARAMETER3 := 1 ;                                               00973900
+      IF NOT NUM4 THEN                                                  00974000
+        PARAMETER4 := FINITY ;                                          00974100
+      THERMOFAX (K, 0) ;                                                00974200
+    END# ;                                                              00974300
+ LABEL NEXT ;                                                           00974400
+    IF BOOLEAN (K) THEN                                                 00974500
+      IF K = 1 THEN                                                     00974600
+        REPLACE                                                         00974700
+      ELSE                                                              00974800
+        DELETE                                                          00974900
+    ELSE IF K = 0 THEN                                                  00975000
+      CLOSEMYFILE                                                       00975100
+    ELSE                                                                00975200
+      PRINTORPUNCH ;                                                    00975300
+ NEXT:                                                                  00975400
+ END XVERBS ;                                                           00975500
+ DEFINE CLOSEFILE = XVERBS (0)#,                                        00975600
+   REPLACE = XVERBS (1)#,                                               00975700
+   PRINT = XVERBS (2)#,                                                 00975800
+   DELETE = XVERBS (3)#,                                                00975900
+   PUNCH = XVERBS (4)# ;                                                00976000
+ % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        01023000
+ PROCEDURE MAIL ;                                                       01023500
+    BEGIN                                                               01024000
+ LABEL NEXT ;                                                           01024100
+ BOOLEAN STREAM PROCEDURE POSTFROM (SENDER, MESSAGE, Z) ;               01024500
+      BEGIN                                                             01025000
+ LABEL OK,                                                              01025500
+   EXIT ;                                                               01026000
+        SI := Z ;                                                       01026500
+        DI := Z ;                                                       01027000
+        DS := 8 LIT "        " ;                                        01027500
+        DS := 8 WDS ;                                                   01028000
+        SI := MESSAGE ;                                                 01028500
+        20 (IF SC = ":" THEN                                            01029000
+          JUMP OUT TO OK ;                                              01029500
+        SI := SI + 1) ;                                                 01030000
+        TALLY := 1 ;                                                    01030500
+        POSTFROM := TALLY ;                                             01031000
+        GO TO EXIT ;                                                    01031500
+ OK:                                                                    01032000
+        SI := SI + 1 ;                                                  01032500
+        DI := Z ;                                                       01033000
+        63 (IF SC = ";" THEN                                            01033500
+          JUMP OUT ;                                                    01034000
+        DS := 1 CHR) ;                                                  01034500
+        DS := 1 LIT "-" ;                                               01035000
+        SI := SENDER ;                                                  01035500
+        SI := SI + 1 ;                                                  01036000
+        DS := 7 CHR ;                                                   01036500
+ EXIT:                                                                  01037000
+      END POSTFROM ;                                                    01037500
+      IF NUM2 THEN                                                      01038000
+        PARAMETER2 := OCTDEC (PARAMETER2) ;                             01038500
+      I := XFILE ("MAIL % ", IF EMPTY1 THEN USERCODE ELSE PARAMETER2,   01039000
+           -1) ;                                                        01039500
+      IF EMPTY1 THEN                                                    01040500
+      BEGIN                                                             01041000
+        IF I LSS 7 THEN                                                 01041500
+          ERROR (NEXT, 0, "SORRY, ", "NO MAIL") ;                       01042000
+        PARAMETER1 := "MAIL % " ;                                       01042500
+        NUM1 := FALSE ;                                                 01043500
+        PARAMETER2 := USERCODE ;                                        01044000
+        NUM2 := FALSE ;                                                 01045000
+        NUM3 := FALSE ;                                                 01045500
+        LISTIT (17) ;% POSTING AND QUICK                                01046000
+      END                                                               01047000
+      ELSE                                                              01047500
+      BEGIN                                                             01048000
+        IF PARAMETER1 NEQ "TO     " THEN                                01048500
+          ERROR (NEXT, 0, "MISSING", " TO.   ") ;                       01049000
+        IF POSTFROM (USERCODE, IMAGE, RECORD) THEN                      01049500
+          ERROR (NEXT, 0, "MISSING", " COLON.") ;                       01050000
+        IF I LSS 0 THEN                                                 01050500
+        BEGIN                                                           01051000
+          FREEFILE (STATION) ;                                          01051500
+          PARAMETER1 := "MAIL % " ;                                     01052000
+          CREATEFILE (15) ;                                             01053000
+          UNFREEFILE (STATION) ;                                        01053500
+        END                                                             01054000
+        ELSE IF I GTR 2 THEN                                            01054500
+        BEGIN                                                           01055000
+          WRITE (LIBRARY [INPUT [5] + 1], 10, RECORD [*]) ;             01055500
+          CLOSE (LIBRARY) ;                                             01056000
+        END ELSE                                                        01056500
+          ERRORX (1, "MAIL % ", PARAMETER2) ;                           01056600
+      END ;                                                             01057500
+ NEXT:                                                                  01058000
+    END POSTMAN ;                                                       01058500
+ % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        01059000
+ PROCEDURE COPY ;                                                       01059500
+    BEGIN                                                               01060000
+ BOOLEAN B,                                                             01060100
+   MERGE ;                                                              01060200
+ LABEL NEXT ;                                                           01060500
+      IF PARAMETER1 = "OVERITE" THEN                                    01060550
+      BEGIN                                                             01060600
+        COPYCLOBBER := TOGGLE (COPYCLOBBER, 2) ;                        01060700
+        GO TO NEXT ;                                                    01060850
+      END ;                                                             01060900
+      READONLYCHECK ;                                                   01060950
+      IF XFILE (12, 0, 2) LSS 2 THEN                                    01061500
+        GO TO NEXT ;                                                    01062000
+      IF INPUT [3] NEQ 10 OR INPUT [4] MOD 30 NEQ 0 THEN                01063500
+        ERROR (NEXT, 3, PARAMETER1, PARAMETER2) ;                       01064000
+      IF NUM3 THEN                                                      01064500
+      BEGIN                                                             01065000
+        I := PARAMETER3 - 1 ;                                           01065500
+        IF I GTR INPUT [5] THEN                                         01066000
+          ERROR (NEXT, 0, "USE REC", "ORD #S.") ;                       01066500
+        IF NUM4 THEN                                                    01067000
+          M := MIN (PARAMETER4 - 1, INPUT [5])                          01067500
+        ELSE M := I ;                                                   01070000
+      END                                                               01070500
+      ELSE                                                              01071000
+      BEGIN                                                             01071500
+        I := 0 ;                                                        01072000
+        M := INPUT [5] ;                                                01072500
+        IF DATAFILE AND MERGE := PARAMETER3 = "MERGE  " THEN            01072600
+          ERROR (NEXT, 5, " TYPE: ", PARAMETER3) ;                      01072700
+      END ;                                                             01073000
+      WAIT (M - I, FALSE) ;                                             01073500
+      READ SEEK (LIBRARY [I]) ;                                         01075000
+      B := NOT (COPYCLOBBER EQV TEMPTOG) ;                              01075100
+      FOR I := I STEP 1 UNTIL M DO                                      01075500
+      BEGIN                                                             01076000
+        READ (LIBRARY, 10, IMAGE [*]) ;                                 01076100
+        IF MERGE THEN                                                   01076200
+          N := IF COBOLFILE THEN DEC (IMAGE [0], 6)                     01076300
+                        ELSE DEC (IMAGE [9], 8) ;                       01076400
+        IF ITSOLD (N) AND B THEN                                        01076500
+          ERROR (NEXT, 0, "OVERITE", " IS OFF") ;                       01076600
+        WDISC ;                                                         01077000
+        INTERUPT (1, 1, I + 1) ;                                        01078000
+      END ;                                                             01078500
+ NEXT:                                                                  01079500
+      CLOSE (LIBRARY) ;                                                 01079600
+    END ;                                                               01080000
+ % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        01086500
+ PROCEDURE ZIPIT ;                                                      01087000
+   BEGIN                                                                01087500
+ ALPHA STREAM PROCEDURE ENDCHECK (S) ;                                  01087550
+ BEGIN                                                                  01087600
+    SI := S ;                                                           01087650
+    IF SC = "?" THEN                                                    01087700
+    BEGIN                                                               01087710
+      DI := LOC ENDCHECK ;                                              01087750
+      DI := DI + 3 ;                                                    01087800
+      DS := CHR ;                                                       01087810
+      63 (IF SC NEQ " " THEN JUMP OUT ;                                 01087850
+          SI := SI + 1) ;                                               01087900
+      4 (IF SC = ALPHA THEN DS := 1 CHR ELSE JUMP OUT) ;                01087950
+    END ;                                                               01087960
+ END ENDCHECK ;                                                         01088000
+ LABEL NEXT ;                                                           01088050
+      READONLYCHECK ;                                                   01088100
+      RDISC (FIRST . T, RECORD) ;                                       01089500
+      IF ENDCHECK (RECORD) = 0 THEN                                     01090000
+        ERROR (NEXT, 0, "INV FIR", "ST CARD") ;                         01090500
+      RDISC (LAST . F, IMAGE) ;                                         01092000
+      IF ENDCHECK (IMAGE) NEQ "?END0" THEN                              01093100
+        ERROR (NEXT, 0, "NO END ", "CARD.  ") ;                         01093200
+      WAIT (KOUNT (1, FINITY, CLOCK) | 2, XLOCKED) ;                    01095500
+      FILL LIBRARY WITH PREFIX, SUFFIX ;                                01096000
+      READ SEEK (LIBRARY [M := (AT := FIRST.T) - 2]) ;                  01096500
+      I := 0 ;                                                          01096600
+      WHILE AT := LL [AT] . T NEQ 1 DO                                  01097000
+      BEGIN                                                             01097500
+        RDISC (AT, IMAGE) ;                                             01098000
+        I := I + 1 ;                                                    01098100
+        IF ENDCHECK (IMAGE) NEQ 0 THEN                                  01098500
+        BEGIN                                                           01099000
+          RECORD [9] := I ;                                             01100000
+          WRITE (LIBRARY, 10, RECORD [*]) ;                             01100500
+          IF M + 1 NEQ M := AT - 2 THEN                                 01100510
+            READ SEEK (LIBRARY [M]) ;                                   01100600
+          READ (IMAGE [*], 10, RECORD [*]) ;                            01101600
+        END ;                                                           01102000
+        INTERUPT (1, 2, M) ;                                            01102500
+      END ;                                                             01103000
+      IMAGE [9] := I ;                                                  01104000
+      WRITE (LIBRARY, 10, IMAGE [*]) ;                                  01104500
+      CLOSE (LIBRARY) ;                                                 01104600
+      IF NOT EMPTY1 THEN                                                01105000
+      BEGIN                                                             01105500
+        PARAMETER3 := 1 ;                                               01106100
+        PARAMETER4 := FINITY ;                                          01106200
+        THERMOFAX (8, (D + 14) DIV 15 | 15) ;                           01107500
+      END                                                               01108500
+      ELSE                                                              01109000
+      BEGIN                                                             01109500
+        FILEINFO := DATA ;                                              01109600
+        CLOSEFILE ;                                                     01110000
+        ZIP WITH DISC ;                                                 01111000
+      END ;                                                             01111500
+ NEXT:                                                                  01111600
+      CLOSE (LIBRARY) ;                                                 01111700
+   END ;                                                                01112000
+ % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        01113000
+ DEFINE CLOSEIT =                                                       01113500
+    BEGIN                                                               01113600
+      OPENCHECK ;                                                       01113800
+      CLOSEFILE ;                                                       01114000
+    END# ;                                                              01116500
+ % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        01117000
+ PROCEDURE OPEN ;                                                       01117500
+      BEGIN                                                             01118000
+ LABEL NEXT ;                                                           01118500
+        IF FILEOPEN THEN CLOSEFILE ;                                    01119000
+        TABAMOUNT := 0 ;                                                01119500
+        PREWHERE := - 1 ;                                               01121000
+        IF FILEINFO := FILETYPE (PARAMETER3) = 0 THEN                   01122000
+          ERROR (NEXT, 5, " TYPE: ", PARAMETER3) ;                      01126000
+        I := XFILE (12, 0, -1) ;                                        01126100
+        FILL DISC WITH PREFIX := PARAMETER1, SUFFIX := PARAMETER2 ;     01126200
+        IF PARAMETER4 = "NEW    " THEN                                  01126500
+        BEGIN                                                           01127000
+          IF I GEQ 0 THEN                                               01128500
+            ERROR (NEXT, 4, PARAMETER1, PARAMETER2) ;                   01129000
+          CREATEFILE (450) ;                                            01130000
+          FILEACCESS := 7 ;                                             01130500
+          FIRST := D := 1 ;                                             01130650
+          LAST := 1 & INFINITY [SF] ;                                   01130700
+          MODIFIED := TRUE ;                                            01130750
+          N := 0 ;                                                      01130800
+          INORDER := FALSE ;                                            01130850
+          GO TO NEXT ;                                                  01130900
+        END ;                                                           01131000
+        IF I LEQ 0 THEN                                                 01133500
+          ERROR (NEXT, 1 - I, PARAMETER1, PARAMETER2) ;                 01134000
+        IF INPUT [3] NEQ 10 OR INPUT [4] MOD 30 NEQ 0 THEN              01134500
+          ERROR (NEXT, 3, PARAMETER1, PARAMETER2) ;                     01135000
+        IF INPUT [6] NEQ 0 THEN                                         01135500
+          ERROR (NEXT, 0, "FILE IN", " USE.  ") ;                       01136000
+        IF D := INPUT [5] + 2 GTR MAXFILELENGTH THEN                    01146000
+          ERROR (NEXT, 0, "FILE TO", " LONG. ") ;                       01147500
+        IF PARAMETER4 = "OLD    " OR DATAFILE THEN                      01155000
+        BEGIN                                                           01155500
+          INORDER := DATAFILE OR READONLYFILE ;                         01156000
+          N := 0 ;                                                      01157500
+          FOR AT := 2 STEP 1 UNTIL D DO                                 01157600
+            LL [AT] := (AT+1) & (N:=N+INC)[SF] & (AT-1)[FF] ;           01157700
+        END ELSE                                                        01158000
+        BEGIN                                                           01158500
+          WAIT (D, FALSE) ;                                             01158600
+          M := 0 ;                                                      01159000
+          FOR AT := 2 STEP 1 UNTIL D DO                                 01160000
+          BEGIN                                                         01160500
+            READ (LIBRARY, 10, IMAGE [*]) ;                             01161000
+            N := IF COBOLFILE THEN DEC (IMAGE [0], 6)                   01161500
+                          ELSE DEC (IMAGE [9], 8) ;                     01162000
+            IF M GTR N THEN                                             01164500
+              ERROR (NEXT, 0, "SEQERR ", OCTDEX (M)) ;                  01166000
+            LL [AT] := (AT+1) & (M:=N)[SF] & (AT-1)[FF] ;               01167500
+            INTERUPT (1, 2, AT - 1) ;                                   01167600
+          END ;                                                         01168000
+        END ;                                                           01168100
+        FILEACCESS := I ;                                               01168200
+        MODIFIED := NOT FALSE ;                                         01168210
+        LL [D] . T := 1 ;                                               01168220
+        FIRST := 2 ;                                                    01168230
+        LAST := 1 & INFINITY [SF] & D [FF] ;                            01168240
+        LL [2] . F := 0 ;                                               01168250
+ NEXT:                                                                  01168500
+        CLOSE (LIBRARY) ;                                               01168600
+        N := N + INC ;                                                  01169000
+        AT := 0 ;                                                       01169100
+        IF READONLYFILE THEN                                            01169500
+          ERRORX (7, "READ ON", "LY FILE") ;                            01170000
+      END ;                                                             01171000
+ % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        01171500
+ DEFINE INCREMENT =                                                     01172000
+    BEGIN                                                               01172100
+      IF NOT NUM1 THEN                                                  01172500
+        ERRORX (7, PARAMETER0, OCTDEX (INC))                            01173000
+      ELSE INC := PARAMETER1 ;                                          01173500
+    END# ;                                                              01174000
+ % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        01174500
+ PROCEDURE RESEQ ;                                                      01175000
+    BEGIN                                                               01175500
+ REAL L ;                                                               01175600
+ LABEL NEXT ;                                                           01176000
+      OPENCHECK ;                                                       01176100
+      IF NUM2 THEN                                                      01176500
+      BEGIN                                                             01177000
+        IF NOT NUM1 THEN                                                01177500
+          ERROR (NEXT, 0, PARAMETER1, "INVALID") ;                      01178000
+        IF NUM4 THEN                                                    01178500
+          INC := PARAMETER4 ;                                           01179000
+        IF NUM3 THEN                                                    01179500
+          M := PARAMETER3 - INC                                         01180000
+        ELSE M := PARAMETER1 - INC ;                                    01180500
+        IF M + INC | KOUNT (PARAMETER1,PARAMETER2,-1) GEQ LL [AT].S THEN01180600
+          ERROR (NEXT, 0, PARAMETER0, " ERROR.") ;                      01180700
+        AT := LOC (PARAMETER1) ;                                        01181000
+        IF M + INC LEQ LL [LL [AT].F].S THEN                            01181010
+          ERROR (NEXT, 0, PARAMETER0, " ERROR.") ;                      01181020
+        N := M ;                                                        01181500
+        WHILE (L := LL [AT]).S LEQ PARAMETER2 DO                        01182000
+        BEGIN                                                           01182500
+          LL [AT] . S := N := N + INC ;                                 01183000
+          MODIFY (AT) ;                                                 01183500
+          AT := L.T ;                                                   01183600
+        END ;                                                           01184000
+      END                                                               01185500
+      ELSE                                                              01186000
+      BEGIN                                                             01186500
+        IF NUM1 THEN                                                    01187000
+          INC := PARAMETER1 ; ;                                         01187500
+        IF INC | KOUNT (1, FINITY, -1) GEQ INFINITY THEN                01187600
+          ERROR (NEXT, 0, PARAMETER0, " ERROR.") ;                      01187700
+        N := 0 ;                                                        01188000
+        AT := 0 ;                                                       01188500
+        WHILE AT := LL [AT] . T NEQ 1 DO                                01189000
+          LL [AT] . S := N := N + INC ;                                 01189500
+        MODIFIED := NOT FALSE ;                                         01189600
+      END ;                                                             01190000
+      N := N + INC ;                                                    01190500
+      IF NOT DATAFILE THEN                                              01191000
+        INORDER := READONLYFILE ;                                       01191500
+ NEXT:                                                                  01192000
+    END RESEQ ;                                                         01192500
+ % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        01193000
+ DEFINE TAB =                                                           01193500
+    BEGIN                                                               01193600
+      IF NOT NUM1 THEN                                                  01194000
+      BEGIN                                                             01194010
+        IF NOT EMPTY1 THEN                                              01194100
+          TABON := TOGGLE (TABON, 1)                                    01194300
+        ELSE                                                            01194450
+          ERRORX (7, PARAMETER0, ONOFF (TABON) &                        01194500
+            OCTDEX (IF COBOLFILE THEN TABAMOUNT + 7 ELSE TABAMOUNT + 1) 01194600
+            [36:36:12]) ;                                               01194700
+      END ELSE                                                          01194800
+      BEGIN                                                             01194900
+        IF RELATIVENUMBER.[2:2] NEQ 0 THEN                              01194910
+          PARAMETER1 := TABAMOUNT + 1 +                                 01194920
+             (RELATIVENUMBER & RELATIVENUMBER[1:3:3])                   01194930
+        ELSE IF COBOLFILE THEN                                          01194940
+          PARAMETER1 := PARAMETER1 - 6 ;                                01194950
+        IF TABAMOUNT := PARAMETER1 GTR 55 THEN                          01195000
+          TABAMOUNT := 55 ;                                             01195500
+        IF TABAMOUNT := TABAMOUNT - 1 LSS 0 THEN                        01197000
+          TABAMOUNT := 0 ;                                              01197500
+      END ;                                                             01197600
+    END#,                                                               01198000
+ % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        01198500
+  SAVEIT =                                                              01199000
+    BEGIN                                                               01199100
+      IF NOT NUM1 THEN                                                  01199500
+        ERRORX (7, PARAMETER0, OCTDEX (SAVEFACTOR))                     01200000
+      ELSE SAVEFACTOR := PARAMETER1 ;                                   01200500
+    END# ;                                                              01201000
+ % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        01211500
+ PROCEDURE COMPILE ;                                                    01212000
+   BEGIN                                                                01212500
+ LABEL NEXT ;                                                           01213000
+      OPENCHECK ;                                                       01213100
+      IF EMPTY2 THEN                                                    01213500
+        ERROR (NEXT, 3, PARAMETER1, PARAMETER2) ;                       01214000
+      IF DATAFILE AND EMPTY3 THEN                                       01216000
+        ERROR (NEXT, 3, PREFIX, SUFFIX) ;                               01216500
+      IF NOT EMPTY3 THEN                                                01217000
+        IF XFILE (PARAMETER3, "DISK   ", 2) LSS 2 THEN                  01218000
+          GO TO NEXT ;                                                  01218500
+      IF PARAMETER0 := XFILE ("LINE   ", USERCODE, -1) = 7 THEN         01221500
+      BEGIN                                                             01223000
+        READ (LIBRARY) ;                                                01223500
+        DETACH ;                                                        01224000
+        CLOSE (LIBRARY, PURGE) ;                                        01224500
+        REATTACH ;                                                      01225000
+      END ELSE                                                          01225500
+      IF PARAMETER0 GEQ 0 THEN                                          01226000
+        ERROR (NEXT, 4, "LINE   ", USERCODE) ;                          01226500
+      IF XFILE (12, 0, -1) GEQ 0 THEN                                   01227000
+        ERROR (NEXT, 4, PARAMETER1, PARAMETER2) ;                       01228500
+      CLOSEFILE ;                                                       01229000
+      IF EMPTY3 THEN                                                    01230000
+        IF COMPILER = ALGOL THEN                                        01230500
+          PARAMETER3 := "ALGOL  "                                       01231000
+        ELSE IF COMPILER = FORTRAN THEN                                 01231500
+          PARAMETER3 := "FORTRAN"                                       01232000
+        ELSE IF COMPILER = XALGOL THEN                                  01232500
+          PARAMETER3 := "XALGOL "                                       01233000
+        ELSE IF COMPILER = BASIC THEN                                   01233500
+          PARAMETER3 := "BASIC  "                                       01234000
+        ELSE                                                            01234500
+          PARAMETER3 := "COBOL  " ;                                     01235000
+      WRITE (ZIPPY [*], ZIPPER, PARAMETER1.[6:6],                       01238000
+        PARAMETER1, PARAMETER2.[6:6], PARAMETER2, PARAMETER3.[6:6],     01238500
+        PARAMETER3, PREFIX.[6:6], PREFIX, SUFFIX.[6:6], SUFFIX,         01239000
+        USERCODE . [6 : 6], USERCODE) ;                                 01239500
+      ZIP WITH ZIPPY [*] ;                                              01240000
+ NEXT:                                                                  01242000
+   END COMPILE ;                                                        01242500
+ % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        01243000
+ PROCEDURE DITTO ;                                                      01243500
+    BEGIN                                                               01244000
+ BOOLEAN B ;                                                            01244100
+ REAL L ;                                                               01244200
+ PROCEDURE LINK (X, Y) ; VALUE X, Y ; INTEGER X, Y ;                    01244300
+ BEGIN                                                                  01244310
+    LL [X].T := Y ;                                                     01244320
+    MODIFY (X) ;                                                        01244330
+    LL [Y].F := X ;                                                     01244340
+    MODIFY (Y) ;                                                        01244350
+ END LINK ;                                                             01244360
+ LABEL NEXT ;                                                           01244500
+      IF PARAMETER1 = "OVERITE" THEN                                    01244550
+      BEGIN                                                             01244600
+        DITTOCLOBBER := TOGGLE (DITTOCLOBBER, 2) ;                      01244700
+        GO TO NEXT ;                                                    01244850
+      END ;                                                             01244900
+      READONLYCHECK ;                                                   01245000
+      IF NOT NUM1 THEN                                                  01246000
+        ERROR (NEXT, 0, PARAMETER0, " ERROR.") ;                        01246500
+      IF PARAMETER2 = "MOVE   " OR PARAMETER3 = "MOVE   " THEN          01246510
+      BEGIN                                                             01246520
+        IF NOT NUM2 THEN                                                01246530
+          PARAMETER2 := PARAMETER1 ;                                    01246540
+        B := ITSOLD (N) ;                                               01246550
+        PARAMETER4 := LL [PARAMETER3 := AT] ;                           01246560
+        M := LL [I := LOC (PARAMETER1)].F ;                             01246570
+        IF PARAMETER0 := KOUNT (PARAMETER1,PARAMETER2,-1) - 1 LSS 0 THEN01246580
+          GO TO NEXT ;                                                  01246590
+        IF ITSOLD (PARAMETER2) THEN                                     01246600
+          L := LL [AT].T                                                01246610
+        ELSE                                                            01246620
+          AT := LL [L := AT].F ;                                        01246630
+        IF (B AND B := LL [M].S GEQ N OR N GEQ LL [L].S) OR             01246640
+          N+INC|PARAMETER0 GEQ (IF B THEN PARAMETER4 ELSE LL [L]).S THEN01246650
+          ERROR (NEXT, 0, "NO ROOM", ": MOVE ") ;                       01246660
+        IF B THEN                                                       01246670
+        BEGIN                                                           01246680
+          LINK (M, L) ;                                                 01246690
+          LINK (AT, PARAMETER3) ;                                       01246700
+          LINK (PARAMETER4.F, I) ;                                      01246710
+        END ELSE                                                        01246720
+          PARAMETER3 := L ;                                             01246730
+        DO BEGIN                                                        01246740
+          LL [I].S := N ;                                               01246750
+          N := N + INC ;                                                01246760
+          MODIFY (I) ;                                                  01246770
+        END UNTIL I := LL [I].T = PARAMETER3 ;                          01246780
+        INORDER := FALSE ;                                              01246790
+        GO TO NEXT ;                                                    01246800
+      END ;                                                             01246810
+      CLOSE (DISC) ;                                                    01247000
+      PREWHERE := PARAMETER3 := -1 ;                                    01247100
+      IF NUM2 THEN                                                      01247500
+        WAIT (KOUNT (PARAMETER1, PARAMETER2, CLOCK), FALSE)             01248500
+      ELSE PARAMETER2 := PARAMETER1 ;                                   01250000
+      FILL LIBRARY WITH PREFIX, SUFFIX ;                                01250500
+      I := LOC (PARAMETER1) ;                                           01251600
+      M := D ;                                                          01252000
+      B := NOT (DITTOCLOBBER EQV TEMPTOG) ;                             01252100
+      WHILE (L := LL [I]).S LEQ PARAMETER2 AND I LEQ M DO               01252500
+      BEGIN                                                             01253500
+        IF PARAMETER3 + 1 NEQ PARAMETER3 := I THEN                      01254000
+          READ SEEK (LIBRARY [I - 2]) ;                                 01254500
+        IF ITSOLD (N) AND B THEN                                        01255000
+          ERROR (NEXT, 0, "OVERITE", " IS OFF") ;                       01255500
+        I := L.T ;                                                      01256000
+        READ (LIBRARY, 10, IMAGE [*]) ;                                 01256500
+        WDISC ;                                                         01257000
+        INTERUPT (1, 2, I - 2) ;                                        01257500
+      END ;                                                             01258000
+ NEXT:                                                                  01259500
+      CLOSE (LIBRARY) ;                                                 01260000
+    END DITTO ;                                                         01261000
+ % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        01261500
+ PROCEDURE REMOVE ;                                                     01262000
+    BEGIN                                                               01262500
+ LABEL NEXT ;                                                           01263000
+      IF EMPTY2 AND PARAMETER1 = "LISTING" THEN                         01263100
+      BEGIN                                                             01263200
+        PARAMETER1 := "LINE   " ;                                       01263300
+        PARAMETER2 := USERCODE ;                                        01263400
+      END ;                                                             01263500
+      IF XFILE (12, 0, 4) LSS 4 THEN                                    01263600
+        GO TO NEXT ;                                                    01263700
+      IF PARAMETER1 = PREFIX THEN                                       01264000
+        IF PARAMETER2 = SUFFIX AND READWRITEFILE THEN                   01264500
+        BEGIN                                                           01265000
+          READ (DISC [0]) ;                                             01265500
+          DETACH ;                                                      01266000
+          CLOSE (DISC, PURGE) ;                                         01266500
+          REATTACH ;                                                    01267500
+          FILEACCESS := 0 ;                                             01268000
+          INORDER := TRUE ;                                             01268500
+          GO TO NEXT ;                                                  01269000
+        END ;                                                           01269500
+      IF INPUT [6] NEQ 0 THEN                                           01273000
+        ERROR (NEXT, 0, "FILE IN", " USE.  ") ;                         01273500
+      READ (LIBRARY) ;                                                  01274000
+      DETACH ;                                                          01274500
+      CLOSE (LIBRARY, PURGE) ;                                          01275000
+      REATTACH ;                                                        01275500
+ NEXT:                                                                  01276000
+    END REMOVE ;                                                        01276500
+ % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        01277000
+ PROCEDURE LISTING ;                                                    01277200
+    BEGIN                                                               01277400
+ BOOLEAN LOCKED ;                                                       01277500
+ INTEGER P5 ;                                                           01277510
+ LABEL NEXT ;                                                           01277600
+ FILE LINE 15 (2, 15) ;                                                 01277800
+ FILE FEEDBACK DISK SERIAL (2, 15, 30) ;                                01278000
+ REAL STREAM PROCEDURE READZ (Z, SKP, A, N) ;                           01278200
+ VALUE SKP, A, N ;                                                      01278210
+ BEGIN                                                                  01278220
+ LABEL EXIT ;                                                           01278230
+    SI := Z ;                                                           01278240
+    SI := SI + SKP ;                                                    01278250
+    DI := LOC READZ ;                                                   01278260
+    A (DI := DI + 8 ; DI := DI - N ; DS := N CHR ; JUMP OUT TO EXIT) ;  01278270
+    DS := N OCT ;                                                       01278280
+ EXIT:                                                                  01278290
+ END READZ ;                                                            01278300
+      IF XFILE ("LINE   ", USERCODE, 1) LSS 1 THEN                      01278400
+        GO TO NEXT ;                                                    01278600
+      IF NOT EMPTY1 THEN                                                01279200
+        IF I := FILETYPE (PARAMETER1) = 0 OR I = DATA THEN              01279400
+          ERROR (NEXT, 5, "TYPE:  ", PARAMETER1) ;                      01281600
+      WAIT (INPUT [5], YLOCKED) ;                                       01281800
+      YLOCKED := LOCKED := TRUE ;                                       01282000
+      FILL FEEDBACK WITH "LINE   ", USERCODE ;                          01282200
+      IF NUM2 AND NUM3 AND NUM4 THEN                                    01282400
+      BEGIN                                                             01282600
+        PARAMETER1 := 1 ;                                               01282800
+        WRITESEGMENT ;                                                  01283200
+        PARAMETER0 := IF I=FORTRAN THEN 10 ELSE REAL(I GEQ ALGOL)+12 ;  01283300
+        P5 := IF I GEQ ALGOL THEN PARAMETER0 - 1 ELSE 0 ;               01283310
+      END                                                               01283600
+      ELSE IF PARAMETER2.[6:30] = "ERROR" OR PARAMETER2                 01283800
+        = "SYNTAX " THEN                                                01284000
+      BEGIN                                                             01284100
+        PARAMETER1 := 2 ;                                               01284200
+        P5 := IF I=FORTRAN THEN 9 ELSE 12 ;                             01284300
+      END                                                               01284310
+      ELSE IF EMPTY2 THEN                                               01284400
+      BEGIN                                                             01284600
+        FILL LINE WITH "LINE   ", USERCODE ;                            01284800
+        DETACH ;                                                        01285000
+        WRITE (LINE) ;                                                  01285200
+        REATTACH ;                                                      01285400
+        PARAMETER1 := 3 ;                                               01285600
+      END                                                               01285800
+      ELSE                                                              01286000
+        ERROR (NEXT, 0, PARAMETER0, " ERROR.") ;                        01286200
+      DO BEGIN                                                          01286400
+        READ (FEEDBACK, 15, ZIPPY [*]) [NEXT] ;                         01287000
+        IF PARAMETER1 = 1 THEN                                          01287200
+        BEGIN                                                           01287400
+          IF I = FORTRAN THEN                                           01287600
+          BEGIN                                                         01287800
+            IF N := READZ (ZIPPY [11], 4, 1, 4) NEQ "LONG" THEN         01288000
+              IF N := READZ (ZIPPY [11], 3, 0, 4) NEQ 0 THEN            01288200
+                M := N ;                                                01288400
+          END                                                           01288800
+          ELSE IF I GEQ ALGOL THEN                                      01289000
+          BEGIN                                                         01289200
+            IF N := READZ (ZIPPY [14], 4, 0, 4) NEQ 0 THEN              01289400
+              M := N ;                                                  01289600
+          END                                                           01289800
+          ELSE M := READZ (ZIPPY [12], N := 0, 0, 4) ;                  01293000
+          IF M = PARAMETER2 AND N = 0 THEN                              01293200
+          BEGIN                                                         01293400
+            N := READZ (ZIPPY [PARAMETER0], REAL (I=COBOL) + 4, 0, 4) ; 01293600
+            IF N GTR PARAMETER4 THEN                                    01294600
+              GO TO NEXT ;                                              01294800
+            IF PARAMETER3 LEQ N THEN                                    01295000
+            BEGIN                                                       01295200
+              PARAMETER3 := N ;                                         01295400
+              N := READZ (ZIPPY [P5], IF I=COBOL THEN 3 ELSE 0, 0, 8) ; 01295600
+              WRITESEQ ;                                                01296600
+              WRITERELADDR ;                                            01297000
+            END ;                                                       01297200
+          END ;                                                         01297400
+        END                                                             01297600
+        ELSE IF PARAMETER1 = 2 THEN                                     01297800
+        BEGIN                                                           01298000
+          IF I = COBOL THEN                                             01298200
+          BEGIN                                                         01298400
+            M := READZ (ZIPPY [0], 0, 1, 1) ;                           01298600
+            IF M = " " OR M = "[" THEN                                  01298800
+              M := READZ (ZIPPY [0], 5, 0, 6)                           01299000
+            ELSE M := 0 ;                                               01299200
+          END                                                           01299400
+          ELSE M := READZ (ZIPPY [P5], 0, 0, 8) ;                       01300000
+          IF M = 0 AND N GTR 0 THEN                                     01300200
+          BEGIN                                                         01301200
+            WRITESEQ ;                                                  01301600
+            WRITEROW (ZIPPY, TRUE, DATA) ;                              01301800
+          END ELSE N := M ;                                             01302000
+        END                                                             01302200
+        ELSE                                                            01302400
+          WRITE (LINE [DBL], 15, ZIPPY [*]) ;                           01302600
+        INTERRUPT (1) ;                                                 01302800
+      END UNTIL BOOLEAN (BREAKI) ;                                      01303000
+ NEXT:                                                                  01303200
+      N := RESETN ;                                                     01303400
+      IF LOCKED THEN                                                    01303500
+        YLOCKED := FALSE ;                                              01303600
+    END LISTING ;                                                       01303800
+ % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        01345000
+ PROCEDURE INLINE ;                                                     01345500
+    BEGIN                                                               01345550
+ LABEL NEXT ;                                                           01345560
+ DEFINE QUICK = FALSE# ;                                                01345570
+      IF PARAMETER1 = "ECHO   " THEN                                    01345600
+      BEGIN                                                             01345610
+        INLINEECHO := TOGGLE (INLINEECHO, 2) ;                          01345620
+        GO TO NEXT ;                                                    01345660
+      END ;                                                             01345670
+      READONLYCHECK ;                                                   01345700
+      IF NUM1 THEN                                                      01346000
+      BEGIN                                                             01346500
+        N := PARAMETER1 ;                                               01347000
+        IF NOT ITSOLD (N) THEN                                          01347500
+          ERROR (NEXT, 0, "MISSING", OCTDEX (N)) ;                      01348000
+        IF NOT MOREINPUT THEN                                           01348500
+          WRITEAT ;                                                     01349000
+        I := PARAMETER2.[6:6] ;                                         01349500
+      END                                                               01350000
+      ELSE                                                              01350500
+      BEGIN                                                             01351000
+        AT := LL [LOC (N)].F ;                                          01351500
+        N := LL [AT].S ;                                                01352500
+        I := PARAMETER1.[6:6] ;                                         01353000
+      END ;                                                             01353500
+      IF NOT NUM1 OR MOREINPUT THEN                                     01353600
+        RDISC (AT, RECORD) ;                                            01354000
+      INLINETOG := TRUE ;                                               01354500
+      IF I = "I" THEN                                                   01356000
+        M := 1                                                          01356500
+      ELSE IF I = "D" THEN                                              01357000
+        M := 2                                                          01357500
+      ELSE IF I = "R" THEN                                              01358000
+        M := 3                                                          01358500
+      ELSE M := 0 ;                                                     01359000
+ NEXT:                                                                  01359500
+    END INLINE ;                                                        01359600
+ % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        01360000
+ PROCEDURE COLUMN ;                                                     01360100
+      BEGIN                                                             01360150
+        INTEGER STREAM PROCEDURE GETCHAR (S) ;                          01360200
+        BEGIN                                                           01360250
+         LABEL NOPE, YES, XIT ;                                         01360300
+             DI := LOC GETCHAR ;                                        01360350
+             SI := S ;                                                  01360400
+             2(40(IF SC = ALPHA THEN ELSE IF SC = " " THEN ELSE         01360450
+                  IF SC = """ THEN                                      01360500
+                    JUMP OUT 2 TO YES                                   01360550
+                  ELSE IF SC = "." THEN                                 01360600
+                    JUMP OUT 2 TO YES                                   01360650
+                  ELSE IF SC = "(" THEN                                 01360700
+                    JUMP OUT 2 TO YES                                   01360750
+                  ELSE IF SC = "[" THEN                                 01360800
+                    JUMP OUT 2 TO YES                                   01360850
+                  ELSE IF SC = ";" THEN                                 01360900
+                    JUMP OUT 2 TO NOPE ;                                01360950
+                  SI := SI + 1)) ;                                      01361000
+ NOPE:                                                                  01361050
+             DS := 8 LIT "+0000001" ;                                   01361100
+             GO TO XIT ;                                                01361150
+ YES:                                                                   01361200
+             SI := SI + 1 ;                                             01361250
+             DI := DI + 7 ;                                             01361300
+             DS := CHR ;                                                01361350
+ XIT:                                                                   01361400
+        END GETCHAR ;                                                   01361450
+        IF I := GETCHAR (IMAGE) GEQ 0 THEN                              01361500
+          CHARACTER := I ;                                              01361550
+        IF NUM1 THEN                                                    01361600
+        BEGIN                                                           01361650
+          COLSTOP1 := MIN (PARAMETER1, 80) ;                            01361700
+          IF NUM2 THEN                                                  01361900
+          BEGIN                                                         01361950
+            COLSTOP2 := MIN (MAX (PARAMETER2, COLSTOP1), 80) ;          01362000
+            IF NUM3 THEN                                                01362050
+            BEGIN                                                       01362100
+              COLSTOP3 := MIN (MAX (PARAMETER3, COLSTOP2), 80) ;        01362150
+              IF NUM4 THEN                                              01362200
+              BEGIN                                                     01362250
+                COLSTOP4 := MIN (MAX (PARAMETER4, COLSTOP3), 80) ;      01362300
+                COLSTOPS := 4 ;                                         01362350
+              END ELSE                                                  01362400
+                COLSTOPS := 3 ;                                         01362450
+            END ELSE                                                    01362500
+              COLSTOPS := 2 ;                                           01362550
+          END ELSE                                                      01362600
+            COLSTOPS := 1 ;                                             01362650
+          MAXCOLSTOP := COLSTOP [COLSTOPS] ;                            01362675
+        END ELSE                                                        01362700
+        IF EMPTY1 THEN                                                  01362750
+        BEGIN                                                           01363100
+          SHOW (PARAMETER0, ONOFF (COLUMNS) & (CHARACTER)[42:42:6]) ;   01363200
+          IF COLSTOPS LSS 1 THEN                                        01363210
+            PARAMETER1 := 0 & "#"[6:42:6]                               01363220
+          ELSE PARAMETER1 := OCTDEX (COLSTOP1) ;                        01363230
+          IF COLSTOPS LSS 2 THEN                                        01363240
+            PARAMETER2 := 0 & "#"[6:42:6]                               01363250
+          ELSE PARAMETER2 := OCTDEX (COLSTOP2) ;                        01363260
+          SHOW (PARAMETER1, PARAMETER2) ;                               01363270
+          IF COLSTOPS LSS 3 THEN                                        01363280
+            PARAMETER3 := 0 & "#"[6:42:6]                               01363290
+          ELSE PARAMETER3 := OCTDEX (COLSTOP3) ;                        01363300
+          IF COLSTOPS LSS 4 THEN                                        01363310
+            PARAMETER4 := 0 & "#"[6:42:6]                               01363320
+          ELSE PARAMETER4 := OCTDEX (COLSTOP4) ;                        01363330
+          ERRORX (7, PARAMETER3, PARAMETER4) ;                          01363410
+        END ELSE                                                        01363420
+          COLUMNS := TOGGLE (COLUMNS, 1) ;                              01363430
+      END COLUMN ;                                                      01364500
+ % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        01365000
+ PROCEDURE TEACH ;                                                      01365500
+    BEGIN                                                               01366000
+ LABEL NEXT ;                                                           01366500
+      IF NOT EMPTY1 THEN                                                01367000
+      BEGIN                                                             01367500
+        M := -1 ;                                                       01368000
+        FOR I := 0 STEP 1 UNTIL RSWDM DO                                01368500
+          IF PARAMETER1 = RSWD [I] THEN                                 01369000
+          BEGIN                                                         01369500
+            M := I ;                                                    01370000
+            I := RSWDM ;                                                01370500
+          END ;                                                         01371000
+        IF M LSS 0 THEN                                                 01371500
+        BEGIN                                                           01371600
+          IF I := XFILE (PARAMETER1, PARAMETER2:=MACROLIBRARY, -1) LSS 201371700
+            AND MACROLIBRARY NEQ "MACRO  " THEN                         01371800
+            I := XFILE (PARAMETER1, PARAMETER2:="MACRO  ", -1) ;        01371830
+          IF I LSS 2 THEN                                               01371900
+          BEGIN                                                         01372000
+            SHOW (PARAMETER1, " INVALI") ;                              01372020
+            ERROR (NEXT, 0, "D:*    ", RWTEACH) ;                       01372040
+          END ;                                                         01372050
+          NUM2 := FALSE ;                                               01372100
+          NUM3 := BOOLEAN (2) ;                                         01372200
+          LISTIT (0) ;                                                  01372300
+          GO TO NEXT ;                                                  01372400
+        END ;                                                           01372450
+        PARAMETER1 := "TEACHER" ;                                       01372500
+        PARAMETER2 := OCTDEC (VERSION) ;                                01373000
+        IF XFILE (PARAMETER1, PARAMETER2, 2) LSS 2 THEN                 01373500
+          GO TO NEXT ;                                                  01374000
+        READ (LIBRARY [M], 1, IMAGE [*]) ;                              01375000
+        N := DEC (IMAGE [0], 8) ;                                       01376000
+        CLOSE (LIBRARY) ;                                               01376500
+        PARAMETER3 := N DIV 10000 ;                                     01377000
+        NUM3 := TRUE ;                                                  01377500
+        PARAMETER4 := N MOD 10000 ;                                     01378000
+        NUM4 := TRUE ;                                                  01378500
+        N := RESETN ;                                                   01379000
+        LISTIT (17) ;% POSTING AND QUICK                                01379500
+      END ELSE                                                          01380500
+      BEGIN                                                             01380600
+        WRITE (PRETANK [*], TEACH1) ;                                   01381500
+        WRITETWX ;                                                      01382000
+        FOR I := 0 STEP 7 UNTIL RSWDM DO                                01382500
+        BEGIN                                                           01383000
+          WRITE (IMAGE [*], TEACH2, FOR M := 0 STEP 1 UNTIL 6 DO        01383500
+            [(PARAMETER0 := RSWD [I + M]).[6:6], PARAMETER0]) ;         01384000
+          WRITEROW (IMAGE, FALSE, COBOL) ;                              01384500
+        END ;                                                           01386500
+        WRITE (IMAGE [*], TEACH3) ;                                     01387000
+        WRITEROW (IMAGE, FALSE, COBOL) ;                                01387500
+      END ;                                                             01390500
+ NEXT:                                                                  01390600
+    END TEACH ;                                                         01390700
+ % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        01391500
+ DEFINE PERCENT =                                                       01392000
+    BEGIN                                                               01392500
+      TRANSLATING := BOOLEAN (I := REAL (TOGGLE (TRANSLATING, 1))) ;    01393000
+      TRANSLATEI := I ;                                                 01393500
+    END# ;                                                              01394500
+ % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *        01402000
+ PROCEDURE STOP ;                                                       01402500
+    BEGIN                                                               01403000
+ DEFINE DIRCTRY = CONTROLS# ;                                           01403100
+ LABEL NEXT ;                                                           01403500
+      IF BOOLEAN (ABNORMALEND) THEN                                     01403600
+      BEGIN                                                             01403610
+        EMPTY1 := ABNORMALEND = 3 ;                                     01403620
+        ABNORMALEND := BREAKI := 0 ;                                    01403630
+        IF BOOLEAN (INREADYQ) THEN                                      01403650
+        BEGIN                                                           01403690
+          FOR I := 1 STEP 1 WHILE READYQ [I] NEQ USER DO ;              01403700
+          FOR I := I + 1 STEP 1 UNTIL READYQTOP DO                      01403750
+            READYQ [I - 1] := READYQ [I] ;                              01403775
+          READYQTOP := READYQTOP - 1 ;                                  01403800
+          INREADYQ := 0 ;                                               01403810
+        END ;                                                           01403825
+      END ELSE                                                          01403850
+      BEGIN                                                             01403875
+        IF FILEOPEN AND PARAMETER1 NEQ "DS     " THEN                   01403900
+          CLOSEFILE ;                                                   01404500
+        WRITE (PRETANK [*], EOJ) ;                                      01407000
+        WRITETWX ;                                                      01407500
+        IF NOT EMPTY1 THEN                                              01407600
+          SAVESTATE ;                                                   01407700
+        IF COUNTI GEQ 0 THEN                                            01407710
+        BEGIN                                                           01407720
+          ABNORMALEND := IF EMPTY1 THEN 2 ELSE 4 ;                      01407730
+          STATION := 0 ;                                                01407740
+          GO TO NEXT ;                                                  01407750
+        END ;                                                           01407760
+      END ;                                                             01407800
+      FORGET (STATIONI) ;                                               01407900
+      I := 2 | SLOTI ;                                                  01408000
+      READ (R1 [45], 90, DIRCTRY [*]) ;                                 01408100
+      IF EMPTY1 THEN                                                    01408500
+        DIRCTRY [I] := 0                                                01408600
+      ELSE                                                              01408700
+        DIRCTRY [I].[1:1] := 0 ;                                        01408800
+      DIRCTRY [I + 1] := 0 ;                                            01409000
+      WRITE (R1 [45], 90, DIRCTRY [*]) ;                                01409500
+      STATION := 0 ;                                                    01410500
+      IF USER NEQ BIGBIRD THEN                                          01415100
+      BEGIN                                                             01415110
+        WRITE (BUFFERS [USER, *], 45, BUFFERS [BIGBIRD, *]) ;           01415130
+        IF BOOLEAN (INREADYQ) THEN                                      01415140
+          FOR I := 0 STEP 1 UNTIL READYQTOP DO                          01415150
+            IF READYQ [I] = BIGBIRD THEN                                01415160
+              READYQ [I] := USER ;                                      01415170
+        READ (R1 [IF INREADYQ=3 THEN 46 ELSE SLOTI], 90, CONTROLS [*]) ;01415180
+        FILEACCESS := CONTROLS [51] ;                                   01415190
+        IF FILEOPEN THEN                                                01415200
+        BEGIN                                                           01415210
+          N := BIGBIRD | 32 ;                                           01415215
+          M := CONTROLS [57].LEFTSIDE ;                                 01415220
+          FOR I := 0 STEP 1 UNTIL M DO                                  01415230
+            WRITE (LINKLISTS [USER32 + I, *], 256,                      01415240
+                     LINKLISTS [N + I, *]) ;                            01415250
+        END ;                                                           01415260
+        IF XDEX := CONTROLS [62] GEQ 0 THEN                             01415265
+        BEGIN                                                           01415270
+          WRITE (XARRAY [USER, *], XMAX | 13, XARRAY [BIGBIRD, *]) ;    01415275
+          FOR XDEX := XDEX STEP -1 UNTIL 0 DO                           01415280
+            IF BOOLEAN (XNCHRS).[1:1] THEN                              01415285
+            BEGIN                                                       01415290
+              READ (IO [2|MAXUSERS+XMAX|BIGBIRD+XDEX], 30, IMAGE [*]) ; 01415295
+              WRITE (IO [2|MAXUSERS+XMAX|USER+XDEX], 30, IMAGE [*]) ;   01415300
+            END ;                                                       01415305
+        END ;                                                           01415310
+      END ;                                                             01415315
+      BIGBIRD := BIGBIRD - 1 ;                                          01415500
+ NEXT:                                                                  01416500
+    END ;                                                               01417000
+ PROCEDURE PROGRAM ;                                                    01417100
+ BEGIN                                                                  01417110
+ LABEL NEXT, EXIT ;                                                     01417120
+ NEXT:                                                                  01417150
+      CASE VERB OF                                                      01417160
+      BEGIN                                                             01417170
+        EXECUTE ;                                                       01417175
+        DITTO ;                                                         01417180
+        COPY ;                                                          01417190
+        INLINE ;                                                        01417200
+        ZIPIT ;                                                         01417210
+        CHANGE ;                                                        01417220
+        EDIT ;                                                          01417230
+        SAVEIT ;                                                        01417240
+        RESEQ ;                                                         01417250
+        PUNCH ;                                                         01417260
+        PRINT ;                                                         01417270
+        DELETE ;                                                        01417280
+        CLOSEIT ;                                                       01417300
+        COMPILE ;                                                       01417310
+        COLUMN ;                                                        01417320
+        SCAN ;                                                          01417330
+        LISTING ;                                                       01417340
+        INCREMENT ;                                                     01417350
+        TAB ;                                                           01417360
+        PERCENT ;                                                       01417370
+        QUICKLIST ;                                                     01417380
+        LISTIT (0) ;                                                    01417390
+        OPEN ;                                                          01417400
+        MAIL ;                                                          01417410
+        TEACH ;                                                         01417420
+        REMOVE ;                                                        01417430
+        REPLACE ;                                                       01417440
+        STOP ;                                                          01417450
+        GO TO EXIT ;                                                    01417460
+      END ;                                                             01417470
+      IF BIGBIRD GEQ 0 THEN                                             01417480
+        GO TO NEXT ;                                                    01417490
+ EXIT:                                                                  01417500
+ END PROGRAM ;                                                          01418000
+ BOOLEAN PROCEDURE RC (START) ;                                         01418100
+ VALUE START ;                                                          01418200
+ BOOLEAN START ;                                                        01418300
+ BEGIN                                                                  01418500
+ SAVE FILE OUT RONE DISK SERIAL [1:47] "R/C" "#1" (1, 90, SAVE 99) ;    01418600
+ SAVE FILE OUT RTWO DISK SERIAL [15:96] "R/C" "#2" (1, 256, SAVE 99) ;  01418700
+ ARRAY DIRCTRY, NEWDIRCTRY [0:90],                                      01418800
+   LINKLIST [0:255] ;                                                   01418900
+ LABEL ENDOFPROGRAM ;                                                   01419000
+    CHARGE (0) ;                                                        01419100
+    FREEFILE (0) ;                                                      01419150
+    IF START THEN                                                       01419200
+    BEGIN                                                               01419300
+      SEARCH (RONE, IMAGE [*]) ;                                        01419500
+      IF IMAGE [6] GTR 0 THEN                                           01420000
+      BEGIN                                                             01420100
+        I := STATUS (IMAGE [*]) ;                                       01420200
+        WRITE (TWXOUTPUT (IMAGE [0]), USERUN) ;                         01420300
+        GO TO ENDOFPROGRAM ;                                            01420500
+      END ;                                                             01420600
+      IF IMAGE [0] GEQ 0 THEN                                           01421000
+      BEGIN                                                             01421500
+        READ (R1 [45], 90, DIRCTRY [*]) ;                               01422000
+        DIRCTRY [90] := 12 ;                                            01422500
+        FOR I := 0 STEP 2 WHILE USERCODE := DIRCTRY [I] NEQ 12 DO       01423000
+          DIRCTRY [I] := ABS (USERCODE) ;                               01423500
+        WRITE (R1 [45], 90, DIRCTRY [*]) ;                              01424000
+      END ELSE                                                          01424500
+      BEGIN                                                             01425000
+        DIRCTRY [0] := 12 ;                                             01425500
+        WRITE (RONE [45], 90, DIRCTRY [*]) ;                            01426000
+      END ;                                                             01426500
+      SEARCH (RTWO, IMAGE [*]) ;                                        01432500
+      IF IMAGE [0] LSS 0 THEN                                           01433000
+        WRITE (RTWO[0], 1, IMAGE [*]) ;                                 01433500
+    END ELSE                                                            01436500
+    BEGIN                                                               01436600
+      READ (R1 [45], 90, DIRCTRY [*]) ;                                 01437300
+      USER := -2 ;                                                      01437500
+      FOR N := 0 STEP 1 UNTIL 1 DO                                      01437600
+        FOR I := 0 STEP 2 WHILE USERCODE := DIRCTRY [I] NEQ 12 DO       01438000
+          IF USERCODE NEQ 0 THEN                                        01439000
+          BEGIN                                                         01439500
+            READ (R1 [I/2], 90, CONTROLS [*]) ;                         01440000
+            FILEACCESS := CONTROLS [51] ;                               01440100
+            IF FILEOPEN OR BOOLEAN (N) THEN                             01440500
+            BEGIN                                                       01441000
+              NEWDIRCTRY [USER := USER + 2] := USERCODE ;               01441500
+              WRITE (RONE, 90, CONTROLS [*]) ;                          01442500
+              IF FILEOPEN THEN                                          01442600
+              BEGIN                                                     01442700
+                READ SEEK (R2 [16 | I]) ;                               01443000
+                NEWDIRCTRY [USER + 1] := DIRCTRY [I + 1] ;              01443100
+                M := CONTROLS [57].LEFTSIDE ;                           01444100
+                FOR D := 0 STEP 1 UNTIL M DO                            01444500
+                BEGIN                                                   01445000
+                  READ (R2, 256, LINKLIST [*]) ;                        01445500
+                  WRITE (RTWO, 256, LINKLIST [*]) ;                     01446000
+                END ;                                                   01446500
+                IF M NEQ 31 THEN                                        01446600
+                  WRITE (RTWO [16 | USER + 31], 1, CONTROLS [*]) ;      01446700
+                DIRCTRY [I] := 0 ;                                      01447000
+              END ;                                                     01447100
+            END ;                                                       01447500
+          END ;                                                         01448000
+      NEWDIRCTRY [USER + 2] := 12 ;                                     01455000
+      IF USER GEQ 0 THEN                                                01455500
+        WRITE (RONE [45], 90, NEWDIRCTRY [*]) ;                         01456000
+      CLOSE (R1, PURGE) ;                                               01456500
+      READ (R2 [0]) ;                                                   01456600
+      CLOSE (R2, PURGE) ;                                               01457000
+ ENDOFPROGRAM:                                                          01458100
+      RC := TRUE ;                                                      01458200
+    END ;                                                               01458300
+  END RC ;                                                              01458500
+    CONTROLS [90] := 12 ;                                               01458900
+    IF NOT RC (TRUE) THEN                                               01459000
+    BEGIN                                                               01459100
+      BIGBIRD := -1 ;                                                   01459110
+      T0 := 150 ;                                                       01459120
+      FREEHEAD := MAXFREEHEAD := (XMAX + 2) | MAXUSERS ;                01459130
+      PROGRAM ;                                                         01459200
+      BOOL := RC (FALSE) ;                                              01459300
+      IF XFILE ("TEACHER", OCTDEC (VERSION), -1) GTR 0 THEN             01459310
+        READ (LIBRARY) ;                                                01459320
+    END ;                                                               01459400
+END.                                                                    01459500

@@ -1,0 +1,1267 @@
+COMMENT FLOW BEGIN                                                              
+HEADING       ITD SORT- VECTOR MATRIX...*                                   3000
+TABLE$                                                                       050
+--------  ------------  -------                                              100
+:INPUT :->:RECORD[0] :..:V[0] :..      EXAMPLE OF VECTOR MATRIX              110
+:RECORD:. ------------  ------- . -------                                    120
+:SOURCE:.                       ..:V[16]:..                                  130
+--------. ------------  ------- . ------- .                                  140
+        ->:RECORD[1] :..:V[1] :..         .                                  150
+        . ------------  -------           . -------                          160
+        .                                 ..:V[24]:.                         170
+        . ------------  -------           . -------.                         180
+        ->:RECORD[2] :..:V[2] :..         .        .                         190
+        . ------------  ------- . ------- .        .                         200
+        .                       ..:V[17]:..        .                         210
+        . ------------  ------- . ------           .                         220
+        ->:RECORD[3] :..:V[3] :..                  .                         230
+        . ------------  -------                    . --------                240
+        .                                          ..:V[28]:..               250
+        . ------------  -------                    . --------.               260
+        ->:RECORD[4] :..:V[4] :..                  .         .               270
+        . ------------  ------- .  ------          .         .               280
+        .                       ..:V[18]:..        .         .               290
+        . ------------  ------- . ------- .        .         .               300
+        ->:RECORD[5] :..:V[5] :..         .        .         .               310
+        . ------------  -------           . -------.         .               320
+        .                                 ..:V[25]:.         .               330
+        . ------------  -------           . -------          .               340
+        ->:RECORD[6] :..:V[6] :..         .                  .               350
+        . ------------  ------- .-------- .                  .               360
+        .                       ..:V[19]:..                  .               370
+        . ------------  ------- . -------                    .               380
+        ->:RECORD[7] :..:V[7] :..                            .               390
+        . ------------  -------                              . -------       400
+        .                                                    ..:V[30]:       410
+        . ------------  -------                              . -------       420
+        ->:RECORD[8] :..:V[8] :..                            .               430
+        . ------------  ------- . -------                    .               440
+        .                       ..:V[20]:..                  .               450
+        . ------------  ------- . ------- .                  .               460
+        ->:RECORD[9] :..:V[9] :..         .                  .               470
+        . ------------  -------           . -------          .               480
+        .                                 ..:V[26]:.         .               490
+        . ------------  -------           . -------.         .               500
+        ->:RECORD[10]:..:V[10]:..         .        .         .               510
+        . ------------  ------- . ------- .        .         .               520
+        .                       ..:V[21]:..        .         .               530
+        . ------------  ------- . -------          .         .               540
+        ->:RECORD[11]:..:V[11]:..                  .         .               550
+        . ------------  -------                    . ------- .               560
+        .                                          ..:V[29]:..               570
+        . ------------  -------                    . -------                 580
+        ->:RECORD[12]:..:V[12]:..                  .                         590
+        . -----------   ------- . -------          .                         600
+        .                       ..:V[22]:..        .                         610
+        . ------------  ------- . ------- .        .                         620
+        ->:RECORD[13]:..:V[13]:..         .        .                         630
+        . ------------  -------           . -------.                         640
+        .                                 ..:V[27]:.                         650
+        . ------------  -------           . -------                          660
+        ->:RECORD[14]:..:V[14]:..         .                                  670
+        . ------------  ------- . ------- .                                  680
+        .                       ..:V[23]:..                                  690
+        . ------------  ------- . -------                                    700
+        ->:RECORD[15]:..:V[15]:..                                            710
+          ------------  -------                                              720
+%                                                                            730
+END;                                                                         740
+COMMENT FLOW BEGIN                                                           750
+HEADING ITD SORT-PHASE  SUBROUTINE SECTION...*                               760
+ENTER*                                                                      3100
+NOTE SUBROUTINE WAIT CHECKS FOR I/O COMPLETE..*                             4000
+WAIT:                                                                       5000
+              IS I/O COMPLETE BIT ON IN TOP-OF-STACK WORD                   6000
+              YES GO EXIT*                                                  7000
+              CALL MCP TO SUSPENDEND UNTIL I/O COMPLETE*                    8000
+EXIT:         EXIT*                                                         9000
+COL*                                                                       10000
+ENTER*                                                                     11100
+NOTE SUBROUTINE RELEASETAPE CALS MCP TO DO I/O ON SORT-SCRATCH TAPES.*     11000
+RELEASETAPE:                                                               12000
+              SET RECORD/BLOCK COUNTER TO RECORDS/BLOCK..                  13000
+             (FIB[11] ~ TBO)*                                              14000
+              RESTORE TOP I/O DESCRIPTOR FROM FIB[16]*                     15000
+              CALL MCP TO I/O BUFFER..                                     16000
+              (MCP PERMUTES ALTERNATE BUFFER TO TOP I/O POSITION)*         17000
+RTA:          CALL WAIT TO CHECK FOR I/O COMPLETE ON                       18000
+              TOP I/O DESCRIPTOR*                                          19000
+              DOES TOP I/O DESCRIPTOR INDICATE END-OF-FILE                 20000
+              NO GO FXUP*                                                  21000
+              CALL FILE-CONTROL TO DO REEL SWITCH*                         22000
+              GO TO RTA*                                                   23000
+COL*                                                                            
+FXUP:         SAVE TOP I/O DESCRIPTOR IN FIB[16]*                          24000
+              POINT TOP I/O DESCRIPTOR PLUS ONE WORD..                     25000
+              (NOTE: 1ST WORD OF EACH BLOCK IS A FLAG AS TO WHETHER        26000
+              THE BLOCK IS THE LAST BLOCK OF A STRING)*                    27000
+              EXIT*                                                        28000
+COL*                                                                       29000
+ENTER*                                                                     30000
+NOTE SUBROUTINE TAPEWRITE BLOCKS SORT OUTPUT TAPES AND CALLS               31000
+    RELEASETAPE WHEN BUFFER IS FULL*                                       32000
+TAPEWRITE:                                                                 33000
+              POINT PRFIB AT FIB FOR CURRENT OUTPUT TAPE*                  34000
+              ADD 1 TO RECORD/STRING COUNTER IN FIB[9]*                    35000
+              REDUCE RECORDS/BLOCK COUNTER IN FIB[11] BY 1*                36000
+              IS RECORDS/BLOCK COUNTER ZERO                                37000
+              YES GO XPR*                                                  38000
+              INDEX I/O DESCRIPTOR BY RECORD SIZE*                         39000
+              GO EXIT*                                                     40000
+XPR:          ZERO 1ST WORD IN BUFFER..                                    42000
+              (FLAGS THIS BLOCK IS NOT LAST BLOCK IN STRINS)*              42100
+              CALL RELEASETAPE*                                            43000
+EXIT:         EXIT*                                                        44000
+COL*                                                                       45000
+ENTER*                                                                     46000
+NOTE SUBROUTINE WRITESTOPPER WRITES LAST BLOCK OF STRING AND DUMMY         47000
+    STRING BLOCKS*                                                         48000
+WRITESTOPPER:                                                              49000
+NOTE COT IS INDEX OF CURRENT OUTPUT TAPE*                                  49100
+              POINT PRFIB AT FIB FOR CURRENT OUTPUT TAPE*                  50000
+              FIX FIRST WORD OF BUFFER AS FOLLOWS..                        51000
+              [3:15] ~ "DS"..                                              52000
+              [18:15]~ TBO-FIB[11] (NUMBER OF LEGITIMATE RECORDS IN        53000
+              THIS BLOCK)..                                                54000
+              [33:15]~FIB[9](NUMBER OF RECORDS IN STRING)*                 55000
+              COUNT UP TN[COT] BY 1(STRINGS PER TAPE COUNTER)*             56000
+              CALL RELEASETAPE*                                            57000
+              EXIT*                                                        58000
+COL*                                                                       59000
+ENTER*                                                                     59100
+NOTE SUBROUTINE TO SET UP PROGRAMMERS SORTED OUTPUT MEDIA*                 60000
+OPENOUT:                                                                   61000
+              IS OUTPUT MEDIA A PROCEDURE NO GO XA*                        62000
+              PASS OUTFIL TO CORE ALLOCATION TO GET STORAGE SPACE          63000
+              FOR ONE RECORD. OUTFIL WILL POINT AT THIS SPACE*             64000
+              IS CALLER COBOL NO GO EXIT*                                  65000
+              SET UP COBOL INPUT PROCEDURE LINKAGE*                        66000
+              GO EXIT*                                                     67000
+XA:           IS CALLER COBOL NO GO XB*                                    68000
+              POINT PRFIB AT OUTPUT FILES FIB*                             69000
+              CALL COBOL FILE CONTROL TO OPEN FILE*                        70000
+              SET DF TRUE IF FILE IS DISK*                                 71000
+              GO EXIT*                                                     72000
+XB:           CALL ALGOL FILE CONTROL TO OPEN FILE*                        73000
+COL*                                                                       74100
+EXIT:         EXIT*                                                        74000
+COL*                                                                       75000
+  ENTER*                                                                   75100
+NOTE SUBROUTINE SETUPTAPES INITIALIZES TAPES FOR DISTRIBUTION PASS*        76000
+SETUPTAPES:                                                                77000
+              ZERO ARRAYS TS,TC AND TN*                                    78000
+NOTE          TN[I] = NUMBER OF STRINGS ON TAPE[I]..                       79000
+              TC[I] = NUMBER OF STRINGS DESIRED ON TAPE[I]..               80000
+              TS[I] = NEXT NUMBER IN FIBONACCI SERIES*                     81000
+              INDICATE TAPE 1 IS CURRENT OUTPUT TAPE*                      82000
+              SET UP 1ST SET IN FIBONACCI SERIES(TC[1]~1)*                 83000
+              SET I TO 1*                                                  84000
+XA:           POINT PRFIB AT FIB FOR TAPE[I]*                              85000
+              PUT TAPE BLOCK SIZE IN FIB[18]*                              86000
+BOX           IF I!1 SET FIB[18] TO MINUS*                                 87000
+NOTE          MCP WILL NOT ASSIGN BUFFERS TO FILES IF FIB[18] IS MINUS     88000
+              AT FILE OPEN TIME*                                           89000
+BOX           IF I!NT THEN CALL MCP TO OPEN FILE*                          90000
+NOTE          WE ASSIGN TAPE UNITS TO ALL BUT THE LAST TAPE FILE..         91000
+              ONLY TAPE[1] WILL HAVE CORE BUFFERS SINCE ITS FIB[18]        92000
+              WAS NOT MADE MINUS. THESE COMMON BUFFERS ARE SHARED BY       93000
+              ALL OTHER TAPES (SEE SUBROUTINE SELECT)*                     94000
+BOX           IF I!NT CALL WAIT(WAIT FOR FILE TO BE OPENED)*               95000
+BOX           IF I=1 POINT IO DESCRIPTOR PAST FLAG WORD*                   96000
+              IS I = NT (ALL TAPES SET UP) YES GO XB*                      97000
+              I+1*                                                         98000
+              GO XA*                                                       99000
+XB:           POINT COIOD AT IO DESCRIPTOR OF CURRENT OUTPUT TAPE*        100000
+              EXIT*                                                       101000
+COL*                                                                      101100
+COL*                                                                      102000
+ENTER*                                                                    102100
+NOTE SUBROUTINE   GETROW CONTROLS DISK ALLOCATION*                        103000
+GETROW:                                                                   104000
+              RESET AMOUNT OF ROW LEFT BY ROW SIZE..                      105000
+              (ORL~ORS)*                                                  106000
+NOTE ORS IS DEFINED AS HEADER[8]*                                         106100
+              INDEX ROW INDEX TO NEXT ROW..                               107000
+              (ORI~ORI+1)*                                                107100
+              DOES INDEX POINT BEYOND LAST ROW YES GO GRA*                108000
+              IS DISK ADDRESS IN HEADER[ROW INDEX] = ZERO YES GO XA*      109000
+XB:           SET THIS ADDRESS INTO OCDA*                                 110000
+              GO EXIT*                                                    111000
+XA:           CALL MCP TO ASSIGN DISK SPACE FOR THIS ROW*                 112000
+NOTE          MCP WILL PUT 1ST ADDRESS OF ROW IN HEARDER[ROW INDEX]       113000
+              IF IT CAN FIND DISK SPACE FOR THE ROW.. IF IT CANNOT        114000
+              FIND SPACE HEADER[ROW INDEX] IS LEFT = 0*                   115000
+              IS HEADER[ROW INDEX] = ZERO NO GO XB*                       116000
+GRA:                                                                      117000
+NOTE          DISK FILE OR DISK SPACE IS EXAUSTED*                        118000
+              WAS TAPE BACKUP SPECIFIED YES GO XC*                        119000
+              SPO IOR 84 AND TERMINATE*                                   120000
+EXIT*                                                                     121000
+COL*                                                                      121100
+XC:           IS THIS THE FIRST TIME WE RAN OUT OF DISK NO GO XD*         122000
+              CALL SETUPTAPES TO INITIALIZE DISK-TAPE MODE*               123000
+XD:           SET TM TO INDICATE DISK-TAPE MODE*                          124000
+              SET DISKFULL TO TRUE*                                       125000
+EXIT:         EXIT*                                                       126000
+COL*                                                                      127000
+ENTER*                                                                    127100
+NOTE SUBROUTINE FORGETDISK RETURNS DISK STORAGE NO LONGER NEEDED*         127120
+FORGETDISK:                                                               127130
+              SET I TO 10(AREA ZERO INDEX)*                               127140
+XA:           IS HEADER[I] ZERO YES GO XB*                                127150
+NOTE IF HEADER[I] ! 0 THEN DISK SPACE HAS BEEN ASSIGNED*                  127160
+              CALL MCP TO RETURN DISK SPACE FOR AREA[I-10]*               127170
+XB:           INDEX I BY ONE*                                             127180
+              IS I = 30 NO GO XA*                                         127190
+              EXIT*                                                       127200
+COL*                                                                      127210
+ENTER*                                                                    127220
+NOTE SUBROUTINE INROW INDEXS EACH STRINGS DISK ADDRESS TO POINT AT THE    128000
+     NEXT BLOCK OF A STRING. WILL INDEX ACROSS A ROW IF NECESSARY*        129000
+INROWCHECK:                                                               130000
+NOTE          ISL IS THE NUMBER OF BLOCKS LEFT IN THE DISK AREA           131000
+              CONTAING THIS STRING*                                       132000
+              IS ISL = ZERO  NO GO XA*                                    133000
+              COMPUTE NUMBER OF BLOCKS IN AREA..                          134000
+              (ISL~ (ORS DIV OD)|(OD DIV D)*                              135000
+              POINT THIS STRINGS ROW INDEX AT NEXT ROW(AREA)..            136000
+              (IRC~IRC+1)*                                                137000
+              POINT THIS STRINGS DISK ADDRESS AT 1ST SEGMENT IN ROW..     138000
+              (IDA~INHEAD[IRC])*                                          139000
+              GO EXIT*                                                    140000
+COL*                                                                      140100
+XA:          INDEX THIS STRINGS DISK ADDRESS BY SEGMENTS/BLOCK..          141000
+              (IDA~IDA+D)*                                                142000
+EXIT:         EXIT*                                                       143000
+COL*                                                                      143100
+ENTER*                                                                    143200
+NOTE SUBROUTINE INREAD GETS RECORDS, ONE AT A TIME, FROM PROGRAMMERS      144000
+              INPUT*                                                      145000
+INREAD:       HAS END-OF-FILE OCCURED YES GO RTNRD*                       146000
+              INCOUNT +1*                                                 147000
+              IS RECORD SOURCE AN INPUT PROCEDURE NO GO XA*               148000
+              IS CALLER COBOL NO GO XB*                                   149000
+              CALL COBOL INPUT PROCEDURE*                                 150000
+NOTE          COBOL WILL PLACE NEXT RECORD IN ARRAY INFIL OR SET          151000
+              ENDQ TO TRUE IF NO MORE RECORDS*                            152000
+              EOF ~ ENDQ*                                                 153000
+              GO TO RTNRD*                                                154000
+XB:                                                                       155000
+NOTE          ALGOL INPUT PROCEDURE*                                      156000
+              CALL ALGOL INPUT PROCEDURE*                                 157000
+NOTE          ALGOL RETURNS A TRUE ON TOP-OF-STACK IF NO MORE RECORDS*    158000
+              EOF ~ TOP OF STACK*                                         159000
+              GO TO RTNRD*                                                160000
+XA:                                                                       161000
+NOTE          RECORD SOURCE IS A FILE*                                    162000
+              IS CALLER COBOL NO GO XC*                                   163000
+              CALL COBOL READ ROUTINE.. (POINTS INFIL AT NEXT RECORD)*    164000
+              EOF ~ PARAMETER RETURNED BY COBOL READ*                     165000
+              GO TO RTNRD*                                                166000
+COL*                                                                      166100
+XC:           CALL ALGOL READ.. (POINTS INFIL AT NEXT RECORD)*            167000
+              EOF ~ TRUE IF PARAMETER RETURNED BY ALGOL READ              168000
+              IS LESS THE 0. (NO MORE RECORDS)*                           169000
+RTN:                                                                      170000
+BOX           IF EOF THEN POINT VECTOR[VLOW] AT HIGH KEY RECORD AND       171000
+              SET EOF FLAG IN BIT 5 OF VECTOR[VLOW]*                      172000
+              EXIT*                                                       173000
+COL*                                                                      174000
+ENTER*                                                                    174100
+NOTE                                                                      174200
+SUBROUTINE DISKWRITE BLOCKS AND WRITES RECORDS ON SCRATCH DISK AREA*      175000
+DISKWRITE:    IS WRITE BLOCK FLAG SET YES GO WRTBLOC*                     176000
+              RECORD/STRING COUNTER PLUS ONE..                            177000
+              (ORC~ORC+1)*                                                178000
+              RECORD/BLOCK COUNTER MINUS ONE..                            179000
+              (OBC~OBC-1)*                                                180000
+              IS OBC=0 YES GO TO WRTBLOC*                                 181000
+              INDEX IO DESCRIPTOR TO POINT AT NEXT RECORD POSITION*       182000
+              GO TO RTNDW*                                                183000
+WRTBLOC:                                                                  184000
+NOTE          MUST WRITE OUT BUFFER ON DISK*                              185000
+              RESTORE RECORD/BLOCK COUNTER..                              186000
+              (OBC~TBO)*                                                  187000
+              CONVERT DISK ADDRESS IN OCDA TO NUMERIC AND PUT THIS        188000
+              ADDRESS IN AS FIRST WORD IN BUFFER*                         189000
+              POINT TOP I/O DESCRIPTOR AT DISK ADDRESS IN BUFFER..        190000
+              (FROM FIB[16])*                                             190100
+              CALL MCP TO INITIATE I/O*                                   191000
+NOTE          MCP WILL PERMUTE I/O DESCRIPTORS SO ALTERNATE BUFFER IS     192000
+              NOW TOP*                                                    193000
+              REDUCE AMOUNT-OF-AREA-LEFT COUNTER BY SEGMENTS/BLOCK..      194000
+              (ORL~ORL-OD)*                                               195000
+              IS THERE ROOM FOR ANOTHER BLOCK..                           196000
+              (ORL>OD) YES GO XA*                                         197000
+              CALL GETROW*                                                198000
+NOTE          GETS DISK SPACE FOR NEXT AREA AND POINTS OCDA AT FIRST      199000
+              ADDRESS*                                                    200000
+              GO XB*                                                      201000
+XA:           INDEX OCDA BY SEGMENTS/BLOCK..                              202000
+              (OCDA~OCDA+OD)*                                             203000
+XB:           CALL WAIT TO INSURE I/O COMPLETE ON ALTERNATE BUFFER*       204000
+              SAVE TOP I/O DESCRIPTOR IN FIB[16]*                         205000
+              POINT IO DESCRIPTOR PAST DISK ADDRESS IN FIRST              206000
+              WORD OF BUFFER*                                             206100
+RTNDW:        EXIT*                                                       207000
+COL*                                                                      208000
+ENTER*                                                                    208100
+NOTE                                                                      208200
+SUBROUTINE DIST COMPUTES STRING DISTRIBUTION PATTERNS DESIRED ON SCRATCH  209000
+              OUTPUT TAPES*                                               210000
+DIST:                                                                     211000
+NOTE          TM1= NUMBER OF TAPES MINUS ONE..                            212000
+              CTRL=INDEX OF CURRENT OUTPUT TAPE..                         213000
+              TS[I]= NUMBER OF STRINGS DESIRED ON EACH TAPE FOR CURRENT   214000
+              PASS..                                                      215000
+              TC[I]= NUMBER OF STRINGS DESIRED ON EACH TAPE FOR NEXT      216000
+              PASS..                                                      217000
+              TC[0]&TS[0] THRU TC[TM1]&TS[TM1] CONTAINS FIBONACCI         218000
+              NUMBERS*                                                    219000
+              POINT AT NEXT TAPE WHICH SHOULD BE CONTROL TAPE..           220000
+              (CTRL~ (CTRL MOD TM1)+1)*                                   221000
+              FOR EACH TAPE..                                             222000
+              TS[I]~TC[I](CURRENT FIBONACCI NUMBER)..                     223000
+              IF I!CTRL THEN TC[I]~TC[I]+TC[CTRL] (NEXT FIBONACCI         224000
+              NUMBER)*                                                    225000
+              EXIT*                                                       226000
+COL*                                                                      227000
+ENTER*                                                                    227100
+NOTE                                                                      228000
+SUBROUTINE SELECT DETERMINES WHICH TAPE THE NEXT STRING SHOULD BE         229000
+              WRITTEN ON*                                                 230000
+SELECT:                                                                   231000
+              REMEMBER CURRENT OUTPUT TAPE..                              232000
+              (X~COT)*                                                    233000
+SA:           POINT COT AT NEXT TAPE IN SEQUENCE..                        234000
+              COT~COT+1*                                                  235000
+              DOES COT POINT AT LAST TAPE NO GO XA*                       236000
+              POINT COT AT FIRST TAPE..                                   237000
+              (COT~1)*                                                    238000
+              CALL DIST*                                                  239000
+NOTE          THE NUMBER OF STRINGS ON EACH TAPE IS AS DESIRED SO CALL    240000
+              DIST TO COMPUTE NEW SET OF FIBONACCI NUMBERS*               241000
+XA:           IS COT=CTRL YES GO SA*                                      242000
+              MARK PRIOR OUTPUT TAPE AS REWOUND..                         243000
+              ZERO CORE ADDRESS OF PRIOR TAPES I/O DESCRIPTOR..           244000
+              POINT CORE ADDRESS OF CURRENT OUTPUT TAPE AT THE            245000
+              TWO COMMON BUFFER AREAS..                                   246000
+              (THE ABOVE IS DONE BY THE MCP VIA A SPECIAL COMUNICATE)*    247000
+              POINT COIOD AT LOCATION OF TOP I/O DESCRIPTOR OF            248000
+              CURRENT OUTPUT TAPE*                                        249000
+              INDEX I/O DESCRIPTOR PAST CONTROL WORD IN FIRST WORD        250000
+              OF BUFFER (SEE WRITESTOPPOR)*                               251000
+              EXIT*                                                       252000
+COL*                                                                      253000
+ENTER*                                                                    253100
+NOTE SUBROUTINE WRITETAG WRITES DISK STRING TAG WORD IN FRONT OF EACH     254000
+              STRING ON DISK*                                             255000
+WRITETAG:                                                                 256000
+              IS THERE ANYTHING IN BUFFER NO GO XA*                       257000
+              SET WRITE BLOCK FLAG*                                       258000
+              CALL DISKWRITE*                                             259000
+XA:           SET TOP I/O DESCRIPTOR TO 30 WORD, 1 SEGEMENT WRITE*        260000
+              CONVERT DISK ADDRESS OF TAG IN LOSA TO NUMERIC AND PUT      261000
+              IN FIRST WORD OF BUFFER(BUFF[0])*                           262000
+              IS DISK FULL NO GO XB*                                      263000
+              IS THERE ROOM IN CURRENT AREA FOR ANOTHER TAG WORD          264000
+              AND AT LEAST ONE BLOCK..                                    265000
+              (ORL} OD+1) YES GO XB*                                      266000
+              CALL GETROW..                                               267000
+              (WILL SET UP NEXT AREA)*                                    268000
+XB:           DEVELOP TAG WORD..                                          269000
+              BUFF[1]~SRI (AREA IN WHICH STRING STARTED)..                270000
+              BUFF[2]~ORC (RECORDS IN STRING)..                           271000
+              BUFF[3]~SRS (AMOUNT OF STRING IN AREA WHERE STRING          272000
+                           STARTED,IN SEGMENTS)*                          273000
+              IS INPUT SOURCE EXAUSTED YES GO XC*                         274000
+              BUFF[4]~LOSA~OCDA (ADDRESS OF NEXT TAG)*                    275000
+              GO TO XD*                                                   276000
+COL*                                                                      276100
+XC:           BUFF[4]~LOSA~0 (LAST TAG FLAG)*                             277000
+XD:           OCDA~OCDA+1 (ADDRESS OF FIRST BLOCK OF NEXT STRING)*        278000
+              CALL MCP TO WRITE TAG ON DISK*                              279000
+              STRING COUNTER PLUS 1*                                      280000
+              SAVE AREA WHERE NEXT STRING STARTS..                        281000
+              (SRI~ORI)*                                                  282000
+              SAVE AMOUNT OF AREA LEFT..                                  283000
+              (SRS~(ORL~ORL-1)*                                           284000
+              SET RECORD/STRING COUNTER TO 0..                            285000
+              (ORC~0)*                                                    286000
+              CALL WAIT TO WAIT FOR I/O COMPLETE ON ALTERNATE AREA*       287000
+              EXIT*                                                       288000
+COL*                                                                      289000
+ENTER*                                                                    289100
+NOTE SUBROUTINE DISKREAD READS SCRATCH DISK INPUT AREA ON DISK-TO-DISK    290000
+                   MERGE PASS*                                            291000
+DISKREAD:                                                                 292000
+              POINT AT PSEUDO FIB FOR CURRENT STRING..                    293000
+             (BASE ~ DATA[VLOW])*                                         294000
+NOTE          BASE[0]=IBC (RECORDS LEFT IN BUFFER)..                      295000
+              BASE[1]=IRL (RECORDS LEFT IN STRING)..                      296000
+              BASE[2]=ISL (BLOCKS LEFT IN AREA)..                         297000
+              BASE[3]=IDA (DISK ADDRESS OF NEXT BLOCK)..                  298000
+              BASE[4]=IRC (INDEX OF AREA CONTAINING CURRENT STRING)*      299000
+              IS STRING EXAUSTED..                                        300000
+              (IRL{0) NO GO XA*                                           301000
+              POINT VECTOR[VLOW] AT HIGH KEY RECORD*                      302000
+              GO TO RTNDR*                                                303000
+COL*                                                                      303100
+XA:           REDUCE RECORDS/STRING COUNTER BY 1*                         304000
+              IS BUFFER EMPTY YES GO XB*                                  305000
+              INDEX VECTOR[VLOW] TO POINT AT NEXT RECORD IN BUFFER*       306000
+              GO TO RTNDR*                                                307000
+COL*                                                                      307100
+XB:           RESTORE RECORD/BLOCK COUNTER..                              308000
+              (IBC~BF)*                                                   309000
+              POINT Y AT BUFFER PAIR FOR THIS STRING..                    310000
+              (Y~2|VLOW)*                                                 311000
+              CONVERT STRING DISK ADDRESS (IDA) TO NUMERIC AND PUT        312000
+              IN FIRST WORD OF BUFFER[Y]*                                 313000
+              CALL MCP TO DO READ ON BUFFER PAIR Y*                       314000
+              CALL INROWCHK TO GET ADDRESS OF NEXT BLOCK*                 315000
+              CALL WAIT TO WAIT FOR I/O COMPLETE ON ALTERNATE BUFFER*     316000
+              POINT I/O DESCRIPTOR[Y] PAST DISK ADDRESS IN BUFFER[Y]*     317000
+              POINT VECTOR[VLOW] AT FIRST RECORD IN BUFFER[Y]*            318000
+RTNDR:        EXIT*                                                       319000
+COL*                                                                      329100
+COL*                                                                      320000
+ENTER*                                                                    320100
+NOTE SUBROUTINE WRITEOUT SELECTS FILE TO BE WRITEN DURING DISK-TAPE       321000
+              MERGE PHASE*                                                322000
+WRITEOUT:                                                                 323000
+              IS THIS FINAL MERGE YES GO XB*                              324000
+              IS THIS DISK-TAPE MERGE NO GO XA*                           325000
+              CALL DISKWRITE (DISK-DISK MERGE)*                           326000
+              GO EXIT*                                                    327000
+XA:           CALL TAPEWRITE (DISK-TAPE MERGE)*                           328000
+              GO EXIT*                                                    329000
+XB:                                                                       330000
+NOTE FINAL MERGE TO PROGRAMMERS FINAL OUTPUT SOURCE*                      331000
+              COUNT OUTCOUNT+1;                                           332000
+              IS OUTPUT A PROCEDURE NO GO XD*                             333000
+              IS CALLER COBOL NO GO XC*                                   334000
+              INDICATE NO END-OF-FILE..                                   335000
+              (ENDO~0)*                                                   336000
+              CALL COBOL OUTPUT PROCEDURE..                               337000
+              (RECORD IS IN COMMON ARRAY OUTFIL)*                         338000
+              GO EXIT*                                                    339000
+COL*                                                                      339100
+XC:           CALL ALGOL OUTPUT PROCEDURE PASSING EOF=FALSE AND OUTFIL..  340000
+              (OUTFIL CONTAINS RECORD)*                                   341000
+              GO EXIT*                                                    342000
+XD:                                                                       343000
+NOTE OUTPUT IS FILE*                                                      344000
+              IS CALLER COBOL NO GO XE*                                   345000
+              CALL COBOL WRITE PASSING FILE OUTFIL*                       346000
+              GO EXIT*                                                    347000
+XE:           CALL ALGOL WRITE*                                           348000
+              IS OUTPUT FILE A DISK FILE..                                349000
+              (IS DF SET ) NO GO EXIT*                                    350000
+              DOES PARAMETER RETURNED FROM ALGOL WRITE INDICATE           351000
+              DISK OUTPUT FILE IS FULL NO GO EXIT*                        352000
+              SPO IOR 83 AND TERMINATE*                                   353000
+EXIT:         EXIT*                                                       354000
+COL*                                                                      355000
+ENTER*                                                                    355100
+NOTE SUBROUTINE SUBMERGE SETS UP PSUDO FIB FOR STRING I IN DATA ROW I     356000
+              AND POINTS BUFFER PAIR I OF INFIL AT STRING I*              357000
+SUBMERGE:                                                                 358000
+NOTE          GIVEN A MERGE FACTOR OF MS THERE ARE 2|MS BUFFERS FOR THE   359000
+              INPUT SCRATCH DISK FILE OR MS BUFFER PAIRS. THE MCP IS      360000
+              FAKED INTO THINKING THERE ARE MS FILES OF TWO BUFFERS EACH  361000
+              . THIS REQUIRES EACH BUFFER PAIR MUST HAVE A PSUEDO FIB     362000
+              SO THAT ACCESS TO RECORDS IN EACH STRING CAN BE CONTROLLED  363000
+              INDIVIDUALLY. ROW DATX [I] IS THE PSUDO FIB FOR STRING I.   364000
+              WE LOAD THE ROW DESCRIPTOR DATX [I] INTO BASE AND DEFINE..  365000
+              IBC =BASE[0] (RECORDS LEFT IN BUFFER)..                     366000
+              IRL =BASE[1] (RECORDS LEFT IN STRING)..                     367000
+              ISL =BASE[2] (NUMBER OF BLOCKS OF STRING LEFT IN DISK       368000
+              AREA WHOSE INDEX IS IRC)..                                  369000
+              IDA =BASE[3] (DISK ADDRESS OF NEXT BLOCK)..                 370000
+              IRC =BASE[4] =(INDEX OF AREA CONTING STRING)..              371000
+              BUFF = TOP I/O DESCRIPTOR FOR BUFFER PAIR I*                372000
+              POINT I AT STRING 0*                                        373000
+XAA:          IS THERE A STRING I YES GO XA*                              374000
+              POINT VECTUR[I] AT HIGH KEY RECORD*                         375000
+              ZERO RECORDS/STRING COUNTER..                               376000
+              (IRL~0)*                                                    377000
+              GO TO XLOP*                                                 378000
+XA:           POINT BASE AT PSUEDO FIB I..                                379000
+              (BASE ~ DATX[I])*                                           380000
+              SET Y TO INDEX OF BUFFER LOCATION OF BUFFER PAIR I..        381000
+              (Y~2|I)*                                                    382000
+              SET I/O DESCRIPTOR[Y] TO 30 WORD, ONE SEGMENT READ*         383000
+              POINT IDA AT ADDRESS OF TAG..                               384000
+              (IDA~LISA)*                                                 385000
+              CONVERT IDA TO NUMERIC AND PUT IN FIRST WORD OF             386000
+              BUFFER[Y]*                                                  387000
+              CALL MCP TO READ TAG..                                      388000
+              (TAG IS READ INTO BUFFER[Y+1] AND WE WANT IT IN             389000
+              BUFFER[Y])*                                                 390000
+              CALL WAIT FOR I/O COMPLETE ON BUFFER[Y]*                    391000
+              INDEX IDA BY ONE (IDA IS NOW DISK ADDRESS OF FIRST          392000
+              BLOCK OF STRING I)*                                         393000
+              CONVERT IDA TO NUMERIC AND PUT IN FIRST WORD OF             394000
+              BUFFER[Y]*                                                  395000
+              CALL MCP TO READ FIRST BLOCK OF STRING*                     396000
+NOTE          MCP PERMUTES BUFFERS SO THAT BUFFER[Y] NOW CONTAINS TAG     397000
+              AND BUFFER[Y+1] CONTAINS BLOCK ONE*                         398000
+              CALL WAIT FOR I/O COMPLETE ON BUFFER[Y]*                    399000
+              POINT BUFF AT TAG SEGMENT IN BUFFER[Y]*                     400000
+              SET PSUEDO FIB AS FOLLOWS..                                 401000
+              IBC~BF (BF=RECORDS/BLOCK)..                                 402000
+              IRC~ BUFF[1] (INDEX OF AREA CONTAINING STRING)..            403000
+              IRL~ BUFF[2]-1 (RECORDS IN STRING)..                        404000
+              ISL~ (BUFF[3] DIV OD)|(OD DIV D) (SEGMENTS LEFT IN AREA)..  405000
+              LISA ~BUFF[4] (ADDRESS OF NEXT TAG SEGMENT)*                406000
+              IS LISA = ZERO NO GO XB*                                    407000
+              SET EOF TO TRUE (NO MORE STRINGS)*                          408000
+XB:           CALL INROWCHK (GETS ADDRESS OF BLOCK 2 TO IDA)*             409000
+              CONVERT IDA TO NUMERIC AND PUT IN FIRST WORD                410000
+              OF BUFFER[Y]*                                               411000
+              CALL MCP TO READ BLOCK 3*                                   412000
+NOTE          MCP PERMUTES SO THAT BLOCK #1 IS IN BUFFER[Y]*              413000
+              CALL INROWCHK (SETS IDA TO ADDRESS OF BLOCK # 3)*           414000
+              CALL WAIT FOR I/O COMPLETE ON BUFFER[Y]*                    415000
+              POINT VECTOR[I] AT RECORD 1 IN BUFFER[Y]*                   416000
+XLOP:         IS BUFFER PAIR MS SET UP YES GO XIT*                        417000
+              I~I+1*                                                      418000
+              GO TO XAA*                                                  419000
+XIT:          EXIT*                                                       420000
+COL*                                                                      421000
+ENTER*                                                                    421100
+NOTE SUBROUTINE FIRSTSELECT DOES INITIAL SELECTION OF LOW RECORD*         422000
+FIRSTSELECT:                                                              423000
+              SET X TO 0*                                                 424000
+              SET I TO MS-1*                                              425000
+XA:           INCREMENT I BY 1*                                           426000
+              PASS RECORDS POINTED AT BY VECTOR[X] AND VECTOR[X+1] TO     427000
+              CALLERS KEY COMPARE ROUTINE*                                428000
+              IS RECORD POINTED AT BY VECTOR[X] "EARLIER-IN-SEQUENCE"     429000
+              (AS PER PARAMETER RETURNED BY KEY COMPARE ROUTINE)          430000
+              NO GO XB*                                                   431000
+              VECTOR[I]~VECTOR[X+1]*                                      432000
+              GO XC*                                                      433000
+COL*                                                                      433100
+XB:           VECTOR[I]~VECTOR[X]*                                        434000
+XC:           INCREMENT X BY 2*                                           435000
+              IS X=STPP NO GO XA*                                         436000
+NOTE          STPP=SIZE OF VECTOR*                                        437000
+              VLOW ~V[I].[18:15]*                                         438000
+NOTE          VLOW IS NOW INDEX OF RECORD WHICH IS "NEXT-IN-SEQUENCE"     439000
+              RECORD*                                                     440000
+              EXIT*                                                       441000
+COL*                                                                      442000
+ENTER*                                                                    442100
+NOTE SUBROUTINE LOWSELECT POINTS VLOW AT NEXT RECORD IN SEQUENCE*         443000
+LOWSELECT:                                                                444000
+BOX           IF VLOW IS EVEN SET X TO VLOW ELSE SET X TO                 445000
+              NEXT EVEN NUMBER SMALLER THEN VLOW..                        446000
+              (X~VLOW AND (OCTAL 1777))*                                  447000
+XA:                                                                       448000
+              I~ MS + X DIV 2                                             449000
+              (I~MS+X.[38:9])*                                            450000
+              CALL KEY COMPARE ROUTINE PASSING THE RECORDS POINTED AT     451000
+              BY VECTOR[X] AND VECTOR[X+1]*                               452000
+              IS RECORD POINTED AT BY VECTOR[X] "EARLIER-IN-SEQUENCE"     453000
+              (AS PER THE PARAMETER RETURNED BY KEY COMPARE ROUTINE)      454000
+              NO GO XB*                                                   455000
+              VECTOR[I]~VECTOR[X+1]*                                      456000
+              GO XC*                                                      457000
+COL*                                                                      457100
+XB:           VECTOR[I]~VECTOR[X]*                                        458000
+XC:                                                                       459000
+BOX           IF I IS EVEN SET X TO I ELSE SET X TO                       460000
+              NEXT LOWER EVEN VALUE OF I..                                461000
+              (X ~ VLOW AND (OCTAL 1777))*                                462000
+              IS X=STPP NO GO XA*                                         463000
+NOTE          STPP = VECTOR SIZE*                                         464000
+              VLOW ~ V[I].[18:15]*                                        465000
+NOTE          VLOW NOW IS INDEX OF RECORD "NEXT-IN-SEQUENCE"*             466000
+              EXIT*                                                       467000
+COL*                                                                      468000
+ENTER*                                                                    468100
+SUBROUTINE SORTIT DEVELOPS STRINGS FROM PROGRAMMERS INPUT SOURCE          469000
+              PLACING THE STRINGS ON SCRATCH DISK*                        470000
+SORTIT:                                                                   471000
+              CALL MCP TO GET STORAGE  FOR DATA ARRAY OF S+1 ROWS, EACH   472000
+              ROW TO HOLD ONE RECORD*                                     473000
+              CALL MCP TO GET STORAGE FOR VECTOR ARRAY. ONE ROW OF        474000
+              SIZE (2|S)-1*                                               475000
+              STPP ~(2|S)-1*                                              476000
+              CLEAR DATA ROW S*                                           477000
+              CALL HIVALU ROUTINE TO CREATE HIGH VALUE RECORD IN          478000
+              DATA ROW S*                                                 479000
+NOTE  IF THIS IS NOT THE FIRST TIME SORIT WAS CALLED THEN TR INDICATES    480000
+              THE NUMBER OF RECORDS SAVED IN DISK AREA(ROW) 0*            481000
+              IS TR}0 NO GO XIPA*                                         482000
+NOTE MUST LOAD DATA FROM DISK AREA 0*                                     483000
+              SET DISK OUTPUT FILE TO READ STATUS*                        484000
+              CALL MCP TO OPEN FILE FOR INPUT(MCP WILL FILL BOTH          485000
+              BUFFERS WITH FIRST TWO BLOCKS)*                             486000
+              CALL WAIT TO WAIT FOR FILE TO BE OPENED*                    487000
+              OCDA ~OUTHEAD[10]+ 2|OD (DISK ADDRESS OF BLOCK # 3)*        488000
+              I~0 (POINT AT DATA ROW 0)*                                  489000
+              SET ORL=ORS (SIZE OF DISK AREA)*                            490000
+              OBC~TBO (RECORDS/BLOCK)*                                    491000
+XA:           IS I<S NO GO XD*                                            492000
+              IS I<TR NO GO XB*                                           493000
+              MOVE RECORD FROM DISK BUFFER TO DATA ROW I*                 494000
+              RESET WRITE BLOCK FLAG*                                     495000
+              CALL DISKWRITE (POINTS AT NEXT RECORD)*                     496000
+              POINT VECTOR[I] AT DATA ROW I*                              497000
+              GO TO XC*                                                   498000
+XB:           POINT VECTOR[I] AT HIGH KEY RECORD*                         499000
+XC:           INCREMENT I*                                                500000
+              GO TO XA*                                                   501000
+XD:           CLOSE DISK OUTPUT FILE*                                     502000
+              SET FILE STATUS TO OUTPUT*                                  503000
+              CALL MCP TO OPEN FILE FOR OUTPUT*                           504000
+              CALL WAIT FOR FILE TO BE OPENED*                            505000
+              GO TO IPB*                                                  506000
+XIPA:                                                                     507000
+NOTE          FILL DATA FROM PROGRAMMERS INPUT SOURCE*                    508000
+              IS INPUT SOURCE A PROCEDURE OR COBOL FILE NO GO XE*         509000
+              CALL INREAD (CAUSES INFIL TO POINT AT FIRST RECORD)*        510000
+XE:           INCOUNT~0*                                                  511000
+              ADDRESS DATA ROW 0..                                        512000
+              (VLOW~0)*                                                   513000
+XEA:          IS VLOW = 0 YES GO XF*                                      514000
+              CALL INREAD (POINTS AT NEXT RECORD)*                        515000
+XF:           IS END-OF-FILE SET (SET BY INREAD) YES GO XG*               516000
+              MOVE RECORD POINTED AT BY INFIL TO                          517000
+              DATA ROW VLOW*                                              518000
+              POINT VECTOR[VLOW] AT DATA ROW VLOW*                        519000
+XG:           VLOW ~VLOW+1*                                               520000
+              IS VLOW { S-1 YES GO XEA*                                   521000
+IPB:                                                                      522000
+NOTE          START OF SORT PHASE*                                        523000
+              POINT ORI AT AREA 0*                                        524000
+              CALL GETROW TO ASSIGN DISK SPACE FOR AREA 1*                525000
+NOTE GETROW COUNTS ORI+1 BEFORE GETTING DISK SPACE*                       526000
+NOTE THE SORT WILL USE AREA 0 TO SAVE THE DATA ARRAY IN CASE WE           527000
+              HAVE TO ALTERNATE BETWEEN THE SORT AND MERGE PHASE*         528000
+              IS DISKFULL NO GO XHA*                                      529000
+              SPO IOR 81 (NOT ENOUGH DISK TO DO DISK SORT)*               530000
+EXIT*                                                                     530100
+XHA:          SET ADDRESS OF TAG (LOSA) FROM OUTHEAD[ORI]*                531000
+NOTE          ORI=11 ON FIRST PASS (ADDRESS OF DISK AREA # 1)*            532000
+              OCDA ~ LOSA+1 (DISK ADDRESS OF FIRST BLOCK)*                533000
+              SRS~ORS-1,                                                  534000
+              ORL~ORS-1 (AMOUNT OF AREA LEFT)*                            535000
+              SRI~ORI (AREA IN WHICH STRING STARTED)*                     536000
+              ORS~ORC~0 (STRINGS ON DISK AND RECORDS/STRING TO ZERO)*     537000
+              OBC~TBO (TBO = RECORDS/BLOCK)*                              538000
+IPBA:         CALL FIRSTSELECT (SET VLOW TO INDEX OF DATA ROW CONTAINING  539000
+              "NEXT-IN-SEQUENCE" RECORD*                                  540000
+              GO IPD*                                                     541000
+IPC:          CALL LOWSELECT (SET VLOW TO INDEX OF DATA ROW               542000
+              CONTAINING  "NEXT-IN-SEQUENCE RECORD"*                      543000
+IPD:          IS VLOW POINTING AT HIGH-KEY RECORD                         544000
+              (VLOW}MS) YES GO XJ*                                        545000
+              MOVE RECORD FROM DATA[VLOW] TO DISK OUTPUT BUFFER*          546000
+              SET WRITE BLOCK FLAG OFF*                                   547000
+              CALL DISKWRITE*                                             548000
+              CALL INREAD*                                                549000
+              IS EOF SET YES GO XI*                                       550000
+              IS NEXT RECORD IN INPUT AREA EARLIER-IN-SEQUENCE THEN       551000
+              RECORD IN DATA[VLOW] NO GO XH*                              552000
+              POINT VECTOR[VLOW] AT HIGH-KEY RECORD*                      553000
+XH:           MOVE RECORD FROM INPUT AREA TO DATA[VLOW]*                  554000
+XI:           IS DISK FULL NO GO IPC*                                     555000
+XJ:           IS ANY VECTOR[I=0 TRU I=MS-1] NOT POINTED AT HIGH-KEY       556000
+              NO GO XK*                                                   557000
+NOTE          RECORD KEY OUTSIDE OF HIGH-KEY*                             558000
+              POINT VLOW AT INDEX OF THIS VECTOR*                         559000
+              GO IPD*                                                     560000
+XK:           SET MOREDATA TRUE IF NOT END-OF-FILE OR IF                  561000
+              ANY DATA ROW CONTAINS A VALID RECORD*                       562000
+NOTE          VECTOR[I].[5:1] = 0 DENOTES DATA[I] CONTAINS UNSORTED       563000
+              RECORD*                                                     564000
+              SET DISKFULL TRUE IF ALREADY TRUE OR IF THIS WILL BE        565000
+              DISK-TAPE MERGE AND DISK CONTAINS THE MAXIMUM NUMBER OF     566000
+              STRINGS THAT CAN BE MERGED IN ONE PASS..                    567000
+              (DISKFULL ~ TM AND ONS}M-1 OR DISKFULL)*                    568000
+IPE:          CALL WRITETAG*                                              569000
+              IS DISKFULL YES GO IPG*                                     570000
+              IS MOREDATA SET NO GO XL*                                   571000
+              IS THIS DISK-ONLY MODE YES GO IPBA*                         572000
+              IS THE NUMBER OF STRINGS LESS THAN THE NUMBER WHICH         573000
+              CAN BE MERGED IN ONE PASS YES GO IPBA*                      574000
+              GO IPG*                                                     575000
+COL*                                                                      575100
+XL:           IS THIS DISK-TAPE MODE NO GO XM*                            576000
+              IS THE NUMBER OF STRINGS LESS THAN THE NUMBER WHICH         577000
+              CAN BE MERGED IN ONE PASS NO GO IPG*                        578000
+XM:           SET FINAL MERGE (FM) TO TRUE*                               579000
+IPG:          EXIT *                                                      580000
+COL*                                                                      581000
+ENTER*                                                                    581100
+NOTE SUBROUTINE MERGEIT MERGES M STRINGS TO 1*                            582000
+MERGEIT:                                                                  583000
+MIC:          CALL FIRSTSELECT*                                           584000
+              GO TO MIE*                                                  585000
+MID:          CALL LOWSELECT*                                             586000
+MIE:          IS VLOW POINTED AT HIGH-KEY RECORD YES GO XA*               587000
+              MOVE RECORD FROM CURRENT DISK INPUT BUFFER TO               588000
+              CURRENT OUTPUT BUFFER*                                      589000
+              CALL WRITOUT*                                               590000
+              CALL DISKREAD*                                              591000
+              GO TO MID*                                                  592000
+XA:           IS ANY VECTOR[I] NOT POINTED AT HIGH-KEY NO GO XB*          593000
+              POINT VLOW AT THIS VECTOR..                                 594000
+              VLOW ~ VECTOR[I].[18:15]*                                   595000
+              GO TO MIE*                                                  596000
+XB:           IS THIS DISK-ONLY MERGE AND NOT EOF NO GO XIT*              597000
+              CALL WRITETAG*                                              598000
+              CALL SUBMERGE*                                              599000
+              GO TO MIC*                                                  600000
+XIT:          EXIT*                                                       601000
+END;                                                                      602000
+COMMENT FLOW BEGIN                                                        603000
+HEADING SORT PHASE, DISK-DISK MERGE AND DISK-TAPE MERGE*                  605000
+START:                                                                    606000
+NOTE          INITIALIZATION*                                             607000
+              IS CALLER COBOL (R>0) NO GO XA*                             608000
+              AC ~ TRUE*                                                  609000
+XA:           IS CALLER COBOL OR MERGE ONLY REQUESTED NO GO XB*           610000
+              INCREMENT BLOCK COUNTER BY ONE*                             611000
+NOTE BY INCREMENTING BLOCK COUNTER, SORT CAN GET RID OF ANYTHING          612000
+        DELARED BY DOING "FALL-OUT-OF-BLOCK" COMMUNICATE*                 613000
+XB:           R~ABS(R) (NEGATIVE RECORD SIZE FLAGS CALLER IS ALGOL)*      614000
+              MAKE DESCRIPTOR POINTING AT TAPE-TAPE MERGE SECTION         615000
+              (POLYMERGE) LOOK LIKE LABEL DESCRIPTOR*                     616000
+              DECLARE ARRAYS TS,TC,TN (USED TO DEVELOP POLY PHASE         617000
+              DISTRIBUTION OF STRINGS ON TAPE)*                           618000
+              IS MERGE ONLY FLAG (MF) ON YES GO POLYMERGE*                619000
+              IS INPUT DATA SOURCE A PROCEDURE NO GO XC*                  620000
+              LISA~ 2|(INPUT BUFFER SIZE)*                                621000
+              GO XD*                                                      622000
+COL*                                                                      622100
+XC:           LISA~0*                                                     623000
+XD:           IS CORESIZE=0 NO GO XE*                                     624000
+              CORESIZE ~ 12000*                                           625000
+XE:           REDUCE CORESIZE BY THAT AMOUNT OF STORAGE KNOWN TO BE       626000
+              NEEDED.. (ABOUT 2000 WORDS PLUS INPUT BUFFER AREA)*         627000
+              ASSUME SORT AND MERGE MATRIX SIZE OF 512*                   628000
+LY:           COMPUTE A MINIMUM BUFFER SIZE FOR DISK SUCH THAT..          629000
+                 MUST BE > 30..                                           630000
+                 MUST BE < 1023..                                         631000
+                 SHOULD BE SOME INTEGER MULTIPLE OF DISK SEGMENT SIZE..   632000
+                 MUST BE SOME INTEGER MULIPLE OF RECORD SIZE*             633000
+LZ            COMPUTE SCRATCH DISK INPUT BUFFER SIZE TO BE SOME INTEGER   634000
+              SIZE TO BE NO LESS THEN 150 WORDS IN LENGTH*                636000
+      COMPUT SCRATCH DISK OUTPUT BUFFER SIZE TO BE SOME MULTIPLE OF       637000
+              SCRATCH DISK INPUT BUFFER SIZE. SIZE TO BE NO LESS THEN     638000
+              450 WORDS*                                                  639000
+              OCDA~CORESIZE-(2|SIZE OF SCRATCH DISK OUTPUT BUFFER)..      640000
+              OCDA IS NOW AMOUNT OF CORE LEFT FOR DATA AND VECTOR         641000
+              SORT ARRAYS*                                                642000
+              LOSA ~(OCDA-R) DIV 2|(SIZE OF SCRATCH DISK INPUT BUFFER)..  643000
+              (LOSA IS APPROXIMATE MERGE MATRIX SIZE)*                    644000
+              IS LOSA < 2 NO GO XF*                                       645000
+              SET MERGE SIZE (M) TO 2*                                    646000
+              GO TO XG*                                                   647000
+XF:           SET M TO SOME POWER-OF-TWO WHICH IS LARGEST POWER-OF-TWO    648000
+              THAT IS SMALLER THEN LOSA*                                  649000
+XG:           LOSA ~ (OCDA-R) DIV (R+3)..                                 650000
+              (LOSA IS APPROXIMATE SORT MATRIX SIZE)*                     651000
+              IS LOSA < 2 NO GO XH*                                       652000
+              SET SORT MATRIX SIZE(S) TO 2*                               653000
+              GO TO LX*                                                   654000
+XH:           SET S TO THE LARGEST POWER-OF-TWO WHICH IS SMALLER          655000
+              THEN LOSA*                                                  656000
+LX:           IS ACTUAL AMOUNT OF CORE USED LESS THEN AMOUNT AVAILABLE    658000
+              NO GO XI*                                                   659000
+              PUSH UP BOTH INPUT AND OUTPUT SCRATCH DISK BUFFER SIZES     660000
+              SO ALL OF AVAILABLE CORE WILL BE USED..                     661000
+              (PUSH UP IS IN INCREMENTS OF MINIMUM BUFFER SIZE)*          662000
+XI:           COMPUTE D = SEGMENTS/DISK INPUT BUFFER*                     663000
+              COMPUTE BF = RECORDS/DISK INPUT BUFFER*                     664000
+              COMPUTE TBO= RECORDS/DISK OUTPUT BUFFER*                    665000
+              IS DISKSIZE 0 NO GO XJ*                                     666000
+              SET DISKSIZE TO 600000 WORDS*                               667000
+XJ:           COMPUTE DISK AREA (ROW) SIZE..                              668000
+              ROWSIZE = DISKSIZE DIV (BF|R|19)*                           669000
+              INSURE ONE DISK AREA WILL HOLD ALL OF DATA ARRAY..          670000
+              ADJUST AREA SIZE LARGER IF NECESSARY*                       671000
+              SET Y TO DIFFERENCE BETWEEN INPUT AND OUTPUT DISK BLOCKING  672000
+              FACTORS..                                                   673000
+              Y~TBO DIV BF*                                               674000
+              ADJUST DISK AREA SIZE SO THAT EACH DISK AREA WILL HOLD      675000
+              SOME INTEGER NUMBER OF BLOCKS..                             676000
+              I.E. (AREA SIZE) MO0 Y MUST = 0*                            677000
+              COMPUTE OD = SEGMENTS/DISK OUTPUT BUFFER*                   678000
+              IN FIB FOR DISK OUTPUT FILE SET UP FOLLOWING..              679000
+                 INDICATE 20 AREAS..                                      680000
+                 AREA SIZE..                                              681000
+                 NUMBER OF BUFFERS = 2..                                  682000
+                 SORT FLAG..                                              683000
+                 SET RECORD SIZE = BLOCK SIZE = TBO|R..                   684000
+                 INSURE FILE INDEX IS IN FIB[4]*                          685000
+              CALL MCP TO OPEN DISK OUTPUT FILE*                          686000
+              HAS TAPE BACK-UP BEEN REQUESTED YES XK*                     687000
+              PUT SORT FLAG IN OUTPUT FILES HEADER [8]*                   688000
+NOTE WILL CAUSE MCP TO NOTIFY SORT OF "NO DISK" CONDITION INSTEAD         689000
+              OF OPERATOR*                                                690000
+XK:           CALL WAIT FOR FILE TO BE OPENED*                            691000
+              SET MOREDATA TRUE*                                          692000
+              SET TR=-1 (FLAGS FIRST CALL ON SORTIT)*                     693000
+              CALL GETROW TO GET SPACE FOR AREA 0*                        694000
+              IS DISKFULL NO GO XL*                                       695000
+              SPO IOR 81 AND TERMINATE*                                   696000
+NOTE  NOT ENOUGH DISK TO DO DISK SORT*                                    697000
+              EXIT*                                                       698000
+XL:                                                                       699000
+NOTE  INITIALIZE INPUT DATA SOURCE*                                       700000
+              IS INPUT SOURCE A PROCEDURE NO GO XM*                       701000
+              IS CALLER COBOL NO GO XN*                                   702000
+              SET UP COBOL PROCEDURE LINKAGE*                             703000
+XN:           CALL MCP TO GET STORAGE FOR COMMON ARRAY INFIL*             704000
+              GO TO CALLSORT*                                             705000
+XM:           IS CALLER COBOL NO GO XO*                                   706000
+              CALL COBOL FILE CONTROL TO OPEN INFIL FOR INPUT*            707000
+              GO TO CALLSORT*                                             708000
+XO:           SET INFIL TO READ STATUS*                                   709000
+              CALL ALGOL READ (WHICH WILL OPEN INFIL AND READ FIRST       710000
+              RECORD)                                                     711000
+              WAIT FOR FILE TO BE OPENED*                                 712000
+COL*                                                                      713000
+CALLSORT:     CALL SORTIT (WILL SORT INPUT INTO STRINGS UNTIL INPUT       714000
+              IS EXAUSTED OR DISK IS FULL)*                               715000
+              IS EOF SET NO GO XP*                                        716000
+              IS INPUT SOURCE A FILE NO GO XP*                            717000
+              CLOSE INPUT FILE WITH LOCK*                                 718000
+              IS INCOUNT=0 NO GO XP*                                      719000
+              SPO IOR 86 AND TERMINATE*                                   720000
+NOTE  NO DATA TO SORT*                                                    721000
+              EXIT*                                                       722000
+COL*                                                                      722100
+XP:           IS MOREDATA SET NO GO XT*                                   723000
+NOTE          SAVE CONTENTS OF DATA IN DISK AREA 0*                       724000
+              SET OCDA AT DISK ADDRESS OF FIRST SEGMENT OF AREA 0*        725000
+              SET TR TO 0 (COUNTS RECORDS SAVED FROM DATA ON DISK)*       726000
+              OBC~ RECORDS/BLOCK (TB0)*                                   727000
+              ORL~ SIZE OF AREA (ORS)*                                    728000
+              SET I TO ZERO*                                              729000
+XQ:           IS I < S NO GO XS*                                          730000
+              IS EOI FLAG IN VECTOR[I] SET                                731000
+             (VECTOR[I].[5:1]=1 IF DATA[I] CONTAINS GOOD RECORD)          732000
+              YES GO XR*                                                  733000
+              TR~TR+1*                                                    734000
+              MOVE RECORD FROM DATA[I] TO DISK OUTPUT BUFFER*             735000
+              RESET WRITE BLOCK FLAG*                                     736000
+              CALL DISKWRITE*                                             737000
+XR:           I~I+1*                                                      738000
+              GO TO XQ*                                                   739000
+XS:           SET WRITE BLOCK FLAG TRUE*                                  740000
+              CALL DISKWRITE*                                             741000
+XT:           SAVE EOF AND MOREDATA IN AC*                                742000
+              RETURN CORE STORAGE FOR DATA AND VECTOR ARRAYS*             743000
+              STPP ~(MS|2)-2 (STPP=MERGE VECTOR ARRAY)*                   744000
+              DECLARE DISK FILE INF AS HAVING..                           745000
+                 2|M BUFFERS..                                            746000
+                 BUFFER SIZE = BF|R*                                      747000
+               NOTE WILL BECOME DISK INPUT FILE *                         748000
+              BUILD A DESCRIPTOR OF SIZE 2|M POINTING AT FIRST BUFFER.    749000
+              PLACE IN ITOP..                                             750000
+              (ITOP LOOKS LIKE MOTHER DESCRIPTOR WITH I/O DESCRIPTORS     751000
+              WORKING AS ROW DESCRIPTORS)*                                752000
+              CALL MCP TO OPEN FILE*                                      753000
+              IS TAPE-BACKUP INDICATED NO GO XU*                          754000
+              SET SORT FLAG IN THIS FILES HEADER[8]*                      755000
+XU:                                                                       756000
+BOX           IF MCP GOT DISK SPACE FOR AREA 0 OF THIS                    757000
+              FILE CALL MCP TO RETURN IT*                                 758000
+              SET THIS FILES FIB TO INDICATE INPUT AND TWO BUFFERS..      759000
+              (FAKES MCP INTO THINKING THIS IS M FILES OF 2 BUFFERS       760000
+              PER FILE)*                                                  761000
+              CALL MCP TO GET CORE SPACE FOR VECTOR ARRAY..               762000
+              ONE DIMENSION OF (2|M)-1 WORDS IN SIZE*                     763000
+              CALL MCP TO GET STORAGE SPACE FOR DATA ARRAY..              764000
+              M+1 DIMESIONS OF 5 WORDS EACH*                              765000
+NOTE EACH DATA ROW I IS PSUDEO FIB FOR BUFFER PAIR I*                     766000
+              CALL MCP TO GET SPACE FOR HIGH-KEY RECORD*                  767000
+              CALL HIVALU TO FILL HIGH-KEY RECORD*                        768000
+              SET ALL (2|M) I/O DESCRIPTORS TO INPUT STATUS*              769000
+COL*                                                                      770000
+DKC:  IS THIS DISK-ONLY MERGE NO GO TPAA*                                 771000
+              IS THIS FINAL MERGE YES GO DKF*                             772000
+              CALL MCP TO RETURN DISK SPACE FOR OUTPUT DISK AREA 0..      773000
+              (SPACE NOT NEEDED TO OVERLAY SORT PHASE DATA ARRAY)*        774000
+              EXCHANGE DISK INPUT AND DISK OUTPUT FILES DISK SPACE BY     775000
+              EXCHANGEING HEADERS, I.E. DISK INPUT FILE NOW POINTS AT     776000
+              SORTED STRINGS AND DISK OUTPUT FILE POINTS AT SCRATCH       777000
+              DISK SPACE)*                                                778000
+              SRI~ORI (NUMBER OF AREAS IN DISK INPUT AREA)*               779000
+              CALL MCP TO ASSIGN THE DISK SPACE FOR AREAS 1 THRU SRI      780000
+              FOR DISK OUTPUT FILE (IF NOT ALREADY ASSIGNED)*             781000
+              IS DISK FULL NO GO XUA*                                     782000
+              CALL FORGETDISK TO RETURN AREA JUST GOT*                    782100
+              GO TO TPA*                                                  782200
+NOTE CAN DO DISK ONLY SORT-MERGE*                                         783000
+XUA:          POINT COIOD AT TOP I/O DESCRIPTOR OF DISK OUTPUT FILE*      786000
+DKD:          SET LOSA FROM OUTPUT FILE HEADER[11]..                      787000
+             (ADDRESS OF 1ST TAG)*                                        788000
+              OCDA ~LOSA+1 (ADDRESS OF FIRST BLOCK TO BE WRITTEN)*        789000
+              POINT SRI AND ORI AT AREA 1*                                790000
+              SET AMOUNT-OF-STRING-IN-AREA AND AMOUNT-OF-AREA-LEFT TO     791000
+              AREA SIZE LESS 1..                                          792000
+              (SRS~ORL~ORS-1)*                                            793000
+DKE:          SET LISA AT DISK ADDRESS OF FIRST INPUT TAG..               794000
+              (LISA~INHEAD[11])*                                          795000
+              SET MOREDATA TRUE*                                          796000
+              SET EOF AND DISKFULL TO FALSE*                              797000
+              SET STRING COUNTER (ONS) TO ZERO*                           798000
+              CALL SUBMERGE (POINTS EACH BUFFER PAIR IN INPUT FILE AT     799000
+              INPUT STRING)*                                              800000
+              CALL MERGIT (FOR DISK-ONLY MERGES ALL STRING FROM INPUT     801000
+              DISK AREA TO FEWER BUT LONGER STRINGS IN OUTPUT AREA. IF    802000
+              LESS THEN M STRINGS WHERE PRODUCED MERGEIT SETS FM TRUE)*   803000
+              IS FM SET YES GO TO TPC*                                    804000
+              SET MOREDATA FALSE*                                         805000
+              CALL WRITETAG (WRITES "LAST-STRING" TAG)*                   806000
+DKF:          REVERSE DISK INPUT AND OUTPUT AREAS BY REVERSING FILE       807000
+              HEADERS*                                                    808000
+              IS NUMBER OF STRINGS (ONS) IN (WHAT IS NOW INPUT AREA)      809000
+              MORE THAN THE NUMBER WHICH CAN BE MERGED IN ONE PASS        810000
+              YES GO DKD*                                                 811000
+              SET FM TO TRUE*                                             812000
+              SET MERGE SIZE (MS) TO A POWER-OF-TWO WHICH IS JUST         813000
+              GREATER THEN THE NUMBER OF STRINGS ON DISK*                 814000
+              STPP~ NEW MATRIX SIZE*                                      815000
+              CALL FILE CONTROL TO CLOSE DISK OUTPUT FILE*                816000
+              CALL OPENOUT TO SET UP PROGRAMMERS OUTPUT MEDIA*            817000
+              COIOD ~ OUTFIL*                                             818000
+NOTE  IF OUTPUT IS FILE COIOD POINTS AT BUFFER, IF PROCEDURE THEN         819000
+              COMMON ARRAY*                                               820000
+              GO TO DKE*                                                  821000
+COL*                                                                      822000
+TPAA:                                                                     823000
+NOTE          DISK-TAPE MERGE*                                            824000
+              EXCHANGE DISK INPUT AND OUTPUT AREAS BY REVERSING           825000
+              HEADERS*                                                    826000
+TPA:          CALL FILE CONTROL TO CLOSE DISK OUTPUT FILE*                827000
+              POINT LISA AT FIRST TAG IN INPUT FILE..                     828000
+              LISA ~ INHEAD[11]*                                          829000
+              SET MOREDATA TO TRUE*                                       830000
+              SET EOF AND DISKFULL TO FALSE*                              831000
+              SET STRING COUNTER TO ZERO*                                 832000
+TPB:          DOES THEN CURRENT OUTPUT TAPE HAVE THE CORRECT NUMBER OF    833000
+              STRINGS WRITTEN ON IT..                                     834000
+              (IS TN[COT]}TC[COT]) YES GO XV*                             835000
+              CALL SELECT (POINTS AT ANOTHER TAPE)*                       836000
+              GO TO TPB*                                                  837000
+XV:           CALL SUBMERGE (POINTS EACH BUFFER PAIR OF INPUT FILE AT     838000
+              A STRING)*                                                  839000
+              CALL MERGEIT (FOR DISK-TAPE MERGES M STRINGS TO ONE)*       840000
+              IS INPUT DISK FILE EMPTY (EOF SET ) NO GO TPB*              841000
+              REVERSE DISK INPUT AND OUTPUT AREAS BY EXCHANGING           842000
+              HEADERS*                                                    843000
+TPC:          CALL MCP TO RETURN CORE SPACE FOR DATA ARRAY*               844000
+              CALL FORGETDISK TO RETURN DISK SPACE FOR INPUT DISK         844100
+              SCRATCH FILE*                                               844200
+              ZERO MY STACK POINTERS AT                                   845000
+                   INHEAD,INFIB,BASE,ITOP AND BUFF (GOOFS OVERLAY IF      846000
+              I DONT)*                                                    847000
+              DO FALL OUT OF BLOCK COMUNICATE TO RETURN EVERY THING       848000
+              ELSE SET UP FOR MERGING*                                    849000
+              IS FM SET YES GO WRAPUP*                                    850000
+              RESTORE EOF AND MOREDATA FROM AC*                           851000
+              GO TO CALLSORT*                                             852000
+COL*                                                                      852100
+WRAPUP:                                                                   853000
+              CALL FORGETDISK TO RETURN DISK SPACE FOR  OUTPUT DISK       853100
+              SCRATCH FILE*                                               853200
+              WAS THIS DISK-DISK MERGE YES                                854000
+              GO TO POLYMERGE*                                            855000
+NOTE POLYMERE DOES TAPE-TAPE MERGE*                                       856000
+SORTDOE:      CLOSE AND RELEASE DISK OUTPUT FILE*                         857000
+              IS OUTPUT MEDIA A FILE NO GO XW*                            858000
+              CLOSE PROGRAMMERS OUTPUT FILE WITH LOCK*                    859000
+BOX           IF FILE IS DISK AND CALLER IS ALGOL MARK FILE               860000
+              AS PERMANENT FILE (ZERO FIB[8])*                            861000
+              GO XX*                                                      862000
+XW:           CALL OUTPUT PROCEDURE PASSING END-OF-FILE INDICATOR*        863000
+XX:           IS OUTCOUNT = INCOUNT YES GO XY*                            864000
+              SPO OUTCOUNT,INCOUNT, IOR 82..                              865000
+              (RECORDS READ ! RECORDS SORTED)*                            866000
+              DO FALL-OUT-OF-BLOCK COMMUNICATE TO RETURN EVERYTHING       867000
+              USED BY SORT*                                               868000
+              EXIT*                                                       869000
+END;                                                                      870000
+COMMENT FLOW BEGIN                                                        871000
+HEADING SUBROUTINE SECTION TAPE-TAPE MERGE PHASE..*                       873000
+NOTE THE FOLLOWING SUBROUTINES ARE IDENTICIAL WITH SORT PHASE..           874000
+              WAIT..                                                      875000
+              RELEASETAPE..                                               876000
+              TAPEWRITE..                                                 877000
+              WRITESTOPPER..                                              878000
+              OPENOUT..                                                   879000
+              FIRSTSELECT..                                               880000
+              LOWSELECT..*                                                881000
+COL*                                                                      882000
+ENTER*                                                                    882100
+NOTE SUBROUTINE TAPE READ READS TAPES PRODUCED BY DISK-TAPE MERGE*        883000
+TAPEREAD:                                                                 884000
+              CIIOD ~ TP[VLOW+1] (TOP I/O DESCRIPTOR OF TAPE TO           885000
+              BE READ)*                                                   886000
+              POINT PRFIB AT FIB FOR TAPE TO BE READ*                     887000
+              RECORD COUNTER PLUS ONE (PRFIB[9])*                         888000
+              IS BUFFER EMPTY (PRFIB[11]=0) NO GO XA*                     889000
+              POINT VECTOR[VLOW] AT NEXT RECORD IN BUFFER*                890000
+              GO RTNDR*                                                   891000
+XA:           Y~ FIRST WORD IN BUFFER*                                    892000
+              IS Y=0 YES GO XB*                                           893000
+TRA:                                                                      894000
+NOTE Y!0 FLAGS LAST BLOCK OF STRING OR DUMMY STRING*                      895000
+              SET DF TRUE (FLAGS STRING EXAUSTED)*                        896000
+              IS Y.[33:15] = PRFIB[9].[33:15] YES GO XB*                  897000
+              SPO IOR 85 (NUMBER OF RECORDS PUT IN STRING DONT AGREE      898000
+              WITH NUMBER OF RECORDS READ BACK)*                          899000
+XB:           CALL MCP TO READ NEXT BLOCK*                                900000
+TRX:          CALL WAIT FOR I/O COMPLETE*                                 901000
+              IS I/O DESCRIPTOR MARKED AS PRESENT YES GO XC*              902000
+              CALL FILE CONTROL PASSING "SORT-INPUT" FLAG..               903000
+              WILL DO REEL SWITCHING IF END-OF-REEL..                     904000
+              WILL SPO IOR 19 IF PARITY...                                905000
+              WILL RETURN EOF=TRUE IF END OF FILE*                        906000
+              IS EOF SET NO GO TRX*                                       907000
+XC:           IS EOF SET YES GO RTNDR*                                    908000
+              IS FIRST WORD IN BUFFER ZERO NO GO XD*                      909000
+              SET BLOCK COUNTER FROM TBO (RECORDS/BLOCK)*                 910000
+              GO XE*                                                      911000
+XD:           SET BLOCK COUNTER FROM [18:15] OF FIRST WORD IN BUFFER*     912000
+NOTE END OF STRING BLOCK MAY BE ONLY PARTIALLY FILLED*                    913000
+XE:           POINT TOP I/O DESCRIPTOR PAST FIRST WORD IN BUFFER*         914000
+              IS DF (END-OF-STRING) SET YES GO RTNDR*                     915000
+              IS BLOCK COUNTER ZERO YES GO TRA*                           916000
+              POINT VECTOR[VLOW] AT FIRST RECORD IN BUFFER*               917000
+RTNDR:        IS EOF OR DF SET NO GO XIT*                                 918000
+              POINT VECTOR[VLOW] AT HIGH-KEY RECORD*                      919000
+              SET DF AND EOF TO FALSE*                                    920000
+XIT:          EXIT*                                                       921000
+COL*                                                                      922000
+ENTER*                                                                    922100
+NOTE SUBROUTINE INREAD READS PROGRAMMERS MERGE FILES*                     923000
+INREAD:                                                                   924000
+              POINT CIIOD AT TAPE TO BE READ..                            925000
+              (CIIOD~TP[VLOW+1])*                                         926000
+              POINT PRFIB AT FIB OF FILE TO BE READ*                      927000
+              IS CALLER COBOL NO GO XA*                                   928000
+              CALL COBOL READ*                                            929000
+              SET TC[VLOW] (EOF FLAG) TO PARAMETER COBOL READ RETURNS*    930000
+              GO XB*                                                      931000
+COL*                                                                      931100
+XA:           CALL ALGOL READ*                                            932000
+              SET TC[VLOW] (EOF FLAG) TO PARAMETER ALCOL READ RETURNS*    933000
+XB:           IS EOF SET  (TC[VLOW]) YES GO XC*                           934000
+              POINT CORE ADDRESS OF VECTOR[VLOW] AT CORE ADDRESS OF       935000
+              TOP I/O DESCRIPTOR*                                         936000
+              GO XIT*                                                     937000
+XC:           POINT VECTOR[VLOW] AT HIGH-KEY RECORD*                      938000
+XIT:          EXIT*                                                       939000
+COL*                                                                      939100
+COL*                                                                      940000
+ENTER*                                                                    940100
+NOTE SUBROUTINE WRITEOUT SELECTS FILE TO BE WRITTEN DURING MERGE*         941000
+WRITEOUT:                                                                 942000
+              IS THIS FINAL MERGE YES GO XA*                              943000
+              CALL TAPEWRITE*                                             944000
+NOTE WRITES ON SCRATCH MERGE TAPES*                                       945000
+              GO XIT*                                                     946000
+XA:                                                                       947000
+NOTE WRITES ON PROGRAMMERS OUTPUT MEDIA*                                  948000
+              INCREMENT OUTCOUNT BY ONE*                                  949000
+              IS OUPUT MEDIA A PROCEDURE NO GO XB*                        950000
+              CALL OUTPUT PROCEDURE*                                      951000
+NOTE OUTPUT RECORD IS IN COMMON ARRAY OUTFIL*                             952000
+              GO XIT*                                                     953000
+XB:                                                                       954000
+NOTE OUTPUT MEDIA IS AS A FILE*                                           955000
+              IS CALLER COBOL NO GO XC*                                   956000
+              CALL COBOL WRITE ROUTINE PASSING FILE OUTFIL*               957000
+              GO XIT*                                                     958000
+XC:           CALL ALGOL WRITE ROUTINE PASSING OUTFIL*                    959000
+              IS OUTPUT FILE A DISK FILE NO GO XIT*                       960000
+              DOES PARAMETER RETURNED BY ALGOL WRITE INDICATE             961000
+              DISK OUTPUT FILE IS FULL NO GO XIT*                         962000
+              SPO IOR 83 AND TERMINATE*                                   963000
+XIT:          EXIT*                                                       964000
+COL*                                                                      965000
+ENTER*                                                                    965100
+NOTE SUBROUTINE MERGEIT MERGES M STRINGS (OR TAPES) TO A SINGLE STRING    966000
+              (OR TAPE)*                                                  967000
+MERGEIT:                                                                  968000
+MIC:          CALL FIRSTSELECT*                                           969000
+              GO MIE*                                                     970000
+MID:          LOWSELECT*                                                  971000
+MIE:          DOES VLOW POINT AT HIGH-KEY RECORD YES GO XB*               972000
+              MOVE RECORD POINTED AT BY VECTOR[VLOW] TO BUFFER            973000
+              POINTED AT BY COIOD*                                        974000
+              CALL WRITEOUT*                                              975000
+              IS THIS MERGE-ONLY NO GO XA*                                976000
+NOTE PROGRAMMER USING MERGE*                                              977000
+              CALL INREAD*                                                978000
+              GO MID*                                                     979000
+XA:                                                                       980000
+NOTE TAPE-TAPE MERGE PORTION OF SORT*                                     981000
+              CALL TAPEREAD*                                              982000
+              GO MID*                                                     983000
+XB:           IS ALL VECTOR[I] POINTING AT HIGH-KEY RECORD YES GO XIT*    984000
+              POINT VLOW AT I*                                            985000
+              GO MIE*                                                     986000
+XIT:          EXIT*                                                       987000
+COL*                                                                      988000
+END;                                                                      989000
+BEGIN COMMENT FLOW                                                        990000
+HEADING TAPE-TAPE MERGE AND MERGE-ONLY SECTION*                           992000
+START:                                                                    993000
+              CUT STACK SO TOP-OF-STACK IS LOCATION OF CIIOD*             994000
+NOTE THIS CODE IN ADDITION TO THE WAY MCP SETS UP STACK ON GO TO IN       995000
+         SORT SECTION RESULTS IN BOTH SECTIONS HAVING THE SAME STACK.     996000
+         THIS MEANS THAT ALL STACK DECARATIONS IN THESE TWO SECTIONS      997000
+         MUST BE IDENTICIAL AS TO NUMBER*                                 998000
+              SET TM1 TO NUMBER-OF-TAPES MINUS 1*                         999000
+              SET MS(MATRIX SIZE) TO A POWER-OF-TWO WHICH IS EQUAL TO    1000000
+              OR GREATER THEN THE NUMBER OF TAPES TO BE MERGED*          1001000
+              IS THIS MERGE-ONLY NO GO XTTT*                             1002000
+NOTE MERGE ONLY*                                                         1003000
+              POINT TP AT FIRST MERGE TAPE*                              1004000
+              CALL MCP TO GET CORE STORAGE FOR VECTOR ARRAY. ONE         1005000
+              DIMESION OF SIZE  (2|M)-1*                                 1006000
+              CALL MCP TO GET CORE STORGE FOR HIGH-KEY RECORD*           1007000
+              CALL HIVALU TO FILL HIGH-KEY RECORD*                       1008000
+              SET VLOW TO ZERO*                                          1009000
+XA:           SET TAPE[VLOW+1] TO INPUT*                                 1010000
+              CALL FILE CONTROL TO OPEN TAPE[VLOW+1]*                    1011000
+              IS TAPE[VLOW+1] OPTIONAL..                                 1012000
+              (AS INDICATED BY MCP) NO GO XB*                            1013000
+              SET EOF FLAG (TC[VLOW) TO TRUE*                            1014000
+              GO XC*                                                     1015000
+XB:           CALL WAIT FOR TAPE TO BE OPENED*                           1016000
+BOX           IF CALLER IS COBOL CALL INREAD TO READ FIRST RECORD*       1017000
+XC:           ALL TAPES OPENED YES GO XD*                                1018000
+              POINT VLOW AT NEXT TAPE* GO XA*                            1019000
+XD:           SET I TO ZERO*                                             1020000
+XDA:          IS I > TM1 YES GO XE*                                      1021000
+              IS EOF FLAG SET  FOR TAPE[I]..                             1022000
+              (TC[I]=1) YES GO XE*                                       1023000
+              POINT VECTOR[I] AT HIGH-KEY RECORD*                        1024000
+              GO XF*                                                     1025000
+COL*                                                                     1025100
+XE:           POINT VECTOR[I] AT FIRST RECORD IN BUFFER OF TAPE[I]*      1026000
+              IS I } MS-1 NO GO XDA*                                     1027000
+              CALL OPENOUT (OPENS PROGRAMMERS OUTPUT MEDIA)*             1028000
+              POINT COIOD AT OUTPUT AREA*                                1029000
+              SET STPP TO SIZE OF VECTOR ARRAY*                          1030000
+              CALL MERGEIT*                                              1031000
+              GO TO SORTDONE*                                            1032000
+COL*                                                                     1033000
+XTTT:                                                                    1034000
+NOTE INITIALIZATION OF TAPE-TAPE MERGE AFTER DISK-TAPE SORT*             1035000
+NOTE WRITE OUT DUMMY STRING TO GET PERFECT DISTRIBUTION ON EACH SCRATCH  1036000
+              MERGE TAPE*                                                1037000
+              POINT I AT LAST SCRATCH OUTPUT TAPE(INDEX IS COT)*         1038000
+XTA:          IS NUMBER OF STRINGS ON TAPE[I] = NUMBER DESIRED..         1039000
+              (TN[I]=TC[I]) YES GO XTC*                                  1040000
+              IS I=COT YES GO XTB*                                       1041000
+              CALL MCP TO POINT COMMON BUFFERS AT TAPE[I] AND MAKE       1042000
+              TAPE[COT] LOOK LIKE REWOUND WITH NO BUFFERS*               1043000
+              SET COT = I*                                               1044000
+COL*                                                                     1044100
+XTB:          CALL WRITESTOPPER TO WRITE DUMMY STRINGS ON TAPE[I]        1045000
+              UNTIL TAPE[I] CONTAINS TC[I] STRINGS*                      1046000
+XTC:          IS TAPE JUST SET UP= TAPE[TM1] YES GO XTD*                 1047000
+              POINT I AT NEXT TAPE*                                      1048000
+              GO TO XTA*                                                 1049000
+XTD:          REWIND ALL SCRATCH TAPES*                                  1050000
+              CALL MCP TO GET STORAGE FOR VECTOR ARRAY. ONE DEMESTON     1051000
+              OF SIZE (2|M)-1*                                           1052000
+              POINT STPP AT SIZE OF VECTOR ARRAY*                        1053000
+              CALL MCP TO GET STORAGE FOR HIGH-KEY RECORD*               1054000
+              CALL HIVALU TO FILL IN HIGH-KEY RECORD*                    1055000
+              SET I TO ONE*                                              1056000
+XTE:          SET TAPE[I] TO INPUT*                                      1057000
+              CALL MCP TO OPEN TAPE[I]*                                  1058000
+              CALL WAIT FOR TAPE[I] TO BE OPENED*                        1059000
+              POINT I/O DESCRIPTOR FOR TAPE[I] PAST TAG WORD             1060000
+              IN FIRST WORD OF BUFFER*                                   1061000
+              IS I = TM1 NO GO XTE*                                      1062000
+TPB:          SET FM TRUE*                                               1063000
+              SET FM FALSE IF ANY TAPE CONTAINS MORE THEN ONE STRING..   1064000
+              (TN[I]>1)*                                                 1065000
+              IS FM SET NO GO XTF*                                       1066000
+              CALL OPENOUT (SETS UP PROGRAMMERS OUTPUT MEDIA)*           1067000
+              POINT COIOD AT OUTPUT AREA*                                1068000
+              GO TPE*                                                    1069000
+XTF:          POINT COIOD AT TP[NT] (CURRENT OUTPUT TAPE)*               1070000
+              SET TAPE[NT] TO OUTPUT*                                    1071000
+              CALL MCP TO OPEN TAPE[NT]*                                 1072000
+              CALL WAIT FOR TAPE[NT] TO BE OPENED*                       1073000
+              POINT I/O DESCRIPTOR PAST TAG WORD IN FIRST WORD OF        1074000
+              BUFFER*                                                    1075000
+TPE:          SET I TO ZERO*                                             1076000
+XTFA:         IS I > TM1 NO GO XTG*                                      1077000
+              SET EOF TO TRUE*                                           1078000
+              GO TPF*                                                    1079000
+XTG:          IS EOF BIT IN I/O DESCRIPTOR TP[I+1] ON NO GO XTH*         1080000
+              SET EOF TO TRUE                                            1081000
+              GO TPF*                                                    1082000
+XTH:          X~ TAG WORD FROM FIRST WORD IN BUFFER OF TAPE[I+1]*        1083000
+              IS X=0 YES GO TPF*                                         1084000
+              IS X.[33:15] = 0..                                         1085000
+              (DUMMY STRING) NO GO TPF*                                  1086000
+              SET EOF TO TRUE*                                           1087000
+TPF:          DOES TAPE CONTAIN ANY STRINGS YES GO XTJ*                  1088000
+XTI:          POINT VECTOR[I] AT HIGH-KEY RECORD*                        1089000
+              GO XTK*                                                    1090000
+XTJ:          IS EOF SET YES GO XTI*                                     1091000
+              POINT VECTOR[I] AT FIRST RECORD IN BUFFER OF TAPE[I+1]*    1092000
+XTK:          IS I = MS-1 YES GO XTL*                                    1093000
+              I~I+1*                                                     1094000
+              GO TO XTFA*                                                1095000
+XTL:          CALL MERGEIT*                                              1096000
+NOTE          HAVE MERGED ONE STRING OFF EACH TAPE*                      1097000
+              IS FM SET  YES GO TO SORTDONE*                             1098000
+              WRITESTOPPER*                                              1099000
+              (TN[I] ~ TN[I]-1*                                          1100000
+              IS ANY TAPE EMPTY..                                        1101000
+              (TN[I]=0) NO GO TPE*                                       1102000
+NOTE TAPE EMPTY, I POINTS AT WHICH ONE*                                  1103000
+              REWIND CURRENT OUTPUT TAPE*                                1104000
+              CLOSE AND PURGE THE EMPTY INPUT TAPE(TAPE[I])*             1105000
+              MOVE STRING COUNTER FROM TN[NT] TO TN[I]*                  1106000
+              SET TN[NT] TO ZERO*                                        1107000
+              SET TAPE[NT] TO INPUT (WAS OUTPUT)*                        1108000
+              DECREMENT STRING COUNTER FOR EACH TAPE BY 1*               1109000
+              CALL MCP TO OPEN TAPE[NT] (WAS OUTPUT NOW INPUT)*          1110000
+              CALL WAIT FOR TAPE TO BE OPENED*                           1111000
+              INDEX I/O DESCRIPTOR PAST TAG WORD IN BUFFER*              1112000
+              EXCHANGE POINTERS AT TP[NT] AND TP[I] SO THAT TP[NT]       1113000
+              ALWAYS POINT AT THAT TAPE WHICH IS TO BE OUTPUT*           1114000
+              GO TO TPD*                                                 1115000
+COL*                                                                     1116000
+SORTDONE:                                                                1117000
+              IS THIS TAPE-TAPE MERGE FOR SORT NO GO XTN*                1118000
+              IS THIS MERGE-ONLY NO GO XTM*                              1119000
+              CLOSE WITH LOCK ALL MERGE TAPES*                           1120000
+              GO XTN*                                                    1121000
+XTM:          CLOSE WITH PURGE ALL SORT SCRATCH TAPES*                   1122000
+              CALL MCP TO CLOSE WITH RELEASE SCRATCH DISK OUTPUT FILE*   1123000
+XTN:          IS OUTPUT MEDIA A PROCEDURE NO GO XTO*                     1124000
+              CALL OUTPUT PROCEDURE PASSING END-OF-SORT FLAG*            1125000
+              GO XTP*                                                    1126000
+XTO:          CALL FILE CONTROL TO CLOSE-LOCK PROGRAMMERS OUTPUT FILE*   1127000
+BOX           IF CALLER IS ALGOL, MARK OUTPUT FILE AS PERMANENT..        1128000
+              (ZERO FILES FIB[8])*                                       1129000
+XTP:          IS THIS MERGE ONLY YES GO XTQ*                             1130000
+              IS OUTCOUNT = INCOUNT YES GO XTQ*                          1131000
+          SPO IOR 82 PASSING INCOUNT AND OUTCOUNT*                       1132000
+XTQ:          EXECUTE FALL-OUT-OF-BLOCK COMMUNICATE TO RETURN            1133000
+              MERGE CORE STORAGE*                                        1134000
+              EXIT*                                                      1135000
+END;                                                                     1136000
+         END*                                                            1137000
+COMMENT FLOW* QUIT*;                                                     1138000

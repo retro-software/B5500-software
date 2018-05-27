@@ -3,22 +3,31 @@
 
 # Explicitly declare text files you want to always be normalized and converted
 # to native line endings on checkout.
-*.BAS   text
+*.*_m   text
+*.alg   text
+*.bas   text
 *.bat   text
 *.card  text
 *.cmd   text
+*.cob   text
 *.css   text
+*.dat   text
+*.for   text
+*.gtl   text
 *.html  text
 *.js    text
 *.lst   text
+*.mca   text
 *.md    text
 *.pt    text
+*.sno   text
 *.svg   text
 *.tape  text
 *.txt   text
 *.vbs   text
+*.wipl  text
 *.wsf   text
-*.*_m   text
+*.xal   text
 
 .gitignore
 .gitattributes
@@ -26,7 +35,7 @@
 # Denote all files that are truly binary and should not be modified.
 *.bcd   binary
 *.cod   binary
-*.DISK  binary
+*.disk  binary
 *.doc   binary
 *.docx  binary
 *.gif   binary
@@ -35,6 +44,7 @@
 *.pdf   binary
 *.png   binary
 *.ppt   binary
+*.tap   binary
 *.ttf   binary
 *.woff  binary
 *.xls   binary

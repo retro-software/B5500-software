@@ -1,0 +1,119 @@
+*  THIS IS A PROGRAM TO PRINT DOCUMENTATION FILES THAT ARE STORED       00001000
+*  IN DISK FILES (WITH 10,30 BLOCKING).  VARIOUS RECORDS OF THE         00002000
+*  FILE CAN BE "CONTROL CARDS" STARTING WITH "%" AND FOLLOWED BY        00003000
+*  A 2-CHAR CONTROL WORD, WITH OTHER PARAMETERS DEPENDING ON THE        00004000
+*  SORT OF CARD.  THE CONTROL WORDS AVAILABLE ARE INDICATED IN          00005000
+*  COMMENTS PRECEDING THE CODE THAT HANDLES THEM.                       00006000
+*                                                                       00007000
+*                                                                       00007100
+*  DELETE THIS CARD TO GENERALIZE TO ANY FILE:                          00007200
+-SET FILENAME "SNOBOL/MANUAL"                                           00007300
+*                                                                       00007400
+*  INITIALIZATION OF GLOBAL CONSTANTS:                                  00008000
+*                                                                       00009000
+-SET HEADER "                                                          "00010000
+-SET PAGESIZE   "78"   AT 8 LINES/INCH; 58 AT 6 L/I.                    00011000
+-SET PAGENO     "0"                                                     00012000
+-SET SECTION    "        "                                              00013000
+-SET SPACING    "1"                                                     00014000
+-SET OPS        "/PA/HE/SP/CP/PL/SE/CH/AP/"                             00015000
+*                                                                       00016000
+*  ASSIGN INPUT FILE:                                                   00017000
+FILL FILENAME  *A* "/" *B*         :F(NOFILE)                           00018000
+   UNEQL(A) UNEQL(B)               :F(NOFILE)                           00019000
+   FILL("CARD",A,B,"12")           :(PRINT)                             00020000
+*                                                                       00021000
+NOFILE TELETYPE = "{!FILE: "       :F(ERR)                              00022000
+   TELETYPE  *FILENAME* = "{!"     :(FILL)                              00023000
+*                                                                       00024000
+ERR PRINT = "**NO INPUT FILE."   :(END)                                 00025000
+PRINT PRINT = PAGE()                                                    00026000
+*                                                                       00027000
+*  INPUT THE NEXT CARD-IMAGE:                                           00028000
+IN CARD  *C/"72"*                  :F(EOF)                              00029000
+   C  ANCHOR() "%" *A/"2"*         :F(OUT)                              00030000
+   OPS  "/" A "/"                  :S($A)                               00031000
+*                                                                       00032000
+*  OUTPUT CARD-IMAGE:                                                   00033000
+OUT PRINT = "        " C                                                00034000
+   LINES = .LE(LINES,PAGESIZE) LINES + SPACING   :S(IN)F(PAGE)          00035000
+* IF SOME BLANK LINES LEFT ON PAGE, EJECT:                              00036000
+D1 PRINT = .LT(LINES,PAGESIZE)  PAGE()           :(HEAD)                00037000
+*                                                                       00038000
+************************************************************************00039000
+*                                                                       00040000
+*  CONTROL CARDS:                                                       00041000
+*                                                                       00042000
+********************                                                    00043000
+*  %PA <INTEGER>                                                        00044000
+*  THIS DOES A PAGE EJECT.  IF <INTEGER> IS PRESENT, IT BECOMES         00045000
+*  THE NEW PAGE NUMBER.                                                 00046000
+PA C  " " *I* " "                                                       00047000
+   UNEQL(I) .NUM(I)                 :F(PAGE)                            00048000
+   PAGENO = I                                                           00049000
+*  WRITE PAGE AND HEADER:                                               00050000
+PAGE PRINT = PAGE()                                                     00051000
+HEAD PRINT = "        " HEADER "  " SECTION " PAGE "  PAGENO            00052000
+   PAGENO = PAGENO + "1"                                                00053000
+   LINES = SPACING | "2"            :(IN)                               00054000
+*                                                                       00055000
+********************                                                    00056000
+*  %HE " <STRING> "                                                     00057000
+*  THIS SETS THE NEW HEADER TO <STRING>.  THIS WILL THEN BE             00058000
+*  PRINTED AT THE TOP OF EACH PAGE OF OUTPUT.                           00059000
+HE C QUOTE *HEADER* QUOTE                                               00060000
+HE1 HEADER  =  .LT(SIZE(HEADER),"64") HEADER " "   :S(HE1)F(IN)         00061000
+*                                                                       00062000
+********************                                                    00063000
+*  %SP <INTEGER>                                                        00064000
+*  THIS SETS SPACING TO <INTEGER>.                                      00065000
+SP C  " " *I* " "                                                       00066000
+   UNEQL(I) .NUM(I)                 :F(IN)                              00067000
+   SPACING = I                                                          00068000
+   SPACE("PRINT",I)                :(IN)                                00069000
+*                                                                       00070000
+********************                                                    00071000
+*                                                                       00072000
+*  %CP <INTEGER>                                                        00073000
+*  IF THERE ARE LESS THAN <INTEGER> LINES LEFT ON THE PAGE,             00074000
+*  A PAGE EJECT IS DONE.                                                00075000
+CP C " " *I* " "                                                        00076000
+   UNEQL(I) .NUM(I)                 :F(IN)                              00077000
+   .GT(I|SPACING+LINES,PAGESIZE)    :S(PAGE)F(IN)                       00078000
+*                                                                       00079000
+*                                                                       00080000
+********************                                                    00081000
+*  %PL <INTEGER>   SETS THE PAGE LENGTH                                 00082000
+PL C  " " *I* " "                                                       00083000
+   UNEQL(I) .NUM(I)              :F(IN)                                 00084000
+   PAGESIZE = I                  :(IN)                                  00085000
+*                                                                       00086000
+*                                                                       00087000
+********************                                                    00088000
+*  %SE " <LIT> "   SETS SECTION FIELD TO <LIT>                          00089000
+*  %SE <INTEGER>   SETS SECTION FIELD TO "SECTION " <INTEGER>           00090000
+SE C  QUOTE *SECTION* QUOTE        :S(IN)                               00091000
+   C  " " *I* " "                                                       00092000
+   UNEQL(I) .NUM(I)              :F(IN)                                 00093000
+   SECTION = "SECTION " I        :(IN)                                  00094000
+*                                                                       00095000
+*                                                                       00096000
+*                                                                       00097000
+********************                                                    00098000
+* %AP <I>  SETS SECTION TO "APPENDIX " <I>.                             00099000
+AP C " " *I* " "                                                        00100000
+   UNEQL(I)                     :F(IN)                                  00101000
+   SECTION = "APPENDIX " I      :(IN)                                   00102000
+*                                                                       00103000
+*                                                                       00104000
+********************                                                    00105000
+* %CH <I>   SETS SECTION TO "CHAPTER " <I>.                             00106000
+CH C  " " *I* " "                                                       00107000
+   UNEQL(I)                     :F(IN)                                  00108000
+   SECTION = "CHAPTER " I       :(IN)                                   00109000
+*                                                                       00110000
+*                                                                       00111000
+********************                                                    00112000
+EOF PRINT = PAGE()                                                      00113000
+   TELETYPE = "{!DONE{!!"                                               00114000
+END                                                                     00115000

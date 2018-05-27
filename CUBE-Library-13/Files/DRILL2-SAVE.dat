@@ -1,0 +1,29 @@
+ QU COURSE DRILL2, A QUICK DRILL IN ADDITION, SUBTRACTION,              00000100
+    MULTIPLICATION AND DIVISION.                                        00000200
+    5+6=                                                                00000300
+ CA 11                                                                  00000400
+ UN TRY 5+6 AGAIN                                                       00000500
+ QU 8+11=                                                               00000600
+ CA 19                                                                  00000700
+ UN TRY 8+11 AGAIN                                                      00000800
+ QU 3+6=                                                                00000900
+ CA 9                                                                   00001000
+ UN TRY 3+6 AGAIN                                                       00001100
+ QU 7 X 9                                                               00001200
+ CA 63                                                                  00001300
+ UN TRY 7 X 9 AGAIN                                                     00001400
+ QU 56/8=                                                               00001500
+ CA 7                                                                   00001600
+ UN TRY 56/8 AGAIN                                                      00001700
+ QU 17-7=                                                               00001800
+ CA 10                                                                  00001900
+ UN TRY 17-7 AGAIN                                                      00002000
+ QU 11-5=                                                               00002100
+ CA 6                                                                   00002200
+ UN TRY 11-5 AGAIN                                                      00002300
+ QU 23-9=                                                               00002400
+ CA 14                                                                  00002500
+ TY                                                                     00002600
+    THAT IS THE END OF THIS COURSE.                                     00002700
+ UN TRY 23-9 AGAIN                                                      00002800
+ 99                                                                     00002900

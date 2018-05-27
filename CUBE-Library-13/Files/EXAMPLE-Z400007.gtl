@@ -1,0 +1,32 @@
+BEGIN                                                                   00000100
+COMMENT THIS PROGRAM MERGES TWO CARD IMAGE TAPES ACCORDING TO           00000200
+      SEQUENCE NUMBER.                                                  00000240
+                                                                        00000250
+      FIRST TAPE ALREADY HAS SEQUENCE NUMBERS - SEQUENCE NUMBERS        00000300
+      FOR SECOND TAPE SPECIFIED AT INTERVALS BY CARD IMAGES             00000350
+      WHICH BEGIN WITH A "$" CONTAINING STARTING SEQUENCE NUMBER        00000400
+      AND INCREMENTAL VALUE.  IF COLUMN POSITIONS 71 AND 72             00000450
+      ON UNSEQUUNCED CARDS ARE BLANK, "%A" IS INSERTED;                 00000500
+                                                                        00000600
+FILE IN TAPE1 (2,56,10);                                                00000700
+FILE IN TAPE2 (2,56,10);                                                00000800
+SAVE FILE OUT TAPE3 (2,56,10,SAVE 10);                                  00000900
+STRING CARD1(72,SEQ1(8)),                                               00001000
+      CARD2(72,SEQ2(8), NEWSEQ(INCR(8),SEQ(8)));                        00001100
+LABEL L1,L2,EOF;                                                        00001200
+L1:   READ(TAPE1,10,CARD1)[EOF];                                        00001300
+L2:   READ(TAPE2,10,CARD2);                                             00001400
+      IF CARD2(0,1) = "$" THEN                                          00001500
+            BEGIN NEWSEQ := CARD2(64,16); GO TO L2 END;                 00001600
+      SEQ2 := SEQ;  COMMENT SET SEQ2 TO CURRENT SEQ NO;                 00001700
+      SEQ := + INCR; COMMENT INCREMENT CURRENT SEQ NO;                  00001800
+      WHILE SEQ1 LSS SEQ2 DO                                            00001900
+            BEGIN                                                       00002000
+            WRITE(TAPE3,10,CARD1);                                      00002100
+            READ(TAPE1,10,CARD1);                                       00002200
+            END;                                                        00002300
+      IF CARD2(70,2) = "  " THEN CARD2(70,2) := "%A";                   00002400
+      WRITE(TAPE3,10,CARD2);                                            00002500
+      IF SEQ1 = SEQ2 THEN GO TO L1 ELSE GO TO L2;                       00002600
+EOF:                                                                    00002700
+END.                                                                    00002800

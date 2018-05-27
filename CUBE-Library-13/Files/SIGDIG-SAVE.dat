@@ -1,0 +1,70 @@
+ RD SIGNIFICANT DIGITS DETERMINE THE PRECISION OF THE                   00000100
+    PRODUCT OF TWO MEASURES.                                            00000200
+    IF YOU WANT TO LEARN MORE ABOUT SIGNIFICANT DIGITS,                 00000300
+    TYPE A LEFT-POINTING ARROW.                                         00000400
+ LA DUMMY                                                               00000500
+ QU THERE ARE FIVE BASIC RULES IN DETERMINING THE NUMBER                00000600
+    OF SIGNIFICANT DIGITS IN A GIVEN MEASURE.  FOUR OF                  00000700
+    THEM ARE CONCERNED WITH ZEROES.  TWO OF THESE RULES                 00000800
+    YOU WILL LEARN IN THIS COURSE.                                      00000900
+    THE FIRST THING TO LEARN IS THAT ALL NON-ZERO DIGITS                00001000
+    ARE SIGNIFICANT.  FOR INSTANCE, THE NUMBER 625                      00001100
+    HAS 3 SIGNIFICANT DIGITS.                                           00001200
+    HOW MANY SIGNIFICANT DIGITS DOES THE NUMBER 5289 HAVE.              00001300
+ CA 4                                                                   00001400
+ CB FOUR                                                                00001500
+ TY VERY GOOD                                                           00001600
+ WA 5289                                                                00001700
+ TY WE WANT THE NUMBER OF DIGITS, NOT THE NUMBER ITSELF.                00001800
+ UN NO, THAT IS NOT RIGHT. TRY AGAIN.                                   00001900
+ UN IF YOU GIVE UP, TYPE HELP.                                          00002000
+ QU HOW MANY SIGNIFICANT DIGITS DOES 524.6 HAVE.                        00002100
+ CA 4                                                                   00002200
+ CB FOUR                                                                00002300
+ TY VERY GOOD. ALL NON-ZERO DIGITS ARE COUNTED IN A                     00002400
+    DECIMAL NUMBER TOO.                                                 00002500
+ WA 3                                                                   00002600
+ WB 2                                                                   00002700
+ WB 1                                                                   00002800
+ TY NO. YOU SHOULD COUNT EVERY NON-ZERO DIGIT. GUESS AGAIN.             00002900
+ UN THERE ARE ONLY FOUR DIGITS IN THE NUMBER AND ALL ARE                00003000
+    NON-ZERO. TRY AGAIN.                                                00003100
+ QU I THINK YOU HAVE THE RIGHT IDEA.  NOW LET US TALK                   00003200
+    ABOUT ZEROES.                                                       00003300
+    ZEROES ARE ALWAYS SIGNIFICANT IF:                                   00003400
+      THEY ARE BETWEEN TWO NON-ZERO DIGITS.  FOR EXAMPLE,               00003500
+      206 HAS 3 SIGNIFICANT DIGITS, AND 3005 HAS FOUR                   00003600
+      SIGNIFICANT DIGITS.                                               00003700
+      THIS IS ALSO TRUE OF DECIMALS.  THE DECIMAL NUMBER                00003800
+      60.03 HAS 4 SIGNIFICANT DIGITS.                                   00003900
+                                                                        00004000
+      THE ZEROES APPEAR AT THE END OF A DECIMAL NUMBER.                 00004100
+      6.0 IMPLIES THAT THE MEASUREMENT WAS TAKEN TO THE                 00004200
+      NEAREST TENTH, SO THE DIGIT IN TENTHS PLACE IS CON-               00004300
+      SIDERED A SIGNIFICANT DIGIT.  THEREFORE, 6.0 HAS                  00004400
+      2 SIGNIFICANT DIGITS.                                             00004500
+    HOW MANY SIGNIFICANT DIGITS ARE THERE IN THE MEASURE                00004600
+    604.                                                                00004700
+ CA 3                                                                   00004800
+ CB THREE                                                               00004900
+ TY VERY GOOD.                                                          00005000
+ WA 2                                                                   00005100
+ TY YOU FORGOT TO COUNT THE ZERO. GUESS AGAIN.                          00005200
+ UN GIVE IT ONE MORE TRY.                                               00005300
+ QU HOW MANY SIGNIFICANT DIGITS DOES THE MEASURE 6,042.00               00005400
+    HAVE.                                                               00005500
+ CA 6                                                                   00005600
+ TY EXCELLENT.  THAT IS ENOUGH FOR NOW.  YOU WERE VERY                  00005700
+    SWEET TO TAKE THE COURSE.  GOODBYE.                                 00005800
+ WA 3                                                                   00005900
+ TY YOU MUST ALSO CONSIDER THE ZEROES. TRY AGAIN.                       00006000
+ WA 4                                                                   00006100
+ TY REMEMBER. ZEROES AT THE END OF DECIMAL NUMBERS ARE                  00006200
+    SIGNIFICANT.                                                        00006300
+ WA 5                                                                   00006400
+ TY YOU FORGOT TO COUNT THE ZERO BETWEEN THE 6 AND THE 4.               00006500
+    GUESS AGAIN.                                                        00006600
+ UN YOU HAVE ONE MORE TRY.                                              00006700
+ UN YOU WILL BE TAKEN BACK FOR A REVIEW                                 00006800
+ BR DUMMY                                                       0000000400006900
+ 99                                                                     00007000

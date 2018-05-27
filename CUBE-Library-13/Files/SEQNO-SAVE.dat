@@ -1,0 +1,98 @@
+ RD SEQUENCES OF NUMBERS ARE LISTS OF NUMBERS THAT ARE MADE             00000100
+    UP WITH A PATTERN; IF YOU LOOK AT THE FIRST FEW NUMBERS,            00000200
+    AND CAN FIGURE OUT HOW THE NUMBERS ARE RELATED TO EACH              00000300
+    OTHER, OR HOW EACH NUMBER IS FORMED FROM THOSE THAT GO              00000400
+    BEFORE IT, YOU HAVE CRACKED THE "CODE" OF THE SEQUENCE.             00000500
+                                                                        00000600
+    FOR EXAMPLE, THE SEQUENCE 2,4,6,8... IS FORMED BY ADDING            00000700
+    TWO TO EACH NUMBER TO GET THE FOLLOWING NUMBER, OR YOU MAY          00000800
+    THINK OF IT AS COUNTING BY TWO.                                     00000900
+    PRESS THE LEFT ARROW KEY WHEN YOU ARE READY TO CONTINUE.            00001000
+ QU DO YOU KNOW WHAT A SEQUENCE IS.                                     00001100
+ CA NO                                                                  00001200
+ CB I DO NOT                                                            00001300
+ TY IN A SEQUENCE THERE IS A RULE FOR FORMING EACH NEW                  00001400
+    NUMBER FROM THE PRECEDING NUMBERS, AND YOU HAVE TO FIND             00001500
+    THE RULE.  FOR EXAMPLE IN THIS SEQUENCE 1, 2, 4, 8, 16, ...         00001600
+    EACH NUMBER IS OBTAINED FROM THE PRECEDING NUMBER BY                00001700
+    DOUBLING IT.  SOMETIMES THE RULE FOR FORMING THE SEQUENCE           00001800
+    MAY BE STATED IN VARIOUS WAYS--THE EXAMPLE HERE MAY BE              00001900
+    THOUGHT OF AS POWERS OF 2.                                          00002000
+ CA YES                                                                 00002100
+ CB OF COURSE                                                           00002200
+ BR PROB3                                                       0000000T00002300
+ UN PLEASE TYPE YES OR NO                                               00002400
+ LA BACK                                                                00002500
+ QU THE RULE FOR FORMING THE SEQUENCE 1, 2, 3, 4, 5,...                 00002600
+    IS ADD ONE.  WRITE A SEQUENCE STARTING WITH ONE IN                  00002700
+    WHICH YOU DOUBLE EACH NUMBER AND ADD ONE TO GET THE                 00002800
+    NEXT NUMBER.  WRITE THE FIRST THREE TERMS, SEPARATING               00002900
+    TERMS WITH COMMAS.                                                  00003000
+ CA 1, 3, 7                                                             00003100
+ CB 1,3,7                                                               00003200
+ CB 1,3,7,                                                              00003300
+ CB 1, 3, 7,                                                            00003400
+ CB ONE, THREE, SEVEN,                                                  00003500
+ CB ONE, THREE, SEVEN                                                   00003600
+ TY VERY GOOD.  THE FIRST THREE NUMBERS ARE 1,3,7, AND IF               00003700
+    SEVERAL MORE NUMBERS WERE GIVEN THE SEQUENCE WOULD LOOK             00003800
+    LIKE THIS 1, 3, 7, 15, 31, 63, 127, ...                             00003900
+    THREE DOTS ARE PLACED AT THE END OF THE SEQUENCE TO SHOW            00004000
+    THAT IT CONTINUES IN THE SAME PATTERN WITHOUT END.                  00004100
+    ANOTHER EXAMPLE IS* 1,1,2,3,5,8,13,...                              00004200
+    THERE ARE ESPECIALLY INTERESTING SEQUENCES, LIKE THE                00004300
+    ONE ABOVE WHICH IS CALLED A FIBONACCI SEQUENCE AND HAS              00004400
+    MANY INTERPRETATIONS IN NATURE.  HOWEVER, FOR THE PRESENT           00004500
+    WE JUST WANT TO CREATE PATTERNS AND SEE HOW YOU                     00004600
+    UNDERSTAND THEM.                                                    00004700
+ UN WRITE THE FIRST THREE NUMERALS IN THE SEQUENCE; EACH                00004800
+    NUMERAL FOLLOWED BY A COMMA AND A SPACE.                            00004900
+ UN YOU WILL BE TAKEN BACK FOR A REVIEW OF SEQUENCES                    00005000
+ BR BACK                                                        0000000H00005100
+ LA PROB3                                                               00005200
+ QU HERE IS AN INTERESTING ONE: 1, 4, 9, 16, 25, 36, ...                00005300
+    WHAT IS THE NEXT NUMBER IN THE SEQUENCE.                            00005400
+ CA 49                                                                  00005500
+ CB FORTY-NINE                                                          00005600
+ CB FORTY NINE                                                          00005700
+ TY VERY GOOD.  THE PATTERN CAN BE THOUGHT OF AS TAKING THE             00005800
+    COUNTING NUMBERS, 1, 2, 3, 4, 5, 6, AND SO ON AND                   00005900
+    MULTIPLYING EACH NUMBER BY ITSELF OR AS SQUARING IT.                00006000
+ UN TRY AGAIN.  LOOK AT THE NUMBERS FOR A PATTERN.                      00006100
+ QU HERE IS ONE THAT IS VERY CLOSELY RELATED TO THE ONE                 00006200
+    ABOVE. 1, 8, 27, 64, ...  WHAT IS THE NEXT NUMBER                   00006300
+    IN THE SEQUENCE.                                                    00006400
+ CA 125                                                                 00006500
+ TY EXCELLENT.  I AM SURE THAT YOU SEE THE PATTERN IS TO TAKE           00006600
+    EACH COUNTING NUMBER AS A FACTOR THREE TIMES; OR TO CUBE            00006700
+    EACH COUNTING NUMBER.                                               00006800
+ UN TRY AGAIN.                                                          00006900
+ UN YOU DID NOT LOOK AT THE NUMBERS; THE FIRST ONE IS 1,                00007000
+    THE SECOND NUMBER IS 8 WHICH EQUALS 2X2X2, THE THIRD                00007100
+    NUMBER IS 27, WHICH IS 3X3X3, THE FOURTH NUMBER IS                  00007200
+    64 WHICH IS 4X4X4.  NOW WHAT IS THE FIFTH NUMBER.                   00007300
+ UN  IF YOU GIVE UP TYPE HELP.                                          00007400
+ QU HERE IS A NEW ONE.  1, 4, 13, 40, 121, ... WHAT IS                  00007500
+    THE NEXT NUMBER IF YOU ARE TOLD THAT IN THIS SEQUENCE               00007600
+    IT INVOLVED A MULTIPLICATION AND AN ADDITION.                       00007700
+ CA 364                                                                 00007800
+ TY THAT IS CORRECT.  YOU HAVE SEEN THAT THE RULE OR PATTERN            00007900
+    IS TO MULTIPLY THE NUMBER BY THREE AND ADD ONE.                     00008000
+ UN THINK OF HOW EACH NUMBER IF FORMED FROM THE ONE BEFORE IT.          00008100
+    WRITE YOUR ANSWER NOW.                                              00008200
+ UN THE SEQUENCE IS 1, 4, 13, 40, 121, ...  THINK ABOUT                 00008300
+    MULTIPLYING EACH NUMBER BY THREE AND ADDING SOMETHING.              00008400
+ UN IF YOU GIVE UP TYPE HELP.                                           00008500
+ QU THESE CAN BE DONE WITH FRACTIONS TOO.  CAN YOU FIGURE               00008600
+    THIS PATTERN: 1, 1/2, 1/4, ... WHAT WILL THE NEXT NUMBER BE.        00008700
+ CA 1/8                                                                 00008800
+ TY THAT IS CORRECT.  YOU HAVE THE IDEA OF SEQUENCES AND CAN            00008900
+    CREATE PATTERNS OF YOUR OWN AND TRY THEM OUT ON YOUR                00009000
+    FRIENDS.                                                            00009100
+                                                                        00009200
+    THIS IS THE END OF THIS COURSE.  PLEASE REMEMBER WHAT YOU           00009300
+    HAVE LEARNED.                                                       00009400
+ UN YOU ARE NOT THINKING                                                00009500
+ UN LOOK AT THE DENOMINATORS.  EACH NUMERATOR IS 1, BUT THE             00009600
+    DENOMINATORS ARE CHANGING IN A VERY EASY WAY.                       00009700
+ 99                                                                     00009800

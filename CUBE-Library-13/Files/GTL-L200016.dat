@@ -1,0 +1,77 @@
+  THE FOLLOWING FILES ARE INCLUDED IN THIS RELEASE OF THE GTL COMPILER: 00000100
+       GTL/L200016     THIS FILE FOR DOCUMENTATION                      00000110
+       GTL/L200015     COMPILER SOURCE                                  00000120
+       ALGOL/ERRORS    ERROR MESSAGE FILE                               00000130
+       ERRSRC/Z100011  ERROR MESSAGE FILE GENERATOR SOURCE              00000140
+       ERROR/INPUT     ERROR MESSAGE FILE GENERATOR INPUT               00000150
+       EXAMPLE/=       MISCELLANEOUS GTL EXAMPLES SOURCE                00000160
+       ELIZA/Z100010   INTERACTIVE PSYCHIATRIST PROGRAM SOURCE          00000170
+       ELIZA/SCRIPT    INTERACTIVE PSYCHIATRIST PROGRAM DATA            00000180
+       ALTRAN/L700001  ALGOL/FORTRAN TRANSLATOR SOURCE                  00000190
+       DERIV/D400002   DIFFERENTIATOR SOURCE                            00000200
+       REMPLT/J500003  REMOTE FUNCTION PLOTTER SOURCE                   00000210
+                                                                        00000220
+                                                                        00000230
+  ALGOL/ERRORS IS A DISK FILE USED BY GTL FOR PRINTING ERROR MESSAGES.  00000240
+       IT MUST BE PRESENT ON DISK WHENEVER GTL IS BEING USED.           00000250
+       IT MAY BE PRODUCED BY EXECUTING THE OBJECT VERSION OF            00000260
+       ERROR/SOURCE ON ERROR/INPUT.                                     00000270
+                                                                        00000280
+  EXAMPLE/= REPRESENTS MANY EXAMPLES FROM THE GTL MANUAL.               00000290
+                                                                        00000300
+   ELIZA/Z100010 IS THE SOURCE.                                         00000310
+       AN INTERACTIVE PSYCHIATRIST PROGRAM WRITTEN IN GTL.              00000320
+       ELIZA/SCRIPT IS ITS INPUT DATA.                                  00000330
+       TERMINAL INPUTS TO IT MUST BE COMPLETE SENTENCES.                00000340
+                                                                        00000350
+  ALTRAN/Z700001 IS THE SOURCE.                                         00000360
+       AN ALGOL TO FORTRAN TRANSLATOR WRITTEN IN GTL.                   00000370
+       DOCUMENTATION FOR ITS USE MAY BE FOUND IN ALTRAN/L700001.        00000380
+                                                                        00000390
+  DERIV/D400002 IS THE SOURCE.                                          00000400
+       AN INTERACTIVE SYMBOLIC DIFFERENTIATOR WRITTEN IN GTL.           00000410
+       IT IS INTERACTIVELY SELF-INSTRUCTIVE.                            00000420
+                                                                        00000430
+  REMPLT/J500003 IS THE SOURCE.                                         00000440
+       A REMOTE FUNCTION PLOTTER WRITTEN IN GTL.                        00000450
+       IT IS SELF-DOCUMENTING.                                          00000460
+                                                                        00000470
+  WHEN NECESSARY, THE FOLLOWING CONTROL                                 00000480
+  CARDS MAY BE USED TO RECOMPILE GTL:                                   00000490
+       CC COMPILE GTL/DISK ALGOL LIBRARY.                               00000500
+       CC ALGOL FILE TAPE=GTL/L200017 SERIAL.                           00000510
+       CC STACK = 1000.                                                 00000520
+       CC ALGOL STACK = 1000.                                           00000530
+       CC CORE = 8000.                                                  00000540
+       CC ALGOL CORE = 12000.                                           00000550
+       CC PROCESS=15.                                                   00000560
+       CC ALGOL PROCESS=25.                                             00000570
+       CC IO=15.                                                        00000580
+       CC ALGOL IO=25.                                                  00000590
+       CC FILE TAPE=TAPE TAPE.                                          00000600
+       CC FILE NEWTAPE=NEWTAPE TAPE.                                    00000610
+       CC FILE CASTA=CASTA/LIBRARY SERIAL.                              00000620
+       CC FILE CASTB=CASTB/LIBRARY SERIAL.                              00000630
+       CC FILE CASTC=CASTC/LIBRARY SERIAL.                              00000640
+       CC DATA.                                                         00000650
+       $ CARD LIST SINGLE SEQXEQ                              00000000  00000660
+       (PATCH CARDS)                                                    00000670
+       (LAST CARD)                                            99999999  00000680
+       CC UNLOCK GTL/DISK.                                              00000690
+       CC END.                                                          00000700
+                                                                        00000710
+  GTL MANUALS MAY BE PURCHASED FROM:                                    00000720
+            BOOKSTORE                                                   00000730
+            GEORGIA INSTITUTE OF TECHNOLOGY                             00000740
+            225 N. AVE. N.W.                                            00000750
+            ATLANTA, GA., 30332                                         00000760
+                                                                        00000770
+  COMMENTS CONCERNING GTL SHOULD BE SENT TO:                            00000780
+            DIRECTOR, RICH ELECTRONIC COMPUTER CENTER                   00000790
+            GEORGIA INSTITUTE OF TECHNOLOGY                             00000800
+            225 N. AVE. N.W.                                            00000810
+            ATLANTA, GA., 30332                                         00000820
+                                                                        00000830
+ CUBE NOTE: THE CUBE LIBRARIAN HAD TO CHANGE CERTAIN FILE               00000840
+            NAMES TO CONFORM WITH THE CUBE NUMBERING SYSTEM.            00000850
+                                                                        00000860

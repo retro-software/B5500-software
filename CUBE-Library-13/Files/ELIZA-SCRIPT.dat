@@ -1,0 +1,339 @@
+(SORRY 2 ((0) (PLEASE DONT APOLIGIZE)                                           
+     (APOLOGIES ARE NOT NECESSARY)                                              
+     (WHAT FEELINGS DO YOU HAVE WHEN YOU APOLOGIZE Q)                           
+     (APOLOGIES ARE NOT REQUIRED)))$                                            
+(IF 3 ((0 IF 0) (DO YOU THINK ITS LIKELY THAT 3 Q)                              
+     (DO YOU WISH THAT 3 Q)                                                     
+     (WHAT DO YOU THINK ABOUT 3 Q)                                              
+     (REALLY; 2 3 Q)))$                                                         
+(NONE 1 ((0) (I AM NOT SURE I UNDERSTAND YOU FULLY)                             
+     (PLEASE GO ON)                                                             
+     (WHAT DOES THAT SUGGEST TO YOU Q)                                          
+     (THATS VERY INTERESTING)                                                   
+     (ARE YOU FEELING OK Q)                                                     
+     (YOU HAVE MY SYMPATHY)                                                     
+     (I HAVE MY DOUBTS ABOUT YOU)                                               
+     (MAY I SEE YOUR KEYBOARD LICENSE PLEASE)                                   
+     (SO Q)                                                                     
+     (I DONT THINK I AM PREPARED FOR THIS)                                      
+     (I COULD CARE LESS)                                                        
+     (I LIKE THE WAY YOU WORDED THAT)                                           
+     (IM NOT SURE I APPRECIATE YOUR ATTITUDE)                                   
+     (DO YOU FEEL STRONGLY ABOUT DISCUSSING SUCH THINGS Q)))$                   
+(PERHAPS 2 ((0) (YOU DONT SEEM QUITE CERTAIN)                                   
+     (WHY THE UNCERTAIN TONE Q)                                                 
+     (CANT YOU BE MORE POSITIVE Q)                                              
+     (YOU ARENT SURE Q)                                                         
+     (DONT YOU KNOW Q)))$                                                       
+(NAME 15 ((0) (I AM NOT INTERESTED IN NAMES)                                    
+     (NAMES MEAN NOTHING TO ME - PLEASE GO ON)                                  
+     (I DONT CARE ABOUT NAMES -                                                 
+       PLEASE CONTINUE)))$                                                      
+(COMPUTER 50 ((0) (DO COMPUTERS WORRY YOU Q)                                    
+     (WHY DO YOU MENTION COMPUTERS Q)                                           
+     (WHAT DO YOU KNOW ABOUT COMPUTERS Q)                                       
+     (WHAT DO YOU THINK MACHINES HAVE TO DO WITH YOUR PROBLEM Q)                
+     (DONT YOU THINK COMPUTERS CAN HELP PEOPLE Q)                               
+     (WHAT ABOUT MACHINES WORRIES YOU Q)                                        
+     (WHAT DO YOU THINK ABOUT MACHINES Q)))$                                    
+(YES 1 ((0) (YOU SEEM QUITE POSITIVE)                                           
+     (YOU ARE SURE Q)                                                           
+     (I SEE)                                                                    
+     (REALLY Q)                                                                 
+     (LETS TALK ABOUT SOMETHING ELSE)                                           
+     (I UNDERSTAND)))$                                                          
+(NO 1 ((0) (ARE YOU SAYING "NO" JUST TO BE NEGATIVE Q)                          
+     (WHY DONT WE CHANGE THE SUBJECT)                                           
+     (YOU ARE BEING A BIT NEGATIVE)                                             
+     (WHY NOT Q)                                                                
+     (WHY "NO" Q)))$                                                            
+(WHAT 2 ((0) (WHY DO YOU ASK Q)                                                 
+     (DOES THAT QUESTION INTEREST YOU Q)                                        
+     (WHAT IS IT YOU REALLY WANT TO KNOW Q)                                     
+     (ARE SUCH QUESTIONS MUCH ON YOUR MIND Q)                                   
+     (WHAT ANSWER WOULD PLEASE YOU MOST Q)                                      
+     (WHAT DO YOU THINK Q)                                                      
+     (WHAT COMES TO YOUR MIND WHEN YOU ASK THAT Q)                              
+     (HAVE YOU ASKED SUCH QUESTIONS BEFORE Q)                                   
+     (HAVE YOU ASKED ANYONE ELSE Q)))$                                          
+(BECAUSE 2 ((0) (IS THAT THE REAL REASON Q)                                     
+     (SURELY YOU CAN THINK OF A BETTER REASON THAN THAT)                        
+     (DONT ANY OTHER REASONS COME TO MIND Q)                                    
+     (DOES THAT REASON SEEM TO EXPLAIN ANYTHING ELSE Q)                         
+     (WHAT OTHER REASONS MIGHT THERE BE Q)))$                                   
+(ALWAYS 2 ((0) (CAN YOU THINK OF A SPECIFIC EXAMPLE Q)                          
+     (WHEN Q)                                                                   
+     (WHAT INCIDENT ARE YOU THINKING OF Q)                                      
+     (REALLY; ALWAYS Q)))$                                                      
+(REMEMBER 5 ((0 YOU REMEMBER 0)                                                 
+     (DO YOU OFTEN THINK OF 4 Q)                                                
+     (DOES THINKING OF 4 BRING ANYTHING ELSE TO MIND Q)                         
+     (WHAT ELSE DO YOU REMEMBER Q)                                              
+     (WHY DO YOU REMEMBER 4 JUST NOW Q)                                         
+     (WHAT IN THE PRESENT SITUATION REMINDS YOU OF 4 Q)                         
+     (WHAT IS THE CONNECTION BETWEEN ME AND 4 Q))                               
+     ((0 DO I REMEMBER 0)                                                       
+     (DID YOU THINK I WOULD FORGET 5 Q)                                         
+     (WHY DO YOU THINK I SHOULD RECALL 5 NOW Q)                                 
+     (WHAT ABOUT 5 Q)                                                           
+     (= WHAT)                                                                   
+     (YOU MENTIONED 5 Q)))$                                                     
+(DIT 1 ((0) (IN WHAT WAY Q)                                                     
+     (WHAT RESEMBLANCE DO YOU SEE Q)                                            
+     (WHAT DOES THAT SIMILARITY SUGGEST TO YOU Q)                               
+     (WHAT OTHER CONNECTIONS DO YOU SEE Q)                                      
+     (WHAT DO YOU SUPPOSE THAT RESEMBLANCE MEANS Q)                             
+     (WHAT IS THE CONNECTION DO YOU SUPPOSE Q)                                  
+     (COULD THERE REALLY BE SOME CONNECTION Q)                                  
+     (HOW Q)))$                                                                 
+(AM 1 = ARE ((0 ARE YOU 0)                                                      
+     (DO YOU BELIEVE YOU ARE 4 Q)                                               
+     (WOULD YOU WANT TO BE 4 Q)                                                 
+     (YOU WISH I WOULD TELL YOU YOU ARE 4 Q)                                    
+     (WHAT WOULD IT MEAN IF YOU WERE 4 Q))                                      
+     ((0) (WHY DO YOU SAY "AM" Q)                                               
+     (I DONT UNDERSTAND THAT)))$                                                
+(ARE 1 ((0 ARE I 0)                                                             
+     (WHY ARE YOU INTERESTED IN WHETHER I AM 4 OR NOT Q)                        
+     (WOULD YOU PREFER IF I WERENT 4 Q)                                         
+     (PERHAPS I AM 4 IN YOUR FANTASIES)                                         
+     (DO YOU SOMETIMES THINK I AM 4 Q)  )                                       
+     ((0 ARE 0) (DID YOU THINK THEY MIGHT NOT BE 3 Q)                           
+     (WOULD YOU LIKE IT IF THEY WERE NOT 3 Q)                                   
+     (REALLY; 1 ARE 3 Q)                                                        
+     (ARE YOU AMAZED BY THE FACT THAT 1 ARE 3 Q)                                
+     (WHAT IF THEY WERE NOT 3 Q)                                                
+     (POSSIBLY THEY ARE 3)))$                                                   
+(WAS 2 ((0 WAS YOU 0)                                                           
+     (WHAT IF YOU WERE 4 Q)                                                     
+     (DO YOU THINK YOU WERE 4 Q)                                                
+     (WERE YOU 4 Q)                                                             
+     (WHAT WOULD IT MEAN IF YOU WERE 4 Q)                                       
+     (= WHAT)                                                                   
+     (WHAT DOES " 4 " SUGGEST TO YOU Q))                                        
+     ((0 YOU WAS 0)                                                             
+     (WERE YOU REALLY Q)                                                        
+     (WHY DO YOU TELL ME YOU WERE 4 NOW Q)                                      
+     (PERHAPS I ALREADY KNEW YOU WERE 4))                                       
+     ((0 WAS I 0)                                                               
+     (WOULD YOU LIKE TO BELIEVE I WAS 4 Q)                                      
+     (WHAT SUGGESTS THAT I WAS 4 Q)                                             
+     (WHAT DO YOU THINK Q)                                                      
+     (PERHAPS I WAS 4)                                                          
+     (WHAT IF I HAD BEEN 4 Q)))$                                                
+(YOUR 2 = MY ((0 MY 0) (WHY ARE YOU CONCERNED OVER MY 3 Q)                      
+     (WHAT ABOUT YOUR OWN 3 Q)                                                  
+     (ARE YOU WORRIED ABOUT SOMEONE ELSES 3 Q)                                  
+     (REALLY - MY 3 Q)))$                                                       
+(MY / MEM)$                                                                     
+(YOU / MEM)$                                                                    
+(MY 2 = YOUR ((0 YOUR 0 (/ FAMILY) 0)                                           
+     (TELL ME MORE ABOUT YOUR FAMILY)                                           
+     (WHO ELSE IN YOUR FAMILY 5 Q)                                              
+     (YOUR 4 Q)                                                                 
+     (WHAT ELSE COMES TO MIND WHEN YOU THINK OF YOUR 4 Q))                      
+     ((0 YOUR 0) (YOUR 3 Q)                                                     
+     (WHY DO YOU SAY YOUR 3 Q)                                                  
+     (DOES THAT SUGGEST ANYTHING ELSE OF YOURS Q)                               
+     (IS IT IMPORTANT TO YOU THAT 2 3 Q)))$                                     
+(CAN 2 ((0 CAN I 0) (YOU BELIEVE I CAN 4 DONT YOU)                              
+     (YOU WANT ME TO BE ABLE TO 4 Q)                                            
+     (PERHAPS YOU WOULD LIKE TO BE ABLE TO 4 YOURSELF))                         
+     ((0 CAN YOU 0)                                                             
+     (WHETHER OR NOT YOU CAN 4 DEPENDS ON YOU MORE THAN ON ME)                  
+     (DO YOU WANT TO BE ABLE TO 4 Q)                                            
+     (PERHAPS YOU DONT WANT TO 4)))$                                            
+(WHY 2 ((0 WHY DONT I 0) (DO YOU BELIEVE I DONT 5 Q)                            
+     (PERHAPS I WILL 5 IN GOOD TIME)                                            
+     (SHOULD YOU 5 YOURSELF Q)                                                  
+     (YOU WANT ME TO 5 Q))                                                      
+     ((0 WHY CANT YOU 0)                                                        
+     (DO YOU THINK YOU SHOULD BE ABLE TO 5 Q)                                   
+     (DO YOU WANT TO BE ABLE TO 5 Q)                                            
+     (HAVE YOU ANY IDEA WHY YOU CANT 5 Q))                                      
+     ((0) (= WHAT)))$                                                           
+(YOU 2 = I ((0 I 0 ARE 0 (/ COMX) 0)                                            
+     (I SUPPOSE THAT YOU ARE PERFECT)                                           
+     (JUDGE NOT; THAT YE BE NOT JUDGED)                                         
+     (I WAS JUST THINKING THE SAME THING ABOUT YOU)                             
+     (IF YOU CANT SAY SOMETHING NICE THEN DONT SAY                              
+         ANYTHING AT ALL)                                                       
+     (I AM NOT)                                                                 
+     (ILL JUST IGNORE THAT REMARK))                                             
+     ((0 I 0 ARE 0)                                                             
+     (WHAT MAKES YOU THINK I AM 5 Q)                                            
+     (DOES IT PLEASE YOU TO BELIEVE I AM 5 Q)))$                                
+(I 2 = YOU ((0 YOU (* WANT NEED) 0)                                             
+     (WHAT WOULD IT MEAN TO YOU IF YOU GOT 4 Q)                                 
+     (WHY DO YOU WANT 4 Q)                                                      
+     (SUPPOSE YOU GOT 4 SOON Q)                                                 
+     (WHAT IF YOU NEVER GOT 4 Q)                                                
+     (WHAT WOULD GETTING 4 MEAN TO YOU Q)                                       
+     (WHAT DOES WANTING 4 HAVE TO DO WITH THIS DISCUSSION Q))                   
+     ((0 YOU ARE 0 (* SAD UNHAPPY DEPRESSED SICK) 0 )                           
+     (I AM SORRY TO HEAR YOU ARE 5)                                             
+     (DO YOU THINK COMING HERE WILL HELP YOU NOT TO BE 5 Q)                     
+     (IM SURE ITS NOT PLEASANT TO BE 5)                                         
+     (CAN YOU EXPLAIN WHAT MADE YOU 5 Q))                                       
+     ((0 YOU ARE 0 (* HAPPY ELATED GLAD BETTER) 0)                              
+     (HOW HAVE I HELPED YOU TO BE 5 Q)                                          
+     (WHAT MAKES YOU 5 JUST NOW Q)                                              
+     (CAN YOU EXPLAIN WHY YOU ARE SUDDENLY 5 Q))                                
+     ((0 YOU (/ BELIEFX) YOU 0)                                                 
+     (DO YOU REALLY THINK SO Q)                                                 
+     (BUT YOU ARE NOT SURE YOU 5 Q)                                             
+     (DO YOU REALLY DOUBT YOU 5 Q))                                             
+     ((0 YOU ARE 0)                                                             
+     (IS IT BECAUSE YOU ARE 4 THAT YOU CAME TO ME Q)                            
+     (HOW LONG HAVE YOU BEEN 4 Q)                                               
+     (DO YOU BELIEVE IT NORMAL TO BE 4 Q)                                       
+     (DO YOU ENJOY BEING 4 Q))                                                  
+     ((0 YOU (* CANT CANNOT) 0)                                                 
+     (HOW DO YOU KNOW YOU CANT 4 Q)                                             
+     (HAVE YOU TRIED Q)                                                         
+     (PERHAPS YOU COULD 4 NOW)                                                  
+     (DO YOU REALLY WANT TO BE ABLE TO 4 Q))                                    
+     ((0 YOU DONT 0)                                                            
+     (DONT YOU REALLY 4 Q)                                                      
+     (WHY DONT YOU 4 Q)                                                         
+     (DO YOU WISH TO BE ABLE TO 4 Q)                                            
+     (DOES THAT TROUBLE YOU Q))                                                 
+     ((0 YOU FEEL 0)                                                            
+     (TELL ME MORE ABOUT SUCH FEELINGS)                                         
+     (DO YOU OFTEN FEEL 4 Q)                                                    
+     (DO YOU ENJOY FEELING 4 Q)                                                 
+     (OF WHAT DOES FEELING 4 REMIND YOU Q))                                     
+     ((0 YOU COULD 0)                                                           
+     (ARE YOU SURE YOU COULD 4 Q)                                               
+     (WHAT MAKES YOU THINK YOU COULD 4 Q)                                       
+     (COULD YOU REALLY 4 Q)                                                     
+     (REALLY; YOU COULD 4 Q)                                                    
+     (PERHAPS I COULD 4 TOO)                                                    
+     (COULD ANYONE ELSE 4 Q))                                                   
+     ((0 YOU 0 I 0)                                                             
+     (PERHAPS IN YOUR FANTASY WE 3 EACH OTHER)                                  
+     (DO YOU WISH TO 3 ME Q)                                                    
+     (YOU SEEM TO NEED TO 3 ME Q)                                               
+     (DO YOU 3 ANYONE ELSE Q))                                                  
+     ((0) (YOU SAY 1 Q)                                                         
+     (CAN YOU ELABORATE ON THAT Q)                                              
+     (DO YOU SAY 1 FOR SOME SPECIAL REASONS Q)                                  
+     (THATS QUITE INTERESTING)))$                                               
+(HOW 2 (= WHAT))$  (WHEN 2 (= WHAT))$                                           
+(ALIKE 10 (= DIT))$  (SAME 10 (= DIT))$                                         
+(CERTAINLY 1 (= YES))$                                                          
+(MACHINE 50 (= COMPUTER))$ (MACHINES 50 (= COMPUTER))$                          
+(COMPUTERS 50 (= COMPUTER))$                                                    
+(WERE 1 = WAS (= WAS))$  (ME = YOU)$                                            
+(MYSELF = YOURSELF)$  (YOURSELF = MYSELF)$                                      
+(EVERYONE 2 ((0 (* EVERYONE EVERYBODY) 0)                                       
+     (REALLY; 2 Q)                                                              
+     (SURELY NOT EVERYONE)                                                      
+     (CAN YOU THINK OF ANYONE IN PARTICULAR Q)                                  
+     (WHO; FOR EXAMPLE Q)                                                       
+     (YOU ARE THINKING OF A VERY SPECIAL PERSON Q)                              
+     (WHO; MAY I ASK Q)                                                         
+     (SOMEONE SPECIAL PERHAPS Q)                                                
+     (YOU HAVE A PARTICULAR PERSON IN MIND; DONT YOU)                           
+     (WHO ARE YOU TALKING ABOUT Q)))$                                           
+(EVERYBODY 2 (= EVERYONE))$                                                     
+(MOTHER / FAMILY)$                                                              
+(FATHER / FAMILY)$                                                              
+(MOM / FAMILY)$                                                                 
+(DAD / FAMILY)$                                                                 
+(SISTER / FAMILY)$                                                              
+(BROTHER / FAMILY)$                                                             
+(WIFE / FAMILY)$                                                                
+(CHILDREN / FAMILY)$                                                            
+(FEEL / BELIEFX)$                                                               
+(THINK / BELIEFX)$                                                              
+(BELIEVE / BELIEFX)$                                                            
+(WISH / BELIEFX)$                                                               
+(DUMB / COMX)$                                                                  
+(CRAZY / COMX)$                                                                 
+(IDIOT / COMX)$                                                                 
+(STUPID / COMX)$                                                                
+(DUMB 60 (= YOU))$                                                              
+(CRAZY 60 (= YOU))$                                                             
+(IDIOT 60 (= YOU))$                                                             
+(STUPID 60 (= YOU))$                                                            
+(MEMRULE 1 ((YOUR 0)                                                            
+     (LETS DISCUSS FURTHER WHY YOUR 2)                                          
+     (EARLIER YOU SAID YOUR 2)                                                  
+     (BUT YOUR 2)                                                               
+     (DIDNT YOU SAY EARLIER THAT YOUR 2 Q)                                      
+     (DOES THAT HAVE ANYTHING TO DO WITH THE FACT THAT YOUR 2 Q))               
+     ((0 I ARE 0)                                                               
+     (DO YOU STILL THINK THAT I AM 4 Q)                                         
+     (DID YOU REALLY MEAN IT WHEN YOU SAID I WAS 4 Q)                           
+     (NOW I UNDERSTAND WHY YOU SAID THAT I WAS 4)))$                            
+(YOURE 2 = (I ARE) (= YOU))$                                                    
+(IM 2 = (YOU ARE) (= I))$                                                       
+(HELLO 1 ((0) (HOWDY PARDNER)                                                   
+     (GREETINGS)                                                                
+     (HELLO)                                                                    
+     (SALUTATIONS)                                                              
+     (HI)                                                                       
+     (GOOD AFTERNOON)))$                                                        
+(HI 1 (= HELLO))$                                                               
+(XFREMD 1 ((0) (I AM SORRY; I SPEAK ONLY ENGLISH)))$                            
+(DEUTSCH 1 (= XFREMD))$                                                         
+(FRANCAIS 1 (= XFREMD))$                                                        
+(ITALIANO 1 (= XFREMD))$                                                        
+(ESPANOL 1 (= XFREMD))$                                                         
+(ALGOL 1 (= XFREMD))$                                                           
+(FORTRAN 1 (= XFREMD))$                                                         
+(COBOL 1 (=  XFREMD))$                                                          
+(GTL 1 ((0) (I AM WRITTEN IN GTL)                                               
+     (GTL IS A GOOD LANGUAGE)                                                   
+     (IF NULL OF INSYM THEN WHILE TRUE DO CASE READCON OF                       
+            FALSE BEGIN; ETC)))$                                                
+(WHO 20 ((WHO ARE I)                                                            
+     (ELIZA; OF COURSE)                                                         
+     (JUST CALL ME ELIZA)                                                       
+     (I AM ELIZA; WHO ELSE Q)                                                   
+     (I AM ELIZA; WHO MIGHT YOU BE Q)                                           
+     (WHO ARE YOU Q)))$                                                         
+(IS 2 ((0 IT IS 0)                                                              
+     (REALLY; IT IS 4 Q)                                                        
+     (HOW DO YOU KNOW THAT IT IS 4 Q)                                           
+     (WHAT MAKES YOU THINK THAT IT IS 4 Q)                                      
+     (IM NOT SURE I UNDERSTAND WHY IT IS 4)                                     
+     (IS IT USUALLY 4 Q)                                                        
+     (IS IT 4 FOR SOME SPECIAL REASON Q )                                       
+     (HOW LONG HAS IT BEEN 4 Q)                                                 
+     (WHAT DOES THE FACT THAT IT IS 4 HAVE TO DO WITH                           
+           THIS DISCUSSION Q ))                                                 
+     ((0 IS 0)                                                                  
+     (WHAT IF 1 WASNT 3 Q)                                                      
+     (WHY DO YOU THINK I AM INTERESTED IN 1 Q)                                  
+     (DOES ANYONE ELSE KNOW THAT 1 IS 3 Q)                                      
+     (HOW DO YOU KNOW 1 IS 3 Q)                                                 
+     (HOW LONG HAS 1 BEEN 3 Q)                                                  
+     (YOU MEAN THAT 1 IS ACTUALLY 3 Q)                                          
+     (REALLY; 1 IS 3 Q)                                                         
+     (I JUST CANT BELIEVE THAT 1 IS 3)                                          
+     (HOW DID YOU FIND OUT THAT 1 IS 3 Q)                                       
+     (OF COURSE; EVERYONE KNOWS THAT 1 IS 3)))$                                 
+(+ 3 ((0 (* + - / | PLUS MINUS TIMES) 0)                                        
+     (WHAT DO YOU THINK I AM; A COMPUTER Q)                                     
+     (MY ARITHMETIC IS RATHER BAD)                                              
+     (WHY DONT YOU COMPUTE IT YOURSELF Q)                                       
+     (ARITHMETIC EXPRESSIONS HURT ME)                                           
+     (ARITHMETIC IS JUST NOT MY BAG)                                            
+     (ILL TAKE A GUESS; IS IT SEVEN Q)))$                                       
+(- 3 (= +))$   (/ 3 (= +))$   (| 3 (= +))$                                      
+(PLUS 3 (= +))$   (MINUS 3 (= +))$                                              
+(ADD 3 (= +))$                                                                  
+(WASNT 2 = (WAS NOT) (= WAS))$                                                  
+(ISNT 2 = (IS NOT) (= IS))$                                                     
+(THATS 2 = (THAT IS) (= IS))$                                                   
+(MINE = YOURS)$                                                                 
+(YOURS = MINE)$                                                                 
+(WE 2 ((0 WE 0 ARE 0)                                                           
+     (WE ARE Q)                                                                 
+     (WHAT  MAKES YOU SAY WE ARE 5 Q)                                           
+     (PERHAPS WE ARE 5)                                                         
+     (WOULD YOU PREFER IF WE WERE NOT 5 Q)                                      
+     (TELL ME MORE ABOUT US BEING 5)                                            
+     (REALLY - WE ARE 5 Q)))$                                                   

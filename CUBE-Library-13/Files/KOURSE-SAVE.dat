@@ -1,0 +1,99 @@
+ QU KOURSE IS INTENDED TO ACQUAINT YOU WITH THE VARIOUS COURSES         00000100
+    WHICH MAY BE TAKEN AT THE TELETYPE UNIT.  THE COURSES LISTED        00000200
+    HEREIN ARE CURRENT AS OF DECEMBER 11, 1967.                         00000300
+    COURSES ARE NOW AVAILABLE ON THE FOLLOWING TOPICS.                  00000400
+                                                                        00000500
+    A.  ARITHMETIC                                                      00000600
+    B.  THE BURROUGHS B-5500 COMPUTER                                   00000700
+    C.  COMPUTER PROGRAMMING                                            00000800
+    D.  THE USE OF TEACHER/DU                                           00000900
+    E.  THE TELETYPE                                                    00001000
+    F.  MATHEMATICS                                                     00001100
+    G.  PHYSICS                                                         00001200
+    H.  BIOLOGY                                                         00001300
+                                                                        00001400
+    WOULD YOU LIKE TO KNOW WHICH SPECIFIC COURSES ARE AVAILABLE         00001500
+    ON ANY OF THESE TOPICS.                                             00001600
+ CA YES                                                                 00001700
+ CB OK                                                                  00001800
+ WA NO                                                                  00001900
+ TY OK.                                                                 00002000
+ BR DUNN                                                        0000001J00002100
+ UN PLEASE TYPE YES OR NO.                                              00002200
+ LA AGAIN                                                               00002300
+ QU WHICH ONE.                                                          00002400
+ CA A                                                                   00002500
+ CB A.  ARITHMETIC                                                      00002600
+ CB A. ARITHMETIC                                                       00002700
+ CB ARITHMETIC                                                          00002800
+ TY THREE COURSES ON ARITHMETIC ARE AVAILABLE.  "DRILL1" AND            00002900
+    "DRILL2" ARE SHORT DRILLS IN ADDITION, SUBTRACTION,                 00003000
+    MULTIPLICATION, AND DIVISION.  "MODA" IS A COURSE IN MODULAR        00003100
+    OR REMAINDER ARITHMETIC.                                            00003200
+ CA B                                                                   00003300
+ CB B.  THE BURROUGHS B-5500 COMPUTER                                   00003400
+ CB B. THE BURROUGHS B-5500 COMPUTER                                    00003500
+ CB THE B-5500                                                          00003600
+ TY TRY THE COURSE TITLED "HELLO".                                      00003700
+ CA C                                                                   00003800
+ CB C.  COMPUTER PROGRAMMING                                            00003900
+ CB C. COMPUTER PROGRAMMING                                             00004000
+ CB COMPUTER PROGRAMMING                                                00004100
+ CB PROGRAMMING                                                         00004200
+ TY "JES1" IS AN INTRODUCTORY COURSE IN ALGOL PROGRAMMING.              00004300
+ CA D                                                                   00004400
+ CB D.  THE USE OF TEACHER/DU                                           00004500
+ CB D. THE USE OF TEACHER/DU                                            00004600
+ CB D.  TEACHER/DU                                                      00004700
+ CB D. TEACHER/DU                                                       00004800
+ CB THE USE OF TEACHER/DU                                               00004900
+ CB TEACHER/DU                                                          00005000
+ CB TEACHER                                                             00005100
+ TY "CORSWT" IS TO TEACH INSTRUCTORS HOW TO WRITE COURSES FOR           00005200
+    THE TELETYPE.  READING ASSIGNMENTS ARE NECESSARY.                   00005300
+ CA E                                                                   00005400
+ CB E.  THE TELETYPE                                                    00005500
+ CB E. THE TELETYPE                                                     00005600
+ CB THE TELETYPE                                                        00005700
+ CB TELETYPE                                                            00005800
+ TY LEARN TO USE THE TELETYPE WITH THE COURSE "TTY1".                   00005900
+ CA F                                                                   00006000
+ CB F.  MATHEMATICS                                                     00006100
+ CB F. MATHEMATICS                                                      00006200
+ CB MATHEMATICS                                                         00006300
+ CB MATH                                                                00006400
+ TY "LIMIT" IS A COURSE THAT TEACHES THE MATHEMATICAL DEFINITION        00006500
+    OF A LIMIT.  READING ASSIGNMENTS ARE NECESSARY.                     00006600
+    "DERIVE" IS A COURSE THAT TEACHES THE METHODS OF FINDING            00006700
+    DERIVATIVES.                                                        00006800
+    "IRDEMO1" IS A STATISTICS COURSE ON MEASURES OF CENTRAL             00006900
+    TENDENCY.                                                           00007000
+    "SETS" IS A COURSE IN SET THEORY.                                   00007100
+    "FACTOR1" IS CONCERNED WITH FACTORING THE DIFFERENCE OF TWO         00007200
+    SQUARES.                                                            00007300
+    "AEXPMX" TEACHES THE METHOD OF FINDING A NUMBER A RAISED TO         00007400
+    THE NEGATIVE X POWER.                                               00007500
+    "PRIMES" IS A SHORT COURSE IN PRIME NUMBERS.                        00007600
+    "SIGDIG" IS A SHORT COURSE IN SIGNIFICANT FIGURES.                  00007700
+    "SEQNO" IS A SHORT INTRODUCTION TO SEQUENCES.                       00007800
+ CA G                                                                   00007900
+ CB G.  PHYSICS                                                         00008000
+ CB G. PHYSICS                                                          00008100
+ CB PHYSICS                                                             00008200
+ TY "PHYSICS" IS A SHORT QUIZ ON NEWTONS LAWS.                          00008300
+ CA H                                                                   00008400
+ CB H.  BIOLOGY                                                         00008500
+ CB H. BIOLOGY                                                          00008600
+ CB BIOLOGY                                                             00008700
+ TY YOU SHOULD TAKE "ELCLBI1", A COURSE ABOUT SOME OF THE               00008800
+    STRUCTURES OF THE CELL AND THEIR FUNCTIONS.                         00008900
+ UN PLEASE CHECK YOUR SPELLING AND TRY AGAIN.  THE CORRESPONDING        00009000
+    LETTER IS SUFFICIENT IN ITSELF.                                     00009100
+ QU ARE YOU INTERESTED IN ANY OF THE OTHER TOPICS.                      00009200
+ CA YES                                                                 00009300
+ BR AGAIN                                                       0000000F00009400
+ CA NO                                                                  00009500
+ TY GOODBYE                                                             00009600
+ UN PLEASE TYPE YES OR NO.                                              00009700
+ LA DUNN                                                                00009800
+ 99                                                                     00009900

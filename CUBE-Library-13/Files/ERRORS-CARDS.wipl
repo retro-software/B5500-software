@@ -1,0 +1,107 @@
+1.000 REM START OF ERROR FILE                                           00001000
+1.001 REM BRACKETS DO NOT MATCH                                         00001001
+1.002 REM PARENTHESES DO NOT MATCH                                      00001002
+1.003 REM UNRECOGNIZABLE STATEMENT                                      00001003
+1.004 REM THIS STATEMENT TYPE MAY NOT BE USED IN STORED PROGRAM MODE    00001004
+1.005 REM THIS STATEMENT TYPE MAY NOT BE USED IN CALCULATOR MODE        00001005
+1.006 REM ADJACENT OPERATORS                                            00001006
+1.007 REM YOU DID NOT SPECIFY A FILE NAME                               00001007
+1.008 REM INVALID STATEMENT NUMBER                                      00001008
+1.009 REM INVALID PART NUMBER                                           00001009
+1.010 REM NO STATEMENTS HAVE BEEN ENTERED                               00001010
+1.011 REM NO STATEMENTS ARE WITHIN THE SPECIFIED RANGE                  00001011
+1.012 REM HELP IS NOT AVAILABLE                                         00001012
+1.013 REM THERE IS NO FILE WITH THAT NAME ON THE DISK                   00001013
+1.014 REM PURGED                                                        00001014
+1.015 REM YOUR FILE NAME IS ALREADY BEING USED                          00001015
+1.016 REM SYNTAX ERROR                                                  00001016
+1.017 REM PLEASE ENTER A NUMBER, LITERAL, OR "STOP"                     00001017
+1.018 REM YES OR NO PLEASE                                              00001018
+1.019 REM EXPONENT OVERFLOW, PLEASE ENTER ANOTHER NUMBER                00001019
+1.020 REM SUBSCRIPT OUT OF RANGE                                        00001020
+1.021 REM DO YOU WISH TO CONTINUE...                                    00001021
+1.022 REM NEGATIVE A IN A**B WITH B INTEGER                             00001022
+1.023 REM A**B OUT OF RANGE                                             00001023
+1.024 REM ARGUMENT OF LOG IS NEGATIVE OR ZERO                           00001024
+1.025 REM ARGUMENT OF EXP EXCEEDS 158                                   00001025
+1.026 REM ARGUMENT OF SQRT IS NEGATIVE                                  00001026
+1.027 REM PART REFERENCED IS NOT WITHIN THE SPECIFIED RANGE             00001027
+1.028 REM PART REFERENCED HAS NOT BEEN ENTERED                          00001028
+1.029 REM STATEMENT REFERENCED IS NOT WITHIN THE SPECIFIED RANGE        00001029
+1.030 REM STATEMENT REFERENCED HAS NOT BEEN ENTERED                     00001030
+1.031 REM ARGUMENT OF ENTIER EXCEEDS INTEGER RANGE                      00001031
+1.032 REM EXPONENT OVERFLOW                                             00001032
+1.033 REM ATTEMPTED DIVISION BY ZERO                                    00001033
+1.034 REM DO LOOPS ARE NESTED TOO DEEPLY OR ARE RECURSIVE               00001034
+1.035 REM NUMBER EXCEEDS MAXIMUM ALLOWABLE VALUE                        00001035
+1.036 REM PROGRAM TOO LARGE, TRY SAVE, ERASE, LOAD                      00001036
+1.037 REM ARGUMENT OF PLOT IS NOT IN RANGE 1 TO 72                      00001037
+1.038 REM MISSING FORM STATEMENT                                        00001038
+1.039 REM STATEMENT REFERENCED IS NOT A FORM STATEMENT                  00001039
+1.040 REM FIELD EXCEEDS MAXIMUM SIZE IN A FORM STATEMENT                00001040
+1.041 REM TOO FEW FIELDS IN A FORM STATEMENT                            00001041
+1.042 REM REFERENCED FILE NOT PRESENT ON DISK                           00001042
+1.043 REM ATTEMPT TO WRITE ON A READ-ONLY FILE                          00001043
+1.044 REM ATTEMPT TO REFERENCE AN INACTIVE FILE                         00001044
+1.045 REM ONLY A PRIMARY USER MAY PURGE A FILE                          00001045
+1.046 REM INVALID USER OF REFERENCED FILE                               00001046
+1.047 REM ATTEMPT TO CREATE A FILE WHICH ALREADY EXISTS                 00001047
+1.048 REM REFERENCED FILE IS IN USE BY SOMEONE ELSE -- TRY AGAIN LATER  00001048
+1.049 REM ARGUMENT OF TAB IS NOT IN RANGE 1 TO 72                       00001049
+1.050 REM                                                               00001050
+1.051 REM                                                               00001051
+1.052 REM                                                               00001052
+1.053 REM                                                               00001053
+1.054 REM                                                               00001054
+1.055 REM                                                               00001055
+1.056 REM                                                               00001056
+1.057 REM                                                               00001057
+1.058 REM                                                               00001058
+1.059 REM                                                               00001059
+1.060 REM                                                               00001060
+1.061 REM                                                               00001061
+1.062 REM                                                               00001062
+1.063 REM                                                               00001063
+1.064 REM                                                               00001064
+1.065 REM                                                               00001065
+1.066 REM                                                               00001066
+1.067 REM                                                               00001067
+1.068 REM                                                               00001068
+1.069 REM                                                               00001069
+1.070 REM                                                               00001070
+1.071 REM                                                               00001071
+1.072 REM                                                               00001072
+1.073 REM                                                               00001073
+1.074 REM                                                               00001074
+1.075 REM ARRAY NOT DECLARED                                            00001075
+1.076 REM NUMBER OF DIMENSIONS DOES NOT AGREE WITH ARRAY DECLARATION    00001076
+1.077 REM AN ARRAY IS RESTRICTED TO 4 DIMENSIONS                        00001077
+1.078 REM AN ARRAY IS RESTRICTED TO 255 IN EACH DIMENSION               00001078
+1.079 REM TOTAL AREA FOR ARRAYS EXCEEDED                                00001079
+1.080 REM IT IS NOT PERMISSIBLE TO CHANGE THE NUMBER OF DIMENSIONS      00001080
+1.081 REM DANGLING OPERATOR IN AN ARITHMETIC EXPRESSION                 00001081
+1.082 REM                                                               00001082
+1.083 REM MISSING ) IN AN ARITHMETIC EXPRESSION                         00001083
+1.084 REM MISSING ) IN A FUNCTION CALL                                  00001084
+1.085 REM USE [] TO ENCLOSE SUBSCRIPTS ( [ = SHIFT K, ] = SHIFT M )     00001085
+1.086 REM MISSING OR INVALID STATEMENT NUMBER                           00001086
+1.087 REM MISSING OPERATOR OR SEPARATOR                                 00001087
+1.088 REM DIMENSION MUST BE A NUMBER                                    00001088
+1.089 REM MISSING OR INVALID PART NUMBER                                00001089
+1.090 REM "PART" MISSING IN A DO STATEMENT                              00001090
+1.091 REM RELATIONAL OPERATOR IS MISSING OR INVALID                     00001091
+1.092 REM FOR CLAUSE IS INVALID                                         00001092
+1.093 REM THIS FORM OF THE DO STATEMENT IS NOT VALID                    00001093
+1.094 REM "DO" MISSING IN A WHILE OR UNTIL STATEMENT                    00001094
+1.095 REM INVALID TYPE STATEMENT                                        00001095
+1.096 REM INVALID STATEMENT TYPE FOLLOWING "THEN" OR "ELSE"             00001096
+1.097 REM "THEN" MISSING IN AN IF STATEMENT                             00001097
+1.098 REM INVALID STATEMENT NUMBER FIELD                                00001098
+1.099 REM MISSING OR INVALID FORM NUMBER                                00001099
+1.100 REM TYPE WITH FORM IS ONLY LEGAL IN PROGRAM MODE                  00001100
+1.101 REM INVALID SET STATEMENT                                         00001101
+1.102 REM ERROR:  PLEASE SEND YOUR OUTPUT TO THE CONSULTING ROOM        00001102
+1.103 REM DATA ITEM MUST BE A CONSTANT OR STRING                        00001103
+1.104 REM INVALID DATA LIST                                             00001104
+1.105 REM INVALID SAVE ACTION IN CLOSE FILE STATEMENT                   00001105
+1.106 REM INVALID FILE NAME IN FILE I/O STATEMENT                       00001106

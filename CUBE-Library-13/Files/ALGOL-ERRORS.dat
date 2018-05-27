@@ -1,0 +1,1000 @@
+DECLARATION NOT FOLLOWED BY SEMICOLON.                                                                                  
+IDENTIFIER DECLARED TWICE IN SAME BLOCK.                                                                                
+SPECIFICATION CONTAINS IDENTIFIER NOT IN FORMAL PARAMETER LIST.                                                         
+NONIDENTIFIER IN IDENTIFIER OF DECLARATION.                                                                             
+STREAM PROCEDURE DECLARATION PRECEDED BY ILLEGAL DECLARATOR.                                                            
+PROCEDURE DECLARATION PRECEEDED BY ILLEGAL DECLARATOR.                                                                  
+PROCEDURE IDENTIFIER REPEATED IN SAME BLOCK (NOT FORWARD).                                                              
+PROCEDURE IDENTIFIER NOT FOLLOWED BY LEFT PARENTHESIS OR SEMICOLON.                                                     
+FORMAL PARAMETER LIST NOT FOLLOWED BY RIGHT PARENTHESIS.                                                                
+FORMAL PARAMETER PART NOT FOLLOWED BY SEMICOLON.                                                                        
+VALUE CLAUSE CONTAINS IDENTIFIER NOT IN FORMAL PARAMETER LIST.                                                          
+VALUE CLAUSE NOT ENDED BY SEMICOLON.                                                                                    
+MISSING OR ILLEGAL SPECIFICATION.                                                                                       
+OWN USED IN ARRAY SPECIFICATION.                                                                                        
+SAVE USED IN ARRAY SPECIFICATION.                                                                                       
+ARRAY CALL-BY-VALUE NOT IMPLEMENTED.                                                                                    
+ARRAY IDENTIFIER NOT FOLLOWED BY LEFT BRACKET.                                                                          
+LOWER BOUND IN ARRAY DECLARATION NOT FOLLOWED BY COLON.                                                                 
+BOUND PAIR IN ARRAY DECLARATION NOT FOLLOWED BY RIGHT BRACKET.                                                          
+ILLEGAL LOWER BOUND DESIGNATOR IN ARRAY SPECIFICATION.                                                                  
+OWN IMMEDIATELY BEFORE IDENTIFIER (NO TYPE) IN DECLARATION.                                                             
+SAVE IMMEDIATELY BEFORE IDENTIFIER (NO TYPE) IN DECLARATION.                                                            
+STREAM IMMEDIATELY BEFORE IDENTIFIER (THE WORD PROCEDURE WAS LEFT OUT).                                                 
+DECLARATOR ILLEGALLY PRECEDED BY ANOTHER DECLARATOR.                                                                    
+LABEL PASSED TO A FUNCTION.                                                                                             
+DECLARATOR OR SPECIFIER ILLEGALLY PRECEDED BY OWN, SAVE OR ANOTHER DECLARATOR.                                          
+MISSING LEFT PARENTHESIS IN FILE DECLARATION.                                                                           
+MISSING RECORD SIZE IN FILE DECLARATION.                                                                                
+ILLEGAL BUFFER PART OR SAVE FACTOR IN FILE DECLARATION.                                                                 
+MISSING RIGHT PARENTHESIS IN FILE DECLARATION.                                                                          
+MISSING COLON IN DISK FILE DECLARATION.                                                                                 
+MISSING LEFT PARENTHESIS IN LIST DECLARATION.                                                                           
+MISSING LEFT PARENTHESIS IN FORMAT DECLARATION.                                                                         
+SWITCH DECLARATION DOES NOT HAVE ASSIGNMENT OPERATOR OR FORWARD AFTER IDENTIFIER.                                       
+MISSING ASSIGNMENT OPERATOR AFTER SWITCH FILE IDENTIFIER.                                                               
+NON-FILE IDENTIFIER IN DECLARATION OF SWITCH FILE LIST.                                                                 
+SWITCH FORMAT IDENTIFIER NOT FOLLOWED BY AN ASSIGNMENT OPERATOR.                                                        
+MISSING LEFT PARENTHESIS AT START OF SWITCH FORMAT LIST.                                                                
+SWITCH FORMAT SEGMENT GREATER THAN 1022 WORDS LONG.                                                                     
+NUMBER OF NESTED BLOCKS GREATER THAN 31.                                                                                
+PROGRAM PARAMETER BLOCK SIZE EXCEEDED.                                                                                  
+MISSING ASSIGNMENT OPERATOR AFTER SWITCH LIST IDENTIFIER.                                                               
+ILLEGAL LIST IDENTIFIER APPEARING IN SWITCH LIST.                                                                       
+MISSING ] AFTER DISK IN FILE DECLARATION.                                                                               
+MISSING [ AFTER DISK IN FILE DECLARATION.                                                                               
+MISSING = AFTER DEFINE IDENTIFIER.                                                                                      
+NON-LITERAL ARRAY BOUND NOT GLOBAL TO ARRAY DECLARATION.                                                                
+ITEM FOLLOWING @ NOT A NUMERIC LITERAL.                                                                                 
+NUMBER OF PARAMETERS DIFFERS FROM FORWARD DECLARATION.                                                                  
+CLASS OF PARAMETERS DIFFERS FROM FORWARD DECLARATION.                                                                   
+VALUE PART DIFFERS FROM FORWARD DECLARATION.                                                                            
+FORWARD DECLARATION DOES NOT AGREE WITH ACTUAL DECLARATION.                                                             
+STATEMENT MAY NOT START WITH THIS TYPE QUANTITY.                                                                        
+MISSING RIGHT BRACKET IN SAVE ARRAY DECLARATION.                                                                        
+FILL PART OF SAVE ARRAY LONGER THAN SIZE.                                                                               
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+ILLEGAL DIMENSION INDICATOR IN ARRAY DECLARATION.                                                                       
+SAVE STORAGE IS NOT ALLOWED WITH INTRNSICS.                                                                             
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+ILLEGAL ARRAY SIZE IN ARRAY DECLARATION.                                                                                
+MISSING ASSIGNMENT OPERATOR IN FAULT ASSIGNMENT STATEMENT.                                                              
+INCORRECT IDENTIFIER IN FAULT TYPE LIST OF FAULT DECLARATION.                                                           
+LEVEL OF POINTER EXPRESSION EXCEEDS LEVEL OF UPDATE POINTER IDENTIFIER.                                                 
+UPDATE POINTER MAY NOT BE CALL-BY-NAME FORMAL PARAMETER.                                                                
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+MISSING BEGIN IN CASE STATEMENT.                                                                                        
+MISSING END IN CASE STATEMENT.                                                                                          
+NULL EXPRESSION NOT ALLOWED IN CASE EXPRESSION.                                                                         
+TYPES OF EXPRESSIONS IN CASE EXPRESSION VARY.                                                                           
+RELATIONAL OP OR IN EXPECTED.                                                                                           
+CONDITION MUST START WITH WHILE OR UNTIL.                                                                               
+BY MISSING AFTER DESTINATION POINTER.                                                                                   
+SOURCE MUST BE POINTER OR ARITHMETIC EXP.                                                                               
+ALPHA REQUIRED AFTER IN.                                                                                                
+ILLEGAL EXPRESSION TYPE.                                                                                                
+MISSING COMMA IN ARRAY RELEASE STATEMENT.                                                                               
+ILLEGAL TYPE OF EXPRESSION IN INLINE FORMAL PARAMETER PART.                                                             
+ILLEGAL DELIMITER IN INLINE FORMAL PARAMETER PART.                                                                      
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+MISSING LEFT BRACKET.                                                                                                   
+MISSING COLON.                                                                                                          
+ILLEGAL BIT NUMBER.                                                                                                     
+FIELD SIZE MUST BE LITERAL.                                                                                             
+MISSING RIGHT BRACKET.                                                                                                  
+ILLEGAL FIELD SIZE.                                                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+ILLEGAL SPECIFIER IN SCOPE STATEMENT.                                                                                   
+EXTRA COLON IN STREAM HEADER.                                                                                           
+UNDECLARED IDENTIFIER.                                                                                                  
+AN IDENTIFIER LOCAL TO ONE PROCEDURE AND GLOBAL TO ANOTHER MAY NOT BE REFERENCED.                                       
+CONDITIONAL EXPRESSION NOT OF ARITHMETIC TYPE.                                                                          
+PRIMARY MAY NOT BEGIN WITH THIS TYPE QUANTITY.                                                                          
+MISSING RIGHT PARENTHESIS.                                                                                              
+MISSING LEFT PARENTHESIS.                                                                                               
+PRIMARY MAY NOT START WITH DECLARATOR.                                                                                  
+THE EXPRESSION IS NOT OF BOOLEAN TYPE.                                                                                  
+RELATION MAY NOT HAVE CONDITIONAL EXPRESSIONS AS ARITHMETIC EXPRESSIONS.                                                
+PRIMARY IS NOT OF BOOLEAN TYPE.                                                                                         
+NON-BOOLEAN OPERATOR IN BOOLEAN EXPRESSION.                                                                             
+NO EXPRESSION MAY BEGIN WITH THIS TYPE QUANTITY.                                                                        
+NO EXPRESSION MAY BEGIN WITH A DECLARATOR.                                                                              
+EITHER SYNTAX OR RANGE OF LITERALS FOR CONCATENATE OPERATOR IS INCORRECT.                                               
+EITHER SYNTAX OR RANGE OF LITERALS FOR PARTIAL WORD DESIGNATOR IS INCORRECT.                                            
+EXPRESSION NOT OF DESIGNATIONAL TYPE.                                                                                   
+MISSING THEN.                                                                                                           
+MISSING LEFT BRACKET.                                                                                                   
+MISSING RIGHT BRACKET.                                                                                                  
+MISSING SEMICOLON OR END.                                                                                               
+MISSING END.                                                                                                            
+AN INDEXED FILE MAY BE PASSED BY NAME ONLY- AND ONLY TO STREAM PROCEDURE.                                               
+EXPRESSIONS MAY NOT BE PASSED BY NAME TO STREAM PROCEDURES.                                                             
+ACTUAL AND FORMAL PARAMETERS NOT SAME TYPE.                                                                             
+ACTUAL AND FORMAL ARRAYS NOT SAME NUMBER OF DIMENSIONS.                                                                 
+STREAM PROCEDURE MAY NOT BE PASSED AS AN ACTUAL PARAMETER TO PROCEDURE.                                                 
+ACTUAL PARAMETER MAY NOT BEGIN WITH THIS TYPE QUANTITY.                                                                 
+THIS TYPE QUANTITY MAY NOT BE PASSED TO STREAM PROCEDURE.                                                               
+ACTUAL AND FORMAL PARAMETERS DO NOT AGREE IN NUMBER OR EXTRA RIGHT PARENTHESIS.                                         
+ILLEGAL PARAMETER DELIMITER.                                                                                            
+MISSING FILE NAME IN RELEASE STATEMENT.                                                                                 
+MISSING UNTIL IN DO STATEMENT.                                                                                          
+MISSING DO IN WHILE STATEMENT.                                                                                          
+MISSING COLON AFTER LABEL.                                                                                              
+LABEL NOT DECLARED IN THIS BLOCK.                                                                                       
+LABEL HAS ALREADY BEEN USED IN THIS BLOCK.                                                                              
+INPROPER FORMAT EDITING PHRASE.                                                                                         
+FORMAT EDITING PHRASE DOES NOT HAVE INTEGER WHERE REQUIRED.                                                             
+WIDTH TOO SMALL IN E OR F OR R EDITING PHRASE.                                                                          
+DEFINE NESTED MORE THAN 8 DEEP.                                                                                         
+INTEGER IN FORMAT GREATER THAN 1023.                                                                                    
+INTEGER OR IDENTIFIER TOO LONG OR ERROR IN PARAMETRIC DEFINE.                                                           
+DEFINE LONGER THAN 2047 CHARACTERS.                                                                                     
+EXTRA END.                                                                                                              
+STATEMENT MAY NOT START WITH THIS TYPE IDENTIFIER.                                                                      
+STATEMENT MAY NOT START WITH THIS TYPE QUANTITY.                                                                        
+STATEMENT MAY NOT START WITH A DECLARATOR.                                                                              
+MORE THAN 256 EXPRESSIONS IN SWITCH DECLARATION.                                                                        
+MORE THAN 1023 PROGRAM REFERENCE TABLE CELLS REQUIRED FOR THIS PROGRAM.                                                 
+MORE THAN 255 STACK CELLS REQUIRED FOR THIS PROCEDURE.                                                                  
+CONSTANTS MAY NOT BE PASSED BY NAME TO STREAM PROCEDURES.                                                               
+IMPROPER INDEX VARIABLE IN FOR STATEMENT.                                                                               
+MISSING ASSIGNMENT OPERATOR FOLLOWING INDEX VARIABLE IN FOR STATEMENT.                                                  
+MISSING UNTIL OR WHILE IN STEP ELEMENT.                                                                                 
+MISSING DO IN FOR CLAUSE.                                                                                               
+MISSING ELSE IN IF STATEMENT.                                                                                           
+DESIGNATIONAL EXPRESSION MAY NOT BE LIST ELEMENT.                                                                       
+ROW DESIGNATOR MAY NOT BE LIST ELEMENT.                                                                                 
+MISSING RIGHT BRACKET IN LIST ELEMENT.                                                                                  
+ILLEGAL USE OF PROCEDURE OR FUNCTION IDENTIFIER.                                                                        
+DECLARED LABEL DID NOT OCCUR.                                                                                           
+DECLARED FORWARD PROCEDURE DID NOT OCCUR.                                                                               
+DECLARED FORWARD SWITCH DID NOT OCCUR.                                                                                  
+WIDTH OF FIELD MORE THAN 63 CHARACTERS.                                                                                 
+SYNTAX ERROR.                                                                                                           
+SYNTAX ERROR IN DELAY STATEMENT.                                                                                        
+THE EXPRESSION IS NOT OF POINTER TYPE.                                                                                  
+POINTER PRIMARY MAY NOT START WITH A QUANTITY OF THIS TYPE.                                                             
+POINTER MAY NOT HAVE PARTIAL WORD SYNTAX.                                                                               
+POINTER ARRAYS NOT PERMITTED.                                                                                           
+MISSING COMMA.                                                                                                          
+PARAMETERS MUST BE 2-DIMENSIONAL ARRAYS.                                                                                
+TOO MANY PARAMETERS IN DEFINE DECLARATION.                                                                              
+RIGHT PARENTHESIS OR RIGHT BRACKET EXPECTED.                                                                            
+WRONG NUMBER OF PARAMETERS IN DEFINE INVOCATION.                                                                        
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+COMPILER SYMBOL TABLE OVERFLOW; PLEASE SEE PROGRAMMING ASSISTANT.                                                       
+SEGMENT LONGER THAN 1023 WORDS.                                                                                         
+PARTIAL WORD DESIGNATOR NOT LEFTMOST IN LEFT PART LIST.                                                                 
+MISSING PERIOD OR ASSIGNMENT OPERATOR.                                                                                  
+WRONG NUMBER OF SUBSCRIPTS IN ROW DESIGNATOR.                                                                           
+MISSING RIGHT BRACKET IN ROW DESIGNATOR.                                                                                
+ROW DESIGNATOR OUTSIDE OF ACTUAL PARAMETER IN LIST OR FILL STATEMENT.                                                   
+MISSING RIGHT BRACKET IN SUBSCRIPTED VARIABLE.                                                                          
+MISSING LEFT BRACKET IN SUBSCRIPTED VARIABLE.                                                                           
+WRONG NUMBER OF SUBSCRIPTS IN SUBSCRIPTED VARIABLE.                                                                     
+PARTIAL WORD DESIGNATOR NOT LEFTMOST IN LEFT PART LIST.                                                                 
+MISSING "." OR ASSIGNMENT OPERATOR.                                                                                     
+PROCEDURE IDENTIFIER APPEARS OUTSIDE OF SCOPE IN LEFT PART.                                                             
+SUB-ARRAY DESIGNATOR PERMITTED AS ACTUAL PARAMETER ONLY.                                                                
+POINTER REQUIRES ARRAY ROW, SUBSCRIPTED VARIABLE, OR ONE-DIMENSIONAL ARRAY ID.                                          
+POINTER RELATION MUST BE EQL OR NEQ ONLY.                                                                               
+CHARACTER SIZE MUST BE LITERAL 6 OR 8.                                                                                  
+LEVEL OF POINTER EXPRESSION EXCEEDS LEVEL OF LEFT-PART POINTER IDENTIFIER.                                              
+LEFT-PART POINTER MAY NOT BE CALL-BY-NAME FORMAL PARAMETER.                                                             
+POINTER UPDATE NOT PERMITTED WITH POINTER RELATION.                                                                     
+RELATIONAL OPERATOR EXPECTED WHEN POINTER UPDATE CONSTRUCT USED.                                                        
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+ILLEGAL STREAM STATEMENT.                                                                                               
+MISSING ASSIGNMENT OPERATOR IN STREAM STATEMENT.                                                                        
+MISSING + OR - IN STREAM INDEX STATEMENT.                                                                               
+MISSING NUMBER OR STREAM VARIABLE IN STREAM INDEX STATEMENT.                                                            
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+MISSING STRING IN DS := LIT STATEMENT.                                                                                  
+MISSING PARENTHESIS OR FILE IDENTIFIER NOT A FORMAL PARAMETER OF STREAM PROCEDURE.                                      
+LABEL SPECIFIED NOT ON THE SAME NEST LEVEL AS PRECEDING APPEARANCE OF THE LABEL.                                        
+MISSING COLON AFTER LABEL.                                                                                              
+LABEL APPEARS MORE THAN ONCE.                                                                                           
+MISSING LABEL IN GO TO OR JUMP OUT TO STATEMENT.                                                                        
+MISSING OUT IN JUMP OUT STATEMENT.                                                                                      
+MISSING PARENTHESIS IN STREAM NEST STATEMENT.                                                                           
+MISSING SC IN IF STATEMENT.                                                                                             
+MISSING RELATIONAL IN IF STATEMENT.                                                                                     
+MISSING ALPHA, DC OR STRING IN IF STATEMENT.                                                                            
+MISSING THEN IN IF STATEMENT.                                                                                           
+LABEL UNDEFINED IN GO TO STATEMENT.                                                                                     
+REPEAT INDEX GREATER THAN OR EQUAL TO 64 WAS SPECIFIED OR MORE THAN 63 FORMAL PARAMETERS, LOCALS AND LABELS WERE USED   
+CONSTANT SPECIFIED TOO LARGE OR TOO SMALL.                                                                              
+RELATIONAL OPERATOR OTHER THAN = IN SOURCE FOR ALPHA TEST.                                                              
+IMPROPER CONSTRUCT FOR SOURCE WITH LITERAL TEST.                                                                        
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+JUMP IN STREAM STATEMENT IS LONGER THAN 63 SYLLABLES.                                                                   
+MISSING DO IN STREAM WHILE STATEMENT.                                                                                   
+MISSING UNTIL IN STREAM DO STATEMENT.                                                                                   
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+MISSING LEFT PARENTHESIS IN DOUBLE STATEMENT.                                                                           
+TOO MANY OPERATORS IN DOUBLE STATEMENT.                                                                                 
+TOO MANY OPERANDS IN DOUBLE STATEMENT.                                                                                  
+MISSING COMMA IN DOUBLE STATEMENT.                                                                                      
+MISSING RIGHT PARENTHESIS IN DOUBLE STATEMENT.                                                                          
+ILLEGAL PARAMETER IN DOUBLE STATEMENT.                                                                                  
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+ILLEGAL PARAMETER IN DOUBLE STATEMENT.                                                                                  
+MISSING PERIOD IN FILE ATTRIBUTE PART.                                                                                  
+MISSING FILE ATTRIBUTE.                                                                                                 
+MISSING ASSIGNMENT OPERATOR IN FILE ATTRIBUTE STATEMENT.                                                                
+FILE ATTRIBUTE IS NOT ASSIGNABLE.                                                                                       
+FILE ATTRIBUTE IS NOT OF TYPE REAL.                                                                                     
+FILE ATTRIBUTE MUST BE LEFTMOST IN LEFT PART LIST.                                                                      
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+IDENTIFIER FOLLOWING FILL NOT ARRAY OR FILE IDENTIFIER.                                                                 
+MISSING WITH IN FILL STATEMENT.                                                                                         
+IMPROPER FILL ELEMENT.                                                                                                  
+NONOCTAL DIGIT IN OCTAL NUMBER.                                                                                         
+IMPROPER ROW DESIGNATOR IN FILL STATEMENT.                                                                              
+NUMBER OF DATA WORDS EXCEEDS 1023.                                                                                      
+NONOCTAL DIGIT IN OCTAL STRING.                                                                                         
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+MISSING OR ILLEGAL PARAMETER DELIMITER IN SORT OR MERGE STATEMENT.                                                      
+ILLEGAL TYPE FOR SORT OR MERGE OUTPUT PROCEDURE.                                                                        
+OUTPUT PROCEDURE IN SORT OR MERGE STATEMENT DOES NOT HAVE EXACTLY TWO PARAMETERS.                                       
+FIRST PARAMETER OF OUTPUT PROCEDURE MUST BE BOOLEAN VARIABLE.                                                           
+SECOND PARAMETER  OF OUTPUT PROCEDURE MUST BE ONE-DIMENSIONAL ARRAY.                                                    
+MISSING LEFT PARENTHESIS IN SORT STATEMENT.                                                                             
+ILLEGAL TYPE FOR SORT OR MERGE HIGHVALUE PROCEDURE.                                                                     
+HIGHVALUE PROCEDURE DOES NOT HAVE EXACTLY ONE PARAMETER.                                                                
+HIVALUE PROCEDURE PARAMETER NOT ONE-DIMENSIONAL ARRAY.                                                                  
+SORT OR MERGE COMPARE PROCEDURE NOT BOOLEAN.                                                                            
+COMPARE PROCEDURE DOES NOT HAVE EXACTLY TWO PARAMETERS.                                                                 
+COMPARE PROCEDURE FIRST PARAMETER NOT ONE-DIMENSIONAL ARRAY.                                                            
+COMPARE PROCEDURE SECOND PARAMETER NOT ONE-DIMENSIONAL ARRAY.                                                           
+SORT STATEMENT INPUT PROCEDURE NOT BOOLEAN.                                                                             
+INPUT PROCEDURE DOES NOT HAVE EXACTLY ONE PARAMETER.                                                                    
+INPUT PROCEDURE PARAMETER NOT ONE-DIMENSIONAL ARRAY.                                                                    
+MISSING RIGHT PARENTHESIS IN SORT STATEMENT.                                                                            
+MISSING LEFT PARENTHESIS IN MERGE STATEMENT.                                                                            
+MORE THAN SEVEN OR LESS THAN TWO FILES TO MERGE.                                                                        
+MISSING RIGHT PARENTHESIS IN MERGE STATEMENT.                                                                           
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+MISSING FILE IDENTIFIER IN MONITOR DECLARATION.                                                                         
+MISSING LEFT PARENTHESIS IN MONITOR DECLARATION.                                                                        
+IMPPROPER SUBSCRIPT FOR MONITOR LIST ELEMENT.                                                                           
+IMPROPER SUBSCRIPT EXPRESSION DELIMITER IN MONITOR LIST ELEMENT.                                                        
+IMPROPER NUMBER OF SUBSCRIPTS IN MONITOR LIST ELEMENT.                                                                  
+LABEL OR SWITCH MONITORED AT IMPROPER LEVEL.                                                                            
+IMPROPER MONITOR LIST ELEMENT.                                                                                          
+MISSING RIGHT PARENTHESIS IN MONITOR DECLARATION.                                                                       
+IMPROPER MONITOR DECLARATION DELIMITER.                                                                                 
+MISSING FILE IDENTIFIER IN DUMP DECLARATION.                                                                            
+MISSING LEFT PARENTHESIS IN DUMP DECLARATION.                                                                           
+SUBSCRIPTED VARIABLE IN DUMP LIST HAS WRONG NUMBER OF SUBSCRIPTS.                                                       
+SUBSCRIPTED VARIABLE IN DUMP LIST HAS WRONG NUMBER OF SUBSCRIPTS.                                                       
+IMPROPER ARRAY DUMP LIST ELEMENT.                                                                                       
+ILLEGAL DUMP LIST ELEMENT.                                                                                              
+MORE THAN 100 LABELS AS DUMP LIST ELEMENTS IN SINGLE DUMP DECLARATION.                                                  
+ILLEGAL DUMP LIST ELEMENT DELIMITER.                                                                                    
+MISSING DUMP LABEL IN DUMP DECLARATION.                                                                                 
+MISSING COLON IN DUMP DECLARATION.                                                                                      
+IMPROPER DUMP DECLARATION DELIMITER.                                                                                    
+MISSING LEFT PARENTHESIS READ STATEMENT.                                                                                
+MISSING LEFT PARENTHESIS IN READ REVERSE OR READ SEEK STATEMENT.                                                        
+MISSING FILE IN READ STATEMENT.                                                                                         
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+IMPROPER FILE DELIMITER IN READ STATEMENT.                                                                              
+IMPROPER FORMAT DELIMITER IN READ STATEMENT.                                                                            
+IMPROPER DELIMITER FOR SECOND PARAMETER IN READ STATEMENT.                                                              
+IMPROPER ROW DESIGNATOR IN READ STATEMENT.                                                                              
+IMPROPER ROW DESIGNATOR DELIMITER IN READ STATEMENT.                                                                    
+MISSING ROW DESIGNATOR IN READ STATEMENT.                                                                               
+IMPROPER DELIMITER PRECEDING LIST IN READ STATEMENT.                                                                    
+IMPROPER END OF FILE LABEL IN READ OR SPACE STATEMENT.                                                                  
+IMPROPER PARITY LABEL IN READ OR SPACE STATEMENT.                                                                       
+MISSING RIGHT BRACKET IN READ OR SPACE STATEMENT.                                                                       
+MISSING LEFT PARENTHESIS IN SPACE STATEMENT.                                                                            
+IMPROPER FILE IDENTIFIER IN SPACE STATEMENT.                                                                            
+MISSING COMMA IN SPACE STATEMENT.                                                                                       
+MISSING RIGHT PARENTHESIS IN SPACE STATEMENT.                                                                           
+MISSING LEFT PARENTHESIS IN WRITE STATEMENT.                                                                            
+IMPROPER FILE IDENTIFIER IN WRITE STATEMENT.                                                                            
+IMPROPER DELIMITER FOR FIRST PARAMETER IN WRITE STATEMENT.                                                              
+MISSING RIGHT BRACKET IN CARRIAGE CONTROL PART OF WRITE STATEMENT.                                                      
+ILLEGAL CARRIAGE CONTROL DELIMITER IN WRITE STATEMENT.                                                                  
+IMPROPER SECOND PARAMETER DELIMITER IN WRITE STATEMENT.                                                                 
+IMPROPER ROW DESIGNATOR IN WRITE STATEMENT.                                                                             
+MISSING RIGHT PARENTHESIS AFTER ROW DESIGNATOR IN WRITE STATEMENT.                                                      
+MISSING ROW DESIGNATOR IN WRITE STATEMENT.                                                                              
+IMPROPER DELIMITER PRECEDING LIST IN WRITE STATEMENT.                                                                   
+IMPROPER LIST DELIMITER IN WRITE STATEMENT.                                                                             
+IMPROPER LIST DELIMITER IN READ STATEMENT.                                                                              
+MISSING LEFT PARENTHESIS IN LOCK STATEMENT.                                                                             
+IMPROPER FILE IN LOCK STATEMENT.                                                                                        
+MISSING COMMA IN LOCK STATEMENT.                                                                                        
+IMPROPER UNIT DISPOSITION PART IN LOCK STATEMENT.                                                                       
+MISSING RIGHT PARENTHESIS IN LOCK STATEMENT.                                                                            
+MISSING LEFT PARENTHESIS IN CLOSE STATEMENT.                                                                            
+IMPROPER FILE IN CLOSE STATEMENT.                                                                                       
+MISSING COMMA IN CLOSE STATEMENT.                                                                                       
+IMPROPER UNIT DISPOSITION PART IN CLOSE STATEMENT.                                                                      
+MISSING RIGHT PARENTHESIS IN CLOSE STATEMENT.                                                                           
+MISSING LEFT PARENTHESIS IN REWIND STATEMENT.                                                                           
+IMPROPER FILE PART IN REWIND STATEMENT.                                                                                 
+MISSING RIGHT PARENTHESIS IN REWIND STATEMENT.                                                                          
+MONITOR DECLARATION IN SPECIFICATION OF PROCEDURE.                                                                      
+DUMP DECLARATION IN SPECIFICATION OF PROCEDURE.                                                                         
+DUMP INDICATOR MUST BE UNSIGNED INTEGER OR SIMPLE VARIABLE.                                                             
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+FOR LISTNAME NOT FOLLOWED BY DO.                                                                                        
+EXPLICIT LISTS MAY NOT BE RECURSIVE.                                                                                    
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+ERROR IN POLISH STRING.                                                                                                 
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+ILLEGAL SUBPROGRAM TAPE IDENTIFIER.                                                                                     
+SUBPROGRAM IDENTIFIER NOT IN DIRECTORY.                                                                                 
+ILLEGAL SUBPROGRAM START POINT.                                                                                         
+SEPARATOR REQUIRED BETWEEN START POINT AND LENGTH ON SUBPROGRAM CARD.                                                   
+ILLEGAL SUBPROGRAM LENGTH.                                                                                              
+MISSING BRACKET ON SUBPROGRAM CARD.                                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+MAGNETIC TAPE POSITIONING ERROR - RECOMPILE.                                                                            
+CONSTRUCT NOT ALLOWED ON TIME-SHARING SYSTEM.                                                                           
+NON-LITERAL FILE VALUE NOT GLOBAL TO FILE DECLARATION.                                                                  
+FOR LIST DO MAY BE USED ONLY IN PROCEDURES.                                                                             
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+ARRAY SIZE TOO LARGE.                                                                                                   
+NUMBER OF DIMENSIONS EXCEEDS 7.                                                                                         
+RECALL CANNOT BE USED WITHOUT REMEMBER AND VICE VERSA.                                                                  
+LOCAL STRING TOO LARGE.                                                                                                 
+INTERNAL STRING EXPRESSION JUMP TOO LONG. MISSING NUMBER OR NUMBER TOO LARGE.                                           
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+MISSING COMMA.                                                                                                          
+MISSING RIGHT BRACKET.                                                                                                  
+MISSING RECORD TYPE.                                                                                                    
+MISSING OR ILLEGAL NUMBER.                                                                                              
+ARRAY ROW NOT ALLOWED HERE.                                                                                             
+DOUBLE PRIMARY MAY NOT BEGIN WITH QUANITY OF THIS TYPE.                                                                 
+ILLEGAL RECORD EXPRESSION.                                                                                              
+RECORD CLASSES DO NOT AGREE.                                                                                            
+MISSING RIGHT BRACKET.                                                                                                  
+ILLEGAL LIST ITEM.                                                                                                      
+TOO MANY RIGHT PARENTHESES IN LIST.                                                                                     
+MISSING ASSIGNMENT OPERATOR IN ASSIGNMENT STATEMENT.                                                                    
+ILLEGAL SYMBOL EXPRESSION.                                                                                              
+RETURN USED OUTSIDE OF SCOPE.                                                                                           
+EXIT USED OUTSIDE OF SCOPE.                                                                                             
+SYMBOL REFERENCES CANNOT BE EXPLICITLY RECLAIMED WHEN USING AUTOMATIC STORAGE RECLAMATION.                              
+ILLEGAL FILE IDENTIFIER.                                                                                                
+PRINT STRING TOO LARGE.                                                                                                 
+ILLEGAL FILE OR PROCEDURE IDENTIFIER IN INPUT OR OUTPUT STATEMENT.                                                      
+ILLEGAL STRING IDENTIFIER IN IO STATEMENT.                                                                              
+THIS DESIGNATIONAL EXPRESSION NOT PERMITTED WHEN USING AUTOMATIC STORAGE RECLAMATION.                                   
+UNDEFINED FIELD IDENTIFIER IN RECORD GENERATOR.                                                                         
+A FIELD CANNOT BE A FORMAL PARAMETER.                                                                                   
+ILLEGAL FIELD DECLARATION.                                                                                              
+FIELD PREVIOUSLY DECLARED IN SAME BLOCK.                                                                                
+MISSING COLON.                                                                                                          
+FIELD TOO SMALL FOR REFERENCE VALUE.                                                                                    
+NUMBER OF RECORD CLASSES EXCEEDS 30.                                                                                    
+DECLARED STRING LENGTH EXCEEDS 8134 CHARACTERS.                                                                         
+ACTUAL NUMBER OF SUBSCRIPTS OF INDEXED FIELD IS NOT EQUAL TO DECLARED NUMBER.                                           
+FIELD NOT CONTAINED IN GIVEN RECORD CLASS.                                                                              
+MISSING QUOTE IN QUOTED SYMBOL EXPRESSION.                                                                              
+UNPRINTABLE EXPRESSION.                                                                                                 
+ILLEGAL PROPERTY LIST ELEMENT.                                                                                          
+MISSING RIGHT BRACKET IN SYMBOL DEFINE.                                                                                 
+ATOMIC SYMBOL MUST PRECEDE PROPERTY LIST PART.                                                                          
+MISSING COLON.                                                                                                          
+ILLEGAL LIST ELEMENT.                                                                                                   
+MISSING INPUT STATEMENT.                                                                                                
+MISSING OUTPUT STATEMENT.                                                                                               
+MISSING IN OR OUT FILE DECLARATION.                                                                                     
+BUFFER LENGTH MUST BE DECLARED TO BE 5 (WORDS) IN FILE DECLARATION.                                                     
+BUFFER LENGTH MUST BE UNSIGNED INTEGER IN REMOTE FILE OR RECORD FILE DECLARATION.                                       
+INPUT STRING LENGTH PLUS LEFT MARGIN MUST BE GREATER THAN 60 CHARACTERS.                                                
+LABEL MUST BE DECLARED IN OUTERMOST BLOCK.                                                                              
+THE SAME OUTPUT STRING VARIABLE MUST APPEAR IN MULTIPLE OCCURANCES OF THE REMOTE TERMINAL OUTPUT STATEMENT.             
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+MISSING INPUT OR OUTPUT STATEMENT FOR REMOTE TERMINAL FILE.                                                             
+MISSING OR ILLEGAL LABEL IDENTIFIER IN REMOTE TERMINAL OUTPUT STATEMENT.                                                
+RECORD FILE MUST BE DECLARED IN SAME BLOCK AS RECORD CLASS IDENTIFIER.                                                  
+ILLEGAL DISK FILE IDENTIFIER IN RECORD CLASS DECLARATION.                                                               
+MISSING DISK FILE IDENTIFIER IN RECORD CLASS DECLARATION.                                                               
+NUMBER OF RECORD CLASS IDENTIFIERS ASSOCIATED WITH GIVEN RECORD FILE EXCEEDS 31.                                        
+RECORD SIZE EXCEEDS SIZE OF LOGICAL RECORD IN RECORD FILE.                                                              
+ILLEGAL USE OF RETURN STATEMENT IN SYMBOL FORMAT.                                                                       
+MISSING UNSIGNED CONSTANT IN WAIT PART OF FILE REMOTE DECLARATION.                                                      
+MISSING OR ILLEGAL FILE IDENTIFIER IN RECORD FILE REFERENCE.                                                            
+IDENTIFIERS IN SYMBOL FORMAT INFO DECLARATION MUST BE DECLARED IN OUTER BLOCK.                                          
+SYMBOL FORMAT CLASS VARIABLE PREVIOUSLY DECLARED.                                                                       
+SYMBOL FORMAT GETNEXT PROCEDURE PREVIOUSLY DECLARED.                                                                    
+ILLEGAL FORMAL PARAMETER IN SYMBOL FORMAT ERROR PROCEDURE.                                                              
+ILLEGAL SYMBOL FORMAT INFO DECLARATION.                                                                                 
+MISSING ATOMIC SYMBOL IN SYMBOL FORMAT TERMINAL COMPONENT.                                                              
+MISSING OR ILLEGAL SYMBOL FORMAT TERMINAL COMPONENT.                                                                    
+NONDECREASING CLASS ASSIGNMENT IN SYMBOL FORMAT TERMINAL COMPONENT SEQUENCE.                                            
+GETNEXT PROCEDURE AND/OR CLASS VARIABLE SHOULD HAVE BEEN DECLARED PREVIOUSLY IN SYMBOL FORMAT DECLARATION               
+MISSING [ IN SYMBOL FORMAT DECLARATION.                                                                                 
+CLASS ASSIGNMENT IN SYMBOL FORMAT TERMINAL MATCHING SEQUENCE MUST BE CONSECUTIVE FOR SYMBOL FORMAT SWITCH.              
+TOO MANY FIRST TERMINAL COMPONENTS IN SYMBOL FORMAT SWITCH (GREATER THAN 127).                                          
+MISSING ERROR PROCEDURE IN SYMBOL FORMAT DECLARATION.                                                                   
+FIRST COMPONENT OF SYMBOL FORMAT SWITCH MATCHING SEQUENCE MUST BE A TERMINAL COMPONENT.                                 
+MISSING MATCHING COMPONENTS IN SYMBOL FORMAT.                                                                           
+MISSING OR ILLEGAL ERROR LABEL IN SYMBOL FORMAT STATEMENT.                                                              
+MISSING REMOTE TERMINAL I/O DECLARATIONS.                                                                               
+MISSING SYMBOL FORMAT IDENTIFIER IN TWXLOOP.                                                                            
+MISSING COLON IN FIELD ASSIGNMENT CONS.                                                                                 
+MISSING FIELD IDENTIFIER IN FIELD ASSIGNMENT CONS.                                                                      
+IDENTIFIER MUST BE DECLARED IN OUTERMOST BLOCK.                                                                         
+ONLY SINGLE DIMENSIONAL ARRAYS ARE PERMITTED AS STRING EXPRESSION PRIMARIES.                                            
+MISSING ASSIGNMENT OPERATOR IN FIELD ASSIGNMENT STATEMENT.                                                              
+ILLEGAL ARGUMENT OF CONVAL FUNCTION.                                                                                    
+OCTAL STRING PRIMARY PERMITTED ONLY IN STRING ASSIGNMENT STATEMENTS.                                                    
+MISSING ATOMIC SYMBOL IN SYMBOL DEFINE DECLARATION.                                                                     
+MISSING STRING VARIABLE IN STRING SUBST PRIMARY.                                                                        
+ONLY INTEGER CONSTANTS CAN APPEAR IN STRING SUBST PRIMARY.                                                              
+ILLEGAL LENGTH SPECIFICATION IN STRING VARIABLE IN SUBST.                                                               
+MISSING SUBSTITUTION CHARACTER IN SUBST.                                                                                
+LEFT MARGIN GREATER THAN OUTPUT STRING VARIABLE LENGTH.                                                                 
+INPUT STRING VARIABLE DIFFERS IN MULTIPLE OCCURANCES OF REMOTE TERMINAL INPUT STATEMENT.                                
+ILLEGAL RECORD FILE DECLARATION.                                                                                        
+FILE REMOTE DECLARATION MUST BE MADE IN OUTER-MOST BLOCK.                                                               
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+ARGUMENT OF SEARCH IS STRING LONGER THAN 63 CHARACTERS IN LENGTH.                                                       
+MISSING STRING AFTER AMONG.                                                                                             
+REPEAT INDICATOR TOO LARGE IN BIT EXPRESSION.                                                                           
+BIT1 OR BIT0 EXPECTED.                                                                                                  
+REPEAT INDICATOR NOT PERMITTED HERE.                                                                                    
+STRING EXPRESSION (LENGTH) OVERFLOW.                                                                                    
+QUOTED STRING TOO LONG.                                                                                                 
+MISSING COLON.                                                                                                          
+STRING EXPRESSION TOO LARGE.                                                                                            
+STRING EXPRESSION CANNOT CONTAIN THIS TYPE QUANTITY.                                                                    
+REPEAT INDICATOR TOO LARGE.                                                                                             
+SUBSTRING NOT IN DESIGNATED STRING OR MISSING OR FORMAL STRING IDENTIFIER.                                              
+ARRAY ROW DESIGNATOR NOT PERMITTED HERE.                                                                                
+STRING DESIGNATOR NOT PERMITTED HERE.                                                                                   
+STARTING POSITION PLUS SUBSTRING LENGTH EXCEEDS LENGTH OF MAIN STRING.                                                  
+MISSING RELATIONAL OPERATOR IN STRING COMPARISON EXPRESSION.                                                            
+MISSING RIGHT BRACKET.                                                                                                  
+STRINGS ON LEFT AND RIGHT HAND SIDES OF RELATIONAL OPERATOR KNOWN TO BE OF UNEQUAL LENGTH.                              
+MISSING ASSIGNMENT OPERATOR.                                                                                            
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+MISMATCHED PARENTHESES.                                                                                                 
+MISSING BOOLEAN OPERAND.                                                                                                
+TOO MANY BOOLEANS SET.                                                                                                  
+MISSING COMMA.                                                                                                          
+MISSING "IF".                                                                                                           
+UNRECOGNIZED WORD OR CHARACTER.                                                                                         
+MISSING SEQUENCE NUMBER.                                                                                                
+MISSING SEMICOLON.                                                                                                      
+MISSING BOOLEAN ID, "=" OR TRUTH VALUE ON SET CARD.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+SYNTAX ERROR. PLEASE TAKE TO PROGRAMMING ASSISTANT.                                                                     
+COMPILATION TERMINATED PREMATURELY.                                                                                     

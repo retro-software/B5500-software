@@ -1,0 +1,119 @@
+0000   0A QUOTED STRING IS GREATER THAN 2013 CHARACTERS                         
+0000   1ILLEGAL ITEM                                                            
+0000   2MISSING IDENTIFIER                                                      
+0000   3DUPLICATE MSTRING DECLARATION                                           
+0000   4MISSING ";" AFTER MACRO NAME IN MACRO DECLARATION                       
+0000   5MISSING "*" OR NUMBER IN SIZE SPECIFICATION OF MSTRING DECLARATION      
+0000   6MISSING "]" AFTER SIZE SPECIFICATION IN MSTRING DECLARATION             
+1000   7INVALID OPERATOR (COPE)                                                 
+0000   8WARNING: MSTRING PASSED TO ENTIER DID NOT CONTAIN A NUMBER              
+1000   9INVALID ADDRESS IN SCAN TYPE (MACRON)                                   
+1000  10INVALID OPERATOR (MACRON)                                               
+0000  11CONSTANT TABLE OVERFLOW (TOO MANY LITERAL CONSTANTS)                    
+0000  12CODE TABLE OVERFLOW (MACRO TOO LARGE)                                   
+0000  13MISSING "(" AFTER MCALGOL INTRINSIC                                     
+0000  14MISSING ")" AFTER MCALGOL INTRINSIC                                     
+0000  15MISSING "[" IN A PARTIAL MSTRING DESIGNATOR                             
+0000  16MISSING ":" IN A PARTIAL MSTRING DESIGNATOR                             
+0000  17MISSING "]" IN A PARTIAL MSTRING DESIGNATOR                             
+0000  18MISSING SPECIAL CHARACTER AFTER INTEGER MSTRING NAME                    
+0000  19MISSING RELATIONAL OPERATOR OR "THEN"                                   
+0000  20ILLEGAL USE OF MACRO RESERVED WORD                                      
+0000  21ILLEGAL ITEM                                                            
+0000  22MISSING "~" OR RELATIONAL OPERATOR                                      
+0000  23MISSING "~" OR RELATIONAL OPERATOR                                      
+0000  24ILLEGAL ITEM FOLLOWING RELATIONAL OPERATOR                              
+0000  25MISSING "THEN"                                                          
+0000  26IMPROPER INTEGER IN FORMS CONTROL OF POST STMT                          
+0000  27MISSING ITEM IN INTEGER SEQUENCE                                        
+0000  28MISSING SPECIAL CHARACTER                                               
+0000  29MISSING MACRO RESERVED WORD                                             
+0000  30ILLEGAL ITEM                                                            
+0000  31ILLEGAL USE OF MACRO RESERVED WORD                                      
+0000  32MISSING "(" AFTER QUOTE                                                 
+0000  33MISSING ")" AFTER QUOTE                                                 
+0000  34MISSING "," ")" "&" OR ";"                                              
+0000  35MISSING ")" OR ";"                                                      
+0000  36MISSING "]"                                                             
+0000  37ILLEGAL USE OF INTEGER MSTRING                                          
+0000  38MISSING "(" OR MSTRING NAME                                             
+0000  39MISSING "~" OR "->"                                                     
+0000  40INTEGER MSTRINGS MAY NOT BE DECOMPOSED                                  
+0000  41MISSING "~" OR "->"                                                     
+0000  42ILLEGAL USE OF MACRO RESERVED WORD                                      
+0000  43MISSING ":"                                                             
+0000  44DUPLICATE LABEL PLACEMENT                                               
+0000  45MISSING ":"                                                             
+0000  46ILLEGAL STATEMENT BEGINNER                                              
+1000  47ILLEGAL TYPE                                                            
+0000  48UNEXPECTED END OF INPUT                                                 
+0000  49EXTRA END                                                               
+0000  50MISSING END                                                             
+0000  51NULL DECLARATION (MISSING IDENTIFIER)                                   
+1001  52A PARTIAL MSTRING MAY NOT BE USED AS AN OPERAND IN A PARTIAL MSTRING    
+0000  53REPLACEMENT ITEM IS TOO LONG                                            
+0000  54MISSING ";"                                                             
+1002  55PACKED DECLARATION GREATER THAN 8189 CHARACTERS. THE DECLARATION IS     
+0000  56MORE THAN 256 PSEUDOREADERS ARE OPEN (MAY BE A RECURSIVE MACRO)         
+0000  57MACRO DECLARATIONS MAY NOT BE NESTED                                    
+0000  58MISSING LABEL                                                           
+0000  59DUPLICATE MSTRING DECLARATION                                           
+0000  60MISSING STRING OR MSTRING IDENTIFIER                                    
+0000  61MISSING "="                                                             
+1003  62DEFINE GREATER THAN 2037 CHARACTERS (BLANKS SUPPRESSED).  THE DEFINE    
+0000  63"BOOLEAN" MUST BE FOLLOWED BY EITHER "EXPRESSION" OR "PRIMARY"          
+0000  64MISSING INTEGER MPOINTER IN PATCH STATEMENT                             
+0000  65PATCH FILE SIZE OR PATCH AREA EXCEEDED                                  
+0000  66INTEGER MPOINTER ALREADY A PATCH IDENTIFIER                             
+0000  67INTEGER MPOINTER NOT A PATCH IDENTIFIER                                 
+0000  68MISSING "("                                                             
+0000  69MISSING ")"                                                             
+0000  70WARNING:  "TOGGLE" SET TO RESULT OF LAST SCAN TYPE ONLY                 
+0000  71MISSING SPECIAL CHARACTER                                               
+0000  72ATTEMPTED TOGGLE CANNOT BE RESET                                        
+0000  73DECLARATION IDENTIFIER APPEARS OUTSIDE OF THE RANGE OF THE DECLARATION  
+0000  74IDENTIFIER FOLLOWING "EQV" NOT A LIST MACRO NAME                        
+0000  75WARNING: RESULTS OF INDIRECT REFERENCE SEQUENCE NOT IN DICTIONARY       
+0000  76WARNING: INDIRECT REFERENCE NOT A VALID MSTRING NAME                    
+0000  77WARNING: INDIRECT REFERENCE MODE DISAGREEMENT                           
+0000  78WARNING: INDIRECT REFERENCE NOT SPECIFIED (UNINITIALIZED MPOINTER)      
+0000  79MISSING "]" IN ADDRESS LOOKUP STATEMENT                                 
+0000  80MISSING MSTRING SIZE SPECIFICATION                                      
+0000  81MISSING "."                                                             
+0000  82NEW LANGUAGE FILES MAY NOT BE DUMPED WHILE PROCESSING A DECLARATION     
+1005  83NEW LANGUAGE FILES MAY NOT BE DUMPED WHILE MACROS ARE BEING             
+0000  84INTEGER LITERAL > 99999999                                              
+0000  85INTEGER MSTRING OVERFLOW                                                
+0000  86MISSING ALPHA MSTRING IDENTIFIER                                        
+0000  87MISSING "(" OR "[" IN PARAMETRIC DEFINE USAGE                           
+0000  88EXTRA ")" OR "]" IN PARAMETRIC DEFINE USAGE                             
+0000  89MISSING ")" OR "]" IN PARAMETRIC DEFINE USAGE                           
+0000  90MISSING "," OR ")" WHILE SCANNING PARAMETERS IN DEFINE                  
+0000  91DUPLICATE PARAMETER NAME IN DEFINE                                      
+0000  92TOO MANY LOCAL VARIABLES                                                
+0000  93TOO MANY GLOBAL VARIABLES                                               
+1004  94PARTIAL MSTRING STORE OUTSIDE OF PRESENT CONTENTS.                      
+0000  95INTEGER MFIELDS MUST BE { 39 BITS                                       
+0000  96MISSING "[", ":", OR "]" IN MFIELD DECLARATION                          
+0000  97INVALID MFIELD DESCRIPTION                                              
+0000  98MISSING DICTIONARY MSTRING IDENTIFIER                                   
+0000  99MISSING DICTIONARY MPOINTER                                             
+0000 100ILLEGAL USE OF PARTIAL MSTRING NOTATION                                 
+0000 101MFIELD MODE DISAGREEMENT                                                
+0000 102MISSING MFIELD DESIGNATOR                                               
+0000 103TANK OVERFLOW...ALPHA REPRESENTATION LOST                               
+0000 104MISSING MPOINTER                                                        
+0000 105DECLARATION NOT FOLLOWED BY ";"                                         
+0000 106MISSING "["                                                             
+0000 107MISSING "]"                                                             
+0000 108MISSING OR IMPROPER INTEGER WHERE REQUIRED                              
+0000 109CODE IMAGES LOST DUE TO "SYNTAX" ON REQUEST                             
+00001000THIS ERROR SHOULD NOT OCCUR, PLEASE NOTIFY SYSTEMS GROUP                
+00001001DESIGNATOR                                                              
+00001002TRUNCATED TO 8189 CHARACTERS.                                           
+00001003IS TRUNCATED TO 2037 CHARACTERS.                                        
+00001004GARBAGE EXISTS IN VOID.                                                 
+00001005COMPILED OR INTERPRETED                                                 
+0000 110CONSTRUCT NOT PERMITTED IN BASIC MCALGOL                                
+0000 111CONSTRUCT NOT PERMITTED IN BASIC OR INTERMEDIATE MCALGOL                
+0000 112CONTROL DECK FEATURE REQUIRES WRL MCP PATCHES(LOAD & TIME)              

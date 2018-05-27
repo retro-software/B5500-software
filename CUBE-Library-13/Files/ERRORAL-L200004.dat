@@ -1,0 +1,411 @@
+0000   0DECLARATION NOT FOLLOWED BY ";" .                                       
+0000   1IDENTIFIER DECLARED TWICE IN SAME BLOCK.                                
+1001   2SPECIFICATION PART CONTAINS IDENTIFIER NOT APPEARING IN FORMAL PARAMETER
+0000   3NON-IDENTIFIER APPEARS IN IDENTIFIER LIST OF DECLARATION.               
+0000   4STREAM PROCEDURE DECLARATION PRECEDED BY ILLEGAL DECLARATOR.            
+0000   5PROCEDURE DECLARATION PRECEDED BY ILLEGAL DECLARATOR.                   
+0000   6PROCEDURE IDENTIFIER USED BEFORE IN SAME BLOCK(NOT FORWARD).            
+1002   7PROCEDURE IDENTIFIER NOT FOLLOWED BY "(" OR ";" IN PROCEDURE            
+0000   8FORMAL PARAMETER LIST NOT FOLLOWED BY ")".                              
+0000   9FORMAL PARAMETER PART NOT FOLLOWED BY ";" .                             
+1003  10VALUE PART CONTAINS IDENTIFIER WHICH DID NOT APPEAR IN FORMAL           
+0000  11VALUE PART NOT ENDED BY SEMICOLON.                                      
+0000  12MISSING OR ILLEGAL SPECIFICATION PART.                                  
+0000  13"OWN" USED IN ARRAY SPECIFICATION.                                      
+0000  14"SAVE" USED IN ARRAY SPECIFICATION.                                     
+0000  15ARRAYDEC: ARRAY CALL-BY-VALUE NOT IMPLEMENTED.                          
+0000  16ARRAY IDENTIFIER IN DECLARATION NOT FOLLOWED BY "[" OR "," .            
+0000  17LOWER BOUND IN ARRAY DECLARATION NOT FOLLOWED BY ":" .                  
+0000  18BOUND PAIR LIST NOT FOLLOWED BY "]".                                    
+0000  19ILLEGAL LOWER BOUND DESIGNATOR IN ARRAY SPECIFICATION.                  
+0000  20"OWN" APPEARS IMMEDIATELY BEFORE IDENTIFIER(NO TYPE).                   
+0000  21"SAVE" APPEARS IMMEDIATELY BEFORE IDENTIFIER(NO TYPE).                  
+1004  22"STREAM" APPEARS IMMEDIATELY BEFORE IDENTIFIER(THE WORD "PROCEDURE" LEFT
+0000  23DECLARATOR PRECEDED ILLEGALLY BY ANOTHER DECLARATOR.                    
+0000  24LABEL CANNOT BE PASSED TO A TYPED PROCEDURE.                            
+1005  25DECLARATOR OR SPECIFIER ILLEGALLY PRECEDED BY "OWN" OR "SAVE" OR SOME   
+0000  26MISSING "(" IN FILE DECLARATION.                                        
+0000  27FILEDEC: MISSING RECORD SIZE.                                           
+0000  28ILLEGAL BUFFER PART OR SAVE FACTOR IN FILE DECLARATION.                 
+0000  29MISSING ")" IN FILE DECLARATION.                                        
+0000  30MISSING ":" IN DISK DESCRIPTION.                                        
+0000  31MISSING "(" IN LIST DECLARATION.                                        
+0000  32MISSING "(" IN FORMAT DECLARATION.                                      
+0000  33SWITCH DECLARATION DOES NOT HAVE "~" OR "FORWARD" AFTER IDENTIFIER.     
+0000  34MISSING "~" AFTER SWITCH FILE IDENTIFIER.                               
+0000  35NON FILE IDENTIFIER APPEARING IN DECLARATION OF SWITCH FILE.            
+0000  36SWITCH FORMAT IDENTIFIER NOT FOLLOWED BY "~" .                          
+0000  37MISSING "(" AT START OF FORMAT PHRASE .                                 
+0000  38FORMAT SEGMENT > 1022 WORDS.                                            
+0000  39NUMBER OF NESTED BLOCKS IS GREATER THAN 31                              
+0000  40PROGRAM PARAMETER BLOCK SIZE EXCEEDED                                   
+0000  41MISSING "~" AFTER SWITCH LIST IDENTIFIER.                               
+0000  42ILLEGAL LIST IDENTIFIER APPEARING IN SWITCH LIST.                       
+0000  43MISSING "]" AFTER "DISK" IN FILE DECLARATION.                           
+0000  44MISSING "[" AFTER "DISK" IN FILE DECLARATION.                           
+0000  45MISSING "=" AFTER DEFINE IDENTIFIER.                                    
+0000  46NON-LITERAL ARRAY BOUND NOT GLOBAL TO ARRAY DECLARATION.                
+0000  47ITEM FOLLOWING "@" NOT A NUMBER.                                        
+0000  48NUMBER OF PARAMETERS DIFFERS FROM FORWARD DECLARATION.                  
+0000  49TYPE OF PARAMETER DIFFERS FROM FORWARD DECLARATION.                     
+0000  50VALUE PART DIFFERS FROM FORWARD DECLARATION.                            
+0000  59IMPROPER ARRAY SIZE (MAX=1023).                                         
+0000  60MISSING "~" IN VAULT STATEMENT.                                         
+0000  61INVALID FAULT TYPE: MUST BE FLAG,ZERO,EXPOVR,INTOVR, OR INDEX.          
+0000  70MISSING "BEGIN" IN CASE STATEMENT.                                      
+0000  71MISSING "END" IN CASE STATEMENT.                                        
+0000  91INLINE: DESIGNATIONAL EXPRESSION NOT ALLOWED.                           
+0000  92INLINE: NOT EXPRESSION TYPE (ONE BELOW MKS).                            
+0000  93INLINE: MISSING ")" IN STREAM CALL.                                     
+0000  94INLINE: MISSING "(" IN STREAM CALL.                                     
+0000  95INLINE: MISSING ".," AFTER STREAM CALL.                                 
+0000  96INLINE: EXTRA ":" IN STREAM CALL.                                       
+0000  97INLINE: MISSING "~" IN STREAM CALL.                                     
+1028  98EFFICIENCY NOTE--THIS BLOCK OR PROCEDURE CONTAINS ARRAY, FILE,          
+1024  99INCORRECT SYNTAX FOR OCTAL CONSTANT.  PLEASE SEE USER CONSULTANT OR     
+0000 100UNDECLARED IDENTIFIER.                                                  
+1006 101AN ATTEMPT HAS BEEN MADE TO ADDRESS AN IDENTIFIER WHICH IS LOCAL TO ONE 
+0000 102CONDITIONAL EXPRESSION IS NOT OF ARITHMETIC TYPE.                       
+0000 103PRIMARY MAY NOT BEGIN WITH A QUANTITY OF THIS TYPE.                     
+0000 104MISSING ")" .                                                           
+0000 105MISSING "(" .                                                           
+0000 106PRIMARY MAY NOT START WITH DECLARATOR.                                  
+0000 107THE EXPRESSION IS NOT OF BOOLEAN TYPE.                                  
+1008 108A RELATION MAY NOT HAVE CONDITIONAL EXPRESSIONS AS THE ARITHMETIC       
+0000 109THE PRIMARY IS NOT BOOLEAN.                                             
+0000 110A NON-BOOLEAN OPERATOR OCCURS IN A BOOLEAN EXPRESSION.                  
+1009 111NO EXPRESSION (ARITHMETIC, BOOLEAN, OR DESIGNATIONAL) MAY BEGIN WITH A  
+1010 112NO EXPRESSION (ARITHMETIC,BOOLEAN OR DESIGNATIONAL) MAY BEGIN WITH A    
+1011 113EITHER THE SYNTAX OR THE RANGE OF THE LITERALS FOR A CONCATENATE        
+1012 114EITHER THE SYNTAX OR THE RANGE OF THE LITERALS FOR A PARTIAL WORD       
+0000 115THE EXPRESSION IS NOT OF DESIGNATIONAL TYPE.                            
+0000 116MISSING "THEN".                                                         
+0000 117MISSING "[" .                                                           
+0000 118MISSING "]" .                                                           
+0000 119MISSING ";" OR "END".                                                   
+0000 120MISSING "END".                                                          
+1013 121AN INDEXED FILE MAY BE PASSED BY NAME ONLY,                             
+0000 122A STREAM PROCEDURE MAY NOT HAVE AN EXPRESSION PASSED TO IT BY NAME.     
+0000 123THE ACTUAL AND FORMAL PARAMETERS DO NOT AGREE AS TO TYPE.               
+0000 124ACTUAL AND FORMAL ARRAYS DO NOT HAVE SAME NUMBER OF DIMENSIONS.         
+0000 125STREAM PROCEDURES MAY NOT BE PASSED AS A PARAMETER TO A PROCEDURE.      
+0000 126NO ACTUAL PARAMETER MAY BEGIN WITH A QUANTITY OF THIS TYPE.             
+0000 127THIS TYPE QUANTITY MAY NOT BE PASSED TO A STREAM PROCEDURE.             
+1015 128EITHER ACTUAL AND FORMAL PARAMETERS DO NOT AGREE AS TO NUMBER, OR EXTRA 
+0000 129ILLEGAL PARAMETER DELIMITER.                                            
+0000 130NO FILE NAME.                                                           
+0000 131MISSING "UNTIL".                                                        
+0000 132MISSING "DO".                                                           
+0000 133MISSING ":" .                                                           
+0000 134THE LABEL WAS NOT DECLARED IN THE BLOCK.                                
+0000 135THE LABEL HAS ALREADY OCCURRED.                                         
+0000 136IMPROPER FORMAT EDITING PHASE.                                          
+1016 137A FORMAT EDITING PHRASE DOES NOT HAVE AN INTEGER WHERE AN INTEGER IS    
+0000 138THE WIDTH IS TOO SMALL IN "E" OR "F" EDITING PHRASE.                    
+0000 139DEFINE IS NESTED MORE THAN EIGHT DEEP.                                  
+0000 140AN INTEGER IN A FORMAT IS GREATER THAN 1023.                            
+0000 141INTEGER, OR IDENTIFIER, OR STRING IS TOO LONG.                          
+0000 142A DEFINE CONTAINS MORE THAN 2047 CHARACTERS (BLANK SUPPRESSED).         
+0000 143EXTRA "END".                                                            
+0000 144NO STATEMENT MAY START WITH THIS TYPE IDENTIFIER.                       
+0000 145NO STATEMENT MAY START WITH THIS TYPE QUANTITY.                         
+1017 146NO STATEMENT MAY START WITH A DECLARATION - MAY BE A MISSING END OF A   
+0000 147MORE THAN 256 EXPRESSIONS IN A SWITCH DECLARATION.                      
+1018 148MORE THAN 1023 PROGRAM REFERENCE TABLE CELLS ARE REQUIRED FOR THIS      
+0000 149MORE THAN 255 STACK CELLS ARE REQUIRED FOR THIS PROCEDURE.              
+0000 150CONSTANTS MAY NOT BE PASSED BY NAME TO STREAM PROCEDURES.               
+0000 151MISSING INDEX VARIABLE IN FOR STATEMENT.                                
+0000 152MISSING "~" FOLLOWING INDEX VARIABLE.                                   
+0000 153MISSING "UNTIL" OR "WHILE" IN STEP ELEMENT.                             
+0000 154MISSING "DO" IN FOR CLAUSE.                                             
+0000 155MISSING "ELSE".                                                         
+0000 156A DESIGNATIONAL EXPRESSION MAY NOT BE A LIST ELEMENT.                   
+0000 157A ROW DESIGNATOR MAY NOT BE A LIST ELEMENT.                             
+0000 158MISSING "]" IN GROUP OF ELEMENTS.                                       
+0000 159ILLEGAL USE OF PROCEDURE OR FUNCTION IDENTIFIER.                        
+0000 160DECLARED LABEL DOES NOT OCCUR.                                          
+0000 161DECLARED FORWARD PROCEDURE DOES NOT OCCUR.                              
+0000 162DECLARED FORWARD SWITCH DOES NOT OCCUR.                                 
+0000 163THE WIDTH OF A FIELD IS MORE THAN 63.                                   
+0000 164MISSING "," IN ZIP OR WAIT STATEMENT.                                   
+0000 165MISSING "," IN DELAY PARAMETER LIST.                                    
+0000 170MISSING PROGRAM--NO BEGIN.                                              
+0000 190"?" CARD NOT ALLOWED IN NON-DISK-TYPE FILES.                            
+0000 191"? LINK" TARGET OUTSIDE FILE BOUNDARIES.                                
+0000 193"?" IN COLUMN 1 SHOULD BE AVOIDED.                                      
+0000 194INVALID RECORD SPECIFIER IN "? LINK" CARD.                              
+0000 200SEGMENT TOO LARGE ( > 1023 WORDS).                                      
+0000 201PARTIAL WORD DESIGNATOR NOT LEFT-MOST IN A LEFT PART LIST.              
+0000 202MISSING "." OR "~" .                                                    
+0000 203WRONG NUMBER OF SUBSCRIPTS IN A ROW DESIGNATOR.                         
+0000 204MISSING "]" IN A ROW DESIGNATOR.                                        
+1019 205A ROW DESIGNATOR APPEARS OUTSIDE OF AN ACTUAL PARAMETER LIST OR FILL    
+0000 206MISSING "]".                                                            
+0000 207MISSING "[".                                                            
+0000 208WRONG NUMBER OF SUBSCRIPTS.                                             
+0000 209PARTIAL WORD DESIGNATOR NOT LEFT-MOST IN A LEFT PART LIST.              
+0000 210MISSING "." OR "~" .                                                    
+0000 211PROCEDURE IDENTIFIER USED OUTSIDE OF ITS SCOPE IN LEFT PART.            
+0000 212SUBARRAY DESIGNATOR PERMITTED AS ACTUAL PARAMETER ONLY.                 
+0000 250ILLEGAL STREAM STATEMENT.                                               
+0000 251MISSING "~".                                                            
+0000 252MISSING "+" OR "-" .                                                    
+0000 253MISSING NUMBER OR STREAM VARIABLE.                                      
+0000 254NOTIFY SYSTEMS GROUP IF YOU GET THIS ERROR.                             
+0000 255MISSING STRING IN "DS~ LIT" STATEMENT.                                  
+0000 256MISSING PARENTHESIS OR FILE IDENTIFIER IS NOT A FORMAL PARAMETER.       
+1020 257LABEL SPECIFIED IS NOT ON THE SAME NEST LEVEL AS A PRECEDING APPEARANCE 
+0000 258MISSING ":".                                                            
+0000 259LABEL APPEARS MORE THAN ONCE.                                           
+0000 260MISSING LABEL IN A "GO TO" OR "JUMP OUT TO" STATEMENT.                  
+0000 261MISSING "OUT" IN "JUMP OUT" STATEMENT.                                  
+0000 262MISSING PARENTHESIS.                                                    
+0000 263MISSING "SC" IN IF STATEMENT.                                           
+0000 264MISSING RELATIONAL IN IF STATEMENT.                                     
+0000 265MISSING "ALPHA", "DC", OR STRING IN IF STATEMENT.                       
+0000 266MISSING "THEN" IN IF STATEMENT.                                         
+0000 267THERE ARE "GO TO" STATEMENTS IN WHICH THE LABEL IS UNDEFINED.           
+1021 268A REPEAT INDEX } 64 WAS SPECIFIED OR TOO MANY FORMAL PARAMETERS,LOCALS  
+0000 269A CONSTANT IS SPECIFIED WHICH IS TOO LARGE OR TOO SMALL.                
+0000 270RELATIONAL IN "SC <RELATIONAL> ALPHA" MUST BE "=".                      
+0000 271IMPROPER CONSTRUCT FOR <SOURCE WITH LITERAL>.                           
+0000 275JUMP LONGER THAN 63 SYLLABLES (WARNING) .                               
+0000 276STREAM PROCEDURES NOT ALLOWED.                                          
+0000 281MISSING "(".                                                            
+0000 282TOO MANY OPERATORS.                                                     
+0000 283TOO MANY OPERANDS.                                                      
+0000 284MISSING "," .                                                           
+0000 285MISSING ")" .                                                           
+0000 300THE IDENTIFIER FOLLOWING THE WORD "FILL" IS NOT AN ARRAY IDENTIFIER.    
+0000 301MISSING "WITH" IN FILL STATEMENT.                                       
+0000 302IMPROPER FILL ELEMENT.                                                  
+1022 303NON OCTAL CHARACTER IN OCTAL FILL. THE THREE LOW ORDER BITS ARE         
+0000 304IMPROPER ROW DESIGNATOR.                                                
+0000 305INVALID OCTAL CONSTANT.                                                 
+0000 306INVALID OCTAL CONSTANT.                                                 
+0000 310IMPROPER ERROR NAME IN A SET STATEMENT.                                 
+0000 311IMPROPER TARGET IN A SET STATEMENT.                                     
+0000 312TARGET ITEM IN A SET STATEMENT MUST HAVE A PRT ADDRESS.                 
+0000 313TARGET PROCEDURE IN A SET STATEMENT MUST NOT HAVE PARAMETERS.           
+0000 314ERROR OPTION MAY NOT APPEAR AFTER FIRST BEGIN.                          
+0000 315IMPROPERLY PLACED LOAD CARD.                                            
+0000 316ALGOL COMMON MUST BE SAME AT DUMP AND LOAD TIMES.                       
+0000 350MISSING OR ILLEGAL PARAMETER DELIMITER IN SORT OR MERGE STATEMENT.      
+0000 351ILLEGAL TYPE FOR SORT OR MERGE OUTPUT PROCEDURE.                        
+0000 352OUTPUT PROCEDURE IN SORT OR MERGE MUST HAVE TWO PARAMETERS.             
+0000 353FIRST PARAMETER OF OUTPUT PROCEDURE MUST BE BOOLEAN.                    
+0000 354SECOND PARAMETER OF OUTPUT PROCEDURE MUST BE ONE-DIM. ARRAY.            
+0000 355MISSING "(".                                                            
+0000 356ILLEGAL TYPE FOR SORT OR MERGE HIGH-VALUE PROCEDURE.                    
+0000 357HIGH-VALUE PROCEDURE MUST HAVE ONE PARAMETER.                           
+0000 358HIGH-VALUE PROCEDURE PARAMETER MUST BE ONE-DIM. ARRAY.                  
+0000 359SORT OR MERGE COMPARE PROCEDURE MUST BE BOOLEAN.                        
+0000 360COMPARE PROCEDURE MUST HAVE TWO PARAMETERS.                             
+0000 361COMPARE PROCEDURE FIRST PARAMETER MUST BE ONE-DIM. ARRAY.               
+0000 362COMPARE PROCEDURE SECOND PARAMETER MUST BE ONE-DIM. ARRAY.              
+0000 363SORT STATEMENT INPUT PROCEDURE MUST BE BOOLEAN.                         
+0000 364INPUT PROCEDURE MUST HAVE ONE PARAMETER.                                
+0000 365INPUT PROCEDURE PARAMETER MUST BE ONE-DIM. ARRAY.                       
+0000 366MISSING ")".                                                            
+0000 367MISSING "(".                                                            
+0000 368THERE MUST BE MORE THAN ONE AND LESS THAN EIGHT MERGE FILES.            
+0000 369MISSING ")".                                                            
+0000 400MISSING FILE IDENTIFIER IN MONITOR DECLARATION.                         
+0000 401MISSING "(" IN MONITOR DECLARATION.                                     
+0000 402IMPROPER SUBSCRIPT FOR MONITOR LIST ELEMENT.                            
+0000 403IMPROPER SUBSCRIPT EXPRESSION DELIMITER IN MONITOR LIST ELEMENT.        
+0000 404IMPROPER NUMBER OF SUBSCRIPTS IN MONITOR LIST ELEMENT.                  
+0000 405LABEL OR SWITCH MONITORED AT IMPROPER LEVEL.                            
+0000 406IMPROPER MONITOR LIST ELEMENT.                                          
+0000 407MISSING ")" IN MONITOR DECLARATION.                                     
+0000 408IMPROPER MONITOR DECLARATION DELIMITER.                                 
+0000 409MISSING FILE IDENTIFIER IN DUMP DECLARATION.                            
+0000 410MISSING "(" IN DUMP DECLARATION.                                        
+0000 411SUBSCRIPTED VARIABLE IN DUMP LIST HAS WRONG NUMBER OF SUBSCRIPTS.       
+0000 412SUBSCRIPTED VARIABLE IN DUMP LIST HAS WRONG NUMBER OF SUBSCRIPTS.       
+0000 413IMPROPER ARRAY DUMP LIST ELEMENT.                                       
+0000 414ILLEGAL DUMP LIST ELEMENT.                                              
+1023 415MORE THAN 100 LABELS APPEAR AS DUMP LIST ELEMENTS IN ONE DUMP           
+0000 416ILLEGAL DUMP LIST ELEMENT DELIMITER.                                    
+0000 417MISSING DUMP LABEL IN DUMP DECLARATION.                                 
+0000 418MISSING COLON IN DUMP DECLARATION.                                      
+0000 419IMPROPER DUMP DECLARATION DELIMITER.                                    
+0000 420MISSING "(" IN READ STATEMENT.                                          
+0000 421MISSING "(" IN READ REVERSE STATEMENT.                                  
+0000 422MISSING FILE IN READ STATEMENT.                                         
+0000 423NOTIFY SYSTEMS GROUP IF YOU GET THIS ERROR.                             
+0000 424IMPROPER FILE DELIMITER IN READ STATEMENT.                              
+0000 425IMPROPER FORMAT DELIMITER IN READ STATEMENT.                            
+0000 426IMPROPER DELIMITER FOR SECOND PARAMETER IN READ STATEMENT.              
+0000 427IMPROPER ROW DESIGNATOR IN READ STATEMENT.                              
+0000 428IMPROPER ROW DESIGNATOR DELIMITER IN READ STATEMENT.                    
+0000 429MISSING ROW DESIGNATOR IN READ STATEMENT.                               
+0000 430IMPROPER DELIMITER PRECEDING THE LIST IN A READ STATEMENT.              
+0000 431IMPROPER END OF FILE LABEL IN READ OR SPACE STATEMENT.                  
+0000 432IMPROPER PARITY LABEL IN READ OR SPACE STATEMENT.                       
+0000 433MISSING "]" IN READ OR SPACE STATEMENT.                                 
+0000 434MISSING "(" IN SPACE STATEMENT.                                         
+0000 435IMPROPER FILE IDENTIFIER IN SPACE STATEMENT.                            
+0000 436MISSING "," IN SPACE STATEMENT.                                         
+0000 437MISSING ")" IN SPACE STATEMENT.                                         
+0000 438MISSING "(" IN A WRITE STATEMENT.                                       
+0000 439IMPROPER FILE IDENTIFIER IN A WRITE STATEMENT.                          
+0000 440IMPROPER DELIMITER FOR FIRST PARAMETER IN A WRITE STATEMENT.            
+0000 441MISSING "]" IN CARRIAGE CONTROL PART OF A WRITE STATEMENT.              
+0000 442ILLEGAL CARRIAGE CONTROL DELIMITER IN A WRITE STATEMENT.                
+0000 443IMPROPER SECOND PARAMETER DELIMITER IN WRITE STATEMENT.                 
+0000 444IMPROPER ROW DESIGNATOR IN A WRITE STATEMENT.                           
+0000 445MISSING ")" AFTER A ROW DESIGNATOR IN A WRITE STATEMENT.                
+0000 446MISSING ROW DESIGNATOR IN A WRITE STATEMENT.                            
+0000 447IMPROPER DELIMITER PRECEDING A LIST IN A WRITE STATEMENT.               
+0000 448IMPROPER LIST DELIMITER IN A WRITE STATEMENT.                           
+0000 449IMPROPER LIST DELIMITER IN A READ STATEMENT.                            
+0000 450MISSING "(" IN A LOCK STATEMENT.                                        
+0000 451IMPROPER FILE PART IN A LOCK STATEMENT.                                 
+0000 452MISSING "," IN A LOCK STATEMENT.                                        
+0000 453IMPROPER UNIT DISPOSITION PART IN A LOCK STATEMENT.                     
+0000 454MISSING ")" IN A LOCK STATEMENT.                                        
+0000 455MISSING "(" IN A CLOSE STATEMENT.                                       
+0000 456IMPROPER FILE PART IN A CLOSE STATEMENT.                                
+0000 457MISSING "," IN A CLOSE STATEMENT.                                       
+0000 458IMPROPER UNIT DISPOSITION PART IN A CLOSE STATEMENT.                    
+0000 459MISSING ")" IN A CLOSE STATEMENT.                                       
+0000 460MISSING "(" IN A REWIND STATEMENT.                                      
+0000 461IMPROPER FILE PART IN A REWIND STATEMENT.                               
+0000 462MISSING ")" IN A REWIND STATEMENT.                                      
+0000 463A MONITOR DECLARATION APPEARS IN THE SPECIFICATION PART OF A PROCEDURE. 
+0000 464A DUMP DECLARATION APPEARS IN THE SPECIFICATION PART OF A PROCEDURE.    
+0000 465DUMP INDICATOR MUST BE UNSIGNED INTEGER OR SIMPLE VARIABLE.             
+0000 475"FOR <LISTNAME>" NOT FOLLOWED BY "DO".                                  
+0000 476LISTS MAY NOT BE GENERATED RECURSIVELY.                                 
+0000 478DECLARED DIMENSION EXCEEDS 1023 (WARNING).                              
+0000 499IODEC:IMPROPER FILE TYPE.                                               
+0000 500ILLEGAL SUBPROGRAM IDENTIFIER.                                          
+0000 501SUBPROGRAM IDENTIFIER NOT CONTAINED IN DIRECTORY.                       
+0000 502ILLEGAL SUBPROGRAM START POINT.                                         
+0000 503SEPARATOR REQUIRED BETWEEN START POINT AND LENGTH.                      
+0000 504ILLEGAL SUBPROGRAM LENGTH.                                              
+0000 505MISSING BRACKET.                                                        
+0000 506NOTIFY SYSTEMS GROUP IF YOU GET THIS ERROR.                             
+0000 507TAPE POSITIONING ERROR.                                                 
+0000 510FORSTLIST: FOR <LIST> DO <STATEMENT> ONLY ALLOWED IN A PROCEDURE BODY.  
+0000 519EFFICIENCY NOTE-DESIGNATIONAL EXPRESSION.                               
+0000 520PROGDESCBLDR: ACCIDENTAL ENTRY DESCRIPTOR.                              
+0000 521PROGDESCBLDR: PROCEDURE DESCRIPTOR.                                     
+0000 522PROGDESCBLDR: LABEL DESCRIPTOR.                                         
+0000 523PROGDESCBLDR: STREAM PROCEDURE DESCRIPTOR.                              
+0000 524DEFINE PARAMETER LIST NOT PROPERLY TERMINATED-MAY BE MISSING ")" OR "]".
+0000 525MISSING ")" OR "]".                                                     
+0000 526IMPROPERLY FORMED PARAMETER IN DEFINE.                                  
+0000 527TOO MANY PARAMETERS IN DEFINE.                                          
+0000 528END-OF-FILE REACHED BEFORE "END. ".                                     
+0000 529FLAG BIT IN QUOTED STRING NOT ALLOWED.                                  
+0000 530EFFICIENCY NOTE--NAME-CALL EXPRESSION.                                  
+0000 531EFFICIENCY NOTE--SIMPLE SWITCH PARAMETER.                               
+0000 532EFFICIENCY NOTE--NON-LOCAL SWITCH.                                      
+0000 533EFFICIENCY NOTE--NON-LOCAL LABEL.                                       
+0000 534EFFICIENCY NOTE--LABEL PARAMETER.                                       
+0000 535EFFICIENCY NOTE--THIS SWITCH CONTAINS NON-LOCAL LABELS.                 
+0000 536EFFICIENCY NOTE--THIS SWITCH WAS DECLARED FORWARD.                      
+1032 537EFFICIENCY NOTE--THIS SWITCH IS BEING USED MORE THAN ONCE.              
+1034 538EFFICIENCY NOTE--THIS POWER IS BEING OBTAINED THRU THE USE OF           
+0000 539EFFICIENCY NOTE--NONZERO LOWER BOUND DECLARATION.                       
+0000 540EFFICIENCY NOTE--NONZERO LOWER BOUND SPECIFICATION.                     
+0000 776"$ STANDARD" USED.                                                      
+0000 777"$ ERROR" USED.                                                         
+0000 778"$ STOP" USED.                                                          
+0000 779"$ NEW TAPE" USED.                                                      
+0000 780"$ PURGE" USED.                                                         
+0000 781"$ XREF" USED.                                                          
+0000 782"$ SAVE" USED.                                                          
+0000 783"$ INDEX" USED.                                                         
+0000 784"$+DOUBLE" USED.                                                        
+0000 785"$ STREAM" USED.                                                        
+0000 786"$ PATCH" USED.                                                         
+0000 787"$ NOTES" USED.                                                         
+0000 788"$ MERGE" USED.                                                         
+0000 789"$ DOL" USED.                                                           
+0000 790"$ PAIRS" USED.                                                         
+0000 791"$ FILES" USED.                                                         
+0000 792"$ INFO" USED.                                                          
+0000 793"$+" OR "$-" USED.                                                      
+0000 794"$ NEW DISK" USED.                                                      
+0000 795"$ DISK" USED.                                                          
+0000 796"$ OMIT" USED.                                                          
+0000 797"$ SET" USED.                                                           
+0000 798"? END" CARD USED TO STOP READING IN A DISK FILE.                       
+0000 799SET OF LIST NAMES ALLOWED AS FOR INDICES.                               
+0000 800PARTIAL WORD OPERATION.                                                 
+0000 801UPLEVEL ADDRESSING IS PERMITTED IF THERE IS A PRT CELL.                 
+0000 802A DYNAMIC ARRAY DECLARATION IS PERMITTED AT THE OUTERMOST LEVEL.        
+0000 803A BLANK ENTRY IS ALLOWED IN LIEU OF ZERO IN FILL STATEMENT.             
+0000 804CONCATENATE OPERATION.                                                  
+0000 805WRL OCTAL CONSTANT NOTATION.                                            
+0000 806WARNING MESSAGE IN LIEU OF SYNTAX ERROR.                                
+1035 807AN EIGHT INSTEAD OF A SEVEN CHARACTER STRING IS ALLOWED  PROVIDED       
+0000 808SPECIAL INTRINSIC FOR OBJECT PROGRAM IDENTIFICATION.                    
+0000 809SET SYNTAX IS UNIQUE TO WRL ERROR OPTION.                               
+0000 810BRACKET CONVENTION IS NOT STANDARD.                                     
+1036 811CHECK VALUE OF THIS EXPRESSION SINCE ONLY ARGUMENT VALUES               
+0000 812ONLY "TIME" ARGUMENT VALUES OF 0,1,2,3,4 ARE STANDARD.                  
+0000 813USE OF INTEGER TO INDEX "CI" IS UNIQUE TO WRL.                          
+0000 814UNDECLARED LABEL ALLOWED--UNIQUE TO WRL.                                
+0000 815ACTUAL LIST ALLOWED IN LIEU OF LIST NAME.                               
+0000 816LIST NAME ALLOWED AS "FOR" INDEX.                                       
+0000 817LIST IDENTIFER ALLOWED AS LIST ELEMENT.                                 
+0000 818EXPLICIT FORMAT IS NOT STANDARD.                                        
+0000 819"~*" OPERATOR IS UNIQUE TO WRL.                                         
+0000 820MULTIPLE RELATIONAL OPERATORS ARE UNIQUE TO WRL.                        
+0000 821"? LINK" CARDS USED TO CONTROL READING DISK FILES.                      
+0000 822INLINE STREAM CODE IS UNIQUE TO WRL.                                    
+0000 823RESIZE SYNTAX IS UNIQUE TO WRL.                                         
+0000 824TIMED SYNTAX IS UNIQUE TO WRL.                                          
+0000 825BRACKETS USED TO DELIMIT ACTUAL LIST.                                   
+0000 826STACK SYNTAX IS UNIQUE TO WRL.                                          
+0000 827SWITCH LIST DESIGNATOR ALLOWED AS LIST ELEMENT.                         
+0000 900MISMATCHED PARENTHESES.                                                 
+0000 901MISSING BOOLEAN OPERAND.                                                
+0000 902TOO MANY BOOLEANS SET.                                                  
+0000 903MISSING COMMA.                                                          
+0000 904MISSING "IF".                                                           
+0000 905UNRECOGNIZED WORD OR CHARACTER.                                         
+0000 906MISSING SEQUENCE NUMBER.                                                
+0000 907MISSING SEMICOLON.                                                      
+0000 908MISSING BOOLEAN ID, "=", OR TRUTH VALUE ON SET CARD.                    
+00001000INVALID ERROR. CONTACT SYSTEMS GROUP.                                   
+00001001PART.                                                                   
+00001002DECLARATION.                                                            
+00001003PARAMETER PART.                                                         
+00001004OUT).                                                                   
+00001005OTHER DECLARATOR.                                                       
+10071006PROCEDURE AND GLOBAL TO ANOTHER. IF THE QUANTITY IS A PROCEDURE NAME OR 
+00001007AN OWN VARIABLE THIS RESTRICTION IS RELAXED.                            
+00001008EXPRESSIONS.                                                            
+00001009QUANTITY OF THIS TYPE.                                                  
+00001010DECLARATOR.                                                             
+00001011OPERATOR IS INCORRECT.                                                  
+00001012DESIGNATOR IS INCORRECT.                                                
+10141013AND ONLY TO A STREAM PROCEDURE - THE STREAM PROCEDURE MAY NOT DO A      
+00001014RELEASE ON THIS TYPE PARAMETER.                                         
+00001015RIGHT PARENTHESIS.                                                      
+00001016REQUIRED.                                                               
+00001017PROCEDURE OR A MISPLACED DECLARATION.                                   
+00001018PROGRAM.                                                                
+00001019STATEMENT.                                                              
+00001020OF THE LABEL.                                                           
+00001021AND LABELS.                                                             
+00001022CONVERTED AND COMPILATION CONTINUES.                                    
+00001023DECLARATION.                                                            
+10251024MANAGER OF COMPUTER CENTER FOR EQUIVALENT WRL SYNTAX.  THE $"           
+10261025NON-STANDARD SYNTAX IS NO LONGER BEING SUPPORTED BY BURROUGHS           
+10271026(MAY 16, 1968).                                                         
+00001027USE OF THIS CONSTRUCT AFTER JUNE 30, 1968 WILL RESULT IN A SYNTAX ERROR.
+10291028SWITCH LIST, OR FAULT DECLARATIONS.  USUALLY , IT SHOULD BE EITHER A    
+10301029SIGNIFICANT PROGRAM DIVISION OR ELSE AN INFREQUENTLY USED               
+10311030SUBDIVISION.  EACH PASSAGE THROUGH THIS BLOCK REQUIRES SEVERAL          
+00001031MILLISECONDS OF PROCESSING TIME TO HANDLE THESE DECLARATIONS.           
+10331032TRANSFERRING TO A LABEL PRECEEDING THE FIRST USE OF THE SWITCH          
+00001033IS MORE EFFICIENT.                                                      
+00001034INTRINSIC ROUTINES.                                                     
+00001035THERE IS NO FLAG BIT.                                                   
+00001036OF 0,1,2,3,4 ARE STANDARD.                                              

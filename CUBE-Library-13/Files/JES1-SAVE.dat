@@ -1,0 +1,216 @@
+ RD THIS IS A COURSE TO TEACH YOU TO PROGRAM THE BURROUGHS              00000100
+    B-5500 IN ONE OF THE LANGUAGES IT IS ABLE TO COMPREHEND.            00000200
+    THIS LANGUAGE IS CALLED ALGOL. DEPRESS THE LEFT ARROW               00000300
+    TO CONTINUE.                                                        00000400
+ QU IS THIS THE COURSE YOU WANT TO TAKE.  TYPE YES OR NO.               00000500
+ CA YES                                                                 00000600
+ TY VERY WELL. YOU ARE A GLUTTON FOR PUNISHMENT BUT WE WILL             00000700
+    TRY TO MAKE IT EASY.                                                00000800
+ WA NO                                                                  00000900
+ TY YOU MADE A WISE CHOICE                                              00001000
+ BR QUIT                                                        0000003F00001100
+ UN PLEASE ANSWER YES OR NO                                             00001200
+ RD THIS COURSE WILL BE AN ATTEMPT TO TEACH YOU BY EXAMPLE.             00001300
+    EACH LESSON WILL CONSIST OF AN EXAMPLE FOLLOWED BY A                00001400
+    DISCUSSION OF THE EXAMPLE, QUESTIONS ABOUT THE EXAMPLE,             00001500
+    A HOMEWORK PROBLEM TO DO WHICH YOU ARE EXPECTED TO                  00001600
+    WRITE AND SUBMIT TO THE COMPUTER TO RUN. THIS WILL BE               00001700
+    FOLLOWED BY THE LESSON NAME FOR YOUR NEXT SITTING AT                00001800
+    THIS CONSOLE.  AFTER RUNNING YOUR PROBLEM AND GETTING               00001900
+    THE RESULTS BACK YOU WILL RETURN TO THE CONSOLE AND                 00002000
+    CALL OUT THE LESSON PREVIOUSLY GIVEN YOU.  THE LESSON               00002100
+    WILL ASK YOU QUESTIONS ABOUT THE RESULTS YOU OBTAINED               00002200
+    AND THEN GO ON TO THE NEXT EXAMPLE IF YOU WORKED THE                00002300
+    PREVIOUS ONE CORRECTLY. DEPRESS THE LEFT ARROW TO                   00002400
+    CONTINUE THE LESSON WITH THE FIRST EXAMPLE.                         00002500
+ RD .........................................................           00002600
+                                                                        00002700
+    BEGIN                                                               00002800
+     COMMENT THIS IS EXAMPLE 1;                                         00002900
+     FILE IN CARD (2,10);                                               00003000
+     FILE OUT LINE 4(2,15);                                             00003100
+     FORMAT F1 (3F12.6);                                                00003200
+     FORMAT F2 (4F12.6);                                                00003300
+     FORMAT F3 ("PROBLEM NUMBER 1 RESULTS");                            00003400
+     LABEL EOF,RETURN;                                                  00003500
+      REAL A,B,C,SUM;                                                   00003600
+      WRITE (LINE,F3);                                                  00003700
+      RETURN:  READ (CARD,F1,A,B,C)[EOF];                               00003800
+      SUM := A + B+ C;                                                  00003900
+      WRITE (LINE,F2,A,B,C,SUM);                                        00004000
+      GO TO RETURN;                                                     00004100
+     EOF: END.                                                          00004200
+                                                                        00004300
+    ................................................................... 00004400
+    THE ABOVE IS A PROGRAM. READ IT AND WHEN YOU ARE READY              00004500
+    DEPRESS THE LEFT ARROW.                                             00004600
+ QU EXAMPLE 1 IS AN ALGOL PROGRAM. YOU WILL NOTICE THAT IT              00004700
+    STARTS WITH A BEGIN AND ENDS WITH AN END FOLLOWED                   00004800
+    BY WHAT CHARACTER.                                                  00004900
+ CA PERIOD                                                              00005000
+ CB .                                                                   00005100
+ TY CORRECT. ALL PROGRAMS START WITH A BEGIN AND END WITH A             00005200
+    END FOLLOWED BY A PERIOD.                                           00005300
+ UN PLEASE LOOK AT THE EXAMPLE CLOSELY AND TRY AGAIN.                   00005400
+ QU YOU WILL ALSO NOTICE THAT BLANKS ARE NOT VERY IMPORTANT.            00005500
+    THERE CAN BE ANY NUMBER OF BLANKS BETWEEN CHARACTERS OR             00005600
+    WORDS. WHAT IS THE MINIMUM NUMBER OF BLANKS BETWEEN TWO             00005700
+    WORDS.                                                              00005800
+ CA ONE                                                                 00005900
+ CB 1                                                                   00006000
+ TY CORRECT. THERE CAN BE MORE THAN ONE HOWEVER IF THERE                00006100
+    WERE LESS THAN ONE THERE WOULD NOT BE TWO WORDS BUT ONE.            00006200
+ WA ZERO                                                                00006300
+ WB 0                                                                   00006400
+ TY HOW COULD THERE BE NO BLANKS BETWEEN TWO WORDS. PLEASE              00006500
+    TRY AGAIN.                                                          00006600
+ UN THINK ABOUT IT... TRY AGAIN.                                        00006700
+ QU NOT CONSIDERING THE BEGIN AND END THERE ARE TWO TYPES OF            00006800
+    ENTRIES - DECLARATIONS AND STATEMENTS. DECLARATIONS ARE             00006900
+    TO DECLARE IDENTIFIERS.  FOR EXAMPLE FILE IN DECLARES               00007000
+    AN IDENTIFIER CARD.  WHAT DOES FILE OUT DECLARE.                    00007100
+ CA LINE                                                                00007200
+ CB THE IDENTIFIER LINE                                                 00007300
+ CB IDENTIFIER LINE                                                     00007400
+ TY VERY GOOD.                                                          00007500
+ WA IDENTIFIER                                                          00007600
+ TY WHAT IDENTIFIER.                                                    00007700
+ UN TRY AGAIN.                                                          00007800
+ QU NOTE THAT THE DECLARATOR LABEL DECLARES TWO IDENTIFIERS,            00007900
+    NAMELY EOF AND RETURN TO BE LABEL IDENTIFIERS. THIS                 00008000
+    REQUIRES THE USE OF ONY ONE DECLARATION, THE IDENTIFIERS            00008100
+    BEING SEPARATED BY WHAT.                                            00008200
+ CA COMMA                                                               00008300
+ CB ,                                                                   00008400
+ TY CORRECT. YOU ARE VERY OBSERVANT.                                    00008500
+ UN LOOK AT THE EXAMPLE AND TRY AGAIN.                                  00008600
+ QU REAL IS A DECLARATOR FOR IDENTIFIERS WHICH ARE TO BE                00008700
+    REAL NUMBERS - AS OPPOSED TO INTEGERS OR OTHER TYPES OF             00008800
+    NUMBERS YOU WILL BE EXPOSED TO LATER. HOW MANY REAL                 00008900
+    IDENTIFIERS ARE DECLARED ON THIS LINE.                              00009000
+ CA FOUR                                                                00009100
+ CB 4                                                                   00009200
+ TY VERY GOOD.                                                          00009300
+ UN LOOK AT THE EXAMPLE AND TRY AGAIN                                   00009400
+ QU AT THE END OF EACH LINE IS A SPECIAL CHARACTER.                     00009500
+    WHAT IS IT.                                                         00009600
+ CA SEMICOLON                                                           00009700
+ CB ;                                                                   00009800
+ TY CORRECT. JUST AS COMMAS SEPARATE IDENTIFIERS IN A SINGLE            00009900
+    DECLARATION, SEMICOLONS SEPARATE DECLARATORS FROM EACH              00010000
+    OTHER.                                                              00010100
+ UN LOOK AT THE EXAMPLE. WHAT IS AT THE END OF EACH LINE.               00010200
+ RD IN MAKING UP THE NAMES OF IDENTIFIERS, THERE ARE TWO                00010300
+    RULES TO BE FOLLOWED:                                               00010400
+     1. THE IDENTIFIER CAN BE ANY WORD THAT BEGINS WITH AN              00010500
+      ALPHABETIC CHARACTER FOLLOWED BY ANY COMBINATION                  00010600
+      OF ALPHABETIC OR NUMERIC CHARACTERS, AND CAN BE FROM              00010700
+      ONE TO SIXTY-THREE CHARACTERS LONG.                               00010800
+     2. AN IDENTIFIER CAN NOT BE A ALGOL RESERVED WORD, SUCH            00010900
+      AS BEGIN,FILE,IN,OUT,LABEL,FORMAT,REAL,END, OR COMMENT.           00011000
+      THESE ARE THE ONLY ONES WE HAVE DISCUSSED SO FAR BUT              00011100
+      I WILL KEEP YOU POSTED AS WE ENCOUNTER NEW ONES.                  00011200
+    IDENTIFIERS MUST CONFORM TO THE ABOVE RULES AND SHOULD              00011300
+    BE MADE UP SO THAT THE NAME MEANS SOMETHING TO YOU.                 00011400
+    DEPRESS THE LEFT ARROW TO CONTINUE.                                 00011500
+ QU IS M A LEGAL IDENTIFIER.                                            00011600
+ CA YES                                                                 00011700
+ TY CORRECT.                                                            00011800
+ WA NO                                                                  00011900
+ TY READ THE RULES ABOVE AND TRY AGAIN.                                 00012000
+ QU IS A1B3 A LEGAL IDENTIFIER.                                         00012100
+ CA YES                                                                 00012200
+ TY CORRECT.                                                            00012300
+ WA NO                                                                  00012400
+ TY TRY AGAIN.                                                          00012500
+ UN TRY AGAIN.                                                          00012600
+ QU IS  2AB A LEGAL IDENTIFIER.                                         00012700
+ CA NO                                                                  00012800
+ TY CORRECT.                                                            00012900
+ CA NO                                                                  00013000
+ WA YES                                                                 00013100
+ TY IDENTIFIERS START WITH A WHAT. TRY AGAIN.                           00013200
+ UN PLEASE TRY AGAIN.                                                   00013300
+ QU IS A.13C A LEGAL IDENTIFIER.                                        00013400
+ CA NO                                                                  00013500
+ TY CORRECT. DENTIFIERS MAY NOT CONTAIN SPECIAL CHARACTERS.             00013600
+ WA YES                                                                 00013700
+ TY WHAT ABOUT SPECIAL CHARACTERS. TRY AGAIN.                           00013800
+ UN TRY AGAIN                                                           00013900
+ QU IS SUMXY A LEGAL IDENTIFIER.                                        00014000
+ CA YES                                                                 00014100
+ TY CORRECT                                                             00014200
+ WA NO                                                                  00014300
+ TY READ THE RULES AND TRY AGAIN.                                       00014400
+ UN  TRY AGAIN                                                          00014500
+ RD AS NOTED BEFORE THERE ARE TWO TYPES OF LINES IN AN ALGOL            00014600
+    PROGRAM - DECLARATIONS AND STATEMENTS. PRIOR TO THIS WE             00014700
+    HAD BEEN DISCUSSING DECLARATIONS - WHICH DECLARE                    00014800
+    IDENTIFIERS AS TO WHAT THEY REPRESENT SUCH AS A FILE,               00014900
+    A LABEL, A FORMAT, OR A REAL NUMBER.                                00015000
+     NOW LETS DISCUSS STATEMENTS WHICH TELL THE COMPUTER                00015100
+    WHAT ACTION TO TAKE WITH THE IDENTIFIERS CONTAINED IN               00015200
+    THE STATEMENT.                                                      00015300
+     REFERING TO EXAMPLE 1 THE FIRST STATEMENT IS THE LINE              00015400
+    WHICH STARTS WITH THE WORD WRITE.  THIS STATEMENT TELLS             00015500
+    THE MACHINE TO WRITE ON THE FILE CALLED LINE (PRINTER)              00015600
+    ACCORDING TO FORMAT F3 AND LOOKING AT FORMAT F3 WE                  00015700
+    FIND THAT WHAT WILL PRINT IS A HEADING LINE - PROBLEM               00015800
+    NUMBER 1 RESULTS.                                                   00015900
+     THE NEXT STATEMENT IS LABELED WITH THE LABEL RETURN                00016000
+    AND THE STATEMENT DIRECTS THE COMPUTER TO READ                      00016100
+    INFORMATION FROM THE FILE CALLED CARD (CARD-READER)                 00016200
+    ACCORDING TO FORMAT F1 AND TO READ THREE REAL                       00016300
+    NUMBERS NAMELY A,B,AND C AND WHEN ALL THE CARDS IN THE              00016400
+    FILE HAVE BEEN READ DO NOT GO TO THE NEXT STATEMENT BUT             00016500
+    GO TO THE LABEL EOF FOR THE NEXT STATEMENT TO EXECUTE.              00016600
+     THE NEXT STATEMENT WILL ADD A, B, AND C AND STORE THE              00016700
+    RESULTING SUM INTO THE IDENTIFIER CALLED SUM.                       00016800
+     THE NEXT STATEMENT INSTRUCTS THE MACHINE TO WRITE ON               00016900
+    THE FILE CALLED LINE AND ACCORDING TO FORMAT F2, THE                00017000
+    REAL NUMBERS A, B, C, AND THE RESULT OF THE                         00017100
+    COMPUTATION SUM.                                                    00017200
+     THE NEXT STATEMENT INSTRUCTS THE COMPUTER TO GO TO THE             00017300
+    LABEL RETURN FOR THE NEXT STATEMENT TO EXECUTE.                     00017400
+     THE LAST STATEMENT CONTAINS THE LABEL EOF AND WHEN NO              00017500
+    MORE INPUT INFORMATION IS TO BE READ THIS STATEMENT WILL            00017600
+    BE EXECUTED AND THE PROGRAM WILL END.                               00017700
+     DEPRESS THE LEFT ARROW TO CONTINUE.                                00017800
+ QU JUST AS DECLARATIONS ARE SEPARATED FROM EACH OTHER BY A             00017900
+    SEMICOLON, STATEMENTS ARE SEPARATED BY A WHAT.                      00018000
+ CA SEMICOLON                                                           00018100
+ CB ;                                                                   00018200
+ TY CORRECT.                                                            00018300
+ UN LOOK BACK AT THE EXAMPLE AND TRY AGAIN.                             00018400
+ QU IN GOING BACK THROUGH THE EXAMPLE WE NOTE THAT NORMALLY             00018500
+    STATEMENTS ARE EXECUTED ONE AT A TIME IN SEQUENCE UNTIL             00018600
+    THAT SEQUENCE IS CHANGED BY A STATEMENT BEGINNING WITH              00018700
+    WHAT TWO WORDS.                                                     00018800
+ CA GO TO                                                               00018900
+ TY CORRECT. WE COULD THEN SAY THAT A GO TO CHANGES THE                 00019000
+    SEQUENCE OF EXECUTION OF STATEMENTS.                                00019100
+ WA READ                                                                00019200
+ TY NOT THAT STATEMENT. TRY ANOTHER ONE.                                00019300
+ UN LOOK AT THE EXAMPLE AND TRY AGAIN OR TRY HELP.                      00019400
+ QU WHAT OTHER STATEMENT CHANGES THE SEQUENCE NOT ALL OF THE            00019500
+    TIME BUT ONLY WHEN A CERTAIN CONDITION IS ENCOUNTERED.              00019600
+ CA READ                                                                00019700
+ CB READ STATEMENT                                                      00019800
+ CB THE READ STATEMENT                                                  00019900
+ TY VERY GOOD. YOU ARE READY TO RUN YOUR FIRST PROGRAM.                 00020000
+ UN LOOK AT THE EXAMPLE AND TRY AGAIN.                                  00020100
+ RD YOU WERE GIVEN A SAMPLE PROGRAM WHEN YOU STARTED THIS               00020200
+    COURSE. THIS PROGRAM IS EXACTLY EXAMPLE 1.  YOU                     00020300
+    ARE TO CHANGE THIS PROGRAM SO AS TO COMPUTE SUM TO BE               00020400
+    A + B - C.  THIS WILL REQUIRE YOU TO CHANGE ONLY ONE                00020500
+    CARD AND THAT CARD IN ONLY ONE COLUMN.  AFTER YOU HAVE              00020600
+    CHANGED THE PROGRAM SUBMIT IT TO THE COMPUTER ROOM TO BE            00020700
+    RUN.  AFTER YOU HAVE RUN THE PROGRAM AND HAVE LOOKED AT             00020800
+    THE RESULTS PLEASE SIGN BACK ON AND ASK FOR COURSE NAME             00020900
+                                                                        00021000
+    ..........  JES2  ..........                                        00021100
+                                                                        00021200
+    GOOD LUCK.. I WILL TALK TO YOU LATER.. NOW PLEASE DEPRESS           00021300
+    THE LEFT ARROW.                                                     00021400
+ LA QUIT                                                               900021500
+999999                                                                 900021600

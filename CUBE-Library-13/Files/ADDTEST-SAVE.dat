@@ -1,0 +1,49 @@
+ QU THIS IS COURSE ADDTEST. PLEASE TYPE THE ANSWERS TO THE              00000100
+    FOLLOWING QUESTIONS:                                                00000200
+    9+8=                                                                00000300
+ CA 17                                                                  00000400
+ TY GOOD.  YOU WILL SKIP AHEAD.                                         00000500
+ BR PR4                                                         0000000N00000600
+ WA 16                                                                  00000700
+ TY THAT IS TOO SMALL. TRY AGAIN.                                       00000800
+ WA 19                                                                  00000900
+ TY THAT IS TOO LARGE. TRY AGAIN.                                       00001000
+ UN THAT IS WRONG. TRY AGAIN.                                           00001100
+ LA REMED                                                               00001200
+ QU YOU NEED EVEN MORE BASIC WORK ON ADDITION.                          00001300
+    1+1=                                                                00001400
+ CA 2                                                                   00001500
+ TY OK. NOW YOU WILL GO BACK TO WHERE YOU WERE HAVING TROUBLE.          00001600
+ BR PR2                                                         0000000E00001700
+ UN TRY 1+1 AGAIN                                                       00001800
+ UN YOU ARE VERY BAD AT ADDITION.  THAT WAS YOUR LAST CHANCE.           00001900
+    YOU HAVE FAILED THIS COURSE.                                        00002000
+ BR EXIT                                                        0000000;00002100
+ LA PR2                                                                 00002200
+ QU YOU HAVE HAD TROUBLE.  HERE IS AN EASIER QUESTION:                  00002300
+    3+2=                                                                00002400
+ CA 5                                                                   00002500
+ UN TRY 3+2 AGAIN                                                       00002600
+ UN MAYBE YOU SHOULD COUNT ON YOUR FINGERS.                             00002700
+ UN STILL WRONG                                                         00002800
+ BR REMED                                                       0000000@00002900
+ QU 4+3=                                                                00003000
+ CA 7                                                                   00003100
+ UN TRY 4+3 AGAIN.                                                      00003200
+ QU 8+9=                                                                00003300
+ CA 17                                                                  00003400
+ WA 15                                                                  00003500
+ TY TRY 8+9 AGAIN                                                       00003600
+ UN TRY AGAIN                                                           00003700
+ LA PR4                                                                 00003800
+ QU 13+12=                                                              00003900
+ CA 25                                                                  00004000
+ TY OK.  YOU MAY AS WELL QUIT.                                          00004100
+ BR EXIT                                                        0000000;00004200
+ WA 1                                                                   00004300
+ TY YOU SUBTRACTED.  YOU WILL BE SENT BACK FOR REVIEW.                  00004400
+ BR PR2                                                         0000000E00004500
+ UN TRY 13+12 AGAIN.                                                    00004600
+ LA EXIT                                                                00004700
+ 99                                                                     00004800
+LOAD SEQLIMT                                                            00004900

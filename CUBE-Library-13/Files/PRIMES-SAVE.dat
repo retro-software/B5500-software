@@ -1,0 +1,34 @@
+ QU A PRIME NUMBER IS A COUNTING NUMBER THAT HAS EXACTLY                00000100
+    TWO DISTINCT DIVISORS, ITSELF AND ONE.  PRIME NUM-                  00000200
+    BERS CAN BE ARRANGED IN SEQUENCE AS FOLLOWS:                        00000300
+      3, 5, 7,...                                                       00000400
+    WHAT IS THE NEXT NUMBER IN THIS SEQUENCE.                           00000500
+ CA 11                                                                  00000600
+ TY CORRECT.                                                            00000700
+ WA 9                                                                   00000800
+ TY 9 IS NOT A PRIME NUMBER.  IT HAS THREE DIVISORS                     00000900
+    ITSELF, ONE AND THREE.  TRY AGAIN.                                  00001000
+ WA 13                                                                  00001100
+ TY 13 IS A PRIME NUMBER. HOWEVER THERE IS A                            00001200
+    PRIME BETWEEN 7 AND 13.                                             00001300
+ UN A PRIME NUMBER HAS NO FACTORS BESIDE ITSELF AND                     00001400
+    ONE. TRY AGAIN                                                      00001500
+ UN WHAT IS THE NEXT COUNTING NUMBER AFTER 7 THAT HAS                   00001600
+    NO FACTOR OTHER THAN ITSELF AND ONE                                 00001700
+ UN TRY AGAIN                                                           00001800
+ QU IF YOU WANT TO BE SKIPPED AHEAD TYPE YES.                           00001900
+ CA NO                                                                  00002000
+ CA YES                                                                 00002100
+ BR SMART                                                       0000000.00002200
+ UN ANSWER YES OR NO                                                    00002300
+ QU WHAT IS THE NUMBER IN THE SEQUENCE AFTER 11                         00002400
+ CA 13                                                                  00002500
+ UN TRY AGAIN                                                           00002600
+ LA SMART                                                               00002700
+ QU HOW MANY PRIMES ARE THERE                                           00002800
+ CA INFINITELY MANY                                                     00002900
+ CB INFINITE                                                            00003000
+ TY VERY GOOD                                                           00003100
+ UN EUCLID SOLVED THIS QUESTION 2000 YEARS AGO.  TRY                    00003200
+    AGAIN.                                                              00003300
+ 99                                                                     00003400

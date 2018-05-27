@@ -1,0 +1,1073 @@
+BEGIN                                                                   00000100
+COMMENT                                                                 00000200
+      THIS PROGRAM MAINTAINS 3 TYPES OF RECORDS IN ONE FILE.            00000300
+                                                                        00000400
+      THE FIRST RECORD, STUDENT, CONTAINS A STUDENT"S NAME, ADDRESS,    00000500
+      SOCIAL SECURITY NUMBER, AND COLLEGE DEGREE, PLUS                  00000600
+      A FIELD WHICH POINTS TO A RECORD, COURSELISTING, WHICH            00000700
+      RECORDS THE HISTORY OF COURSES TAKEN BY THE STUDENT.  THE OTHER   00000800
+      POINTER POINTS TO THE NEXT STUDENT"S RECORD.  IF THIS POINTER     00000900
+      IS NULL THEN THERE ARE NO MORE STUDENT RECORDS.  THIS             00001000
+      INDICATES END OF THE LIST.   THE STUDENT POINTER, SP, POINTS TO   00001100
+      THE  FIRST RECORD IN THE LINKED LIST OF STUDENT RECORDS.          00001200
+                                                                        00001400
+      THE COURSEDESCRIP RECORD CONTAINS A DESCRIPTION OF EVERY POSSIBLE 00001500
+      COURSE THE STUDENT MAY TAKE.  THIS DESCRIPTION INCLUDES           00001600
+      THE DEPARTMENT WHICH OFFERS THE COURSE, THE COURSE NUMBER, WHETHER00001700
+      THE COURSE IS REQUIRED OR NOT, AND THE TITLE DESCRIPTION OF THE   00001800
+      COURSE.  CDP POINTS TO THE FIRST RECORD OF THIS LINKED LIST.      00001900
+                                                                        00002000
+      THE THIRD RECORD, COURSELISTING, CONTAINS 2 FIELDS.  THE FIRST    00002100
+      FIELD CONTAINS 3 ITEMS: THE QUARTER THE COURSE WAS TAKEN, A       00002200
+      POINTER TO THE COURSEDESCRIP RECORD, AND THE GRADE RECEIVED.  THIS00002300
+      FIELD OCCURS 9 TIMES WITHIN THE RECORD, WHERE EACH FIELD OCCUPIES 00002400
+      1 WORD.  THE SECOND FIELD, WHICH IS IN THE LAST WORD OF THE       00002500
+      RECORD, POINTS TO ANOTHER COURSEDESCRIP IF ONE EXISTS.  THE NULL  00002600
+      VALUE OF COURSEDESCRIP POINTER ENDS THE LIST OF COURSES TAKEN,    00002700
+      WHEREAS A NULL COURSES POINTER ENDS THE LINKED LIST OF            00002800
+      COURSELISTING RECORDS.                                            00002900
+                                                                        00002950
+      THE PROGRAM ALLOWS THE USER TO ADD COURSES, TO ADD STUDENTS,      00003000
+      AND TO ADD COURSES TAKEN TO ANY STUDENT"S RECORD.  STUDENTS OR    00003100
+      COURSES MAY BE DELETED, CAUSING THE RECORDS TO BE "RECLAIMED"     00003200
+      AND LINKED ONTO THE FREELIST BY THE PROGRAM.  AFTER ANY RECORDS   00003300
+      ARE CREATED OR RECLAIMED, THE NEXTAVL,FREELIST,SP, AND CDP VALUES 00003400
+      ARE UPDATED IN RECORD ZERO OF THE FILE TO MAINTAIN ITS INTEGRITY  00003500
+      IN THE EVENT THE PROGRAM ABNORMALLY TERMINATES, OR THE MACHINE    00003600
+      HANGS.                                                            00003700
+                                                                        00003800
+      ALL INFORMATION IN THE SYSTEM CAN BE LISTED IN VARIOUS FORMS.     00003900
+                                                                        00004000
+      THE FIND OPTION ENABLES THE USER TO DETERMINE INFORMATION ABOUT   00004100
+      THE DATA BASE HE HAS ESTABLISHED.  FOR EXAMPLE, THERE IS A        00004200
+      COMMAND WHICH DETERMINES WHAT REQUIRED COURSES HAVE BEEN TAKEN OR 00004300
+      NEED TO BE TAKEN, EITHER FOR A PARTICULAR STUDENT OR ALL          00004400
+      STUDENTS.  OTHER VARIATIONS OF THIS COMMAND FIND THE GRADE        00004500
+      AND GRADE POINT AVERAGE FOR ONE STUDENT OR ALL STUDENTS.          00004600
+      A THIRD OPTION FINDS EITHER ALL PEOPLE WHO TOOK A PARTICULAR      00004700
+      COURSE, OR OUT OF THE PEOPLE WHO TOOK THAT COURSE THOSE WHO MADE A00004800
+      CERTAIN GRADE, OR FINDS THIS INFORMATION FOR ALL COURSES. THE LAST00004900
+      FIND OPTION LISTS ALL STUDENTS WHO HAVE A PARTICULAR DEGREE;      00005000
+                                                                        00005200
+                                                                        00005300
+                                                                        00005400
+FILE REMOTE;                                                            00005500
+RECORD FILE SF DISK OLD(1,10,30);                                       00005600
+RECORD STUDENT SF(NAME,ADDRESS,SSNO,COURSES,DEGREE,NEXT);               00005700
+RECORD COURSEDESCRIP SF(DEPT,COURSENO,REQUIRED,DESCRIPTION,             00005800
+      HOURS,NEXTCOURSE);                                                00005900
+RECORD COURSELISTING SF(QUARTER,COURSEPOINTER,GRADE,COURSES);           00006000
+STRING FIELD NAME (0) [0:26],                                           00006100
+      ADDRESS (3) [2:37],                                               00006200
+      SSNO (7) [7:9];                                                   00006300
+COURSELISTING FIELD COURSES (9) [1:17];                                 00006400
+STRING FIELD DEGREE (9) [3:2];                                          00006500
+STUDENT FIELD NEXT (9) [30:18];                                         00006600
+STRING FIELD DEPT (0) [0:4],                                            00006700
+      COURSENO (0) [4:3],                                               00006800
+      REQUIRED(0) [7:1],                                                00006900
+      DESCRIPTION (1) [0:64],                                           00007000
+      HOURS (9) [2:3];                                                  00007100
+COURSEDESCRIP FIELD NEXTCOURSE (9) [30:18],                             00007200
+      COURSEPOINTER (0,8) [30:18];                                      00007300
+REAL FIELD GRADE (0,8) [18:6], % TREAT  AS ALPHA FIELDS                 00007400
+      QUARTER (0,8) [24:6];                                             00007500
+STUDENT SP;                                                             00007600
+COURSEDESCRIP CDP;                                                      00007700
+STRING                                                                  00007800
+      NAMESTR(26),                                                      00007900
+      ADDSTR(37),                                                       00008000
+      SSNUMBER(9),                                                      00008100
+      DEGREESTR(2),                                                     00008200
+      DEPTSTR(4),                                                       00008300
+      COURSENOSTR(3),                                                   00008400
+      DESCRIPSTR(64),                                                   00008500
+      HOURSTR(3);                                                       00008600
+INTEGER T;                                                              00008700
+LABEL START;                                                            00008800
+STUDENT PROCEDURE LOOKUPSSNO (SSNUMBER);                                00008900
+      STRING SSNUMBER;                                                  00009000
+      FORWARD;                                                          00009100
+                                                                        00009150
+                                                                        00009160
+                                                                        00009170
+                                                                        00009200
+COMMENT                                                                 00009300
+      THIS PROCEDURE "PRINS" THE COURSE DESCRIPTION INFORMATION IN      00009400
+      A RECORD POINTED TO BY P.  SINCE DESCRIPTION(P) MAY CONTAIN       00009500
+      TRAILING BLANKS, THESE ARE EFFECTIVELY DELETED SO THAT TAB        00009600
+      POINTS TO ONE BLANK BEYOND THE INFORMATION;                       00009700
+                                                                        00009800
+PROCEDURE PRINCOURSEDESCRIP (P);                                        00009900
+      VALUE P;                                                          00010000
+      COURSEDESCRIP P;                                                  00010100
+      BEGIN                                                             00010200
+      PRIN DEPT(P),COURSENO(P) REQUIRED(P),HOURS(P) SPACE(1);           00010300
+      DESCRIPSTR := DESCRIPTION(P);                                     00010400
+      T := 63;                                                          00010500
+      WHILE DESCRIPSTR(T,1) = " " AND T GTR 0 DO T := T - 1;            00010600
+      T := T + 1;                                                       00010700
+      PRIN DESCRIPSTR(0,T);                                             00010800
+      END;                                                              00010900
+COMMENT                                                                 00011100
+      THIS PROCEDURE FIRST PRINTS THE QUARTER AND GRADE AND THEN        00011200
+      CALLS PRINCOURSEDESCRIP FOR ALL COURSES IN THE LIST               00011300
+      OF COURSELISTING RECORDS POINTED TO BY P;                         00011400
+PROCEDURE PRINTCOURSES(P);                                              00011600
+      VALUE P;                                                          00011700
+      COURSELISTING P;                                                  00011800
+      BEGIN                                                             00011900
+      ALPHA A;                                                          00012000
+      INTEGER I;                                                        00012100
+      LABEL START;                                                      00012200
+      IF P=NIL THEN RETURN; % REFERENCE TO NULL RECORD CAUSES ERROR     00012300
+START:FOR I := 0 STEP 1 UNTIL 8 DO                                      00012400
+      BEGIN                                                             00012500
+      IF COURSEPOINTER[I](P) = NIL THEN RETURN;                         00012600
+      CASE QUARTER[I](P) OF                                             00012700
+      BEGIN                                                             00012800
+      PRIN #FA #;                                                       00012900
+      PRIN #WI #;                                                       00013000
+      PRIN #SP #;                                                       00013100
+      PRIN #SU #;                                                       00013200
+      END;                                                              00013300
+      PRIN A := GRADE[I](P),;                                           00013400
+      PRINCOURSEDESCRIP(COURSEPOINTER[I](P));                           00013500
+      TERPRI;                                                           00013600
+      END;                                                              00013700
+      IF P := COURSES(P) NEQ NIL THEN GO START;                         00013800
+      END;                                                              00013900
+PROCEDURE PRINTSTUDENT (P,N);                                           00014000
+      VALUE P,N;                                                        00014100
+      STUDENT P; % WHICH STUDENT                                        00014200
+      INTEGER N; % KEY TO WHAT IS PRINTED ABOUT STUDENT                 00014300
+      CASE N OF BEGIN            % N =                                  00014400
+      PRINT #S: # SSNO(P);       % 0 - PRINT SOCIAL SECURITY NUMBER     00014500
+      PRINT #N: # NAME(P);       % 1 - PRINT STUDENTS NAME              00014600
+      PRINT #A: # ADDRESS(P);    % 2 - PRINT STUDENTS ADDRESS           00014700
+      PRINT #D: # DEGREE(P);     % 3 - PRINT STUDENTS DEGREE            00014800
+      PRINTCOURSES(COURSES(P));  % 4 - PRINT COURSES STUDENT HAS TAKEN  00014900
+      END;                                                              00015000
+                                                                        00015100
+COMMENT                                                                 00015200
+      PRINTALL LISTS ALL STUDENTS" NAMES, ADDRESSES, SOCIAL SECURITY    00015300
+      NUMBERS, DEGREES, COURSES TAKEN INCLUDING                         00015400
+      THE QUARTER THE COURSE WAS TAKEN AND THE GRADE RECEIVED;          00015500
+                                                                        00015700
+PROCEDURE PRINTALL;                                                     00015800
+      BEGIN                                                             00015900
+      STUDENT P;                                                        00016000
+      INTEGER I;                                                        00016100
+      IF P := SP = NIL THEN                                             00016200
+      BEGIN                                                             00016300
+      PRINT #STUDENT LIST EMPTY#;                                       00016400
+      RETURN;                                                           00016500
+      END;                                                              00016600
+      WHILE P NEQ NIL DO                                                00016700
+      BEGIN                                                             00016800
+      FOR I:=0 STEP 1 UNTIL 4 DO PRINTSTUDENT(P,I);                     00016900
+      TERPRI;                                                           00017000
+      P := NEXT(P);                                                     00017100
+      END;                                                              00017200
+      END;                                                              00017300
+                                                                        00017400
+                                                                        00017401
+                                                                        00017402
+                                                                        00017403
+                                                                        00017404
+COMMENT                                                                 00017500
+      LISTER LISTS VARIOUS THINGS FROM THE DIFFERENT RECORDS.  THE      00017600
+      COMMANDS ARE:                                                     00017700
+                                                                        00017800
+            L [SOCIAL SECURITY NUMBER] [OPTION LIST]                    00017900
+                                                                        00018000
+            WHERE                                                       00018100
+                  [OPTION LIST] ::= [OPTION] , [OPTION LIST]            00018200
+                  [OPTION] ::= S % PRINT SOCIAL SECURITY NUMBER         00018300
+                             / N % PRINT NAME                           00018400
+                             / A % PRINT ADDRESS                        00018500
+                             / D % PRINT DEGREE                         00018600
+                             / C % PRINT COURSES TAKEN                  00018700
+                                                                        00018800
+            L S   LISTS THE SOCIAL SECURITY NUMBER AND NAMES            00018900
+                  OF ALL STUDENTS IN THE DATA BASE                      00019000
+                                                                        00019100
+            L C   LISTS THE DESCRIPTION OF ALL COURSES:                 00019200
+                  THE DEPARTMENT, COURSE NUMBER,                        00019300
+                  FOLLOWED BY AN OPTIONAL ASTERISK (*) WHICH            00019400
+                  INDICATES THAT THE COURSE IS REQUIRED FOR GRADUATION, 00019500
+                  THE COURSE HOURS AND COURSE TITLE;                    00019600
+                                                                        00019800
+PROCEDURE LISTER;                                                       00019900
+      BEGIN                                                             00020000
+      STUDENT S;                                                        00020100
+      COURSEDESCRIP C;                                                  00020200
+      INTEGER T;                                                        00020300
+      LABEL START;                                                      00020400
+      IF "0" LEQ REAL(TWXS1(2,1)) LEQ "9" THEN                          00020500
+      BEGIN                                                             00020600
+      SSNUMBER := TWXS1(2,9);                                           00020700
+      IF S := LOOKUPSSNO(SSNUMBER) = NIL THEN                           00020800
+      BEGIN                                                             00020900
+      PRINT #STUDENT NOT FOUND#;                                        00021000
+      RETURN;                                                           00021100
+      END;                                                              00021200
+      COL := 12;                                                        00021300
+START:IF T := READN(TWXA) = "S" THEN T := 0 ELSE                        00021400
+      IF T = "N" THEN T := 1 ELSE                                       00021500
+      IF T = "A" THEN T := 2 ELSE                                       00021600
+      IF T = "D" THEN T := 3 ELSE                                       00021700
+      IF T = "C" THEN T := 4 ELSE                                       00021800
+      BEGIN                                                             00021900
+      PRINT #ILLEGAL INPUT#;                                            00022000
+      RETURN;                                                           00022100
+      END;                                                              00022200
+      PRINTSTUDENT(S,T);                                                00022300
+      IF TWXS1(COL,1) = "," THEN                                        00022400
+      BEGIN                                                             00022500
+      COL := COL + 1;                                                   00022600
+      GO START;                                                         00022700
+      END;                                                              00022800
+      RETURN;                                                           00022900
+      END;                                                              00023000
+      IF T := REAL(TWXS1(2,1)) = "S" THEN                               00023100
+      BEGIN                                                             00023200
+      IF S := SP = NIL THEN                                             00023300
+      BEGIN                                                             00023400
+      PRINT #STUDENT LIST EMPTY#;                                       00023500
+      RETURN;                                                           00023600
+      END;                                                              00023700
+      WHILE S NEQ NIL DO                                                00023800
+      BEGIN                                                             00023900
+      PRINT SSNO(S),NAME(S);                                            00024000
+      S := NEXT(S);                                                     00024100
+      END;                                                              00024200
+      RETURN;                                                           00024300
+      END;                                                              00024400
+      IF T = "C" THEN                                                   00024500
+      BEGIN                                                             00024600
+      IF C := CDP = NIL THEN                                            00024700
+      BEGIN                                                             00024800
+      PRINT #COURSE LIST EMPTY#;                                        00024900
+      RETURN;                                                           00025000
+      END;                                                              00025100
+      WHILE C NEQ NIL DO                                                00025200
+      BEGIN                                                             00025300
+      PRINCOURSEDESCRIP (C);                                            00025400
+      TERPRI;                                                           00025500
+      C := NEXTCOURSE(C);                                               00025600
+      END;                                                              00025700
+      RETURN;                                                           00025800
+      END;                                                              00025900
+      PRINT #ILLEGAL LIST COMMAND#;                                     00026000
+      END LISTER;                                                       00026100
+                                                                        00026200
+COMMENT                                                                 00026300
+      THIS PROCEDURE SEARCHES FOR A STUDENT SOCIAL SECURITY NUMBER WHICH00026400
+      MATCHES SSNUMBER.  IF SUCH A STUDENT EXISTS THEN A POINTER        00026600
+      TO HIS RECORD IS RETURNED, OTHERWISE THE NULL POINTER IS          00026700
+      RETURNED;                                                         00026800
+                                                                        00026900
+STUDENT PROCEDURE LOOKUPSSNO (SSNUMBER);                                00027000
+      STRING SSNUMBER;                                                  00027100
+      BEGIN                                                             00027200
+      STUDENT P;                                                        00027300
+      P := SP;                                                          00027400
+      WHILE P NEQ NIL DO                                                00027500
+      BEGIN                                                             00027600
+      IF SSNO(P) = SSNUMBER (0,9) THEN RETURN P;                        00027700
+      P := NEXT (P);                                                    00027800
+      END;                                                              00027900
+      END;                                                              00028000
+                                                                        00028100
+COMMENT                                                                 00028200
+      THIS PROCEDURE ADDS STUDENTS TO THE DATA BASE.  THE               00028300
+      PROCEDURE LOOPS ASKING FOR THE FOLLOWING INFORMATION              00028400
+      FOR EACH STUDENT TO BE ENTERED INTO THE SYSTEM:                   00028500
+                                                                        00028600
+            SSNO:        EXPECTS A 9 DIGIT SOCIAL SECURITY NUMBER OR    00028700
+                         IF THE WORD "STOP" OR A BLANK LINE             00028800
+                         IS FOUND THEN THE PROCEDURE IS EXITED.         00028900
+            NAME:        EXPECTS THE NAME OF THE STUDENT UP TO 26       00029200
+                         CHARACTERS IN LENGTH.                          00029300
+            ADDRESS:     EXPECTS THE ADDRESS OF THE STUDENT UP TO 37    00029400
+                         CHARACTERS IN LENGTH.                          00029500
+            DEGREE:      EXPECTS THE DEGREE OF THE STUDENT              00029600
+                         (2 CHARACTERS) SUCH AS EE, IE, OR CE.          00029700
+                                                                        00029800
+      IF THE STUDENT ALREADY EXISTS ON THE SYSTEM THEN AN ERROR         00029900
+      MESSAGE IS TYPED, OTHERWISE THE NEW STUDENT IS ADDED TO THE       00030000
+      SYSTEM;                                                           00030100
+                                                                        00030200
+PROCEDURE ADDSTUDENT;                                                   00030300
+      BEGIN                                                             00030400
+      LABEL LOOP;                                                       00030500
+LOOP: PRINT #SSNO: #; READ TWX; SSNUMBER := TWXS1(0,9);                 00030600
+      IF SSNUMBER(0,4) = "STOP" OR SSNUMBER = SPACE THEN RETURN;        00030700
+      IF LOOKUPSSNO(SSNUMBER) NEQ NIL THEN                              00030800
+      BEGIN                                                             00030900
+      PRINT #STUDENT ALREADY ON SYSTEM#;                                00031000
+      GO TO LOOP;                                                       00031100
+      END;                                                              00031200
+      PRINT #NAME: #; READ TWX; NAMESTR := TWXS1(0,26);                 00031300
+      PRINT #ADDRESS: #; READ TWX; ADDSTR := TWXS1(0,37);               00031400
+      PRINT #DEGREE: #; READ TWX; DEGREESTR := TWXS1(0,2);              00031500
+      % CREATE NEW STUDENT RECORD                                       00031600
+      SP := STUDENT(NAMESTR,ADDSTR,SSNUMBER,*,DEGREESTR,SP);            00031700
+      GO TO LOOP; % DE LOOP                                             00031800
+      WRITE(SF[0],*,NEXTAVL(SF),FREELIST(SF),SP,CDP);                   00031900
+      END;                                                              00032000
+                                                                        00032100
+COMMENT                                                                 00032200
+      DELETESTUDENT DELETES STUDENTS CURRENTLY ON THE SYSTEM.           00032300
+      WHEN A STUDENT IS DELETED HIS OLD RECORD IS LINKED INTO           00032400
+      THE FREELIST BY THE RECLAIM STATEMENT SO THAT THE RECORD          00032500
+      CAN LATER BE USED.  ALSO ALL OF HIS COURSELISTING RECORDS         00032600
+      ARE RECLAIMED.  THE PROCEDURE EITHER ASKS FOR A SOCIAL            00032700
+      SECURITY NUMBER OR IT MAY BE  GIVEN IN THE COMMAND "D S"          00032800
+      SUCH AS "D S 405628801".  A SERIES OF SOCIAL SECURITY NUMBERS     00032900
+      MAY BE GIVEN, IF EACH PRECEDING ONE IF FOLLOWED BY A COMMA.       00033000
+      AS EACH STUDENT IS DELETED HIS NAME IS PRINTED AS FEEDBACK        00033100
+      TO THE USER;                                                      00033200
+                                                                        00033300
+PROCEDURE DELETESTUDENT;                                                00033400
+      BEGIN                                                             00033500
+      STUDENT S,T;                                                      00033600
+      COURSELISTING C,D;                                                00033700
+      LABEL LOOP,RC,L,L1;                                               00033800
+      IF SSNUMBER:=TWXS1(4,9) = SPACE(9) THEN                           00033900
+      BEGIN                                                             00034000
+      LOOP: PRINT #SSNO:#;                                              00034100
+      READ TWX;                                                         00034200
+L:    SSNUMBER := TWXS1(0,9);                                           00034300
+      END ELSE TWXS1 := TWXS1(4) & SPACE;                               00034400
+      IF SSNUMBER(0,4) = "STOP" OR SSNUMBER = SPACE THEN RETURN;        00034500
+      IF S := T := SP = NIL THEN                                        00034600
+      BEGIN                                                             00034700
+      PRINT #STUDENT LIST EMPTY#;                                       00034800
+      RETURN;                                                           00034900
+      END;                                                              00035000
+                                                                        00035001
+      IF SSNUMBER(0,9) = SSNO(SP) THEN % ITS THE FIRST RECORD           00035100
+      BEGIN                                                             00035200
+      PRINTSTUDENT(SP,1);                                               00035300
+      C := COURSES(S);                                                  00035400
+      WHILE D:=C NEQ NIL DO % DELETE COURSE DESCRIPTION RECORDS         00035500
+      BEGIN                                                             00035600
+      C := COURSES(C); % POINTER TO NEXT RECORD                         00035700
+      RECLAIM(D); % RECLAIM THE RECORD                                  00035800
+      END;                                                              00035900
+      S := NEXT(SP);                                                    00036000
+      RECLAIM(SP);                                                      00036100
+      SP := S; % RESTORE STUDENT POINTER                                00036200
+      GO TO RC;                                                         00036300
+      END;                                                              00036400
+      WHILE S := NEXT(S) NEQ NIL DO % SCAN DOWN THE LIST                00036500
+      BEGIN                                                             00036600
+      IF SSNUMBER(0,9) = SSNO(S) THEN % FOUND HIM                       00036700
+      BEGIN                                                             00036800
+      PRINTSTUDENT(S,1);                                                00036900
+      C := COURSES(S);                                                  00037000
+      WHILE D := C NEQ NIL DO % DELETE COURSE DESCRIPTION RECORDS       00037100
+      BEGIN                                                             00037200
+      C := COURSES(C);                                                  00037300
+      RECLAIM(D);                                                       00037400
+      END;                                                              00037500
+      NEXT(T) := NEXT(S); % DELINK THE RECORD                           00037600
+      RECLAIM(S); % LINK RECLAIMED RECORD ONTO FREELIST                 00037700
+      GO TO RC;                                                         00037800
+      END;                                                              00037900
+      T := S; % KEEP TAB OF TRAILING POINTER                            00038000
+      END OF WHILE LOOP;                                                00038100
+      PRIN SSNUMBER, #NOT FOUND#; % NOT ON SYSTEM - NOTIFY USER         00038200
+      IF TWXS1(9,1) = "," THEN PRINT #,CONTINUING# ELSE TERPRI;         00038300
+      GO TO L1;                                                         00038400
+RC:   WRITE(SF[0],*,NEXTAVL(SF),FREELIST(SF),SP,CDP); % UPDATE FILE     00038500
+L1:   IF TWXS1(9,1) = "," THEN                                          00038600
+      BEGIN                                                             00038700
+      TWXS1:=TWXS1(10) & SPACE;                                         00038800
+      GO TO L;                                                          00038900
+      END;                                                              00039000
+      GO TO LOOP;                                                       00039100
+      END DELETESTUDENT;                                                00039200
+                                                                        00039300
+                                                                        00039301
+                                                                        00039302
+      LOOKUPCOURSE IS THE SAME AS LOOKUPSSNO EXCEPT IT                  00039500
+      LOOKS UP A COURSE GIVEN BY DEPT NAME(DT) AND COURSE NUMBER(CN).   00039600
+      IT RETURNS THE ADDRESS OF THE COURSEDESCRIP RECORD IF SUCH        00039700
+      A COURSE EXISTS;                                                  00039800
+                                                                        00039900
+COURSEDESCRIP PROCEDURE LOOKUPCOURSE (DT,CN);                           00040000
+      STRING DT,CN;                                                     00040100
+      BEGIN                                                             00040200
+      COURSEDESCRIP P;                                                  00040300
+      P := CDP;                                                         00040400
+      WHILE P NEQ NIL DO                                                00040500
+      BEGIN                                                             00040600
+      IF DT(0,4) = DEPT(P) AND CN(0,3) = COURSENO(P) THEN RETURN P;     00040700
+      P := NEXTCOURSE (P);                                              00040800
+      END;                                                              00040900
+      END;                                                              00041000
+                                                                        00041100
+COMMENT                                                                 00041200
+      ADDCOURSE ADDS COURSES TO THE SYSTEM.  THE INPUT IS AS FOLLOWS    00041300
+                                                                        00041400
+            DEPT:        EXPECTS THE DEPT NAME (4 CHARACTERS).          00041500
+                         IF THE WORD "STOP" OR A BLANK LINE IS ENTERED  00041600
+                         THEN THE PROCEDURE IS EXITED.                  00041700
+            COURSENO:    EXPECTS THE COURSE NUMBER OF THE COURSE.       00041800
+                         AT THIS TIME THE COURSEDESCRIP RECORDS ARE     00041900
+                         SEARCHED BY CALLING LOOKUP TO SEE IF THE       00042000
+                         COURSE ALREADY EXISTS, AND IF IT DOES AN ERROR 00042100
+                         MESSAGE IS TYPED.                              00042200
+            REQUIRED:    EXPECTS "Y" OR "YES" IF THE COURSE IS REQUIRED 00042300
+                         FOR GRADUATION, OTHERWISE A BLANK LINE         00042400
+                         WILL SUFFICE FOR A NO RESPONSE.                00042500
+            DESCRIPTION: EXPECTS THE COURSE TITLE TO BE ENTERED UP TO   00042600
+                         64 CHARACTERS IN LENGTH                        00042700
+            HOURS:       EXPECTS 3 CHARACTERS OF THE FORM "303" WHERE   00042800
+                         THE FIRST DIGIT INDICATES THE NUMBER           00042900
+                         OF HOURS OF IN-CLASS INSTRUCTION, THE SECOND   00043000
+                         DIGIT INDICATES THE NUMBER OF HOURS SPENT      00043100
+                         IN LAB PER WEEK, AND THE THIRD DIGIT           00043200
+                         INDICATES  THE HOURS EARNED FOR THAT COURSE.   00043300
+                                                                        00043400
+      AT THIS TIME THE NEW RECORD IS CREATED AND THEN THE PROCEDURE     00043500
+      LOOPS;                                                            00043600
+                                                                        00043700
+PROCEDURE ADDCOURSE;                                                    00043800
+      BEGIN                                                             00043900
+      BOOLEAN B;                                                        00044000
+      LABEL LOOP;                                                       00044100
+LOOP: PRINT #DEPT: #; READ TWX; DEPTSTR := TWXS1(0,4);                  00044200
+      IF DEPTSTR = "STOP" OR DEPTSTR = SPACE(4) THEN RETURN;            00044300
+      PRINT #COURSE NO: #; READ TWX; COURSENOSTR := TWXS1(0,3);         00044400
+      IF LOOKUPCOURSE(DEPTSTR,COURSENOSTR) NEQ NIL THEN                 00044500
+      BEGIN                                                             00044600
+      PRINT #COURSE ALREADY ENTERED#;                                   00044700
+      GO TO LOOP;                                                       00044800
+      END;                                                              00044900
+      PRINT #REQUIRED:#; READ TWX;                                      00045000
+      B := TWXS1(0,1) = "Y";                                            00045100
+      PRINT #DESCRIPTION: #; READ TWX; DESCRIPSTR := TWXS1(0,64);       00045200
+      PRINT #HOURS: #; READ TWX; HOURSTR := TWXS1(0,3);                 00045300
+      CDP := COURSEDESCRIP(DEPTSTR,COURSENOSTR, % CREATE COURSE RECORD  00045400
+      STRING(IF B THEN "*" ELSE " ",1),DESCRIPSTR,                      00045500
+            HOURSTR,CDP);                                               00045600
+      GO TO LOOP;                                                       00045700
+      WRITE(SF[0],*,NEXTAVL(SF),FREELIST(SF),SP,CDP);                   00045800
+      END;                                                              00045900
+                                                                        00046000
+COMMENT                                                                 00046100
+      DELETECOURSE DELETES A COURSE SIMILAR TO DELETESTUDENT.           00046200
+      THE DEPARTMENT NAME AND COURSE NUMBER ARE REQUESTED.              00046300
+      IF THE COURSE RECORD IS FOUND THEN IT IS RECLAIMED                00046400
+      SO THAT IT CAN BE USED LATER.  IF THE COURSE CAN NOT              00046500
+      BE FOUND THEN AN ERROR MESSAGE IS PRINTED.                        00046600
+      ****** SOME CARE SHOULD BE USED IN DELETING COURSES BECAUSE ******00046700
+      ****** THERE MAY BE POINTERS IN COURSELISTING POINTING  TO  ******00046800
+      ****** THE RECORD BEING DELETED, THUS ERRONEOUS LISTINGS    ******00046900
+      ****** MAY RESULT                                           *****;00047000
+PROCEDURE DELETECOURSE;                                                 00047200
+      BEGIN                                                             00047300
+      COURSEDESCRIP C,T;                                                00047400
+      LABEL LOOP,RC,L;                                                  00047500
+LOOP: PRINT #DEPT:#; READ TWX; DEPTSTR := TWXS1(0,4);                   00047600
+      IF DEPTSTR = "STOP" OR DEPTSTR = SPACE THEN RETURN;               00047700
+      PRINT #COURSE NO:#; READ TWX; L:COURSENOSTR:=TWXS1(0,3);          00047800
+      IF C := T := CDP = NIL THEN                                       00047900
+      BEGIN                                                             00048000
+      PRINT #COURSE LIST EMPTY#;                                        00048100
+      RETURN;                                                           00048200
+      END;                                                              00048300
+      IF DEPTSTR = DEPT(CDP) AND COURSENOSTR = COURSENO(CDP) THEN       00048400
+      BEGIN % ITS THE FIRST RECORD                                      00048500
+      C := NEXTCOURSE(CDP);                                             00048600
+      RECLAIM(CDP);                                                     00048700
+      CDP := C;                                                         00048800
+      GO TO RC;                                                         00048900
+      END;                                                              00049000
+      WHILE C := NEXTCOURSE(C) NEQ NIL DO % SCAN DOWN THE LIST          00049100
+      BEGIN                                                             00049200
+      IF DEPTSTR = DEPT(C) AND COURSENOSTR = COURSENO(C) THEN % GOT HIM 00049300
+      BEGIN                                                             00049400
+      NEXTCOURSE(T) := NEXTCOURSE(C);                                   00049500
+      RECLAIM(C);                                                       00049600
+      GO TO RC;                                                         00049700
+      END;                                                              00049800
+      T := C;                                                           00049900
+      END OF WHILE LOOP; %                                              00050000
+      PRINT #COURSE NOT FOUND#; % COURSE NOT ON SYSTEM                  00050100
+      GO TO LOOP;                                                       00050200
+RC:   WRITE(SF[0],*,NEXTAVL(SF),FREELIST(SF),SP,CDP);                   00050300
+      IF TWXS1(3,1) = "," THEN                                          00050400
+      BEGIN                                                             00050500
+      TWXS1 := TWXS1(4) & SPACE;                                        00050600
+      GO TO L;                                                          00050700
+      END;                                                              00050800
+      GO TO LOOP;                                                       00050900
+      END DELETECOURSE;                                                 00051000
+                                                                        00051100
+COMMENT                                                                 00051200
+      ADDCOURSESTOSTUDENT ADDS COURSES TAKEN TO A STUDENT RECORD.       00051300
+      THESE INPUTS ARE PUT INTO COURSELISTING AND                       00051400
+      THEN IF IT IS THE FIRST COURSE TAKEN, OR AN OLD RECORD IS         00051500
+      FULL (EACH RECORD HOLDS 9 COURSES) THEN A NEW RECORD IS           00051600
+      CREATED AND LINKED INTO THE LIST.  OTHERWISE THE INFORMATION      00051700
+      IS ADDED TO AN EXISTING RECORD.  THE PROCEDURE VERIFIES           00051800
+      THAT BOTH THE STUDENT AND THE COURSE EXIST.  THE INPUT            00051900
+      IS REQUESTED AS FOLLOWS:                                          00052000
+                                                                        00052100
+            SSNO:        EITHER AN SS NO. OR "STOP" OR A BLANK.         00052200
+            DEPT:        DEPARTMENT NAME (4 CHARACTERS).                00052300
+            COURSENO:    COURSE NUMBER.                                 00052400
+            GRADE:       GRADE RECEIVED, EITHER A OR B OR C OR D OR F.  00052500
+            QUARTER:     THIS INDICATES THE QUARTER THE COURSE WAS      00052600
+                         TAKEN.  ENTER EITHER FALL OR F, SPRING OR      00052700
+                         SP, WINTER OR WI, OR SUMMER OR SU.             00052800
+                                                                        00052900
+      THE PROCEDURE LOOPS UNTIL "STOP" OR  BLANK IS ENTERED             00053000
+      AT THE REQUEST FOR SSNO:.  IF AN ERROR OCCURS AN APPROPRIATE      00053100
+      ERROR MESSAGE IS TYPED;                                           00053200
+                                                                        00053300
+PROCEDURE ADDCOURSESTOSTUDENT;                                          00053400
+      BEGIN                                                             00053500
+      STUDENT S;                                                        00053600
+      COURSEDESCRIP P;                                                  00053700
+      ALPHA A,B;                                                        00053800
+      COURSELISTING CL;                                                 00053900
+      INTEGER I;                                                        00054000
+      LABEL DONE,LOOP,QT,GD;                                            00054100
+      PRINT #SSNO: #; READ TWX; SSNUMBER := TWXS1(0,9);                 00054200
+      IF S := LOOKUPSSNO(SSNUMBER) = NIL THEN                           00054300
+      BEGIN                                                             00054400
+      PRINT #STUDENT NOT FOUND#;                                        00054500
+      RETURN;                                                           00054600
+      END;                                                              00054700
+      PRINT NAME(S);                                                    00054800
+LOOP: PRINT #DEPT: #; READ TWX; DEPTSTR := TWXS1(0,4);                  00054900
+      IF DEPTSTR = "STOP" OR DEPTSTR = SPACE(4) THEN RETURN;            00055000
+      PRINT #COURSENO: #; READ TWX; COURSENOSTR := TWXS1(0,3);          00055100
+      IF P := LOOKUPCOURSE(DEPTSTR,COURSENOSTR) = NIL THEN              00055200
+      BEGIN                                                             00055300
+      PRINT #NO SUCH COURSE#;                                           00055400
+      GO TO LOOP;                                                       00055500
+      END;                                                              00055600
+GD:   PRINT #GRADE: #; READ TWX; A := REAL(TWXS1(0,1));                 00055700
+      IF "A" GEQ A GEQ "F" OR A = "E" THEN                              00055800
+      BEGIN                                                             00055900
+      PRINT #ILLEGAL GRADE#;                                            00056000
+      GO GD;                                                            00056100
+      END;                                                              00056200
+QT:   PRINT #QUARTER: #; READ TWX; B := REAL(TWXS1(0,2));               00056300
+      IF B = "F " OR B = "FA" THEN B := 0 ELSE                          00056400
+      IF B = "W " OR B = "WI" THEN B := 1 ELSE                          00056500
+      IF B = "SP" THEN B := 2 ELSE                                      00056600
+      IF B = "SU" THEN B := 3 ELSE                                      00056700
+      BEGIN                                                             00056800
+      PRINT #NO SUCH QUARTER#;                                          00056900
+      GO TO QT;                                                         00057000
+      END;                                                              00057100
+      IF CL := COURSES(S) = NIL THEN GO DONE;                           00057200
+      WHILE CL NEQ NIL DO                                               00057300
+      BEGIN                                                             00057400
+      FOR I := 0 STEP 1 UNTIL 8 DO                                      00057500
+      IF COURSEPOINTER[I](CL) = NIL THEN GO DONE;                       00057600
+      CL := COURSES(CL);                                                00057700
+      END;                                                              00057800
+DONE: IF I = 0 OR I = 9 THEN                                            00057900
+      BEGIN % CREATE NEW COURSELISTING RECORD                           00058000
+      COURSES(S) := COURSELISTING(B,P,A,COURSES(S));                    00058100
+      WRITE(SF[0],*,NEXTAVL(SF),FREELIST(SF),SP,CDP);                   00058200
+      END ELSE                                                          00058300
+      BEGIN % UPDATE OLD COURSELISTING RECORD                           00058400
+      QUARTER[I](CL) := B;                                              00058500
+      COURSEPOINTER[I](CL) := P;                                        00058600
+      GRADE[I] (CL) := A;                                               00058700
+      END;                                                              00058800
+      GO TO LOOP;                                                       00058900
+      END;                                                              00059000
+                                                                        00059100
+                                                                        00059101
+                                                                        00059102
+                                                                        00059103
+                                                                        00059104
+COMMENT                                                                 00059200
+      FINDDEGREE FINDS ALL STUDENTS WHO HAVE A DEGREE GIVEN IN          00059300
+      THE COMMAND "F D [DEGREE]" WHERE [DEGREE] IS ANY 2                00059400
+      CHARACTERS;                                                       00059500
+                                                                        00059600
+PROCEDURE FINDDEGREE;                                                   00059700
+      BEGIN                                                             00059800
+      STUDENT S;                                                        00059900
+      DEGREESTR := TWXS1(4,2);                                          00060000
+      S := SP;                                                          00060100
+      WHILE S NEQ NIL DO                                                00060200
+      BEGIN                                                             00060300
+      IF DEGREESTR = DEGREE(S) THEN PRINT SSNO(S);                      00060400
+      S := NEXT (S);                                                    00060500
+      END;                                                              00060600
+      END;                                                              00060700
+                                                                        00060800
+                                                                        00060801
+                                                                        00060802
+COMMENT                                                                 00060900
+      FINDGRADE EITHER FINDS THE GRADES FOR A PARTICULAR STUDENT        00061000
+      OR ALL STUDENTS.  IF THE SOCIAL SECURITY NUMBER IS GIVEN          00061100
+      IN THE COMMAND "F G [SSNO]" THEN THAT STUDENT"S GRADES ARE        00061200
+      SUMARIZED, OTHERWISE ALL STUDENTS" SUMMARIES ARE PRINTED;         00061300
+                                                                        00061400
+PROCEDURE FINDGRADE;                                                    00061500
+      BEGIN                                                             00061600
+      STUDENT S;                                                        00061700
+      COURSELISTING CL;                                                 00061800
+      STRING LINE(26);                                                  00061900
+      ALPHA G;                                                          00062000
+      INTEGER I,QP,HT,H;                                                00062100
+      ARRAY GC[0:4];                                                    00062200
+      BOOLEAN B,PRINTED;                                                00062300
+      FORMAT HEAD("  A  B  C  D  F QP HE  PA  NAME");                   00062400
+      FORMAT INFO(7(I3),F5.2);                                          00062500
+      LABEL L1,L2,L3,LS;                                                00062600
+      IF B := SSNUMBER := TWXS1(4,9) NEQ SPACE THEN                     00062700
+      BEGIN                                                             00062800
+      IF S := LOOKUPSSNO(SSNUMBER) = NIL THEN                           00062900
+      BEGIN                                                             00063000
+      PRINT #STUDENT NOT FOUND#;                                        00063100
+      RETURN;                                                           00063200
+      END;                                                              00063300
+      END ELSE S := SP;                                                 00063400
+      IF S = NIL THEN                                                   00063500
+      BEGIN                                                             00063600
+      PRINT #STUDENT LIST EMPTY#;                                       00063700
+      RETURN;                                                           00063800
+      END;                                                              00063900
+      WHILE S NEQ NIL DO                                                00064000
+      BEGIN                                                             00064100
+      IF CL := COURSES(S) = NIL THEN GO TO LS;                          00064200
+      FOR I := 0 STEP 1 UNTIL 4 DO GC[I]:=0;                            00064300
+      HT := QP := 0;                                                    00064400
+L1:   FOR I := 0 STEP 1 UNTIL 8 DO                                      00064500
+      BEGIN                                                             00064600
+      IF COURSEPOINTER[I](CL) = NIL THEN GO TO L2;                      00064700
+      GC[GRADE[I](CL)-"A"] := * + 1;                                    00064800
+      LINE := HOURS(COURSEPOINTER[I](CL));                              00064900
+      H := REAL(LINE(2,1));                                             00065000
+      HT := HT + H;                                                     00065100
+      QP := QP + H | (IF H:=GRADE[I](CL) = "F" THEN 0 ELSE "E"-H);      00065200
+      END;                                                              00065300
+      IF CL := COURSES(CL) NEQ NIL THEN GO TO L1;                       00065400
+L2:   IF HT NEQ 0 THEN                                                  00065500
+      BEGIN                                                             00065600
+      IF NOT PRINTED THEN WRITE(TWXF2,HEAD);                            00065700
+      PRINTED := TRUE;                                                  00065800
+      WRITE(LINE,INFO,FOR I:=0 STEP 1 UNTIL 4 DO GC[I],QP,HT,QP/HT);    00065900
+      PRINT LINE(0,26), NAME(S);                                        00066000
+      END;                                                              00066100
+LS:   IF B THEN GO TO L3;;                                              00066200
+      S := NEXT(S);                                                     00066300
+      END;                                                              00066400
+L3:   IF NOT PRINTED THEN PRINT #NULL#;                                 00066500
+      END;                                                              00066600
+                                                                        00066700
+COMMENT                                                                 00066800
+      FINDCOURSE FINDS EITHER ALL PEOPLE WHO HAVE TAKEN A PARTICULAR    00066900
+      COURSE OR ALL PEOPLE WHO MADE A PARTICULAR GRADE.                 00067000
+      THE COMMAND "F G" CAUSES THIS PROCEDURE TO BE ENTERED WHICH       00067100
+      THEN REQUESTS THE REST OF THE NECESSARY INFORMATION.              00067200
+      THE FOLLOWING IS REQUESTED:                                       00067300
+                                                                        00067400
+            DEPT:        SAME AS FOR ADD COURSES                        00067500
+            COURSENO:        "                                          00067600
+            GRADE:       IF A GRADE IS GIVEN THEN THAT COURSE           00067700
+                         WILL BE LISTED WITH ALL PEOPLE WHO TOOK        00067800
+                         IT AND MADE THAT GRADE ELSE ALL PEOPLE         00067900
+                         WHO TOOK THAT COURSE WILL BE LISTED;           00068000
+                                                                        00068100
+PROCEDURE FINDCOURSE;                                                   00068200
+      BEGIN                                                             00068300
+      STUDENT S;                                                        00068400
+      COURSELISTING CL;                                                 00068500
+      COURSEDESCRIP CP;                                                 00068600
+      ALPHA G;                                                          00068700
+      BOOLEAN B,PRINTED;                                                00068800
+      INTEGER I;                                                        00068900
+      LABEL L1,L2,LOOP;                                                 00069000
+LOOP: PRINT #DEPT:#; READ TWX; DEPTSTR := TWXS1(0,4);                   00069100
+      IF DEPTSTR = "STOP" OR DEPTSTR = SPACE THEN RETURN;               00069200
+      PRINT #COURSENO:#; READ TWX; COURSENOSTR := TWXS1(0,3);           00069300
+      PRINT #GRADE:#; READ TWX; B := G := REAL(TWXS1(0,1)) = " ";       00069400
+      IF LOOKUPCOURSE(DEPTSTR,COURSENOSTR) = NIL THEN                   00069500
+      BEGIN                                                             00069600
+      PRINT #NO SUCH COURSE#;                                           00069700
+      GO TO LOOP;                                                       00069800
+      END;                                                              00069900
+      S := SP;                                                          00070000
+      WHILE S NEQ NIL DO                                                00070100
+      BEGIN                                                             00070200
+      IF CL := COURSES(S) = NIL THEN GO TO L2;                          00070300
+L1:   FOR I := 0 STEP 1 UNTIL 8 DO                                      00070400
+      BEGIN                                                             00070500
+      IF CP := COURSEPOINTER[I](CL) = NIL THEN GO TO L2;                00070600
+      IF DEPT(CP) = DEPTSTR AND COURSENO(CP) = COURSENOSTR AND          00070700
+            (B OR GRADE[I](CL) = G) THEN                                00070800
+      BEGIN                                                             00070900
+      PRINT SSNO(S), NAME(S);                                           00071000
+      PRINTED := TRUE;                                                  00071100
+      GO TO L2;                                                         00071200
+      END;                                                              00071300
+      END;                                                              00071400
+      IF CL := COURSES(CL) NEQ NIL THEN GO TO L1;                       00071500
+L2:   S := NEXT(S);                                                     00071600
+      END;                                                              00071700
+      IF NOT PRINTED THEN PRINT #NULL#;                                 00071800
+      END FINDCOURSE;                                                   00071900
+                                                                        00071901
+                                                                        00071902
+                                                                        00071903
+                                                                        00071904
+                                                                        00071905
+                                                                        00071906
+                                                                        00071907
+                                                                        00071908
+                                                                        00072000
+COMMENT                                                                 00072100
+      FINDREQUIRED FINDS ALL OF THE REQUIRED COURSES THAT A             00072200
+      STUDENT HAS OR HAS NOT TAKEN.   THIS CAN BE DONE FOR EITHER AN    00072300
+                                                                        00072350
+      INDIVIDUAL OR ALL STUDENTS.  THE COMMANDS ARE:                    00072400
+                                                                        00072600
+            F R [SOCIAL SECURITY NO] [OPTION]                           00072700
+                                                                        00072800
+                   [OPTION] ::= L / [EMPTY]                             00072900
+                                                                        00073000
+      IF THE SOCIAL SECURITY NUMBER IS OMITTED THEN ALL                 00073100
+      STUDENTS ARE PRINTED.  IF THE OPTION FIELD IS EMPTY THEN ALL      00073200
+      REQUIRED COURSES THAT HAVE BEEN TAKEN ARE LISTED, ELSE            00073300
+      IF THE "L" APPEARS THEN THE COURSES THAT ARE                      00073400
+      REQUIRED  AND HAVE NOT BEEN TAKEN ARE LISTED;                     00073500
+                                                                        00073600
+PROCEDURE FINDREQUIRED;                                                 00073700
+      BEGIN                                                             00073800
+      STUDENT S;                                                        00073900
+      COURSELISTING CL;                                                 00074000
+      COURSEDESCRIP CP,DP;                                              00074100
+      INTEGER I;                                                        00074200
+      LABEL L1,L2,L3,L4,L5,L6;                                          00074300
+      BOOLEAN B,PRINTED,NOCOURSES;                                      00074400
+      IF B := SSNUMBER := TWXS1(4,9) = SPACE OR                         00074500
+            SSNUMBER(0,1) = "L" THEN S := SP ELSE                       00074600
+      IF S := LOOKUPSSNO(SSNUMBER) = NIL THEN                           00074700
+      BEGIN                                                             00074800
+      PRINT IF SP = NIL THEN #STUDENT LIST EMPTY# ELSE                  00074900
+            #STUDENT NOT FOUND#;                                        00075000
+      RETURN;                                                           00075100
+      END;                                                              00075200
+      IF TWXS1(IF B THEN 3 ELSE 13,3) NEQ SPACE(3) THEN GO TO L3;       00075300
+      WHILE S NEQ NIL DO                                                00075400
+      BEGIN                                                             00075500
+      PRINTED := FALSE;                                                 00075600
+      IF CL := COURSES(S) = NIL THEN GO TO L2;                          00075700
+L1:   FOR I := 0 STEP 1 UNTIL 8 DO                                      00075800
+      BEGIN                                                             00075900
+      IF CP := COURSEPOINTER[I](CL) = NIL THEN GO TO L2;                00076000
+      IF REQUIRED(CP) = "*" THEN                                        00076100
+      BEGIN                                                             00076200
+      IF NOT PRINTED THEN                                               00076300
+      BEGIN                                                             00076400
+      TERPRI;                                                           00076500
+      IF B THEN PRINT SSNO(S),NAME(S) ELSE PRINTSTUDENT(S,1);           00076600
+      PRINTED := TRUE;                                                  00076700
+      END;                                                              00076800
+      PRINCOURSEDESCRIP(CP);                                            00076900
+      TERPRI;                                                           00077000
+      END;                                                              00077100
+      END;                                                              00077200
+      IF CL := COURSES(CL) NEQ NIL THEN GO TO L1;                       00077300
+L2:   IF NOT PRINTED THEN                                               00077400
+      BEGIN                                                             00077500
+      TERPRI;                                                           00077600
+      IF B THEN PRINT SSNO(S),NAME(S) ELSE PRINTSTUDENT(S,1);           00077700
+      PRINT #NO REQUIRED COURSES TAKEN YET#;                            00077800
+      END;                                                              00077900
+      IF NOT B THEN RETURN;                                             00078000
+      S := NEXT(S);                                                     00078100
+      END;                                                              00078200
+      RETURN;                                                           00078300
+L3:   WHILE S NEQ NIL DO                                                00078400
+      BEGIN                                                             00078500
+      PRINTED := FALSE;                                                 00078600
+      DP := CDP;                                                        00078700
+      WHILE DP NEQ NIL DO                                               00078800
+      BEGIN                                                             00078900
+      IF REQUIRED(DP) NEQ "*" THEN GO TO L6;                            00079000
+      NOCOURSES := CL := COURSES(S) = NIL;                              00079100
+L4:   IF NOCOURSES THEN GO TO L5;                                       00079200
+      FOR I := 0 STEP 1 UNTIL 8 DO                                      00079300
+      BEGIN                                                             00079400
+      IF CP := COURSEPOINTER[I](CL) = NIL THEN GO TO L5;                00079500
+      IF CP = DP THEN GO TO L6;                                         00079600
+      END;                                                              00079700
+      IF CL := COURSES(CL) NEQ NIL THEN GO TO L4;                       00079800
+L5:   IF NOT PRINTED THEN                                               00079900
+      BEGIN                                                             00080000
+      IF B THEN PRINT SSNO(S),NAME(S) ELSE PRINTSTUDENT(S,1);           00080100
+      PRINTED := TRUE;                                                  00080200
+      END;                                                              00080300
+      PRINCOURSEDESCRIP(DP);                                            00080400
+      TERPRI;                                                           00080500
+L6:   DP := NEXTCOURSE(DP);                                             00080600
+      END;                                                              00080700
+      IF NOT PRINTED THEN                                               00080800
+      BEGIN                                                             00080900
+      PRINTSTUDENT(S,1);                                                00081000
+      PRINT #ALL REQUIREMENTS SATISFIED#;                               00081100
+      PRINTED := TRUE;                                                  00081200
+      END;                                                              00081300
+      IF NOT B THEN RETURN;                                             00081400
+      S := NEXT(S);                                                     00081500
+      END;                                                              00081600
+      END FINDREQUIRED;                                                 00081700
+                                                                        00081800
+COMMENT                                                                 00081900
+      THE COMMANDS ARE:                                                 00082000
+                                                                        00082100
+            COMMANDS      ACTION                                        00082200
+                                                                        00082300
+            LIST           CALL PRINTALL                                00082400
+            L ALL          CALL PRINTALL                                00082500
+            L [OPTIONS]    CALL LISTER                                  00082600
+                           SEE LISTER FOR [OPTIONS]                     00082700
+            D S            CALL DELETESTUDENT                           00082900
+            D S [[SS NO], ...]                                          00083000
+                                                                        00083100
+            A S            CALL ADDSTUDENT                              00083200
+            A C            CALL ADDCOURSES                              00083300
+                                                                        00083400
+            U C            CALL ADDCOURSESTOSTUDENT %UPDATE COURSES     00083500
+                                                                        00083600
+            STOP           END OF PROGRAM %WRAP UP                      00083700
+                                                                        00083800
+      FIND COMMANDS                                                     00083900
+                                                                        00084000
+                                                                        00084100
+            F D [DEGREE]   CALL FINDDEGREE                              00084200
+                                                                        00084250
+            F G            CALL FINDGRADE                               00084300
+            F G [SSNO]     CALL FINDGRADE                               00084400
+                                                                        00084500
+            F C            CALL FINDCOURSES                             00084600
+                                                                        00084700
+            F R            CALL FINDREQUIRED                            00084800
+            F R L          CALL FINDREQUIRED                            00084900
+            F R [SSNO]     CALL FINDREQUIRED                            00085000
+            F R [SSNO] L   CALL FINDREQUIRED;                           00085100
+                                                                        00085200
+      PRINT #GO AHEAD.#;                                                00085300
+      READ(SF[0],*,NEXTAVL(SF),FREELIST(SF),SP,CDP);                    00085400
+START:PRINT #:#;                                                        00085500
+      READ TWX;                                                         00085600
+      IF T := REAL(TWXS1(0,4)) = "LIST" OR T = "L AL" THEN PRINTALL ELSE00085700
+      IF TWXS1(0,1) ="L" THEN LISTER ELSE                               00085800
+      IF T = "D S " THEN DELETESTUDENT ELSE                             00085900
+      IF T = "D C " THEN DELETECOURSE ELSE                              00086000
+      IF T = "A S " THEN ADDSTUDENT ELSE                                00086100
+      IF T = "A C " THEN ADDCOURSE ELSE                                 00086200
+      IF T = "U C " THEN ADDCOURSESTOSTUDENT ELSE                       00086300
+      IF T = "F D " THEN FINDDEGREE ELSE                                00086400
+      IF T = "F G " THEN FINDGRADE ELSE                                 00086500
+      IF T = "F C " THEN FINDCOURSE ELSE                                00086600
+      IF T = "F R " THEN FINDREQUIRED ELSE                              00086700
+      IF T = "STOP" THEN                                                00086800
+      BEGIN                                                             00086900
+      WRITE(SF[0],*,NEXTAVL(SF),FREELIST(SF),SP,CDP);                   00087000
+      PRINT #END-OF-UPDATE#;                                            00087100
+      PRINT #GOODBYE#;                                                  00087200
+      EXIT;                                                             00087300
+      END ELSE                                                          00087400
+      PRINT #ILLEGAL INPUT#;                                            00087500
+      GO START;                                                         00087600
+END.                                                                    00087601
+                                                                        00087602
+                                                                        00087603
+                                                                        00087604
+                                                                        00087605
+                                                                        00087606
+                                                                        00087607
+                                                                        00087608
+                                                                        00087609
+                                                                        00087701
+RUN RECORD                                                              00087702
+                                                                        00087703
+ -BOJ- 0RECORD                                                          00087704
+GO AHEAD.                                                               00087705
+:L C                                                                    00087706
+ICS  452  536 LOGIC DESIGN AND SWITCHING THEORY                         00087707
+ICS  445  303 LOGISTIC SYSTEMS                                          00087708
+ICS  436  303 INFORMATION SYSTEMS                                       00087709
+ICS  424  303 ELEMENTS OF INFORMATION THEORY                            00087710
+ICS  423  303 MATHEMATICAL TECHNIQUES FOR INFORMATION SCIENCE           00087711
+ICS  415  233 THE LITERATURE OF SCIENCE AND ENGINEERING                 00087712
+ICS  410* 303 PROBLEM SOLVING                                           00087713
+ICS  406* 303 COMPUTING LANGUAGES                                       00087714
+ICS  404  303 TOPICS IN LINGUISTICS                                     00087715
+ICS  402  303 LANGUAGES FOR SCIENCE AND TECHNOLOGY                      00087716
+ICS  401  303 LANGUAGES FOR SCIENCE AND TECHNOLOGY                      00087717
+ICS  355* 303 INFORMATION STRUCTURES AND PROCESSES                      00087718
+ICS  342* 303 INTRODUCTION TO SEMIOTICS                                 00087719
+ICS  336  303 INTRODUCTION TO INFORMATION ENGINEERING                   00087720
+ICS  325* 303 INTRODUCTION TO CYBERNETICS                               00087721
+MATH 239* 303 INTRODUCTION TO SET-THEORETIC CONCEPTS                    00087722
+ICS  310* 233 COMPUTER-ORIENTED NUMERICAL METHODS                       00087723
+ICS  256* 303 COMPUTER AND PROGRAMMING SYSTEMS                          00087724
+ICS  251  233 AUTOMATIC DATA PROCESSING                                 00087725
+ICS  215  101 TECHNICAL INFORMATION RESOURSES                           00087726
+ICS  151* 233 DIGITAL COMPUTER ORGANIZATION AND PROGRAMMING             00087727
+:L S                                                                    00087728
+405628804 CHUCK COVERALL                                                00087729
+405628801 BARRY FOLSOM                                                  00087730
+405628806 BILL BROWN                                                    00087731
+405628805 RAY SPUTNICK                                                  00087732
+405628803 JERRY CIGARS                                                  00087733
+405628802 JOHN FOSTER                                                   00087734
+:F G                                                                    00087735
+  A  B  C  D  F QP HE  PA  NAME                                         00087736
+  2  1  1  0  0 39 12 3.25 BILL BROWN                                   00087737
+  3  3  2  1  0 78 27 2.89 RAY SPUTNICK                                 00087738
+:F R 405628804 L                                                        00087739
+N: CHUCK COVERALL                                                       00087740
+ICS  410* 303 PROBLEM SOLVING                                           00087741
+ICS  406* 303 COMPUTING LANGUAGES                                       00087742
+ICS  355* 303 INFORMATION STRUCTURES AND PROCESSES                      00087743
+ICS  342* 303 INTRODUCTION TO SEMIOTICS                                 00087744
+ICS  325* 303 INTRODUCTION TO CYBERNETICS                               00087745
+MATH 239* 303 INTRODUCTION TO SET-THEORETIC CONCEPTS                    00087746
+ICS  310* 233 COMPUTER-ORIENTED NUMERICAL METHODS                       00087747
+ICS  256* 303 COMPUTER AND PROGRAMMING SYSTEMS                          00087748
+ICS  151* 233 DIGITAL COMPUTER ORGANIZATION AND PROGRAMMING             00087749
+:F R 405628805 L                                                        00087750
+N: RAY SPUTNICK                                                         00087751
+ALL REQUIREMENTS SATISFIED                                              00087752
+:F R 405628801                                                          00087753
+                                                                        00087754
+N: BARRY FOLSOM                                                         00087755
+NO REQUIRED COURSES TAKEN YET                                           00087756
+:A S                                                                    00087757
+SSNO:405628807                                                          00087758
+NAME:BUD PASSOUT                                                        00087759
+ADDRESS:5700 MOORES CENTER PLACE                                        00087760
+DEGREE:IE                                                               00087761
+SSNO:                                                                   00087762
+:U C                                                                    00087763
+SSNO:405628807                                                          00087764
+BUD PASSOUT                                                             00087765
+DEPT:ICS                                                                00087766
+COURSENO:151                                                            00087767
+GRADE:A                                                                 00087768
+QUARTER:FALL                                                            00087769
+DEPT:ICS                                                                00087770
+COURSENO:250                                                            00087771
+NO SUCH COURSE                                                          00087772
+DEPT:                                                                   00087773
+:F C                                                                    00087774
+DEPT:ICS                                                                00087775
+COURSENO:151                                                            00087776
+GRADE:                                                                  00087777
+405628807 BUD PASSOUT                                                   00087778
+405628806 BILL BROWN                                                    00087779
+405628805 RAY SPUTNICK                                                  00087780
+:F R                                                                    00087781
+                                                                        00087782
+405628807 BUD PASSOUT                                                   00087783
+ICS  151* 233 DIGITAL COMPUTER ORGANIZATION AND PROGRAMMING             00087784
+                                                                        00087785
+405628804 CHUCK COVERALL                                                00087786
+NO REQUIRED COURSES TAKEN YET                                           00087787
+                                                                        00087788
+405628801 BARRY FOLSOM                                                  00087789
+NO REQUIRED COURSES TAKEN YET                                           00087790
+                                                                        00087791
+405628806 BILL BROWN                                                    00087792
+MATH 239* 303 INTRODUCTION TO SET-THEORETIC CONCEPTS                    00087793
+ICS  325* 303 INTRODUCTION TO CYBERNETICS                               00087794
+ICS  151* 233 DIGITAL COMPUTER ORGANIZATION AND PROGRAMMING             00087795
+                                                                        00087796
+405628805 RAY SPUTNICK                                                  00087797
+ICS  410* 303 PROBLEM SOLVING                                           00087798
+ICS  406* 303 COMPUTING LANGUAGES                                       00087799
+ICS  355* 303 INFORMATION STRUCTURES AND PROCESSES                      00087800
+ICS  342* 303 INTRODUCTION TO SEMIOTICS                                 00087801
+ICS  325* 303 INTRODUCTION TO CYBERNETICS                               00087802
+MATH 239* 303 INTRODUCTION TO SET-THEORETIC CONCEPTS                    00087803
+ICS  310* 233 COMPUTER-ORIENTED NUMERICAL METHODS                       00087804
+ICS  256* 303 COMPUTER AND PROGRAMMING SYSTEMS                          00087805
+ICS  151* 233 DIGITAL COMPUTER ORGANIZATION AND PROGRAMMING             00087806
+                                                                        00087807
+405628803 JERRY CIGARS                                                  00087808
+NO REQUIRED COURSES TAKEN YET                                           00087809
+                                                                        00087810
+405628802 JOHN FOSTER                                                   00087811
+NO REQUIRED COURSES TAKEN YET                                           00087812
+:F R L                                                                  00087813
+405628807 BUD PASSOUT                                                   00087814
+ICS  410* 303 PROBLEM SOLVING                                           00087815
+ICS  406* 303 COMPUTING LANGUAGES                                       00087816
+ICS  355* 303 INFORMATION STRUCTURES AND PROCESSES                      00087817
+ICS  342* 303 INTRODUCTION TO SEMIOTICS                                 00087818
+ICS  325* 303 INTRODUCTION TO CYBERNETICS                               00087819
+MATH 239* 303 INTRODUCTION TO SET-THEORETIC CONCEPTS                    00087820
+ICS  310* 233 COMPUTER-ORIENTED NUMERICAL METHODS                       00087821
+ICS  256* 303 COMPUTER AND PROGRAMMING SYSTEMS                          00087822
+405628804 CHUCK COVERALL                                                00087823
+ICS  410* 303 PROBLEM SOLVING                                           00087824
+ICS  406* 303 COMPUTING LANGUAGES                                       00087825
+ICS  355* 303 INFORMATION STRUCTURES AND PROCESSES                      00087826
+ICS  342* 303 INTRODUCTION TO SEMIOTICS                                 00087827
+ICS  325* 303 INTRODUCTION TO CYBERNETICS                               00087828
+MATH 239* 303 INTRODUCTION TO SET-THEORETIC CONCEPTS                    00087829
+ICS  310* 233 COMPUTER-ORIENTED NUMERICAL METHODS                       00087830
+ICS  256* 303 COMPUTER AND PROGRAMMING SYSTEMS                          00087831
+ICS  151* 233 DIGITAL COMPUTER ORGANIZATION AND PROGRAMMING             00087832
+405628801 BARRY FOLSOM                                                  00087833
+ICS  410* 303 PROBLEM SOLVING                                           00087834
+ICS  406* 303 COMPUTING LANGUAGES                                       00087835
+ICS  355* 303 INFORMATION STRUCTURES AND PROCESSES                      00087836
+ICS  342* 303 INTRODUCTION TO SEMIOTICS                                 00087837
+ICS  325* 303 INTRODUCTION TO CYBERNETICS                               00087838
+MATH 239* 303 INTRODUCTION TO SET-THEORETIC CONCEPTS                    00087839
+ICS  310* 233 COMPUTER-ORIENTED NUMERICAL METHODS                       00087840
+ICS  256* 303 COMPUTER AND PROGRAMMING SYSTEMS                          00087841
+ICS  151* 233 DIGITAL COMPUTER ORGANIZATION AND PROGRAMMING             00087842
+405628806 BILL BROWN                                                    00087843
+ICS  410* 303 PROBLEM SOLVING                                           00087844
+ICS  406* 303 COMPUTING LANGUAGES                                       00087845
+ICS  355* 303 INFORMATION STRUCTURES AND PROCESSES                      00087846
+ICS  342* 303 INTRODUCTION TO SEMIOTICS                                 00087847
+ICS  310* 233 COMPUTER-ORIENTED NUMERICAL METHODS                       00087848
+ICS  256* 303 COMPUTER AND PROGRAMMING SYSTEMS                          00087849
+N: RAY SPUTNICK                                                         00087850
+ALL REQUIREMENTS SATISFIED                                              00087851
+405628803 JERRY CIGARS                                                  00087852
+ICS  410* 303 PROBLEM SOLVING                                           00087853
+ICS  406* 303 COMPUTING LANGUAGES                                       00087854
+ICS  355* 303 INFORMATION STRUCTURES AND PROCESSES                      00087855
+ICS  342* 303 INTRODUCTION TO SEMIOTICS                                 00087856
+ICS  325* 303 INTRODUCTION TO CYBERNETICS                               00087857
+MATH 239* 303 INTRODUCTION TO SET-THEORETIC CONCEPTS                    00087858
+ICS  310* 233 COMPUTER-ORIENTED NUMERICAL METHODS                       00087859
+ICS  256* 303 COMPUTER AND PROGRAMMING SYSTEMS                          00087860
+ICS  151* 233 DIGITAL COMPUTER ORGANIZATION AND PROGRAMMING             00087861
+405628802 JOHN FOSTER                                                   00087862
+ICS  410* 303 PROBLEM SOLVING                                           00087863
+ICS  406* 303 COMPUTING LANGUAGES                                       00087864
+ICS  355* 303 INFORMATION STRUCTURES AND PROCESSES                      00087865
+ICS  342* 303 INTRODUCTION TO SEMIOTICS                                 00087866
+ICS  325* 303 INTRODUCTION TO CYBERNETICS                               00087867
+MATH 239* 303 INTRODUCTION TO SET-THEORETIC CONCEPTS                    00087868
+ICS  310* 233 COMPUTER-ORIENTED NUMERICAL METHODS                       00087869
+ICS  256* 303 COMPUTER AND PROGRAMMING SYSTEMS                          00087870
+ICS  151* 233 DIGITAL COMPUTER ORGANIZATION AND PROGRAMMING             00087871
+:STOP                                                                   00087872
+END-OF-UPDATE                                                           00087873
+GOODBYE                                                                 00087874

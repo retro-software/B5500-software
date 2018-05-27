@@ -1,0 +1,107 @@
+BEGIN                                                                   00000100
+COMMENT  THIS PROGRAM, USING LIST PROCESSING, ACCEPTS                   00000200
+      SYNTAX RULES AS INPUT, AND WILL PRODUCE RANDOM GENERATED          00000300
+      STRUCTURES WHICH ARE SYNTACTICALLY CORRECT.  TO                   00000400
+      INPUT A RULE, THE COMMAND "RULE" IS FOLLOWED FIRST BY             00000500
+      THE NAME OF THE RULE AND THEN ITS DEFINITION.                     00000600
+      A RULE IS ANY COMBINATION OF EITHER                               00000700
+      RULE NAMES, WHETHER PREVIOUSLY DEFINED OR NOT, OR AN              00000800
+      "ATOM".  (AN "ATOM" IS AN ATOMIC SYMBOL AS DEFINED IN             00000900
+      SECTION 6.12).  ALTERNATE RULES MAY BE SEPARATED                  00001000
+      BY A SLASH(/) WHICH MEANS "OR".                                   00001100
+      THE SYNTAX OF "RULES"  IS SHOWN BELOW:                            00001200
+                                                                        00001400
+            SPECIFICATION   ::=  ATOM / ATOM SPECIFICATION              00001500
+            RULE ::=  SPECIFICATION / SPECIFICATION "/" RULE            00001600
+            RULENAME ::=  ATOM                                          00001700
+            RULES ::=  RULENAME RULE                                    00001800
+                                                                        00001900
+      TO GENERATE RANDOM STRUCTURES FROM THE RULE SPECIFICATIONS        00002000
+      THE COMMAND "GENERATE "INTEGER" "RULE NAME" WILL CAUSE            00002100
+      "INTEGER" RULE NAMES TO BE GENERATED                              00002200
+      ACCORDING TO THE SPECIFICATION OF THE "RULE NAME".                00002300
+      TO STOP THE PROGRAM "STOP" SHOULD BE ENTERED.                     00002400
+      AFTER EVERY COMMAND, "GO AHEAD" IS PRINTED AND THE                00002500
+      PROGRAM WAITS FOR MORE COMMANDS FROM THE TERMINAL;                00002600
+FILE REMOTE;                                                            00002700
+SYMBOL R;                                                               00002800
+REAL X;                                                                 00002900
+LABEL L;                                                                00003000
+SYMBOL PROCEDURE RULE;                                                  00003100
+      RULE := IF R := READ1 EQ "/" OR R EQ QMARK THEN NIL ELSE R . RULE;00003200
+SYMBOL PROCEDURE RULES;                                                 00003300
+      RULES := RULE . (IF R EQ "/" THEN RULES ELSE NIL);                00003400
+PROCEDURE GEN(X);                                                       00003500
+      VALUE X;                                                          00003600
+      SYMBOL X;                                                         00003700
+      IF NUMBERP(X) OR NULL(CDR(X)) THEN                                00003800
+            BEGIN                                                       00003900
+            IF X NEQL "EMPTY" THEN PRIN X SPACE;                        00004000
+            END                                                         00004100
+      ELSE FOR X IN RANDOM(CDR X) DO GEN(X);                            00004200
+                                                                        00004300
+COMMENT PROGRAM STARTS HERE:          ;                                 00004400
+                                                                        00004500
+L:    PRINT #GO AHEAD.#,/;                                              00004600
+      READ TWX;                                                         00004700
+      IF R := READ1 EQ "RULE" THEN                                      00004800
+            DO CDR(READ1) := RULES UNTIL R EQ QMARK                     00004900
+      ELSE                                                              00005000
+      IF R EQ "GENERATE" THEN                                           00005100
+            BEGIN                                                       00005200
+            X := READN(TWX);                                            00005300
+            R := READ1;                                                 00005400
+            FOR X DO BEGIN GEN(R); TERPRI; END;                         00005500
+            END                                                         00005600
+      ELSE                                                              00005700
+      IF R EQ "STOP" THEN                                               00005800
+            BEGIN PRINT #EOJ#,/,/,/; EXIT; END                          00005900
+      ELSE PRINT #ILLEGAL INPUT#;                                       00006000
+      GO TO L;                                                          00006100
+END.                                                                    00006200
+                                                                        00006300
+EXECUTE SENGEN                                                          00006400
+                                                                        00006500
+ -BOJ- 0SENGEN                                                          00006600
+GO AHEAD.                                                               00006700
+RULE SUBJECT BARRY/SUSIE/RECC/B5500/GTL                                 00006800
+GO AHEAD.                                                               00006900
+RULE VERB LOVES/HATES/RUNS/PROCESSES                                    00007000
+GO AHEAD.                                                               00007100
+RULE ADVERB REALLY/MOSTLY                                               00007200
+GO AHEAD.                                                               00007300
+RULE ACTION VERB/ADVERB VERB                                            00007400
+GO AHEAD.                                                               00007500
+RULE OBJECT SUBJECT                                                     00007600
+GO AHEAD.                                                               00007700
+RULE SENTENCE SUBJECT ACTION/SUBJECT ACTION OBJECT                      00007800
+GO AHEAD.                                                               00007900
+GENERATE 25 SENTENCE                                                    00008000
+GTL PROCESSES RECC                                                      00008100
+B5500 REALLY PROCESSES                                                  00008200
+BARRY REALLY RUNS                                                       00008300
+GTL PROCESSES                                                           00008400
+RECC REALLY RUNS BARRY                                                  00008500
+SUSIE HATES BARRY                                                       00008600
+GTL HATES SUSIE                                                         00008700
+B5500 REALLY RUNS                                                       00008800
+RECC MOSTLY LOVES RECC                                                  00008900
+GTL PROCESSES                                                           00009000
+GTL REALLY LOVES                                                        00009100
+GTL REALLY RUNS                                                         00009200
+BARRY RUNS                                                              00009300
+SUSIE REALLY RUNS                                                       00009400
+BARRY REALLY RUNS                                                       00009500
+B5500 REALLY RUNS                                                       00009600
+GTL PROCESSES                                                           00009700
+BARRY REALLY PROCESSES                                                  00009800
+BARRY MOSTLY PROCESSES                                                  00009900
+RECC LOVES                                                              00010000
+RECC REALLY LOVES B5500                                                 00010100
+SUSIE RUNS SUSIE                                                        00010200
+SUSIE PROCESSES B5500                                                   00010300
+BARRY REALLY PROCESSES RECC                                             00010400
+BARRY REALLY LOVES                                                      00010500
+GO AHEAD.                                                               00010600
+STOP                                                                    00010700
+EOJ                                                                     00010800

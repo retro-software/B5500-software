@@ -1,0 +1,151 @@
+$+STREAM                                                                00000000
+BEGIN       % LINKED MESSAGE FILE HANDLER                               00001000
+%       L P MCQUOWN                                                     00002000
+%       WESTINGHOUSE R & D                                              00003000
+%   INPUT FORMAT:  2 I4 FIELDS FOLLOWED BY 72 CHR OF TEXT               00004000
+%   LEFT # = LINK TO CONTINUED TEXT ELSE 0                              00005000
+%   RIGHT #= PHYSICAL RECORD # OF THIS TEXT IMAGE                       00006000
+%   COM=0       LIST    "DISK"                                          00007000
+%   COM=1       DUMP    "DISK"  ->  "PUNCH"                             00008000
+%   COM=2       LIST    "DISK"  LOCATE                                  00009000
+%   COM=3       DUMP    "DISK"  ->  "NEWDISK"                           00010000
+%   COM=4       LOAD    "CARD"  ->  "MESSAGE"                           00011000
+%   COM=6       LOAD    "CARD"  ->  "MESSAGE"   LOCK                    00012000
+                                                                        00013000
+BOOLEAN COM;                                                            00014000
+INTEGER I,CT,ERCT,TOP,LEFT,RIGHT,RT;                                    00015000
+DEFINE D32 = [36:7]#,                                                   00016000
+        M32 = [43:5]#;                                                  00017000
+LABEL LEOF,LOD,EOF,NEXT,DMP,RCVR,FINISH,ER;                             00018000
+                                                                        00019000
+ARRAY A[0:9],   % INCOMING DATA ROW                                     00020000
+    NEED[0:127],    % REQUESTED LINKS                                   00021000
+    HAVE[0:127];    % RECORDS ENCOUNTERED                               00022000
+FORMAT  L1("MESSAGE FILE: "A1,A6"/"A1,A6),                              00023000
+        L2(//I4" MESSAGES"),                                            00024000
+        L3(X80"ERROR IN MESSAGE FILE");                                 00025000
+FORMAT  F1(X80"RECORD OUT OF BOUNDS:"2I5),                              00026000
+        F2(X80"DUPLICATE TEXT RECORD"I5),                               00027000
+        F3(X80"MISSING TEXT RECORD"I5),                                 00028000
+        F4(//I4" RECORDS,"I4" ERRORS.");                                00029000
+FORMAT  D1(//I4" VALID RECORDS IN ERROR FILE");                         00030000
+FILE CARD (2,10,150);                                                   00031000
+FILE LINE 6(1,15);                                                      00032000
+FILE MESSAGE DISK RANDOM [20:210] (1,10,30,SAVE 780);                   00033000
+FILE DISK DISK RANDOM (1,10,30);                                        00034000
+FILE PUNCH 32(5,10);                                                    00035000
+FILE NEWDISK DISK SERIAL [20:210] (2,10,30,SAVE 780);                   00036000
+                                                                        00037000
+PROCEDURE VALIDATE;                                                     00038000
+BEGIN                                                                   00039000
+    FORMAT  NOFILE("NO FILE: "A1,A6"/"A1,A6),                           00040000
+            WRONG("IMPROPER RECORD SIZE:"I5" ! 10");                    00041000
+    SEARCH(DISK,A[*]);                                                  00042000
+    IF A[0] { 0 THEN BEGIN                                              00043000
+        WRITE(LINE,NOFILE,A[1].[6:6],A[1],A[2].[6:6],A[2]);             00044000
+        GO FINISH;                                                      00045000
+    END;                                                                00046000
+    IF A[3] ! 10 THEN BEGIN                                             00047000
+        WRITE(LINE,WRONG,A[3]);                                         00048000
+        GO FINISH;                                                      00049000
+    END;                                                                00050000
+    TOP ~ A[5];                                                         00051000
+END;                                                                    00052000
+STREAM PROCEDURE ZOT(A,B); VALUE B; BEGIN                               00053000
+    SI~A; DI~A; SI~SI+4; DS~4 CHR; DS~4 LIT " ";                        00054000
+    B(DI~A; DS~4 LIT " "); END;                                         00055000
+STREAM PROCEDURE REQUEST(A,B); VALUE B; BEGIN                           00056000
+    DI~A; DI~DI+1; SKIP B DB; DS~ SET END;                              00057000
+BOOLEAN STREAM PROCEDURE ALREADY(A,B); VALUE B; BEGIN                   00058000
+    SI~A; SI~SI+1; SKIP B SB;                                           00059000
+    IF SB THEN TALLY~1; ALREADY~TALLY END;                              00060000
+STREAM PROCEDURE DECODE(A,L,R); BEGIN                                   00061000
+    SI~A; DI~L; DS~4 OCT; DI~R; DS~4 OCT;                               00062000
+    SI~L; DI~A; DS~4 DEC; SI~R; DS~4 DEC;                               00063000
+    DI~DI-4; DS~3 FILL END;                                             00064000
+IF COM.[45:1] THEN GO LOD;                                              00065000
+IF COM THEN GO DMP;                                                     00066000
+% LIST A MESSAGE FILE                                                   00067000
+    VALIDATE;                                                           00068000
+    WRITE(LINE[DBL],L1,A[1].[6:6],A[1],A[2].[6:6],A[2]);                00069000
+    FOR I~0 STEP 1 UNTIL TOP DO BEGIN                                   00070000
+        READ(DISK[I],10,A[*])[LEOF];                                    00071000
+        DECODE(A,LEFT,RIGHT);                                           00072000
+        IF RIGHT = I THEN % VALID RECORD IN FILE                        00073000
+            IF NOT ALREADY(NEED[I.D32],I.M32) THEN BEGIN                00074000
+                CT ~ CT + 1;                                            00075000
+                ERCT ~ 0;                                               00076000
+                WHILE LEFT ! 0 DO BEGIN                                 00077000
+                    REQUEST(NEED[LEFT.D32],LEFT.M32);                   00078000
+                    ZOT(A,ERCT!0 AND (NOT COM).[46:1]);                 00079000
+                    WRITE(LINE,10,A[*]);                                00080000
+                    READ(DISK[RT~LEFT],10,A[*])[LEOF];                  00081000
+                    DECODE(A,LEFT,RIGHT);                               00082000
+                    IF RT ! RIGHT THEN GO ER;                           00083000
+                    ERCT ~ ERCT + 1;                                    00084000
+                END;                                                    00085000
+                ZOT(A,ERCT!0 AND (NOT COM).[46:1]);                     00086000
+                WRITE(LINE[DBL],10,A[*]);                               00087000
+            END;                                                        00088000
+LEOF:                                                                   00089000
+    END;                                                                00090000
+    WRITE(LINE,L2,CT);                                                  00091000
+    GO FINISH;                                                          00092000
+ER:                                                                     00093000
+    WRITE(LINE,L3);                                                     00094000
+    GO FINISH;                                                          00095000
+LOD:                                                                    00096000
+WHILE TRUE DO BEGIN                                                     00097000
+    READ(CARD,10,A[*])[EOF];                                            00098000
+    DECODE(A,LEFT,RIGHT);                                               00099000
+    IF LEFT=9999 OR RIGHT=9999 THEN                                     00100000
+        GO NEXT;                                                        00101000
+    IF LEFT>4095 OR RIGHT>4095 THEN BEGIN                               00102000
+        WRITE(LINE[DBL],F1,LEFT,RIGHT);                                 00103000
+        ERCT ~ ERCT + 1;                                                00104000
+        GO NEXT;                                                        00105000
+    END;                                                                00106000
+    IF LEFT ! 0 THEN                                                    00107000
+        REQUEST(NEED[LEFT.D32],LEFT.M32);                               00108000
+    IF ALREADY(HAVE[RIGHT.D32],RIGHT.M32) THEN BEGIN                    00109000
+        WRITE(LINE[DBL],F2,RIGHT);                                      00110000
+        ERCT ~ ERCT + 1;                                                00111000
+        GO NEXT;                                                        00112000
+    END;                                                                00113000
+    REQUEST(HAVE[RIGHT.D32],RIGHT.M32);                                 00114000
+    WRITE(MESSAGE[RIGHT],10,A[*]);                                      00115000
+    WRITE(LINE[DBL],10,A[*]);                                           00116000
+    TOP ~ MAX(TOP,LEFT,RIGHT);                                          00117000
+    CT ~ CT + 1;                                                        00118000
+NEXT:                                                                   00119000
+END;                                                                    00120000
+EOF:                                                                    00121000
+    FOR I~0 STEP 1 UNTIL TOP DO                                         00122000
+        IF ALREADY(NEED[I.D32],I.M32) THEN                              00123000
+            IF NOT ALREADY(HAVE[I.D32],I.M32) THEN BEGIN                00124000
+                WRITE(LINE[DBL],F3,I);                                  00125000
+                ERCT ~ ERCT + 1;                                        00126000
+            END;                                                        00127000
+    IF ERCT = 0 OR COM.[46:1] THEN                                      00128000
+        LOCK(MESSAGE);                                                  00129000
+    WRITE(LINE,F4,CT,ERCT);                                             00130000
+    GO FINISH;                                                          00131000
+                                                                        00132000
+DMP:                                                                    00133000
+    VALIDATE;                                                           00134000
+    FOR I~0 STEP 1 UNTIL TOP DO BEGIN                                   00135000
+        READ(DISK[I],10,A[*])[RCVR];                                    00136000
+        DECODE(A,LEFT,RIGHT);                                           00137000
+        IF RIGHT!I THEN GO RCVR;                                        00138000
+        WRITE(LINE[DBL],10,A[*]);                                       00139000
+        IF COM.[46:1] THEN                                              00140000
+            WRITE(NEWDISK,10,A[*])                                      00141000
+        ELSE                                                            00142000
+            WRITE(PUNCH,10,A[*]);                                       00143000
+        CT ~ CT + 1;                                                    00144000
+RCVR:                                                                   00145000
+    END;                                                                00146000
+    WRITE(LINE,D1,CT);                                                  00147000
+    IF CT>0 AND COM.[46:1] THEN LOCK(NEWDISK);                          00148000
+FINISH:                                                                 00149000
+END.                                                                    00150000

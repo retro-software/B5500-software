@@ -49,10 +49,18 @@ INCL2OMIT.alg_m
     Mark XIII MCP source to be compiled with ESPOLXEM during early
     development of retro-b5500.
 
+LIBMAINT-EXTRACT.alg_m
+    An Algol program to extract individual files from a B5500 Library/
+    Maintenance tape image in .bcd format and convert them to EBCDIC
+    text under a specified directory.
+
 NEATUP.alg_m
     Prgram to reformat source code for Emode Algol originally written by
     Dave Brown of U.S. Customs in San Diego, California, and modified
     slightly by Paul Kimpel.
+
+NEATUP-DO.wfl_m
+    A CANDE DO command illustrating the use of NEATUP and its options.
 
 NEATUP55.alg_m
     A clone of NEATUP.alg_m, modified to reformat the transcriptions of
@@ -67,3 +75,12 @@ NEATUPINFO.alg_m
     Program to decode the "Lexicon" tables used by NEATUP. It was
     written as an aid to cloning NEATUP55 from NEATUP.
 
+TAPBCD.alg_m
+    An Algol program to convert a .tap (taput) tape image to .bcd
+    format.
+
+__________
+2016-05-03  Paul Kimpel
+    Initial version.
+2018-05-27  Paul Kimpel
+    Add LIBMAINT-EXTRACT, NEATUP-DO, and TAPBCD.
