@@ -1,39 +1,39 @@
 CUBE Library Version 13 (February 1972)
 
 CUBE, the Cooperating Users of Burroughs Equipment, was a U.S. based
-user organization that was active from the 1950s through the early
+user organization that was active from the 1960s through the early
 1990s. After the merger of Burroughs and Sperry Univac in 1986, CUBE and
-USE (the Sperry user group) evenually merged to form the UNITE
+USE (the Sperry user group) eventually merged to form the UNITE
 organization (http://www.unite.org).
 
-One of the functions CUBE performed during the 1960s and early '70s was
-to maintain a library of programs for the B5000 and B5500 computer
+One of the functions that CUBE performed during the 1960s and early '70s
+was to maintain a library of programs for the B5000 and B5500 computer
 systems. These programs were donated both by Burroughs and by CUBE
 members. The library was freely available to CUBE members and Burroughs
-support staff.
+support staff. The library eventually grew to occupy three reels of
+7-track, odd-parity magnetic tape.
 
-The library eventually grew to three reels of 7-track, odd parity
-magnetic tape. Tapes for version 13 of the library were acquired several
-years ago by Jim Haynes from the B5500 site at the University of
-California at Santa Cruz and donated to the Computer History Museum in
-Mountain View, California. The CHM was finally able to read these tapes
-in May 2018, producing binary images in .tap (taput) format. For
-information on the .tap format, see:
+Tapes for version 13 of the library were acquired several years ago by
+Jim Haynes from the B5500 site at the University of California at Santa
+Cruz and donated to the Computer History Museum in Mountain View,
+California. The CHM was finally able to read these tapes in May 2018,
+producing binary images in .tap (taput) format. For information on the
+.tap format, see:
 
     http://simh.trailing-edge.com/docs/simh_magtape.pdf
 
 The .tap format was not originally designed to support the even- and
 odd-parity encoding available on 7-track tapes, and there is some
-difference of opinion on how it should be used for 7-track images. These
-images produced by the CHM do not record the parity. Each 6-bit
-character frame is stored right-justified in 8-bit bytes with two
-leading zero bits. The data is encoded in B5500 Internal Code (BIC). See
-Appendix A in:
+difference of opinion on how it should be used for 7-track images. The
+CUBE Library tape images produced by the CHM do not record the parity.
+Each 6-bit character frame is stored right-justified in 8-bit bytes with
+two leading zero bits. The data is encoded in B5500 Internal Code (BIC).
+See Appendix A in:
 
     http://bitsavers.org/pdf/burroughs/B5000_5500_5700/
     1021326_B5500_RefMan_May67.pdf
 
-The .tap format is not presently supported by my retro-b5500 emulator.
+The .tap format is not presently supported by the retro-b5500 emulator.
 Using a program I wrote for the modern Unisys MCP systems, I converted
 the .tap files to the .bcd format used by retro-b5500 and several
 others. See /Unisys-Emode-Tools/TAPBCD.alg_m in this repo. For
@@ -63,11 +63,11 @@ sequence numbers "KPKP0024"-"KPKP0028". These records are part of a
 large comment. The second error was in the PTS051 module, in the block
 containing sequence numbers "ANTP  11"-"ANTP  13", and including the two
 blank records on either side of those sequence numbers. These records
-occurred at the end of a large comment.
+occurred at the end of another large comment.
 
 There were actually three blocks with errors in this second area of the
 tape, but two appear to be duplicates of the middle one, probably
-introduced by tape positioning errors during error retry, either when
+introduced by positioning errors during tape error retry, either when
 the tape was written or when it was recently imaged. The two duplicated
 blocks caused module boundaries to be offset by 10 records in all the
 modules after that point.
@@ -97,9 +97,9 @@ described below.
 CUBEA13 and CUBEB13 contain identical copies of an index file for the
 library (CUBELIB/INDEX) and an Algol program that can sort and format
 the index in multiple ways (CUBELST/Q000007). This program was used to
-generate the text files CUBELIB.LIST.txt and CUBELIB.LIST-1.text
-below. These files appear to match the following scans of
-listings on bitsavers:
+generate the index listings you can view in the CUBELIB.LIST.txt and
+CUBELIB.LIST-1.txt files below. These files appear to match the
+following scans of listings on bitsavers:
 
     http://bitsavers.org/pdf/burroughs/B5000_5500_5700/listing/
     CUBE_13_Library_Feb72.pdf
@@ -220,11 +220,11 @@ Files/
     On the B5500, these files would be named MFID/FID. In Windows and
     Unix-like file systems, however, treating the MFID as a directory
     name would result in a large number of directories containing a
-    single file. This would make the library a little tedious to
-    navigate, and would make it more difficult to find files by their
-    CUBE ID in the second name. Therefore, the text files have been
-    named in the form MFID-FID.ext, where ".ext" attempts to identify
-    the files by type:
+    single file. This would make the library files a little tedious to
+    navigate, and would make it more difficult to find files by the CUBE
+    ID in their second name. Therefore, the text files in the Files/
+    subdirectory have been named in the form MFID-FID.ext, where ".ext"
+    attempts to identify the files by language or usage:
 
         .alg    B5500 Extended Algol
         .cob    B5500 COBOL (not COBOL-68)
@@ -234,7 +234,7 @@ Files/
         .mca    Westinghouse Research MCALGOL
         .sno    SNOBOL
         .wipl   WIPL (Wisconsin Interactive Problem-Solving Language)
-        .xla    B5500 XALGOL (Compatible Algol)
+        .xal    B5500 XALGOL (Compatible Algol)
 
     Several files were transcribed earlier by Richard Cornwell and me,
     before these tape images became available, and were included
@@ -252,4 +252,8 @@ Files/
 __________
 2018-05-27 Paul Kimpel
     Initial creation of the library.
+
+
+
+
 

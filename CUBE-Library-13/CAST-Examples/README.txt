@@ -6,21 +6,22 @@ have the large Head-per-Track disks that were introduced with the B5500,
 only two relatively small drums, so source programs had to be maintained
 either as card decks or on tape.
 
-The CAST format allowed multiple source modules to be maintained on a
-single tape volume. These tapes were maintained by the standard utility
-program MAKCAST/DISK. The Algol and COBOL compilers understood this
-format and could compile programs and include individual routines
-directly from CAST tapes or a disk file.
+The CAST format allows multiple source modules to be maintained as a
+single file. CAST files were originally on tape, but on the B5500, could
+also be stored on disk. These tapes are maintained by the standard
+Burroughs utility program MAKCAST/DISK. The Algol and COBOL compilers
+understand this format and can compile programs and include individual
+routines directly from CAST tapes or a disk file.
 
-CAST tapes had a directory on the front of the tape that identified the
-files stored on that tape. The directory included the relative record
-number of the start of each file. This allowed MAKCAST and the compilers
-to use the Algol SPACE statement to position the tape to individual
-files relatively efficiently. If the CAST file was on disk, SPACE
-provided random access to the modules. If the file was on tape, it could
-take about five minutes to traverse a full reel.
+CAST tapes have a directory on the front of the tape that identifies the
+files stored on that tape. The directory includes the relative record
+number of the start of each file. This allows MAKCAST/disk and the
+compilers to use the Algol SPACE statement to position the tape to
+individual files relatively efficiently. If the CAST file is on disk,
+SPACE provides random access to the modules. If the file is on tape, it
+can take about five minutes to traverse a full reel.
 
-Here is what I have deduced about the format of CAST tapes:
+Here is what I have deduced for the format of CAST tapes:
 
     1. The tape is labeled with standard B5500 tape labels.
 
@@ -31,16 +32,17 @@ Here is what I have deduced about the format of CAST tapes:
     files on the tape:
 
         a. The first word of the first directory block appears to be a
-        count of the number of blocks in the directory. This appears to
-        be a fixed value of 3, however, and is hard-wired into the
-        MAKCAST/DISK utility program that maintains these tapes.
+        binary count of the number of blocks in the directory. This
+        appears to be a fixed value of 3, however, and is hard-wired
+        into the MAKCAST/DISK utility program.
 
         b. Entries in the tape directory are variable length,
         consisting of N+4 characters, where N is the number of
         characters in the library module name.
 
-        c. The first character in an entry is the length in binary of
-        the module name, followed by the characters of the name.
+        c. The first character in an entry is the binary length of the
+        module name. This length is followed immediately by the
+        characters of the name.
 
         d. Following the name are three characters that specify a big-
         endian 18-bit binary number -- the 1-relative logical record
@@ -54,12 +56,12 @@ Here is what I have deduced about the format of CAST tapes:
         entry is stored at the beginning of the next block.
 
     4. The remainder of the tape after the directory blocks consists of
-    blocks with the text of the library modules.
+    blocks containing the text of the library modules.
 
-    5. The first word of each of these text blocks is the binary value
-    of the 1-relative record number of the first logical record in the
-    block, using the same relative basis as in the 18-bit directory
-    record numbers.
+    5. The first word of each of these text blocks is the big-endian
+    binary value of the 1-relative record number of the first logical
+    record in the block, using the same relative basis as in the 18-bit
+    directory record numbers.
 
     6. The remainder of the block consists of five logical records of 88
     characters (11 words) each (thus 5*88+8=448). The first 80
@@ -110,5 +112,7 @@ PTS051.lst
 __________
 2018-05-27 Paul Kimpel
     Initial version.
+
+
 
 
