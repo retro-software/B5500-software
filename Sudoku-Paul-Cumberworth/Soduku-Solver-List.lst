@@ -1,0 +1,1236 @@
+ 
+ 
+ 
+ 
+ 
+ 
+ LABEL  0LINE   0SUDOKU 00188237?COMPILE SUDOKU/TEST WITH XALGOL GO                                      XALGOL /SUDOKU
+ 
+ 
+ 
+ 
+ 
+                      BURROUGHS B-5700 XALGOL COMPILER MARK XIII.0  WEDNESDAY, 08/24/88,   5:49 AM.
+ 
+ 
+ 
+ 
+ 
+                %CARD STACK SEG PRT LIST SINGLE DEBUGN                                                      0000
+ 
+                % SUDOKU SOLVER                                                                             0000
+ 
+                % ORIGINALLY WRITTEN IN C BY SCOTT HEMPHILL AND PLACED IN                                   0000
+ 
+                % THE PUBLIC DOMAIN 5 SEPTEMBER 2005                                                        0000
+ 
+                % CONVERTED TO B5500 BY PAUL C JULY 2018                                                    0000
+ 
+                % MAKE SURE STACK SET TO AT LEAST 5000 WORDS TO COPE WITH RECURSION                         0000
+ 
+                BEGIN                                                                                       0000
+ 
+                                                                                        START OF SEGMENT **********    2
+ 
+                  BOOLEAN                                                                                   0000
+ 
+                    FINDMULTIPLE;   % FIND MULTIPLE SOLUTIONS (SET COMMON = 1 IN CC)                        0000
+ 
+                  INTEGER                                                                                   0000
+ 
+                    NUM,            % COUNT OF NUMBER OF SOLUTIONS FOUND                                    0000
+ 
+                    CURDEPTH,       % CURRENT RECURSION DEPTH                                               0000
+ 
+                    MAXDEPTH,       % MAXIMUM RECURSION DEPTH                                               0000
+ 
+                    STARTET;        % TIME(1) OF WHEN WE STARTED                                            0000
+ 
+                  INTEGER ARRAY                                                                             0000
+ 
+                    BITNO[0:11],    % ALLOW FOR 12 BITS, ONLY USE 9 THOUGH                                  0000
+ 
+                    GRID [0:80],    % THE PUZZLE GRID: 1 THRU 9, OR 0 IF NO NUMBER YET                      0002
+ 
+                    BITS [0:80],    % BITMAP OF EACH SQUARE: BIT SET => NOT POSSIBLE                        0003
+ 
+                                    % I.E. 3"001" => !1, 3"002" => !2,  3"004" => !3,                       0005
+ 
+                                    % 3"010" => !4, ... 3"400" => !9.                                       0005
+ 
+                    COUNT [0:511],   % BIT COUNT FOR EACH NUMBER                                            0005
+ 
+                    OTHERSARY [0:80, 0:19];                                                                 0007
+ 
+                  DEFINE OTHERS(X,Y) =                                                                      0009
+ 
+                    OTHERSARY[X,Y] #;  % MAKE IT EASIER TO OPTIMISE LATER                                   0009
+ 
+                                    % FOR EACH SQUARE, AN ARRAY OF 20 "OTHER"                               0009
+ 
+                                    % LOCATIONS AFFECT BY THIS SQUARE.  FOR                                 0009
+ 
+                                    % EXAMPLE, IF THERE IS A "6" IN SQUARE 0,                               0009
+ 
+                                    % THERE ARE 20 OTHER SQUARES WE KNOW                                    0009
+ 
+                                    % CANT CONTAIN A SIX:                                                   0009
+ 
+                                    % 1,2,3,4,5,6,7,8 (HORIZONTAL ROW)                                      0009
+ 
+                                    % 9,18,27,36,45,54,63,72 (VERTCAL COLUMN)                               0009
+ 
+                                    % 1,2,9,10,11,18,19,20 (3X3 SQUARE)                                     0009
+ 
+                                    % THATS A TOTAL OF 24 SQUARE NUMBERS,                                   0009
+ 
+                                    % BUT 4 OF THEM ARE DUPLICATES.  THE                                    0009
+ 
+                                    % "OTHERS" ARRAY IS BIG ENOUGH TO HOLD                                  0009
+ 
+                                    % 24 NUMBERS WHILE IT IS BEING BUILT, BUT                               0009
+ 
+                                    % WILL ONLY 20 NUMBERS WILL BE USED WHEN                                0009
+ 
+                                    % IT IS COMPLETE.                                                       0009
+ 
+                                                                                                            0009
+ 
+                FILE CARD (2,10,150);                                                                       0009
+ 
+                FILE SPO 11 (1,10);                                                                         0012
+ 
+                FILE LINE 15  (1,15);               % 15, 17 IS PRINTER BACKUP DISK                         0016
+ 
+                                                                                                            0019
+ 
+                INTEGER PROCEDURE ONES32(I);    % FROM HACKERS DELIGHT                                      0019
+ 
+                %---------------------------                                                                0019
+ 
+                VALUE I; INTEGER I;                                                                         0019
+ 
+                BEGIN                                                                                       0019
+ 
+                  I:= I - REAL(BOOLEAN(I.[31:31]) AND BOOLEAN(3"12525252525"));                             0019
+ 
+                  I:= REAL(BOOLEAN(I.[31:30]) AND BOOLEAN(3"6314631463")) +                                 0022
+ 
+                      REAL(BOOLEAN(I) AND BOOLEAN(3"6314631463"));                                          0023
+ 
+                  I:= REAL(BOOLEAN(I.[31:28] + I) AND BOOLEAN(3"1703607417"));                              0025
+ 
+                  I:= I + I.[31:24];                                                                        0027
+ 
+                  I:= I + I.[31:16];                                                                        0029
+ 
+                  ONES32:= REAL(BOOLEAN(I) AND BOOLEAN(3"77"));                                             0030
+ 
+                END;                                                                                        0032
+ 
+                                                                                                            0037
+ 
+                PROCEDURE SETBOX(N, X, BIT);                                                                0037
+ 
+                %---------------------------                                                                0037
+ 
+                VALUE N, X, BIT; INTEGER N, X, BIT;                                                         0037
+ 
+                % "SETBOX" IS USED TO PLACE A NUMBER IN THE GRID, WHETHER IT IS KNOWN,                      0037
+ 
+                % OR A GUESS.  IT ALSO UPDATES ALL THE BITMASKS FOR ALL THE ASSOCIATED                      0037
+ 
+                % SQUARES TO INDICATE THAT THEY CANT CONTAIN THIS NUMBER.                                   0037
+ 
+                BEGIN                                                                                       0037
+ 
+                  INTEGER I;                                                                                0037
+ 
+                                                                                        START OF SEGMENT **********    3
+ 
+                                                                                                            0000
+ 
+                  GRID[N]:= X;                                                                              0000
+ 
+                  FOR I:= 0 STEP 1 UNTIL 19 DO                                                              0001
+ 
+                    BITS[OTHERS(N,I)]:= REAL(BOOLEAN(BITS[OTHERS(N,I)]) OR                                  0002
+ 
+                                             BOOLEAN(BIT));                                                 0005
+ 
+                END;                                                                                        0008
+ 
+                                                                                           3 IS   11 LONG, NEXT SEG    2
+ 
+                                                                                                            0037
+ 
+                PROCEDURE READGRID;                                                                         0037
+ 
+                %------------------                                                                         0037
+ 
+                % READ IN INITIAL DATA                                                                      0037
+ 
+                % THE INITIAL BITMASK IS CALCULATED AT THE SAME TIME BY CALLING SETBOX                      0037
+ 
+                BEGIN                                                                                       0037
+ 
+                  INTEGER I, J;                                                                             0037
+ 
+                                                                                        START OF SEGMENT **********    4
+ 
+                  ALPHA ARRAY AIN[0:2];                                                                     0000
+ 
+                  POINTER P;                                                                                0001
+ 
+                                                                                                            0001
+ 
+                  FOR I:= 0 STEP 1 UNTIL 8 DO % 9 ROWS OF 9 NUMBERS                                         0001
+ 
+                    BEGIN                                                                                   0003
+ 
+                      READ(CARD, 3, AIN[*]);                                                                0003
+ 
+                      P:= POINTER(AIN[0]);                                                                  0007
+ 
+                      FOR J:= 0 STEP 1 UNTIL 8 DO                                                           0010
+ 
+                        BEGIN                                                                               0011
+ 
+                          SETBOX(9 | I + J, INTEGER(P,1),                                                   0011
+ 
+                                 BITNO[INTEGER(P,1)]); % SET BITNO, LSB=BIT0                                0013
+ 
+                          P:= P + 1;                                                                        0015
+ 
+                        END;                                                                                0017
+ 
+                    END;                                                                                    0020
+ 
+                                                                                                            0022
+ 
+                  %WRITE OUT WHAT WE GOT!                                                                   0022
+ 
+                  WRITE(LINE, <"WE STORED IN GRID:">);                                                      0022
+ 
+                                                                                           5 IS    6 LONG, NEXT SEG    4
+ 
+                  FOR I:= 0 STEP 1 UNTIL 8 DO                                                               0025
+ 
+                    WRITE(LINE, <9I1>, FOR J:= 0 STEP 1 UNTIL 8 DO GRID[9|I+J]);                            0026
+ 
+                                                                                           6 IS    4 LONG, NEXT SEG    4
+ 
+                                                                                                            0040
+ 
+                  %CHECK FOR CONSISTENCY                                                                    0040
+ 
+                  FOR I:= 0 STEP 1 UNTIL 80 DO                                                              0040
+ 
+                    IF GRID[I] > 0 THEN                                                                     0042
+ 
+                      IF REAL(BOOLEAN(BITS[I]) AND BOOLEAN(BITNO[GRID[I]])) > 0 THEN                        0043
+ 
+                        BEGIN                                                                               0045
+ 
+                          WRITE(LINE, <"INCONSISTENT DATA IN ",I1,",",I1>,                                  0046
+ 
+                                                                                           7 IS   10 LONG, NEXT SEG    4
+ 
+                                    (I DIV 9)+1, (I MOD 9) + 1);                                            0048
+ 
+                          J:= 1/0;                                                                          0058
+ 
+                        END;                                                                                0059
+ 
+                END;                                                                                        0061
+ 
+                                                                                           4 IS   66 LONG, NEXT SEG    2
+ 
+                                                                                                            0037
+ 
+                PROCEDURE PRINTSOLUTION;                                                                    0037
+ 
+                %-----------------------                                                                    0037
+ 
+                BEGIN                                                                                       0037
+ 
+                  INTEGER I, J;                                                                             0037
+ 
+                                                                                        START OF SEGMENT **********    8
+ 
+                                                                                                            0000
+ 
+                  NUM:= NUM + 1;                                                                            0000
+ 
+                  IF NUM > 1 THEN                                                                           0001
+ 
+                    WRITE(LINE, <" ">);  % BLANK                                                            0002
+ 
+                                                                                           9 IS    4 LONG, NEXT SEG    8
+ 
+                                                                                                            0005
+ 
+                  WRITE(LINE,<"SOLUTION ",I3,":">, NUM);                                                    0005
+ 
+                                                                                          10 IS    7 LONG, NEXT SEG    8
+ 
+                  FOR I:= 0 STEP 1 UNTIL 8 DO                                                               0013
+ 
+                    WRITE(LINE, <9I1>, FOR J:= 0 STEP 1 UNTIL 8 DO GRID[9|I+J]);                            0014
+ 
+                                                                                          11 IS    4 LONG, NEXT SEG    8
+ 
+                                                                                                            0028
+ 
+                END;                                                                                        0028
+ 
+                                                                                           8 IS   31 LONG, NEXT SEG    2
+ 
+                                                                                                            0037
+ 
+                PROCEDURE SELECTBOX;                                                                        0037
+ 
+                %-------------------                                                                        0037
+ 
+                % "SELECTBOX" IS THE HEART OF THE ALGORITHM.  IT WORKS THIS WAY:                            0037
+ 
+                % FIRST, THE GRID IS SEARCHED FOR AN EMPTY SQUARE.  IF THERE ISNT ONE,                      0037
+ 
+                % THEN THE GRID CONTAINS A SOLUTION, SO IT IS PRINTED.  IF AN EMPTY                         0037
+ 
+                % SQUARE IS FOUND, THEN IT IS COMPARED WITH ALL OTHER EMPTY SQUARES TO                      0037
+ 
+                % SEE WHICH ONE OF THEM HAS THE MAXIMUM NUMBER OF 1-BITS IN ITS BITMASK.                    0037
+ 
+                % THAT SQUARE IS THE ONE SELECTED, AND EACH OF THE POSSIBLE VALUES ARE                      0037
+ 
+                % TRIED IN RETURN, CALLING "SELECTBOX" RECURSIVELY TO SEARCH FOR A                          0037
+ 
+                % SOLUTION.  NOTE THAT IF A SQUARE HAS 9 1-BITS IN ITS BITMASK, THEN                        0037
+ 
+                % THERE ARE NO POSSIBLE VALUES, AND "SELECTBOX" WILL RETURN WITHOUT ANY                     0037
+ 
+                % FURTHER RECURSION.  OTHERWISE, IF A SQUARE HAS 8 1-BITS IN ITS BITMASK        ,           0037
+ 
+                % THEN IT HAS A FORCED CHOICE, AND ONLY THAT CHOICE WILL BE TAKEN AT THI        S           0037
+ 
+                % LEVEL IN THE RECURSION.                                                                   0037
+ 
+                BEGIN                                                                                       0037
+ 
+                  INTEGER ARRAY                                                                             0037
+ 
+                                                                                        START OF SEGMENT **********   12
+ 
+                    BITSAVE[0:80]; % SAVED ON EVERY RECURSION, MAX DEPTH 81|81 = 4131 WO        RDS?        0000
+ 
+                  INTEGER                                                                                   0001
+ 
+                    I,                                                                                      0001
+ 
+                    J,                                                                                      0001
+ 
+                    BEST,                                                                                   0001
+ 
+                    BESTCOUNT;                                                                              0001
+ 
+                  BOOLEAN                                                                                   0001
+ 
+                    FINISHED;                                                                               0001
+ 
+                  LABEL XIT;                                                                                0001
+ 
+                                                                                                            0001
+ 
+                  CURDEPTH:= CURDEPTH + 1;                                                                  0001
+ 
+                  MAXDEPTH:= MAX(MAXDEPTH, CURDEPTH);                                                       0003
+ 
+                                                                                                            0006
+ 
+                % IF NUM = 0 THEN % RECURSE ONLY IF NO SOLUTIONS SO FAR                                     0006
+ 
+                    BEGIN                                                                                   0006
+ 
+                      % FIND EMPTY SQUARE                                                                   0006
+ 
+                      BEST:= 0;                                                                             0006
+ 
+                      WHILE NOT FINISHED DO  % PREFER TO HAVE CONDITIONAL AND :)                            0006
+ 
+                        IF NOT FINISHED:= GRID[BEST] = 0 THEN                                               0007
+ 
+                          FINISHED:= (BEST:= BEST + 1) GTR 80;                                              0009
+ 
+                                                                                                            0012
+ 
+                      IF BEST = 81 THEN  % 81 INDICATES NO EMPTY SQUARES                                    0012
+ 
+                        BEGIN                                                                               0013
+ 
+                          PRINTSOLUTION;                                                                    0014
+ 
+                          GO TO XIT;                                                                        0014
+ 
+                        END;                                                                                0015
+ 
+                                                                                                            0015
+ 
+                      BESTCOUNT:= COUNT[BITS[BEST]]; % BITS IN THE SQUARE WE FOUND                          0015
+ 
+                      FOR I:= BEST+1 STEP 1 WHILE I LSS 81 DO                                               0016
+ 
+                        BEGIN % FIND THE BIGGEST COUNT OVER ALL SQUARES                                     0020
+ 
+                          IF GRID[I] = 0 THEN  % ONLY CONSIDER EMPTY SQUARES                                0020
+ 
+                            BEGIN                                                                           0021
+ 
+                              J:= COUNT[BITS[I]];                                                           0022
+ 
+                              IF J > BESTCOUNT THEN                                                         0023
+ 
+                                BEGIN                                                                       0024
+ 
+                                  BEST:= I;                                                                 0024
+ 
+                                  BESTCOUNT:= J;                                                            0025
+ 
+                                END;                                                                        0026
+ 
+                            END;                                                                            0026
+ 
+                        END;                                                                                0026
+ 
+                                                                                                            0026
+ 
+                      % TRY ALL NUMBERS FOR THIS SQUARE                                                     0026
+ 
+                      FOR I:= 1 STEP 1 WHILE I LEQ 9  DO                                                    0026
+ 
+                        BEGIN                                                                               0030
+ 
+                          IF REAL(BOOLEAN(BITS[BEST]) AND BOOLEAN(BITNO[I])) = 0 THEN                       0030
+ 
+                            BEGIN % IF THE NUMBER IS POSSIBLE, RECURSE                                      0032
+ 
+                              % SAVE STATE ON STACK                                                         0033
+ 
+                              REPLACE POINTER(BITSAVE) BY POINTER(BITS) FOR 81 WORDS;                       0033
+ 
+                              SETBOX(BEST, I, BITNO[I]);  % SET NUMBER AND FIX BITMASK                      0037
+ 
+                              SELECTBOX;           % RECURSE                                                0038
+ 
+                              GRID[BEST]:= 0;      % UNPLACE NUMBER IN SQUARE                               0039
+ 
+                              % RESTORE                                                                     0040
+ 
+                              REPLACE POINTER(BITS) BY POINTER(BITSAVE) FOR 81 WORDS;                       0040
+ 
+                            END;                                                                            0044
+ 
+                        END;                                                                                0044
+ 
+                    END;                                                                                    0045
+ 
+                                                                                                            0045
+ 
+                XIT:                                                                                        0045
+ 
+                  CURDEPTH:= CURDEPTH - 1;                                                                  0046
+ 
+                END;                                                                                        0047
+ 
+                                                                                          12 IS   52 LONG, NEXT SEG    2
+ 
+                                                                                                            0037
+ 
+                PROCEDURE INITIALIZE;                                                                       0037
+ 
+                %---------------------                                                                      0037
+ 
+                % FILL THE COUNT AND OTHERS ARRAYS                                                          0037
+ 
+                BEGIN                                                                                       0037
+ 
+                  DEFINE FO(I) = FILL OTHERSARY[I, *] WITH #;  % MAKE IT EASIER TO WRITE        !           0037
+ 
+                                                                                        START OF SEGMENT **********   13
+ 
+                  INTEGER CNT;                                                                              0000
+ 
+                                                                                                            0000
+ 
+                  % PREFILLED COUNT ARRAY:   PT=   0.833 IO=   9.267 ET=     3.483                          0000
+ 
+                  % CALCULATED COUNT ARRAY:  PT=   1.150 IO=   8.850 ET=     3.517                          0000
+ 
+                  FOR CNT:= 0 STEP 1 UNTIL 511 DO                                                           0000
+ 
+                    COUNT[CNT]:= ONES32(CNT);                                                               0001
+ 
+                                                                                                            0005
+ 
+                  % BE NICE TO REDUCE PBITTING SOMEHOW, AND MAYBE MAKE FASTER ACCESS,                       0005
+ 
+                  % WHICH IS BETTER INDEXED DESCRIPTOR OR MULTIPLY TO DETERMINE VALUE?                      0005
+ 
+                  % CURRENT IMPLEMENTATION SLOWS THE COMPILER AS WELL!                                      0005
+ 
+                  % AS FILL CAN ONLY DO 1024 NUMBERS, CANNOT USE SINGLE DIMENSION ARRAY                     0005
+ 
+                    %  0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19                           0005
+ 
+                FO( 0) 1, 2, 3, 4, 5, 6, 7, 8, 9,10,11,18,19,20,27,36,45,54,63,72; %  0                     0005
+ 
+                                                                                        START OF SEGMENT **********   14
+ 
+                                                                                          14 IS   20 LONG, NEXT SEG   13
+ 
+                FO( 1) 0, 2, 3, 4, 5, 6, 7, 8, 9,10,11,18,19,20,28,37,46,55,64,73; %  1                     0007
+ 
+                                                                                        START OF SEGMENT **********   15
+ 
+                                                                                          15 IS   20 LONG, NEXT SEG   13
+ 
+                FO( 2) 0, 1, 3, 4, 5, 6, 7, 8, 9,10,11,18,19,20,29,38,47,56,65,74; %  2                     0009
+ 
+                                                                                        START OF SEGMENT **********   16
+ 
+                                                                                          16 IS   20 LONG, NEXT SEG   13
+ 
+                FO( 3) 0, 1, 2, 4, 5, 6, 7, 8,12,13,14,21,22,23,30,39,48,57,66,75; %  3                     0011
+ 
+                                                                                        START OF SEGMENT **********   17
+ 
+                                                                                          17 IS   20 LONG, NEXT SEG   13
+ 
+                FO( 4) 0, 1, 2, 3, 5, 6, 7, 8,12,13,14,21,22,23,31,40,49,58,67,76; %  4                     0013
+ 
+                                                                                        START OF SEGMENT **********   18
+ 
+                                                                                          18 IS   20 LONG, NEXT SEG   13
+ 
+                FO( 5) 0, 1, 2, 3, 4, 6, 7, 8,12,13,14,21,22,23,32,41,50,59,68,77; %  5                     0015
+ 
+                                                                                        START OF SEGMENT **********   19
+ 
+                                                                                          19 IS   20 LONG, NEXT SEG   13
+ 
+                FO( 6) 0, 1, 2, 3, 4, 5, 7, 8,15,16,17,24,25,26,33,42,51,60,69,78; %  6                     0017
+ 
+                                                                                        START OF SEGMENT **********   20
+ 
+                                                                                          20 IS   20 LONG, NEXT SEG   13
+ 
+                FO( 7) 0, 1, 2, 3, 4, 5, 6, 8,15,16,17,24,25,26,34,43,52,61,70,79; %  7                     0019
+ 
+                                                                                        START OF SEGMENT **********   21
+ 
+                                                                                          21 IS   20 LONG, NEXT SEG   13
+ 
+                FO( 8) 0, 1, 2, 3, 4, 5, 6, 7,15,16,17,24,25,26,35,44,53,62,71,80; %  8                     0021
+ 
+                                                                                        START OF SEGMENT **********   22
+ 
+                                                                                          22 IS   20 LONG, NEXT SEG   13
+ 
+                FO( 9) 0, 1, 2,10,11,12,13,14,15,16,17,18,19,20,27,36,45,54,63,72; %  9                     0023
+ 
+                                                                                        START OF SEGMENT **********   23
+ 
+                                                                                          23 IS   20 LONG, NEXT SEG   13
+ 
+                FO(10) 0, 1, 2, 9,11,12,13,14,15,16,17,18,19,20,28,37,46,55,64,73; % 10                     0025
+ 
+                                                                                        START OF SEGMENT **********   24
+ 
+                                                                                          24 IS   20 LONG, NEXT SEG   13
+ 
+                FO(11) 0, 1, 2, 9,10,12,13,14,15,16,17,18,19,20,29,38,47,56,65,74; % 11                     0027
+ 
+                                                                                        START OF SEGMENT **********   25
+ 
+                                                                                          25 IS   20 LONG, NEXT SEG   13
+ 
+                FO(12) 3, 4, 5, 9,10,11,13,14,15,16,17,21,22,23,30,39,48,57,66,75; % 12                     0029
+ 
+                                                                                        START OF SEGMENT **********   26
+ 
+                                                                                          26 IS   20 LONG, NEXT SEG   13
+ 
+                FO(13) 3, 4, 5, 9,10,11,12,14,15,16,17,21,22,23,31,40,49,58,67,76; % 13                     0031
+ 
+                                                                                        START OF SEGMENT **********   27
+ 
+                                                                                          27 IS   20 LONG, NEXT SEG   13
+ 
+                FO(14) 3, 4, 5, 9,10,11,12,13,15,16,17,21,22,23,32,41,50,59,68,77; % 14                     0033
+ 
+                                                                                        START OF SEGMENT **********   28
+ 
+                                                                                          28 IS   20 LONG, NEXT SEG   13
+ 
+                FO(15) 6, 7, 8, 9,10,11,12,13,14,16,17,24,25,26,33,42,51,60,69,78; % 15                     0035
+ 
+                                                                                        START OF SEGMENT **********   29
+ 
+                                                                                          29 IS   20 LONG, NEXT SEG   13
+ 
+                FO(16) 6, 7, 8, 9,10,11,12,13,14,15,17,24,25,26,34,43,52,61,70,79; % 16                     0037
+ 
+                                                                                        START OF SEGMENT **********   30
+ 
+                                                                                          30 IS   20 LONG, NEXT SEG   13
+ 
+                FO(17) 6, 7, 8, 9,10,11,12,13,14,15,16,24,25,26,35,44,53,62,71,80; % 17                     0039
+ 
+                                                                                        START OF SEGMENT **********   31
+ 
+                                                                                          31 IS   20 LONG, NEXT SEG   13
+ 
+                FO(18) 0, 1, 2, 9,10,11,19,20,21,22,23,24,25,26,27,36,45,54,63,72; % 18                     0041
+ 
+                                                                                        START OF SEGMENT **********   32
+ 
+                                                                                          32 IS   20 LONG, NEXT SEG   13
+ 
+                FO(19) 0, 1, 2, 9,10,11,18,20,21,22,23,24,25,26,28,37,46,55,64,73; % 19                     0043
+ 
+                                                                                        START OF SEGMENT **********   33
+ 
+                                                                                          33 IS   20 LONG, NEXT SEG   13
+ 
+                FO(20) 0, 1, 2, 9,10,11,18,19,21,22,23,24,25,26,29,38,47,56,65,74; % 20                     0045
+ 
+                                                                                        START OF SEGMENT **********   34
+ 
+                                                                                          34 IS   20 LONG, NEXT SEG   13
+ 
+                FO(21) 3, 4, 5,12,13,14,18,19,20,22,23,24,25,26,30,39,48,57,66,75; % 21                     0047
+ 
+                                                                                        START OF SEGMENT **********   35
+ 
+                                                                                          35 IS   20 LONG, NEXT SEG   13
+ 
+                FO(22) 3, 4, 5,12,13,14,18,19,20,21,23,24,25,26,31,40,49,58,67,76; % 22                     0049
+ 
+                                                                                        START OF SEGMENT **********   36
+ 
+                                                                                          36 IS   20 LONG, NEXT SEG   13
+ 
+                FO(23) 3, 4, 5,12,13,14,18,19,20,21,22,24,25,26,32,41,50,59,68,77; % 23                     0051
+ 
+                                                                                        START OF SEGMENT **********   37
+ 
+                                                                                          37 IS   20 LONG, NEXT SEG   13
+ 
+                FO(24) 6, 7, 8,15,16,17,18,19,20,21,22,23,25,26,33,42,51,60,69,78; % 24                     0053
+ 
+                                                                                        START OF SEGMENT **********   38
+ 
+                                                                                          38 IS   20 LONG, NEXT SEG   13
+ 
+                FO(25) 6, 7, 8,15,16,17,18,19,20,21,22,23,24,26,34,43,52,61,70,79; % 25                     0055
+ 
+                                                                                        START OF SEGMENT **********   39
+ 
+                                                                                          39 IS   20 LONG, NEXT SEG   13
+ 
+                FO(26) 6, 7, 8,15,16,17,18,19,20,21,22,23,24,25,35,44,53,62,71,80; % 26                     0057
+ 
+                                                                                        START OF SEGMENT **********   40
+ 
+                                                                                          40 IS   20 LONG, NEXT SEG   13
+ 
+                FO(27) 0, 9,18,28,29,30,31,32,33,34,35,36,37,38,45,46,47,54,63,72; % 27                     0059
+ 
+                                                                                        START OF SEGMENT **********   41
+ 
+                                                                                          41 IS   20 LONG, NEXT SEG   13
+ 
+                FO(28) 1,10,19,27,29,30,31,32,33,34,35,36,37,38,45,46,47,55,64,73; % 28                     0061
+ 
+                                                                                        START OF SEGMENT **********   42
+ 
+                                                                                          42 IS   20 LONG, NEXT SEG   13
+ 
+                FO(29) 2,11,20,27,28,30,31,32,33,34,35,36,37,38,45,46,47,56,65,74; % 29                     0063
+ 
+                                                                                        START OF SEGMENT **********   43
+ 
+                                                                                          43 IS   20 LONG, NEXT SEG   13
+ 
+                FO(30) 3,12,21,27,28,29,31,32,33,34,35,39,40,41,48,49,50,57,66,75; % 30                     0065
+ 
+                                                                                        START OF SEGMENT **********   44
+ 
+                                                                                          44 IS   20 LONG, NEXT SEG   13
+ 
+                FO(31) 4,13,22,27,28,29,30,32,33,34,35,39,40,41,48,49,50,58,67,76; % 31                     0067
+ 
+                                                                                        START OF SEGMENT **********   45
+ 
+                                                                                          45 IS   20 LONG, NEXT SEG   13
+ 
+                FO(32) 5,14,23,27,28,29,30,31,33,34,35,39,40,41,48,49,50,59,68,77; % 32                     0069
+ 
+                                                                                        START OF SEGMENT **********   46
+ 
+                                                                                          46 IS   20 LONG, NEXT SEG   13
+ 
+                FO(33) 6,15,24,27,28,29,30,31,32,34,35,42,43,44,51,52,53,60,69,78; % 33                     0071
+ 
+                                                                                        START OF SEGMENT **********   47
+ 
+                                                                                          47 IS   20 LONG, NEXT SEG   13
+ 
+                FO(34) 7,16,25,27,28,29,30,31,32,33,35,42,43,44,51,52,53,61,70,79; % 34                     0073
+ 
+                                                                                        START OF SEGMENT **********   48
+ 
+                                                                                          48 IS   20 LONG, NEXT SEG   13
+ 
+                FO(35) 8,17,26,27,28,29,30,31,32,33,34,42,43,44,51,52,53,62,71,80; % 35                     0075
+ 
+                                                                                        START OF SEGMENT **********   49
+ 
+                                                                                          49 IS   20 LONG, NEXT SEG   13
+ 
+                FO(36) 0, 9,18,27,28,29,37,38,39,40,41,42,43,44,45,46,47,54,63,72; % 36                     0077
+ 
+                                                                                        START OF SEGMENT **********   50
+ 
+                                                                                          50 IS   20 LONG, NEXT SEG   13
+ 
+                FO(37) 1,10,19,27,28,29,36,38,39,40,41,42,43,44,45,46,47,55,64,73; % 37                     0079
+ 
+                                                                                        START OF SEGMENT **********   51
+ 
+                                                                                          51 IS   20 LONG, NEXT SEG   13
+ 
+                FO(38) 2,11,20,27,28,29,36,37,39,40,41,42,43,44,45,46,47,56,65,74; % 38                     0081
+ 
+                                                                                        START OF SEGMENT **********   52
+ 
+                                                                                          52 IS   20 LONG, NEXT SEG   13
+ 
+                FO(39) 3,12,21,30,31,32,36,37,38,40,41,42,43,44,48,49,50,57,66,75; % 39                     0083
+ 
+                                                                                        START OF SEGMENT **********   53
+ 
+                                                                                          53 IS   20 LONG, NEXT SEG   13
+ 
+                FO(40) 4,13,22,30,31,32,36,37,38,39,41,42,43,44,48,49,50,58,67,76; % 40                     0085
+ 
+                                                                                        START OF SEGMENT **********   54
+ 
+                                                                                          54 IS   20 LONG, NEXT SEG   13
+ 
+                FO(41) 5,14,23,30,31,32,36,37,38,39,40,42,43,44,48,49,50,59,68,77; % 41                     0087
+ 
+                                                                                        START OF SEGMENT **********   55
+ 
+                                                                                          55 IS   20 LONG, NEXT SEG   13
+ 
+                FO(42) 6,15,24,33,34,35,36,37,38,39,40,41,43,44,51,52,53,60,69,78; % 42                     0089
+ 
+                                                                                        START OF SEGMENT **********   56
+ 
+                                                                                          56 IS   20 LONG, NEXT SEG   13
+ 
+                FO(43) 7,16,25,33,34,35,36,37,38,39,40,41,42,44,51,52,53,61,70,79; % 43                     0091
+ 
+                                                                                        START OF SEGMENT **********   57
+ 
+                                                                                          57 IS   20 LONG, NEXT SEG   13
+ 
+                FO(44) 8,17,26,33,34,35,36,37,38,39,40,41,42,43,51,52,53,62,71,80; % 44                     0093
+ 
+                                                                                        START OF SEGMENT **********   58
+ 
+                                                                                          58 IS   20 LONG, NEXT SEG   13
+ 
+                FO(45) 0, 9,18,27,28,29,36,37,38,46,47,48,49,50,51,52,53,54,63,72; % 45                     0095
+ 
+                                                                                        START OF SEGMENT **********   59
+ 
+                                                                                          59 IS   20 LONG, NEXT SEG   13
+ 
+                FO(46) 1,10,19,27,28,29,36,37,38,45,47,48,49,50,51,52,53,55,64,73; % 46                     0097
+ 
+                                                                                        START OF SEGMENT **********   60
+ 
+                                                                                          60 IS   20 LONG, NEXT SEG   13
+ 
+                FO(47) 2,11,20,27,28,29,36,37,38,45,46,48,49,50,51,52,53,56,65,74; % 47                     0099
+ 
+                                                                                        START OF SEGMENT **********   61
+ 
+                                                                                          61 IS   20 LONG, NEXT SEG   13
+ 
+                FO(48) 3,12,21,30,31,32,39,40,41,45,46,47,49,50,51,52,53,57,66,75; % 48                     0101
+ 
+                                                                                        START OF SEGMENT **********   62
+ 
+                                                                                          62 IS   20 LONG, NEXT SEG   13
+ 
+                FO(49) 4,13,22,30,31,32,39,40,41,45,46,47,48,50,51,52,53,58,67,76; % 49                     0103
+ 
+                                                                                        START OF SEGMENT **********   63
+ 
+                                                                                          63 IS   20 LONG, NEXT SEG   13
+ 
+                FO(50) 5,14,23,30,31,32,39,40,41,45,46,47,48,49,51,52,53,59,68,77; % 50                     0105
+ 
+                                                                                        START OF SEGMENT **********   64
+ 
+                                                                                          64 IS   20 LONG, NEXT SEG   13
+ 
+                FO(51) 6,15,24,33,34,35,42,43,44,45,46,47,48,49,50,52,53,60,69,78; % 51                     0107
+ 
+                                                                                        START OF SEGMENT **********   65
+ 
+                                                                                          65 IS   20 LONG, NEXT SEG   13
+ 
+                FO(52) 7,16,25,33,34,35,42,43,44,45,46,47,48,49,50,51,53,61,70,79; % 52                     0109
+ 
+                                                                                        START OF SEGMENT **********   66
+ 
+                                                                                          66 IS   20 LONG, NEXT SEG   13
+ 
+                FO(53) 8,17,26,33,34,35,42,43,44,45,46,47,48,49,50,51,52,62,71,80; % 53                     0111
+ 
+                                                                                        START OF SEGMENT **********   67
+ 
+                                                                                          67 IS   20 LONG, NEXT SEG   13
+ 
+                FO(54) 0, 9,18,27,36,45,55,56,57,58,59,60,61,62,63,64,65,72,73,74; % 54                     0113
+ 
+                                                                                        START OF SEGMENT **********   68
+ 
+                                                                                          68 IS   20 LONG, NEXT SEG   13
+ 
+                FO(55) 1,10,19,28,37,46,54,56,57,58,59,60,61,62,63,64,65,72,73,74; % 55                     0115
+ 
+                                                                                        START OF SEGMENT **********   69
+ 
+                                                                                          69 IS   20 LONG, NEXT SEG   13
+ 
+                FO(56) 2,11,20,29,38,47,54,55,57,58,59,60,61,62,63,64,65,72,73,74; % 56                     0117
+ 
+                                                                                        START OF SEGMENT **********   70
+ 
+                                                                                          70 IS   20 LONG, NEXT SEG   13
+ 
+                FO(57) 3,12,21,30,39,48,54,55,56,58,59,60,61,62,66,67,68,75,76,77; % 57                     0119
+ 
+                                                                                        START OF SEGMENT **********   71
+ 
+                                                                                          71 IS   20 LONG, NEXT SEG   13
+ 
+                FO(58) 4,13,22,31,40,49,54,55,56,57,59,60,61,62,66,67,68,75,76,77; % 58                     0121
+ 
+                                                                                        START OF SEGMENT **********   72
+ 
+                                                                                          72 IS   20 LONG, NEXT SEG   13
+ 
+                FO(59) 5,14,23,32,41,50,54,55,56,57,58,60,61,62,66,67,68,75,76,77; % 59                     0123
+ 
+                                                                                        START OF SEGMENT **********   73
+ 
+                                                                                          73 IS   20 LONG, NEXT SEG   13
+ 
+                FO(60) 6,15,24,33,42,51,54,55,56,57,58,59,61,62,69,70,71,78,79,80; % 60                     0125
+ 
+                                                                                        START OF SEGMENT **********   74
+ 
+                                                                                          74 IS   20 LONG, NEXT SEG   13
+ 
+                FO(61) 7,16,25,34,43,52,54,55,56,57,58,59,60,62,69,70,71,78,79,80; % 61                     0127
+ 
+                                                                                        START OF SEGMENT **********   75
+ 
+                                                                                          75 IS   20 LONG, NEXT SEG   13
+ 
+                FO(62) 8,17,26,35,44,53,54,55,56,57,58,59,60,61,69,70,71,78,79,80; % 62                     0129
+ 
+                                                                                        START OF SEGMENT **********   76
+ 
+                                                                                          76 IS   20 LONG, NEXT SEG   13
+ 
+                FO(63) 0, 9,18,27,36,45,54,55,56,64,65,66,67,68,69,70,71,72,73,74; % 63                     0131
+ 
+                                                                                        START OF SEGMENT **********   77
+ 
+                                                                                          77 IS   20 LONG, NEXT SEG   13
+ 
+                FO(64) 1,10,19,28,37,46,54,55,56,63,65,66,67,68,69,70,71,72,73,74; % 64                     0133
+ 
+                                                                                        START OF SEGMENT **********   78
+ 
+                                                                                          78 IS   20 LONG, NEXT SEG   13
+ 
+                FO(65) 2,11,20,29,38,47,54,55,56,63,64,66,67,68,69,70,71,72,73,74; % 65                     0135
+ 
+                                                                                        START OF SEGMENT **********   79
+ 
+                                                                                          79 IS   20 LONG, NEXT SEG   13
+ 
+                FO(66) 3,12,21,30,39,48,57,58,59,63,64,65,67,68,69,70,71,75,76,77; % 66                     0137
+ 
+                                                                                        START OF SEGMENT **********   80
+ 
+                                                                                          80 IS   20 LONG, NEXT SEG   13
+ 
+                FO(67) 4,13,22,31,40,49,57,58,59,63,64,65,66,68,69,70,71,75,76,77; % 67                     0139
+ 
+                                                                                        START OF SEGMENT **********   81
+ 
+                                                                                          81 IS   20 LONG, NEXT SEG   13
+ 
+                FO(68) 5,14,23,32,41,50,57,58,59,63,64,65,66,67,69,70,71,75,76,77; % 68                     0141
+ 
+                                                                                        START OF SEGMENT **********   82
+ 
+                                                                                          82 IS   20 LONG, NEXT SEG   13
+ 
+                FO(69) 6,15,24,33,42,51,60,61,62,63,64,65,66,67,68,70,71,78,79,80; % 69                     0143
+ 
+                                                                                        START OF SEGMENT **********   83
+ 
+                                                                                          83 IS   20 LONG, NEXT SEG   13
+ 
+                FO(70) 7,16,25,34,43,52,60,61,62,63,64,65,66,67,68,69,71,78,79,80; % 70                     0145
+ 
+                                                                                        START OF SEGMENT **********   84
+ 
+                                                                                          84 IS   20 LONG, NEXT SEG   13
+ 
+                FO(71) 8,17,26,35,44,53,60,61,62,63,64,65,66,67,68,69,70,78,79,80; % 71                     0147
+ 
+                                                                                        START OF SEGMENT **********   85
+ 
+                                                                                          85 IS   20 LONG, NEXT SEG   13
+ 
+                FO(72) 0, 9,18,27,36,45,54,55,56,63,64,65,73,74,75,76,77,78,79,80; % 72                     0149
+ 
+                                                                                        START OF SEGMENT **********   86
+ 
+                                                                                          86 IS   20 LONG, NEXT SEG   13
+ 
+                FO(73) 1,10,19,28,37,46,54,55,56,63,64,65,72,74,75,76,77,78,79,80; % 73                     0151
+ 
+                                                                                        START OF SEGMENT **********   87
+ 
+                                                                                          87 IS   20 LONG, NEXT SEG   13
+ 
+                FO(74) 2,11,20,29,38,47,54,55,56,63,64,65,72,73,75,76,77,78,79,80; % 74                     0153
+ 
+                                                                                        START OF SEGMENT **********   88
+ 
+                                                                                          88 IS   20 LONG, NEXT SEG   13
+ 
+                FO(75) 3,12,21,30,39,48,57,58,59,66,67,68,72,73,74,76,77,78,79,80; % 75                     0155
+ 
+                                                                                        START OF SEGMENT **********   89
+ 
+                                                                                          89 IS   20 LONG, NEXT SEG   13
+ 
+                FO(76) 4,13,22,31,40,49,57,58,59,66,67,68,72,73,74,75,77,78,79,80; % 76                     0157
+ 
+                                                                                        START OF SEGMENT **********   90
+ 
+                                                                                          90 IS   20 LONG, NEXT SEG   13
+ 
+                FO(77) 5,14,23,32,41,50,57,58,59,66,67,68,72,73,74,75,76,78,79,80; % 77                     0159
+ 
+                                                                                        START OF SEGMENT **********   91
+ 
+                                                                                          91 IS   20 LONG, NEXT SEG   13
+ 
+                FO(78) 6,15,24,33,42,51,60,61,62,69,70,71,72,73,74,75,76,77,79,80; % 78                     0161
+ 
+                                                                                        START OF SEGMENT **********   92
+ 
+                                                                                          92 IS   20 LONG, NEXT SEG   13
+ 
+                FO(79) 7,16,25,34,43,52,60,61,62,69,70,71,72,73,74,75,76,77,78,80; % 79                     0163
+ 
+                                                                                        START OF SEGMENT **********   93
+ 
+                                                                                          93 IS   20 LONG, NEXT SEG   13
+ 
+                FO(80) 8,17,26,35,44,53,60,61,62,69,70,71,72,73,74,75,76,77,78,79; % 80                     0165
+ 
+                                                                                        START OF SEGMENT **********   94
+ 
+                                                                                          94 IS   20 LONG, NEXT SEG   13
+ 
+                                                                                                            0167
+ 
+                  FILL BITNO[*] WITH  0,    1,    2,    4, % NOTE ZERO BASED!!!                             0167
+ 
+                                                                                        START OF SEGMENT **********   95
+ 
+                                      8,   16,   32,   64,                                                  0168
+ 
+                                    128,  256,  512, 1024;                                                  0168
+ 
+                                                                                          95 IS   12 LONG, NEXT SEG   13
+ 
+                                                                                                            0168
+ 
+                  WRITE(LINE, <"INITIALIZATION TIME: ",                                                     0168
+ 
+                               "PT=",F8.3," IO=",F8.3," ET=", F10.3>,                                       0170
+ 
+                                                                                          96 IS   13 LONG, NEXT SEG   13
+ 
+                               TIME(2)/60, TIME(3)/60, (TIME(1)-STARTET)/60);                               0171
+ 
+                END;                                                                                        0185
+ 
+                                                                                          13 IS  188 LONG, NEXT SEG    2
+ 
+                                                                                                            0037
+ 
+                %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                     0037
+ 
+                % SOME TESTED DATA VALUES,                                                                  0037
+ 
+                %071698035                                                                                  0037
+ 
+                %600030700                                                                                  0037
+ 
+                %090400100                                                                                  0037
+ 
+                %000009002                                                                                  0037
+ 
+                %300000009                                                                                  0037
+ 
+                %500200000                                                                                  0037
+ 
+                %004006070                                                                                  0037
+ 
+                %006080001                                                                                  0037
+ 
+                %820314950                                                                                  0037
+ 
+                                                                                                            0037
+ 
+                %000000008                                                                                  0037
+ 
+                %010000040                                                                                  0037
+ 
+                %000645910                                                                                  0037
+ 
+                %591300000                                                                                  0037
+ 
+                %062401790                                                                                  0037
+ 
+                %000008165                                                                                  0037
+ 
+                %024173000                                                                                  0037
+ 
+                %080000020                                                                                  0037
+ 
+                %900000000                                                                                  0037
+ 
+                                                                                                            0037
+ 
+                %000000000  - 272 SOLUTIONS                                                                 0037
+ 
+                %010000040                                                                                  0037
+ 
+                %000605910                                                                                  0037
+ 
+                %591300000                                                                                  0037
+ 
+                %062401790                                                                                  0037
+ 
+                %000008105                                                                                  0037
+ 
+                %024173000                                                                                  0037
+ 
+                %080000020                                                                                  0037
+ 
+                %000000000                                                                                  0037
+ 
+                                                                                                            0037
+ 
+                %600900050    - VERY HARD - PT = 30SEC+                                                     0037
+ 
+                %009000003                                                                                  0037
+ 
+                %050040007                                                                                  0037
+ 
+                %013502790                                                                                  0037
+ 
+                %000000000                                                                                  0037
+ 
+                %092603540                                                                                  0037
+ 
+                %900050020                                                                                  0037
+ 
+                %100000600                                                                                  0037
+ 
+                %020004005                                                                                  0037
+ 
+                                                                                                            0037
+ 
+                %000000008  - 12 SOLUTIONS                                                                  0037
+ 
+                %010000040                                                                                  0037
+ 
+                %000645910                                                                                  0037
+ 
+                %591300000                                                                                  0037
+ 
+                %000000007                                                                                  0037
+ 
+                %000008165                                                                                  0037
+ 
+                %024173000                                                                                  0037
+ 
+                %080000020                                                                                  0037
+ 
+                %900000000                                                                                  0037
+ 
+                                                                                                            0037
+ 
+                %000000008  - 118 SOLUTIONS                                                                 0037
+ 
+                %010000040                                                                                  0037
+ 
+                %000645910                                                                                  0037
+ 
+                %591300000                                                                                  0037
+ 
+                %000000000                                                                                  0037
+ 
+                %000008165                                                                                  0037
+ 
+                %024173000                                                                                  0037
+ 
+                %080000020                                                                                  0037
+ 
+                %900000000                                                                                  0037
+ 
+                                                                                                            0037
+ 
+                  STARTET:= TIME(1);                                                                        0037
+ 
+                                                                                                            0039
+ 
+                  INITIALIZE;                                                                               0039
+ 
+                  READGRID;                                                                                 0039
+ 
+                                                                                                            0040
+ 
+                  SELECTBOX;                                                                                0040
+ 
+                                                                                                            0040
+ 
+                  % WARN THE OPERATOR                                                                       0040
+ 
+                  IF NUM > 1 THEN                                                                           0040
+ 
+                    WRITE(SPO, <"FOUND ", I5, " SOLUTIONS">, NUM);                                          0041
+ 
+                                                                                          97 IS    7 LONG, NEXT SEG    2
+ 
+                                                                                                            0049
+ 
+                  WRITE(LINE, <" ">);                                                                       0049
+ 
+                                                                                          98 IS    4 LONG, NEXT SEG    2
+ 
+                  WRITE(LINE, <I3," SOLUTION(S), ",                                                         0052
+ 
+                               "MAX RECURSION DEPTH = ",I3,", TIMES: ",                                     0054
+ 
+                               "PT=",F8.3," IO=",F8.3," ET = ", F10.3>,                                     0054
+ 
+                                                                                          99 IS   20 LONG, NEXT SEG    2
+ 
+                               NUM, MAXDEPTH,                                                               0054
+ 
+                               TIME(2)/60, TIME(3)/60, (TIME(1)-STARTET)/60);                               0059
+ 
+                END.                                                                                        0071
+ 
+                                                                                           2 IS   74 LONG, NEXT SEG    1
+ 
+                                                                                           1 IS    2 LONG, NEXT SEG    0
+ 
+                                                                                         107 IS   69 LONG, NEXT SEG    0
+ 
+NUMBER OF ERRORS DETECTED =   0.  COMPILATION TIME =   50 SECONDS.
+ 
+PRT SIZE =  61; TOTAL SEGMENT SIZE =  2204 WORDS; DISK SIZE = 123 SEGS; NO. PGM. SEGS = 107
+ 
+ESTIMATED CORE STORAGE REQUIRED =  5457 WORDS.
+ 
+ESTIMATED AUXILIARY MEMORY REQUIRED =     0 WORDS.
+ 
+ 
+ 
+ 
+ 
+ LABEL  0LINE   0SUDOKU 00188237?COMPILE SUDOKU/TEST WITH XALGOL GO                                      XALGOL /SUDOKU
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ LABEL  000000000LINE   00188237?COMPILE SUDOKU/TEST WITH XALGOL GO                                      SUDOKU /TEST
+ 
+ 
+ 
+ 
+ 
+INITIALIZATION TIME: PT=   0.633 IO=   5.900 ET=     8.967
+WE STORED IN GRID:
+000000008
+010000040
+000645910
+591300000
+062401790
+000008165
+024173000
+080000020
+900000000
+SOLUTION   1:
+459712638
+216839547
+378645912
+591367284
+862451793
+743928165
+624173859
+187594326
+935286471
+ 
+  1 SOLUTION(S), MAX RECURSION DEPTH =  52, TIMES: PT=   4.667 IO=  17.267 ET =     31.000
+ 
+ LABEL  000000000LINE   00188237?COMPILE SUDOKU/TEST WITH XALGOL GO                                      SUDOKU /TEST
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 

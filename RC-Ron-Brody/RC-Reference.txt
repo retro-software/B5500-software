@@ -1,79 +1,97 @@
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
+ LABEL  000000000LINE   00188158?EXECUTE XREF/JONES                                                      XREF   /JONES
+
+
+
+
+
+XREF PROGRAM OF  3DC70 THIS LISTING PRODUCED   6 JUN 1988 TIME  7.59
+
+$ DISK SIX DOCONLY DOCUMENT FINAL
+
+
+CARD FILE IS CARD   /0000000
+
+SOURCE FILE IS TEACHER/0000094
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                                   R/C
                                   ---
                                REFERENCE
                                ---------
                                  MANUAL
                                  ------
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                                                   BY
- 
- 
+
+
                                                   RON BRODY
- 
- 
+
+
                                                   12/22/71 VERSION 94
- 
- 
- 
- 
- 
- 
+
+
+
+
+
                                                                  PAGE  1
- 
+
                               INTRODUCTION
                               ------------
- 
- 
+
+
               R/C  PERMITS A USER AT A REMOTE TELETYPEWRITER TO CREATE AND
          MAINTAIN  SOURCE  OR  DATA  FILES ON THE B5500 SYSTEM DISK.  FILE
          TYPES  CREATED AND MAINTAINED WITH R/C ARE: ALGOL, XALGOL, COBOL,
          FORTRAN,  BASIC,  AND  DATA.   THESE  FILES  REPRESENT NORMAL (80
          CHARACTER-PER-CARD)  PUNCHED  CARD  DECKS  EXCEPT  THAT  THEY ARE
          STORED  ON  THE DISK.  EACH RECORD CAN BE THOUGHT OF AS ONE CARD.
- 
- 
+
+
               R/C ALLOWS THE USER TO:
- 
+
               * CREATE A VARIETY OF FILES
               * RESEQUENCE FILES
               * PRINT OR PUNCH FILES
@@ -84,24 +102,24 @@
               * REMOVE FILES
               * COMPILE FILES
               * PERFORM MANY OTHER FUNCTIONS
- 
- 
+
+
               THE TELETYPEWRITER (IN CONJUNCTION WITH THE PROGRAM R/C) CAN
          BE CONSIDERED A KEYPUNCH EXTENSION WHICH ELIMINATES PUNCHED CARDS.
          IT OFFERS GREAT FLEXIBILITY IN FILE HANDLING.
- 
- 
+
+
               R/C HAS TWO MAJOR RESTRICTIONS:
- 
- 
+
+
                    WHILE  THE  SEQUENCE  NUMBER  99999999 IS PERMITTED FOR
               CONVENIENCE, THE MAXIMUM SEQUENCE NUMBER IS 2097151 (2*21-1).
- 
- 
+
+
                    THE  MAXIMUM  NUMBER  OF RECORDS PERMITTED IN A FILE IS
               8191.
- 
- 
+
+
               IN THE DISCUSSION OF CERTAIN R/C VERBS, SOME OF THE ELEMENTS
          OF  THE SYNTAX ARE GIVEN AS <M>, <N>, <I>, OR <J>.  IN EACH CASE,
          THESE ELEMENTS REPRESENT INTEGER VALUES WHICH MUST BE PROVIDED BY
@@ -109,36 +127,36 @@
          SEQUENCE  NUMBER  FOR  OTHERS,  OR  AN  INCREMENT  AMOUNT.   THE
          BRACKETED  CONSTRUCT IS ONLY A FORM OF NOTATION USED TO REPRESENT
          AN INTEGER PARAMETER.
- 
- 
- 
+
+
+
                                                                  PAGE  2
- 
+
                 PROGRAM OPERATION AND RECORD SEQUENCING
                 ------- --------- --- ------ ----------
- 
- 
+
+
               DURING  CREATION  AND  FILE  MAINTENANCE,  R/C AUTOMATICALLY
          ADVANCES  (BY  THE CURRENT VALUE OF THE "INCREMENT") THE SEQUENCE
          NUMBER  OF  EACH  RECORD  THAT  IS  INPUT.  THE USER MAY SET THIS
          INCREMENT  TO  ANY  DESIRED  VALUE THROUGH USE OF THE "*INC" VERB
          (SEE  BELOW).  THE INCREMENT VALUE IS INITIALIZED TO 100 WHEN THE
          USER FIRST RUNS R/C.
- 
- 
+
+
               THE  INITIAL  SEQUENCE NUMBER IS SET TO THE INCREMENT WHEN A
          NEW  FILE  IS  OPENED  BY  A  USER.   FOR EXAMPLE, IF THE CURRENT
          INCREMENT  WERE  100, THE FIRST SEQUENCE NUMBER IN THE FILE WOULD
          BE  "100:".   THIS  INITIAL SEQUENCE NUMBER MAY BE CHANGED BY THE
          USER THROUGH THE USE OF THE CONSTRUCT "*<N>", (SEE BELOW).
- 
- 
+
+
               AFTER  EACH  RECORD  IS  TYPED  INTO  THE FILE, THE SEQUENCE
          NUMBER OF THE NEXT RECORD IN THE FILE IS SET TO THE LAST SEQUENCE
          NUMBER PLUS THE INCREMENT.  THIS SEQUENCE NUMBER IS NEXT TYPED ON
          THE TELETYPEWRITER.
- 
- 
+
+
               IF  THE  FILE  TYPE  IS  NOT "COBOL", THE SEQUENCE NUMBER IS
          FOLLOWED  BY  A  COLON.   IF  A  RECORD  ALREADY EXISTS WITH THIS
          SEQUENCE  NUMBER, LEADING ZEROS ARE TYPED AS A WARNING; OTHERWISE
@@ -146,19 +164,19 @@
          OUT,  THE  USER  MAY  THEN  ENTER  THE  DESIRED CONTENTS FOR THAT
          SEQUENCE  NUMBER  OR  MAY  ENTER  A  VERB  TO  PERFORM SOME OTHER
          FUNCTION.
- 
- 
+
+
               ALTERNATIVELY,  THE  USER MAY SET THE SEQUENCE TO SOME OTHER
          VALUE  THROUGH  THE USE OF THE CONSTRUCT "*<N>", WHERE <N> IS THE
          DESIRED  SEQUENCE  NUMBER.   NOTE THAT LEADING ZEROS ARE ACCEPTED
          BUT NOT NECESSARY WITH THIS CONSTRUCT.
- 
- 
+
+
               BY  USE  OF  THE "*<N>" CONSTRUCT AND THE "*INC" VERB TO SET
          THE  SEQUENCE  NUMBER  INCREMENT,  THE  USER  MAY  SET UP HIS OWN
          NUMBERING SEQUENCE THROUGHOUT HIS FILE.
- 
- 
+
+
               THE  EXAMPLES  ILLUSTRATE  THE SEQUENCE NUMBER OF THE RECORD
          TYPED  ON  THE  LEFT  SIDE  OF  THE  PAGE  AS  IT  APPEARS ON THE
          TELETYPEWRITER  AND  THE  MANNER  IN  WHICH  THESE  RECORDS  ARE
@@ -166,59 +184,59 @@
          ACTUALLY  CARRY  THE SEQUENCE NUMBER IN CHARACTER POSITIONS 73-80
          OF  THE  RECORD,  R/C  TYPES THE NUMBER ON THE LEFT MARGIN OF THE
          TELETYPEWRITER.
- 
- 
- 
- 
- 
- 
+
+
+
+
+
+
                                                                  PAGE  3
- 
+
                            PROGRAM EXECUTION
                            ------- ---------
- 
- 
+
+
      INITIAL REMOTE TERMINAL OPERATIONS
      ------- ------ -------- ----------
- 
- 
-              FOR LOGGING-IN TO A TELETYPEWRITER, PRESS THE "ORGI" BUTTON,
+
+
+              FOR LOGGING-IN TO A TELETYPEWRITER, PRESS THE "ORIG" BUTTON,
          WAIT  FOR  A  DIAL  TONE  FROM THE SPEAKER, AND DIAL THE COMPUTER
          NUMBER.  THE B5500 RESPONDS WITH THE MESSAGE:
- 
- 
+
+
                       BURROUGHS B-5500: <TT>/<BB>
                       --------- ------- ---------
- 
- 
+
+
                    (THE  STATION  NUMBER  IS  <TT>/<BB>  WHERE <TT> IS THE
               TERMINAL NUMBER AND <BB> IS THE BUFFER NUMBER.)
- 
- 
+
+
               YOU MAY TYPE:
- 
- 
+
+
                 ? LI: <USERCODE>/<AUTHENTICATION CODE>~
                 - --- -------------------------- ------
- 
- 
+
+
                    THIS  LOG-IN MESSAGE MAY HAVE BEEN PRECEDED BY A "?BO~"
               MESSAGE  WHICH  WOULD HAVE BLACKED OUT THE LINE ON WHICH THE
               LOG-IN MESSAGE WAS TYPED.
- 
- 
+
+
                    THE B5500 VALIDATES THE <USERCODE> AND <AUTHENTICATION-
               CODE>  AND RESPONDS BY TYPING OUT THE STATION NUMBER AND THE
               TIME OF DAY OF THE LOG-IN.
- 
- 
+
+
               TO CONNECT A REMOTE TERMINAL TO R/C, ENTER:
- 
- 
+
+
                             ?? RUN R/C;END.~
                             -- --- ---------
- 
- 
+
+
               THE  B5500  RESPONDS BY EITHER TYPING OUT A "BOJ" (BEGINNING
          OF  JOB)  MESSAGE, A "SCHEDULED" MESSAGE, OR A "RUNNING" MESSAGE.
          A "BOJ" MESSAGE INDICATES THAT R/C WAS NOT PREVIOUSLY RUNNING BUT
@@ -227,174 +245,174 @@
          AND  IS SCHEDULED.  IN THIS CASE, R/C IS NOT BROUGHT INTO THE MIX
          UNTIL  OTHER  SYSTEM  USERS  COMPLETE  THEIR WORK.  THE "RUNNING"
          MESSAGE INDICATES R/C IS ALREADY IN THE MIX.
- 
- 
- 
- 
- 
+
+
+
+
+
                                                                  PAGE  4
- 
- 
- 
+
+
+
               WITH R/C IN THE MIX, IT AUTOMATICALLY SEARCHES OUT AND LOCKS
          ONTO REMOTE TERMINALS WHICH HAVE REQUESTED CONNECTION (BY "RUN R/
          C").  AS SOON AS YOUR TERMINAL IS LOCKED, R/C TYPES ONE OF THE
          FOLLOWING MESSAGE SEQUENCES, ACCORDING TO THE MANNER IN WHICH R/C
          ENDED  DURING  YOUR LAST R/C RUN (FIRST-TIME USERS ARE CONSIDERED
          TO HAVE CAUSED NORMAL LAST ENTRIES):
- 
- 
+
+
                INITIAL MESSAGE AFTER NORMAL TERMINATION OF LAST RUN:
- 
- 
+
+
                     <R/C VERSION NUMBER>
-                    HELLO <USERCODE.
+                    HELLO <USERCODE>
                     :
- 
- 
+
+
               INITIAL  MESSAGE  AFTER  "* END X"  OR  ABNORMAL  LAST  RUN
          TERMINATION:
- 
+
                IF A FILE WAS OPEN
- 
+
                     <R/C VERSION NUMBER>
                     <FILE NAME OF OPEN FILE>
                     HELLO+<USERCODE>
                     <SEQUENCE NUMBER IN THE OPEN FILE>:
- 
+
                OR IF NO FILE IS OPEN
- 
-                    <R/C> VERSION NUMBER>
+
+                    <R/C VERSION NUMBER>
                     HELLO+<USERCODE>
                     :
- 
- 
+
+
               IF  A  MESSAGE  HAS  BEEN  SENT  FROM  ANOTHER  USER TO YOUR
          USERCODE  (SEE  THE  MAIL  VERB),  "MAIL %"  IS  TYPED INSTEAD OF
          "HELLO".
- 
- 
+
+
                EXAMPLES:
- 
- 
+
+
                     VERSION #
-                    HELLO BLUM
+                    HELLO  BLUM
                     :
- 
- 
+
+
                    THIS IS THE NORMAL INITIAL SEQUENCE FROM R/C.
- 
- 
- 
+
+
+
                     VERSION #
- 
- 
- 
- 
- 
+
+
+
+
+
                                                                  PAGE  5
- 
+
                     HELLO+ WILNER
                     :
- 
- 
+
+
                    THIS  SEQUENCE  INDICATES  THAT R/C REMEMBERS THE USERS
-              STATE  FROM  THE  PREVIOUS  RUN.   THE  STATE  INDICATES THE
+              STATE  FROM  THE  PREVIOUS  RUN.   THE  STATE  INCLUDES  THE
               INCREMENT  VALUE,  TAB  AMOUNT, SAVE FACTOR, PERCENT ON-OFF,
               AND VERB REPLACEMENTS.
- 
- 
- 
+
+
+
                     VERSION #
                     FILE/NAME
                     HELLO+ SHARPE
                     00050600:
- 
- 
+
+
                    THIS SEQUENCE INDICATES THAT USER HAS THE FILE "FILE/
               NAME" OPEN AND IS AT THE RECORD WITH SEQUENCE NUMBER 50600.
               THE LEADING ZEROS INDICATE THAT A RECORD ALREADY EXISTS WITH
               THAT NUMBER.
- 
- 
+
+
      FINAL REMOTE TERMINAL OPERATIONS
      ----- ------ -------- ----------
- 
- 
+
+
               THE  USER  SHOULD  TERMINATE HIS USE OF R/C WITH THE "* END"
          COMMAND (SEE BELOW).  R/C WILL RESPOND WITH "GOOD BYE."
- 
- 
+
+
               AFTER  HE HAS ENDED R/C, IF THE USER IS DONE WITH THE REMOTE
          TERMINAL HE SHOULD LOG-OUT BY ENTERING: "?LO~"
- 
- 
+
+
      R/C INPUT
      --- -----
- 
- 
+
+
               INPUT TO R/C IS EITHER COMMANDS OR RECORDS.
- 
- 
+
+
               COMMANDS  ARE  INDICATED  BY  THE CHARACTER "*" IN THE FIRST
          INPUT POSITION.  (IF THERE IS NO OPEN FILE, THE "*" IS OPTIONAL.)
          ALL  OTHER  INPUT  IS CONSIDERED RECORDS TO BE PLACED IN THE OPEN
          FILE.   THE  FORMAT  FOR  A COMMAND IS THE "*" FOLLOWED BY AN R/C
          VERB AND, IF NEEDED, ITS PARAMETERS.  THE VERB AND ITS PARAMETERS
          MUST BE SEPARATED BY A DELIMITER.
- 
- 
+
+
               A  DELIMITER  IS  EITHER  A  SPACE  OR ANY SPECIAL CHARACTER
          EXCEPT A ";", A """, A ".",  A "(", OR A "[".  MULTIPLE
          DELIMITERS ARE TREATED AS A SINGLE DELIMITER.
- 
- 
- 
- 
- 
+
+
+
+
+
                                                                  PAGE  6
- 
- 
- 
+
+
+
               A COMMAND MAY BE FOLLOWED BY ANOTHER INPUT (EITHER A COMMAND
          OR A RECORD) IF IT IS TERMINATED BY A ";".  AN ERROR IN A COMMAND
          OF  A  MULTIPLE INPUT INHIBITS THE PROCESSING OF THE REST OF THAT
          INPUT.
- 
- 
+
+
                EXAMPLES:
- 
- 
+
+
                100:* INC 50~
- 
+
                    THIS IS AN EXAMPLE OF ONE OF THE INPUT COMMANDS.
- 
- 
+
+
                100:BEGIN~
- 
+
                    THIS  IS  AN  EXAMPLE  OF  PLACING A RECORD AT SEQUENCE
               NUMBER 100.
- 
- 
+
+
                100:* INC 3;* RESEQ~
- 
+
                    THIS IS AN EXAMPLE OF MULTIPLE COMMANDS.
- 
- 
+
+
                100:*35; THIS RECORD GOES AT 35~
- 
+
                    THIS IS AN EXAMPLE OF A COMMAND FOLLOWED BY A RECORD OF
               INPUT.
- 
- 
+
+
                100:* OPEN A/B DATA;* PRINT FOR ME;*CLOSE~
- 
+
                    THIS  IS  ANOTHER  EXAMPLE  OF MULTIPLE COMMANDS.  NOTE
               THAT  THE  "*"  MUST  APPEAR  IN THE NEXT CHARACTER POSITION
               FOLLOWING  THE  SEMICOLON  OR THE REMAINDER OF THE RECORD IS
               TREATED AS DATA.
- 
- 
+
+
               AN  INPUT  LINE  IS  SENT  TO  THE  COMPUTER  BY  TYPING THE
          CHARACTER  "~".   TYPING  ERRORS CAN BE CORRECTED, BY BACKSPACING
          AND  LINE  ERASING,  BEFORE  A  MESSAGE  IS  SENT.  THE BACKSPACE
@@ -402,33 +420,33 @@
          CHARACTER  IS THE UP-ARROW (SHIFT N).  ALL THE FOLLOWING LINES OF
          INPUT  ARE  EQUIVALENT  (NOTE THE UNDERLINED CHARACTERS REPRESENT
          USE OF THE SHIFT):
- 
- 
+
+
                100:THIS IS IT~
- 
+
                100:THIS IS NOT, BUTNTHIS IS IT~
- 
- 
- 
- 
- 
+
+
+
+
+
                                                                  PAGE  7
- 
+
                                    -
-               100:THE7IS IT~
+               100:THE7IS IS IT~
                       -
                100:THESE777IS IS IT~
                         ---
- 
- 
+
+
               IF,  AFTER  BACKSPACING  AND  LINE  ERASING,  THE INPUT LINE
-         CONTAINS MORE THEN 240 CHARACTERS, THE INPUT IS DISCARDED WITH AN
+         CONTAINS MORE THAN 240 CHARACTERS, THE INPUT IS DISCARDED WITH AN
          "INPUT OVERFLW"  ERROR  MESSAGE.  DATA RECORDS ARE ALSO DISCARDED
          (WITH THE ERROR MESSAGE) IF THEY ARE TOO LARGE FOR THE FILE.  (I.
          E.  GTR 66 FOR COBOL FILES; GTR 80 FOR DATA FILES; AND GTR 72 FOR
          ALL OTHER FILES)
- 
- 
+
+
               THERE  ARE  TWO  CLASSES OF REQUESTS TO R/C: LONG AND SHORT.
          LONG  OPERATIONS  ARE  THOSE THAT USUALLY ARE SLOW TO EXECUTE AND
          ARE  CHARACTERIZED BY THE "WAIT..."  MESSAGE.  ALL OTHER REQUESTS
@@ -440,128 +458,128 @@
          RECEIVE  A  FEW  "RUBOUT" CHARACTERS OF REASSURANCE.  R/C IGNORES
          ANY  INPUT  SENT  BY USERS IN THE QUEUE OR BY THE USER WHOSE LONG
          OPERATION IS BEING PROCESSED.
- 
- 
+
+
               IF A USER PRODUCES NO INPUT FOR FIVE MINUTES, HE IS SENT THE
          MESSAGE "LOOK ALIVE".  IF HE DOES NOT RESPOND WITHIN ANOTHER FIVE
-         MINUTE PERIOD, R/C PROCESSES A "*END DS" FOR THAT USER.
- 
- 
+         MINUTE PERIOD, R/C PROCESSES A "* END DS" FOR THAT USER.
+
+
      R/C OUTPUT
      --- ------
- 
- 
+
+
               OUTPUT TO THE TELETYPEWRITER OF THE SPECIAL CHARACTERS ~, !,
          <,  {, >, AND } IS REPLACED BY A "$" CHARACTER IN ORDER THAT THEY
-         DO NOT EVOKE TELETYPEWRITER CONTROL FUNCTIONS WITH WHICH THEY ARE
+         DO  NOT EVOKE TELETYPWRITER CONTROL FUNCTIONS WITH WHICH THEY ARE
          ASSOCIATED.   (THESE INCLUDE LINE-FEED, CARRIAGE-RETURN, MESSAGE-
          END, AND PAPER-TAPE-ON.)
- 
- 
+
+
               WHEN  THE "BREAK" KEY IS DEPRESSED DURING OUTPUT, THE OUTPUT
          IS TERMINATED WITH THE MESSAGE "BREAK".
- 
- 
- 
- 
- 
- 
+
+
+
+
+
+
                                                                  PAGE  8
- 
+
                                R/C FILES
                                --- -----
- 
- 
+
+
               ALL FILES CREATED BY R/C ARE PERMANENT DISK FILES.  THE SAVE
          FACTOR IS NORMALLY 7 DAYS, BUT IT MAY BE CHANGED BY THE SAVE VERB
          (SEE BELOW).
- 
- 
+
+
      FILE TYPES
      ---- -----
- 
- 
+
+
               R/C  ENABLES  THE  USER TO CREATE AND MAINTAIN ALGOL, COBOL,
          FORTRAN,  XALGOL,  BASIC,  AND  DATA  FILES.  THESE FILES HAVE 80
          CHARACTER-LONG RECORDS, (ONE CARD IMAGE).
- 
- 
+
+
               XALGOL,  BASIC,  ALGOL AND FORTRAN FILES CONTAIN EIGHT DIGIT
          SEQUENCE NUMBERS LOCATED IN THE POSITIONS 73-80 OF THE CARD IMAGE.
- 
- 
+
+
               COBOL  FILES  CONTAIN  SIX-DIGIT SEQUENCE NUMBERS, PLACED IN
          POSITIONS 1-6 OF THE RECORD.
- 
- 
+
+
               DATA  FILES  ARE  NOT  PHYSICALLY  SEQUENCED  ALTHOUGH  R/C
          MAINTAINS AN INTERNAL, EIGHT-DIGIT NUMBER FOR EACH RECORD.
- 
- 
+
+
      FILE NAMES
      ---- -----
- 
- 
+
+
               FILE  NAMES  MUST BE SUPPLIED TO R/C.  THE FORM OF A NAME IS
          <FILE  PREFIX> / <FILE SUFFIX>.  THROUGHOUT THIS DOCUMENT, <FILE-
          NAME>  IS USED TO SPECIFY A FILE AND SHOULD BE IN THE FORM ABOVE.
          THE  <FILE  PREFIX>  AND  THE <FILE SUFFIX> MAY EACH BE NO LONGER
          THAN SEVEN CHARACTERS.
- 
- 
+
+
                EXAMPLES:
- 
- 
+
+
                     A/B
- 
+
                     GRIMY/GULCH
- 
+
                     ZAP/1
- 
+
                     16JAN/SUFFIX
- 
+
                     0000000/DISK
- 
- 
- 
- 
- 
+
+
+
+
+
                                                                  PAGE  9
- 
- 
- 
+
+
+
      RECORD REFERENCING
      ------ -----------
- 
- 
+
+
               RECORDS IN THE OPEN FILE (SEE OPEN BELOW) ARE REFERRED TO BY
          THEIR  SEQUENCE NUMBER.  "DATA" FILES ARE IMPLICITLY SEQUENCED BY
          THE VALUE OF THE INCREMENT WHEN THEY ARE OPENED.
- 
- 
+
+
               AN  ALTERNATE METHOD OF REFERENCING RECORDS IN THE OPEN FILE
          IS  RELATIVE  SEQUENCE NUMBERS.  A RELATIVE SEQUENCE NUMBER IS AN
          INTEGER  PRECEEDED  BY  A + OR - SIGN.  IT MAY BE USED ANYPLACE A
          SEQUENCE  NUMBER  IS USED.  IT IS TRANSLATED TO A SEQUENCE NUMBER
          BY MOVING FORWARD OR BACKWARD THE INDICATED NUMBER OF RECORDS AND
          USING THE SEQUENCE NUMBER OF THAT RECORD.
- 
- 
+
+
               RECORDS  IN  A NON-OPEN FILE (EXTERNAL FILE) ARE REFERRED TO
          BY  THEIR RELATIVE POSITION WITHIN THE FILE.  THE FIRST RECORD IS
          1,  THE SECOND 2, ETC.  ANY SEQUENCING THAT MAY BE ON THE RECORDS
          IS IGNORED.
- 
- 
- 
- 
- 
+
+
+
+
+
                                                                 PAGE  10
- 
+
                           FILE-HANDLING VERBS
                           ------------- -----
- 
- 
+
+
               THIS  SECTION  DESCRIBES VERBS THAT HANDLE FILES AS A WHOLE,
          RATHER  THAN  RECORDS  WITHIN  A FILE.  HOWEVER, A FEW VERBS HAVE
          OPTIONS  IN  R/C  SYNTAX THAT PERMIT ACCESS TO RECORDS WITHIN THE
@@ -570,30 +588,30 @@
          ALWAYS  BE THE FIRST CHARACTER IN THE INPUT STRING WHEN A COMMAND
          IS  ENTERED.   IF THIS IS NOT FOLLOWED, AN EXISTING RECORD MAY BE
          OVERWRITTEN BY THE COMMAND ITSELF.
- 
- 
- 
- 
+
+
+
+
                                                                 PAGE  11
- 
- 
- 
+
+
+
      FILE OPENING AND CREATION (OPEN)
      ---- ------- --- -------- ------
- 
- 
+
+
                * OPEN  <FILE-NAME> <FILE-TYPE> NEW
                - ----  ----------- ----------- ---
- 
- 
+
+
                * OPEN  <FILE-NAME> <FILE-TYPE> OLD
                - ----  ----------- ----------- ---
- 
- 
+
+
                * OPEN <FILE-NAME> <FILE-TYPE>
                - ---- ----------- -----------
- 
- 
+
+
               THE "* OPEN " VERB ATTACHES THE USER TO THE DISK FILE <FILE-
          NAME>.   THE  <FILE-TYPE>  MUST  BE  EITHER  "ALGOL",  "COBOL",
          "FORTRAN",  "XALGOL",  "BASIC", OR "DATA".  IF THE <OPEN TYPE> IS
@@ -603,261 +621,261 @@
          "NEW"  NOR  "OLD"  THE  DISK FILE <FILE-NAME> IS OPENED AND IT IS
          READ  TO  DETERMINE  ITS  SEQUENCE  NUMBERS.  THIS LATTER FORM IS
          SLOWER THAN THE OPEN "OLD".
- 
- 
+
+
                EXAMPLES:
- 
- 
+
+
                      :* OPEN PROGRAM/SOURCE ALGOL NEW~
                          100:
- 
+
                    THIS CREATES A NEW DISK FILE CALLED PROGRAM/SOURCE.
- 
- 
+
+
                         63500:* OPEN ANOTHER/PROG DATA OLD~
                          4500:
- 
+
                    THIS  OPENS  THE FILE ANOTHER/PROG SEQUENCING IT BY THE
               CURRENT  INCREMENT  VALUE.  NOTE THAT THE FILE THAT WAS OPEN
               IS FIRST CLOSED BEFORE THE NEXT FILE IS OPENED.
- 
- 
+
+
                      :* OPEN YET/ANOTHER COBOL~
                      WAIT...
                      READ ONLY FILE.
                        7504
- 
+
                    THIS  OPENS  THE  FILE  YET/ANOTHER  USING THE SEQUENCE
               NUMBERS  WITHIN  THE  FILE.   THE  MESSAGE  "READ ONLY FILE"
- 
- 
- 
- 
- 
+
+
+
+
+
                                                                 PAGE  12
- 
+
               INDICATES  THAT  THE USER IS FORBIDDEN (BY THE FILE SECURITY
               SYSTEM) TO MODIFY THE FILE.
- 
- 
+
+
                ERRORS:
- 
- 
+
+
                     DUP FILE: <FILE-NAME>
- 
- 
+
+
                    A  FILE,  <FILE-NAME>,  ALREADY  EXISTS AND THE USER IS
               TRYING TO CREATE A FILE WITH THAT NAME WITH AN "* OPEN ...
               NEW".
- 
- 
+
+
                     NO FILE: <FILE-NAME>
- 
- 
+
+
                    THE  USER IS TRYING TO OPEN A FILE, <FILE-NAME>, AND IT
               DOES NOT EXIST ON DISK.
- 
- 
+
+
                     BAD FILE: <FILE-NAME>
- 
- 
+
+
                    THE  FILE  <FILE-NAME> WHICH THE USER IS TRYING TO OPEN
               IS  NOT  BLOCKED CORRECTLY.  THE CORRECT BLOCKING IS 10-WORD
-              RECORDS WITH MULTIPLE OF 3 RECORDS PER BLOCK.
- 
- 
+              RECORDS WITH A MULTIPLE OF 3 RECORDS PER BLOCK.
+
+
                     INV USER: <FILE-NAME>
- 
- 
+
+
                    THE  USER  IS  TRYING TO OPEN A FILE TO WHICH HE HAS NO
               ACCESS.   IF  THE  USER  HAS  EITHER  SECONDARY  OR TERTIARY
               ACCESS, THE MESSAGE: "READ ONLY FILE" IS TYPED.
- 
- 
+
+
                     FILE TOO LONG
- 
- 
-                   THE  USER  IS TRYING TO OPEN A FILE WITH MORE THEN 8191
+
+
+                   THE  USER  IS TRYING TO OPEN A FILE WITH MORE THAN 8191
               RECORDS.
- 
- 
+
+
                     SEQ OVERFLOW
- 
- 
+
+
                    THE  FILE  THE  USER  IS  OPENING  CAUSES  THE SEQUENCE
               COUNTER  TO  EXCEED  2,097,151.  THE FILE IS OPENED, BUT THE
               USER SHOULD RESEQUENCE IT.
- 
- 
- 
- 
- 
- 
- 
+
+
+
+
+
+
+
                                                                 PAGE  13
- 
+
                     SEQ ERR-<N>
- 
- 
+
+
                    THE FILE CONTAINS A RECORD WHOSE SEQUENCE NUMBER <N> IS
               LESS THAN THE SEQUENCE NUMBER OF THE PRECEEDING RECORD.  THE
               FILE IS NOT OPENED.
- 
- 
+
+
                     BAD FILE TYPE: <FILE-TYPE>
- 
- 
+
+
                    <FILE-TYPE>  IS  NOT  "ALGOL",  "COBOL",  "FORTRAN",
               "XALGOL", "BASIC", OR "DATA".
- 
- 
- 
+
+
+
                                                                 PAGE  14
- 
- 
- 
+
+
+
      FILE CLOSING (CLOSE)
      ---- ------- -------
- 
- 
+
+
               FILES ARE CLOSED BY USE OF THE FOLLOWING CONSTRUCT:
- 
- 
+
+
                * CLOSE
                - -----
- 
- 
+
+
               THIS VERB DETATCHES THE OPEN FILE, FROM R/C.
- 
- 
+
+
                EXAMPLES:
- 
- 
+
+
                     5600:* CLOSE~
                 :
- 
+
                    THIS  IS  AN  EXAMPLE  OF CLOSING A FILE THAT IS IN THE
               CORRECT ORDER.
- 
- 
+
+
                      450:* RESEQ 100~
                     9000:* CLOSE~
                 WAIT...
                 :
- 
+
                    THIS  IS  AN  EXAMPLE  OF CLOSING A FILE THAT IS NOT IN
               ORDER.
- 
- 
+
+
                ERROR:
- 
- 
+
+
                     NO FILE OPEN: CLOSE
- 
- 
-                   THERE IS NO OPEN FILE TO CLOSE
- 
- 
- 
- 
+
+
+                   THERE IS NO OPEN FILE TO CLOSE.
+
+
+
+
                                                                 PAGE  15
- 
- 
- 
+
+
+
      LISTINGS ON THE TELETYPEWRITER (LIST)
      -------- -- --- -------------- ------
- 
- 
+
+
               TO  LIST  FILES  OR  ANY  OF  THEIR  SEPARATE  RECORDS,  THE
          FOLLOWING CONSTRUCTS APPLY:
- 
- 
+
+
                * LIST
                - ----
- 
- 
+
+
                * LIST <FILE-NAME>
                - ---- -----------
- 
- 
+
+
                * LIST <FILE-NAME> NO
                - ---- ----------- --
- 
- 
+
+
                * LIST <FILE-NAME> <M>
                - ---- ----------- ---
- 
- 
+
+
                * LIST <FILE-NAME> <M> <N>
                - ---- ----------- --- ---
- 
- 
+
+
                * LIST <M>
                - ---- ---
- 
- 
+
+
                * LIST <M> <N>
                - ---- --- ---
- 
- 
+
+
               THE  "LIST" VERB CAUSES AN ENTIRE FILE OR PORTIONS OF A FILE
          TO  BE LISTED ON THE TELETYPEWRITER.  LISTING MAY BE DISCONTINUED
          BY PRESSING THE BREAK KEY ON THE TELETYPEWRITER.
- 
- 
+
+
                    THE FIRST FORM LISTS THE OPEN FILE.
- 
- 
+
+
                    THE SECOND FORM LISTS THE FILE <FILE-NAME>.
- 
- 
+
+
                    THE  THIRD FORM LISTS THE FILE <FILE-NAME>, WITHOUT THE
               RECORD NUMBERS.
- 
- 
- 
- 
- 
- 
- 
+
+
+
+
+
+
+
                                                                 PAGE  16
- 
+
                    THE FOURTH FORM LISTS <FILE-NAME> FROM THE <M>TH RECORD
               TO THE END.
- 
- 
+
+
                    THE  FIFTH FORM LISTS <FILE-NAME> FROM THE <M>TH TO THE
               <N>TH RECORDS.
- 
- 
+
+
                    THE  SIXTH  FORM  LISTS SEQUENCE NUMBER <M> OF THE OPEN
               FILE.
- 
- 
+
+
                    THE LAST FORM LISTS SEQUENCE NUMBERS <M> THROUGH <N> OF
               THE OPEN FILE.
- 
- 
+
+
                EXAMPLES:
- 
- 
+
+
                        500:* LIST~
                        100:BEGIN
                        200: INTEGER I, J, K ;
                        300: REAL X, Y, Z ;
                        400: ARRAY A [0 : 9] ;
                        500:
- 
+
                       5500:* LIST 8900,+3~
                       8950:     I := I + 5 ;
                       9125:     GO TO NEXT ;
                       9300: HELP:
                       9400:
- 
+
                        300* LIST 60~
                     000060    MOVE A TO B.
                     000070
- 
+
                   :* LIST SOME/FILE~
                          1:BEGIN
                          2: INTEGER I, J, K ;
@@ -866,7 +884,7 @@
                          5:      A [I] := X ;
                          6:END.
                   :
- 
+
                        500:* LIST SOME/FILE NO~
                     BEGIN
                      INTEGER I, J, K ;
@@ -875,176 +893,176 @@
                           A [I] := X ;
                     END.
                        500:
- 
- 
- 
- 
- 
+
+
+
+
+
                                                                 PAGE  17
- 
+
+
                   :* LIST LIBRARY/FILE 2,4~
                          2:PROCEDURE READDATA 567,653
                          3:PROCEDURE WRITEDATA 654,789
                          4:PROCEDURE DATA 790,808
                   :
- 
+
                   :* LIST SOME/FILE 5~
                          5:     A [I] := X ;
                          6:END.
                   :
- 
+
                   :* LIST SOME/FILE 200,500~
                   USE RECORD #S.
                   :
- 
+
                    THE  LAST  EXAMPLE  ILLUSTRATES  THE  COMMON  ERROR  OF
               REFERENCING  AN  EXTERNAL FILE WITH SEQUENCE NUMBERS INSTEAD
               OF RECORD NUMBERS.
- 
- 
- 
- 
+
+
+
                                                                 PAGE  18
- 
- 
- 
+
+
+
      COMPRESSED FILE LISTINGS (QUICK)
      ---------- ---- -------- -------
- 
- 
+
+
               A COMPRESSED FILE LISTING MAY BE OBTAINED FROM R/C BY USE OF
          THE CONSTRUCTS:
- 
- 
+
+
                * QUICK
                - -----
- 
- 
+
+
                * QUICK <FILE-NAME>
                - ----- -----------
- 
- 
+
+
                * QUICK <FILE-NAME> NO
                - ----- ----------- --
- 
- 
-               * QUICK <FILE-NAME> <M>
-               - ----- ----------- ---
- 
- 
+
+
+               * QUICK <FILE-NAME>  <M>
+               - ----- -----------  ---
+
+
                * QUICK <FILE-NAME> <M> <N>
                - ----- ----------- --- ---
- 
- 
+
+
                * QUICK <M>
                - ----- ---
- 
- 
+
+
                * QUICK <M> <N>
                - ----- --- ---
- 
- 
+
+
               THE  "* QUICK" VERB LISTS ON THE TELETYPEWRITER DELETING ALL
          CONTIGUOUS  BLANKS EXCEPT THE FIRST.  THE FILE IS NOT AFFECTED BY
          THE VERB.
- 
- 
+
+
                EXAMPLE:
- 
- 
+
+
                 4500:* LIST 4300,4400~
                 4300:        FOR I :=    A STEP -1 UNTIL 0   DO
                 4400:          X  [I]   :=   SIN   (Y) ;
-                4500:*QUICK -2 + 1~
+                4500:* QUICK -2, + 1~
                 4300: FOR I := A STEP -1 UNTIL 0 DO
                 4400: X [I] := SIN (Y) ;
                 4500:
- 
- 
- 
- 
- 
+
+
+
+
+
                                                                 PAGE  19
- 
- 
- 
+
+
+
      FILE REMOVAL (REMOVE)
      ---- ------- --------
- 
- 
+
+
               TO REMOVE A FILE USE THE FOLLOWING CONSTRUCT:
- 
- 
+
+
                * REMOVE <FILE-NAME>
                - ------ -----------
- 
- 
+
+
                    THE REMOVE VERB REMOVES THE FILE <FILE-NAME> FROM DISK.
- 
- 
+
+
                * REMOVE LISTING
                - ------ -------
- 
- 
+
+
                    REMOVES LINE/<USERCODE>, THE LISTING FILE FROM THE LAST
               COMPILATION.
- 
- 
+
+
                EXAMPLES:
- 
- 
+
+
                 3200:* REMOVE A/B~
                 3200:
- 
+
                  546:* REMOVE ANOTHER/FILE~
             NO FILE: ANOTHER/FILE
-                546:
- 
+                 546:
+
             :* OPEN EXAMPLE/X COBOL OLD~
             46500* REMOVE EXAMPLE/X~
             :
- 
- 
- 
+
+
+
                                                                 PAGE  20
- 
- 
- 
+
+
+
      LINE-PRINTER FILE REPRODUCTION (PRINT)
      ------------ ---- ------------ -------
- 
- 
+
+
               THE PRINT VERB:
- 
- 
+
+
                *PRINT <A> <B>
                ------ --- ---
- 
- 
+
+
                    PRINTS THE OPENED FILE ON THE LINE PRINTER (LABELED <A>
               <B>).  IF "<B>" IS "DOUBLE" THEN DOUBLE SPACING IS USED.
- 
- 
+
+
                * PRINT <A> <B> <M>
                - ----- --- --- ---
- 
- 
+
+
                    AS ABOVE, STARTING WITH SEQUENCE NUMBER <M>.
- 
- 
+
+
                * PRINT <A> <B> <M>, <N>
                - ----- --- --- ---- ---
- 
- 
+
+
                    AS ABOVE, STOPPING WITH SEQUENCE NUMBER <N>.
- 
- 
+
+
                EXAMPLES:
- 
- 
-                :* OPEN TEST/CASE DATA;*PRINT TC DOUBLE;* CLOSE~
+
+
+                :* OPEN TEST/CASE DATA;* PRINT TC DOUBLE;* CLOSE~
                 :
- 
+
                    THIS  EXAMPLE ILLUSTRATES AN INSTANCE WHERE A SEQUENCED
               FILE SHOULD BE TREATED AS DATA TO SHORTEN THE OPERATION.  IF
               THE  FILE  WAS  OPENED  "ALGOL OLD"  IT  WOULD  HAVE  BEEN
@@ -1053,97 +1071,97 @@
               OPENED  "ALGOL"  IT  WOULD  HAVE  BEEN READ TO DETERMINE ITS
               SEQUENCE  NUMBERS.   EITHER  WAY  WOULD  HAVE MADE THE WHOLE
               OPERATION MUCH SLOWER THAN OPENING THE FILE "DATA".
- 
+
                     8700:* PRINT FOR USER~
                  WAIT...
                     8700:
- 
- 
- 
+
+
+
                                                                 PAGE  21
- 
- 
- 
+
+
+
      PUNCHED-CARD FILE REPRODUCTION (PUNCH)
      ------------ ---- ------------ -------
- 
- 
+
+
               TO PUNCH A FILE:
- 
- 
+
+
                * PUNCH <A> <B>
                - ----- --- ---
- 
- 
+
+
                    PUNCHES  A  CARD  DECK  (LABELED <A> <B>) OF THE OPENED
               FILE.
- 
- 
+
+
                * PUNCH <A> <B> <M>
                - ----- --- --- ---
- 
- 
+
+
                    AS ABOVE, STARTING WITH SEQUENCE NUMBER <M>.
- 
- 
+
+
                * PUNCH <A> <B> <M>, <N>
                - ----- --- --- ---- ---
- 
- 
+
+
                    AS ABOVE, STOPPING WITH SEQUENCE NUMBER <N>.
- 
- 
+
+
                EXAMPLE:
- 
- 
+
+
                     7600:* PUNCH A B 100,+10~
                  WAIT...
                     7600:
- 
- 
- 
+
+
+
                                                                 PAGE  22
- 
- 
- 
+
+
+
      FILE COMPILATION (COMPILE)
      ---- ----------- ---------
- 
- 
+
+
               FILES  MAY BE COMPILED TO THE B5500 LIBRARY BY THE FOLLOWING
          CONSTRUCT:
- 
- 
+
+
                * COMPILE <FILE-NAME>
                - ------- -----------
- 
- 
+
+
                    THIS VERB INITIATES THE COMPILATION OF THE OPEN FILE TO
               LIBRARY  USING THE COMPILER INDICATED IN THE OPEN STATEMENT.
               THE OBJECT CODE IS NAMED <FILE-NAME>.  THE LISTING OUTPUT OF
               THE  COMPILATION  IS  EQUATED  TO "LINE/<USERCODE>" ON DISK.
               THE  "* LISTING" VERB MAY BE USED TO LIST THE SYNTAX ERRORS.
- 
- 
+
+
                * COMPILE <FILE-NAME> <COMPILER>
                - ------- ----------- ----------
- 
- 
-                   COMPILES THE OPEN FILE USING SPECIFIED COMPILER.
- 
- 
+
+
+                   COMPILES THE OPEN FILE USING THE SPECIFIED COMPILER.
+
+
                EXAMPLES:
- 
- 
+
+
                     5700:* COMPILE OBJECT/CODE~
                 WAIT...
                 :
- 
+
                      479:* COMPILE TEST/OBJECT EZTRAN~
                 QUEUED( 1).WAIT...
                 :
- 
- 
+
+
                    IN  THE  LAST  EXAMPLE,  THE "EZTRAN" COMPILER (EZTRAN/
               DISK) WILL BE USED.  IF THE FILE IS NOT IN ORDER, IT WILL BE
               REORDERED.   SINCE  THIS IS A LONG OPERATION THE USER GETS A
@@ -1151,53 +1169,53 @@
               USERS  LONG  OPERATION IS BEING PROCESSED AND THAT THIS LONG
               OPERATION  IS  QUEUED  UNTIL  THE  OTHER  IS  DONE.  THE "1"
               INDICATES THAT THIS IS THE FIRST REQUEST IN THE QUEUE.
- 
- 
- 
- 
- 
+
+
+
+
+
                                                                 PAGE  23
- 
- 
- 
+
+
+
      OUTPUT OF THE COMPILATION (LISTING)
      ------ -- --- ----------- ---------
- 
- 
+
+
               THE  LISTING  FILE  OF  THE  COMPILER  IS  EQUATED  TO LINE/
          <USERCODE>  ON  DISK.  THE FILE MAY BE ACCESSED BY THE USE OF THE
          LISTING VERB:
- 
- 
+
+
                * LISTING <FILE-TYPE> <S>, <L>, <U>
                - ------- ----------- ---- ---- ---
- 
- 
+
+
                    LISTS  THE SEQUENCE NUMBERS RELATED TO SEGMENT <S> FROM
               RELATIVE  ADDRESS  <L> TO RELATIVE ADDRESS <U>.  <FILE-TYPE>
               IS  ALGOL,  XALGOL,  BASIC,  COBOL, OR FORTRAN AND INDICATES
               WHICH  COMPILER  CREATED THE LISTING FILE "LINE/<USERCODE>".
               (THIS  FILE IS AUTOMATICALLY GENERATED BY THE COMPILE VERB).
- 
- 
+
+
                * LISTING <FILE-TYPE> ERRORS
                - ------- ----------- ------
- 
- 
+
+
                    LISTS THE SYNTAX ERRORS OF YOUR LAST COMPILATION.
- 
- 
+
+
                * LISTING
                - -------
- 
- 
+
+
                    PRINTS  THE  LINE  FILE OF YOUR LAST COMPILATION ON THE
               PRINTER.
- 
- 
+
+
                EXAMPLES:
- 
- 
+
+
                 :* LISTING ALGOL 5, 25, 35~
                 WAIT... SEGMENT =      5:
                     4300: REL. ADDR. =   26.
@@ -1206,163 +1224,163 @@
                     9300: REL. ADDR. =   35.
                 :* LISTING ALGOL ERRORS~
                 WAIT...
-                    7800:ERROR 100   I,
+                    7800:ERROR 100   I.
                 :
- 
+
                     8900:* LISTING~
                     8900:
- 
- 
- 
- 
- 
+
+
+
+
+
                                                                 PAGE  24
- 
- 
- 
+
+
+
      FILE ZIPPED AS AN "EXECUTE" DECK (ZIP)
      ---- ------ -- -- --------- ---- -----
- 
- 
+
+
               TO  IMPLEMENT  THE  B5500  ZIP FUNCTION THROUGH R/C, USE THE
          FOLLOWING CONSTRUCT:
- 
- 
+
+
                * ZIP
                - ---
- 
- 
+
+
                    THIS  CONSTRUCT ZIPS THE OPENED FILE AFTER IT LINKS ALL
               THE  CONTROL  CARDS  AS  INDICATED  BY  "?".   SEE THE ALGOL
               REFERENCE MANUAL FOR A DESCRIPTION OF THE "ZIP WITH FILE-ID"
               STATEMENT.
- 
- 
+
+
                * ZIP <FILE-NAME>
                - --- -----------
- 
- 
+
+
                    COPIES  THE  OPENED  FILE CREATING <FILE-NAME> AND ZIPS
               <FILE-NAME>.  NOTE THIS "ZIP" CONSTRUCT DOES NOT DESTROY THE
-              OPEN FILE AS DOES THE FIRST FORM.
- 
- 
+              OPEN FILE, AS DOES THE FIRST FORM.
+
+
                EXAMPLES:
- 
- 
+
+
                  :COLUMN ON "@";COLUMN 73~
                  :OPEN MAKE/MANUAL DATA NEW;%%EXECUTE XREF/JONES.~
                       200:%%FILE DISK = TEACHER/0000094.~
                       300:%% DATA CARD.~
                       400:$ DISK SIX DOCONLY DOCUMENT FINAL~
                       500:@99999999~
-                      600%% END.~
+                      600:%% END.~
                       700:* ZIP TEMP/NAME~
                  WAIT...
                       700:
- 
+
                    THIS  EXAMPLE  ILLUSTRATES HOW TO CREATE A CONTROL DECK
               AND  INITIATE  ITS EXECUTION.  THE DECK WAS SAVED (UNDER THE
               NAME  "MAKE/MANUAL")  SINCE  THE  ZIP CONSTRUCT INCLUDED THE
               DUMMY  FILE  "TEMP/NAME".   (NOTE  THAT  THE ABOVE DECK WILL
               CREATE AN R/C USERS MANUAL.)
- 
- 
+
+
                  :* OPEN MAKE/MANUAL DATA;* ZIP T/N;* CLOSE~
                  WAIT...
                  :
- 
- 
- 
- 
- 
+
+
+
+
+
                                                                 PAGE  25
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
+
+
+
+
+
+
+
+
+
+
+
                          RECORD HANDLING VERBS
                          ------ -------- -----
- 
- 
- 
- 
+
+
+
+
                                                                 PAGE  26
- 
- 
- 
+
+
+
      RECORD COPYING (DITTO)
      ------ ------- -------
- 
- 
+
+
               RECORDS  MAY  BE  COPIED  FROM ONE PLACE TO ANOTHER WITHIN A
          FILE BY THE CONSTRUCT:
- 
- 
+
+
                * DITTO <M>
                - ----- ---
- 
- 
+
+
                    COPIES CARD IMAGE <M> AS THE NEXT RECORD.
- 
- 
+
+
                * DITTO <M>, <N>
                - ----- ---- ---
- 
- 
+
+
                    COPIES  THE CARD IMAGES <M> TO <N> AS THE NEXT RECORDS.
- 
- 
+
+
                * DITTO OVERITE ON
                - ----- ------- --
- 
- 
+
+
                * DITTO OVERITE OFF
                - ----- ------- ---
- 
- 
+
+
                * DITTO OVERITE
                - ----- -------
- 
- 
+
+
                    IF  THE  DITTO OVERITE IS OFF AND AN EXISTING RECORD IS
               ABOUT  TO  BE  OVERWRITTEN,  THE  DITTO  TERMINATES  WITH AN
               "OVERITE OFF"  MESSAGE.   (IT  IS INITIALLY OFF.)  THE ABOVE
               COMMANDS ARE USED TO SET THE OPTION AND TO PRINT ITS CURRENT
               SETTING.   ITS  SETTING  MAY  BE REVERSED FOR ONE COMMAND BY
               PREFIXING THE DITTO WITH A -.  (E.G.  *-DITTO 10,50.)
- 
- 
+
+
                * DITTO <M> MOVE
                - ----- --- ----
- 
- 
+
+
                * DITTO <M>, <N> MOVE
                - ----- ---- --- ----
- 
- 
+
+
                    THE  MOVE  OPTION,  MOVES  RECORDS  <M> THRU <N> TO THE
- 
- 
- 
- 
- 
+
+
+
+
+
                                                                 PAGE  27
- 
+
               CURRENT  LOCATION.   THIS OPTION IS VERY FAST, BUT OVERITING
               IS NOT ALLOWED.
- 
- 
+
+
                EXAMPLES:
- 
- 
+
+
                   500:* DITTO 200,300~
                   700:* LIST~
                   100:ONE
@@ -1371,7 +1389,7 @@
                   400:FOUR
                   500:TWO
                   600:THREE
-                  700:*DITTO 200,300 MOVE;*LIST~
+                  700:* DITTO 200,300 MOVE;*LIST~
                   100:ONE
                   400:FOUR
                   500:TWO
@@ -1379,90 +1397,90 @@
                   700:TWO
                   800:THREE
                   900:
- 
- 
- 
- 
- 
+
+
+
+
+
                                                                 PAGE  28
- 
- 
- 
+
+
+
      COPYING EXTERNAL FILES (COPY)
      ------- -------- ----- ------
- 
- 
+
+
               WHOLE  OR  PARTIAL  EXTERNAL  FILES  MAY  BE COPIED INTO THE
          CURRENTLY OPENED FILE BY THE CONSTRUCTS:
- 
- 
+
+
                * COPY <FILE-NAME>
                - ---- -----------
- 
- 
+
+
                * COPY <FILE-NAME> <M>
                - ---- ----------- ---
- 
- 
+
+
                * COPY <FILE-NAME> <M>, <N>
                - ---- ----------- ---- ---
- 
- 
+
+
                * COPY <FILE-NAME> MERGE
                - ---- ----------- -----
- 
- 
+
+
                    THE  COPY VERB COPIES RECORDS FROM ANOTHER FILE (<FILE-
               NAME>).
- 
- 
+
+
                    THE  FIRST FORM COPIES THE WHOLE FILE.  THE SECOND FORM
               COPIES  THE  <M>-TH RECORD (WHERE THE FIRST RECORD OF <FILE-
               NAME>  IS  1, THE SECOND RECORD IS 2, THE THIRD IS 3, ETC.).
               THE THIRD FORM COPIES THE <M>-TH THROUGH THE <N>-TH RECORDS.
               THE  LAST  FORM  USES THE SEQUENCE NUMBERS OF THE RECORDS OF
               <FILE-NAME> TO DETERMINE THEIR POSITION IN THE OPEN FILE.
- 
- 
+
+
                * COPY OVERITE ON
                - ---- ------- --
- 
- 
+
+
                * COPY OVERITE OFF
                - ---- ------- ---
- 
- 
+
+
                * COPY OVERITE
                - ---- -------
- 
- 
+
+
                    IF  THE  COPY  OVERITE IS OFF AND AN EXISTING RECORD IS
               ABOUT  TO  BE  OVERWRITTEN,  THE  COPY  TERMINATES  WITH  AN
               "OVERITE OFF"  MESSAGE.   (IT  IS INITIALLY OFF.)  THE ABOVE
- 
- 
- 
- 
- 
+
+
+
+
+
                                                                 PAGE  29
- 
+
               COMMANDS ARE USED TO SET THE OPTION AND TO PRINT ITS CURRENT
               SETTING.   ITS  SETTING  MAY  BE REVERSED FOR ONE COMMAND BY
               PREFIXING THE COPY WITH A -.  (E.G.  *-COPY A/B 10,50.)
- 
- 
+
+
                EXAMPLES:
- 
- 
+
+
                   :* OPEN SOURCE/MARK7 ALGOL NEW~
                        100:* COPY SOURCE/MARK6~
                   WAIT...
                       8900:
- 
+
                        500:* COPY LIBRARY/FILE 345, 368~
                   WAIT...
                       2800:
- 
+
                   :QUICK PATCH/FILE~
                          1:A 00000050
                          2:B 00000150
@@ -1481,168 +1499,168 @@
                        250:Z
                        300:3
                        400:
- 
- 
- 
- 
- 
+
+
+
+
+
                                                                 PAGE  30
- 
- 
- 
+
+
+
      INTRA-RECORD EDITING (INLINE)
      ------------ ------- --------
- 
- 
+
+
               RECORDS  MAY  BE  EDITED BY USE OF THE "* INLINE" CONSTRUCTS
          DESCRIBED IN THE NEXT PARAGRAPHS.
- 
- 
+
+
                * INLINE <M>
                - ------ ---
- 
- 
+
+
                * INLINE
                - ------
- 
- 
-               * INLINE <M> <EDIT CHAR>
-               - ------ --- ----- -----
- 
- 
-               * INLINE <EDIT CHAR>
-               - ------ ----- -----
- 
- 
+
+
+               * INLINE <M> <EDIT CHR>
+               - ------ --- ----- ----
+
+
+               * INLINE <EDIT CHR>
+               - ------ ----- ----
+
+
               THIS  SETS  UP LINE <M> FOR INLINE EDITING.  IF THE SEQUENCE
          NUMBER  <M> IS NOT INCLUDED WITH THE COMMAND, THE PREVIOUS RECORD
          IS USED AND THE INITIAL PRINTING OF IT IS SUPPRESSED.
- 
- 
+
+
                * INLINE ECHO ON
                - ------ ---- --
- 
- 
+
+
                * INLINE ECHO OFF
                - ------ ---- ---
- 
- 
+
+
                * INLINE ECHO
                - ------ ----
- 
- 
+
+
               THE  MODIFIED  RECORD  WILL  BE TYPED ON THE TELETYPE IF THE
          INLINE ECHO IS ON.  (IT IS INITIALLY ON.)  THE ABOVE COMMANDS ARE
          USED  TO  SET  THE  OPTION AND TO PRINT ITS CURRENT SETTING.  ITS
          SETTING  MAY  BE REVERSED FOR ONE COMMAND BY PREFIXING THE INLINE
          WITH A -.  (E.G.  * -INLINE +3.)
- 
- 
+
+
               TO MODIFY A PORTION OF A RECORD (CARD IMAGE) USE THE "*
          INLINE" VERB.  R/C PRINTS THE RECORD NUMBER AND THE LINE, THEN
          GIVES  A CARRIAGE RETURN AND LINE FEED.  IT NEXT SPACES THE PRINT
- 
- 
- 
- 
- 
+
+
+
+
+
                                                                 PAGE  31
- 
+
          BALL  (ON  THE  NEW  LINE)  DIRECTLY  BELOW  THE  FIRST CHARACTER
          POSITION  OF THE OLD LINE, ABOVE.  THE USER SPACES THE PRINT BALL
          TO THE PROPER POSITION AND ACCOMPLISHES THE FOLLOWING ACTIONS:
- 
- 
+
+
                    TO INSERT A STRING, TYPE THE LETTER "I" FOLLOWED BY THE
               STRING AND A "~".
- 
- 
+
+
                    TO  DELETE  A  STRING,  USE  THE LETTER "D" FOLLOWED BY
               SPACES UNDER THE CHARACTERS TO BE DELETED AND THEN A "~".
- 
- 
+
+
                    TO REPLACE A STRING, USE THE LETTER "R" FOLLOWED BY THE
               NEW STRING OF THE SAME LENGTH AND A "~".
- 
- 
+
+
                    IF  THE  MODIFICATION  IS  TO  BE  DONE  IN  THE  FIRST
               CHARACTER, THEN INCLUDE THE "I", "R", OR "D" WITH THE INLINE
               COMMAND.
- 
- 
+
+
           EXAMPLES:
- 
- 
+
+
                TO INSERT CHARACTERS INTO A RECORD:
                -- ------ ---------- ---- - -------
- 
- 
+
+
                     300:*INLINE 30500~
                   30500:ABCDEFGHIJK
                00030500:  I12345~
                   30500:ABC12345DEFGHIJK
- 
- 
+
+
                TO DELETE CHARACTERS FROM A RECORD:
                -- ------ ---------- ---- - -------
- 
- 
+
+
                    7700:*INLINE 67700~
                   67700:ABCDEFGHIJKLMNOP
                00067700: D     ~
                   67700:ABHIJKLMNOP
- 
- 
+
+
                TO REPLACE CHARACTERS IN A RECORD:
                -- ------- ---------- -- - -------
- 
- 
+
+
                     600:* INLINE 551~
                     551:ABCDEFGHIJKLMNOPQRST
                00000551:R12345~
                     551:A12345GHIJKLMNOPQRST
- 
- 
- 
- 
- 
+
+
+
+
+
                                                                 PAGE  32
- 
- 
- 
+
+
+
                TO MODIFY A RECORD BEGINNING WITH ITS FIRST CHARACTER:
                -- ------ - ------ --------- ---- --- ----- ----------
- 
- 
+
+
                00006700:*INLINE 70800 D~
                   70800:ABCDEFGHIJKLM
                00070800:   ~
                   70800:DEFGHIJKLM
                   70900:* INLINE D; ~
                   70800:EFGHIJKLM
- 
- 
+
+
                    THE  "R" AND "I" FORMS OF THIS LATTER CONSTRUCT OPERATE
               IN A SIMILAR FASHION.
- 
- 
- 
- 
- 
- 
+
+
+
+
+
+
                                                                 PAGE  33
- 
- 
- 
+
+
+
      STRINGS
      -------
- 
- 
+
+
               R/C SCANS FOR THE OCCURRENCE OF A STRING BY USE OF THE "*
          SCAN" AND "* CHANGE" VERBS.  IN THIS APPLICATION THE FOLLOWING
          DEFINITION OF "STRING" APPLIES:
- 
- 
+
+
                <STRING> ::= <LEFT> <TEXT> <RIGHT> <COLUMN RANGE>
                          <LEFT> ::=  "/ ( / [ / .
                          <RIGHT> ::= "/ ) / ] / .
@@ -1651,135 +1669,135 @@
                                    TO THE <LEFT> CHARACTER USED.}
                          <COLUMN RANGE> ::= {EMPTY} /
                                    @<INTEGER> / @<INTEGER>-<INTEGER>
- 
- 
+
+
               IF  THE  STRING IS DELIMITED BY PERIODS, AN ADDED CHECK WILL
          BE  MADE BEFORE DETERMINING A MATCHED STRING.  THIS CHECK INSURES
          THAT  THE  MATCHED  STRING  WILL  BE  IMMEDIATELY  PRECEEDED  AND
          FOLLOWED BY A NON-ALPHANUMERIC CHARACTER.  HENCE THIS FORM SHOULD
          BE USED FOR IDENTIFIERS.
- 
- 
+
+
               IF  THE  <COLUMN  RANGE> IS SPECIFIED, A MATCH WILL BE FOUND
          ONLY IF THE FIRST CHARACTER APPEARS WITHIN THE RANGE.
- 
- 
+
+
                EXAMPLES:
- 
- 
+
+
                     "FD"@8
- 
+
                     .LIST.
- 
+
                     "M := IMAGE [5] ;"@15-25
- 
+
                     ( WORD [I] := "SCAN" ;)
- 
+
                     ["]
- 
+
                     ""
- 
- 
- 
- 
- 
- 
+
+
+
+
+
+
                                                                 PAGE  34
- 
- 
- 
+
+
+
      CHANGING THE OCCURRENCE OF A STRING (CHANGE)
      -------- --- ---------- -- - ------ --------
- 
- 
+
+
               ENTIRE STRINGS MAY BE CHANGED IN A FILE BY USE OF THE "*
          CHANGE" VERB.
- 
- 
-               * CHANGE <STRING> TO <STRING>
-               - ------ -------- -- --------
- 
- 
+
+
+               * CHANGE  <STRING> TO <STRING>
+               - ------  -------- -- --------
+
+
                    SCANS  THE CURRENT RECORD REPLACING EVERY OCCURRENCE OF
               THE FIRST STRING WITH THE SECOND.  IF NO "<STRING> TO
               <STRING>" APPEARS THE PREVIOUSLY USED STRINGS WILL BE USED
               AGAIN.
- 
- 
+
+
                * CHANGE <M> <STRING> TO <STRING>
                - ------ --- -------- -- --------
- 
- 
+
+
                    AS ABOVE, FOR THE RECORD WITH SEQUENCE NUMBER <M>.
- 
- 
+
+
                * CHANGE <M>, <N> <STRING> TO <STRING>
                - ------ ---- --- -------- -- --------
- 
- 
+
+
                    AS  ABOVE,  FOR ALL RECORDS FROM SEQUENCE NUMBER <M> TO
               <N>.
- 
- 
+
+
                * CHANGE ECHO ON
                - ------ ---- --
- 
- 
+
+
                * CHANGE ECHO OFF
                - ------ ---- ---
- 
- 
+
+
                * CHANGE ECHO
                - ------ ----
- 
- 
+
+
                    THE  MODIFIED  RECORDS WILL BE TYPED ON THE TELETYPE IF
               THE  CHANGE  ECHO  IS ON.  (IT IS INITIALLY OFF.)  THE ABOVE
               COMMANDS ARE USED TO SET THE OPTION AND TO PRINT ITS CURRENT
               VALUE.   ITS  SETTING  MAY  BE  REVERSED  FOR  A  COMMAND BY
               PREFIXING THE CHANGE WITH A -.  (E.G.  *-CHANGE "X" TO "Z".)
- 
- 
- 
- 
- 
- 
+
+
+
+
+
+
                                                                 PAGE  35
- 
- 
+
+
                EXAMPLES:
- 
- 
+
+
               00004200:* CHANGE "REMOTE/CARD" TO "R/C";*CHANGE 5300~
               00005300:
- 
+
                   8700:* -CHANGE -1 .TWX.@25-30 TO "TELETYPWRITER"~
-                  8600: THE OUTPUT IS TYPED ON THE TELETYPWRITER IF
+                  8600: THE OUPUT IS TYPED ON THE TELETYPWRITER IF
               00008600:
- 
+
                    450:* CHANGE 232, 448 "IMAGE [I]" TO (Z [J])~
               WAIT...
               00000448:
- 
+
                  47000:* CHANGE 2200+6 " "@1 "   "~
               00002800:* CHANGE +1+3 "  "@1 ""~
               00003200:
- 
- 
- 
- 
+
+
+
+
                                                                 PAGE  36
- 
- 
- 
+
+
+
      SCANNING FOR OCCURRENCE OF A STRING (SCAN)
      -------- --- ---------- -- - ------ ------
- 
- 
+
+
                * SCAN <STRING>
                - ---- --------
- 
- 
+
+
                    SCANS  THE FILE FROM THE CURRENT SEQUENCE NUMBER TO THE
               END  OF  THE FILE OR UNTIL THE FIRST OCCURRENCE OF <STRING>.
               IF  THE STRING IS FOUND THE RECORD CONTAINING IT IS TYPED ON
@@ -1789,58 +1807,58 @@
               THE  SAME  <STRING>  AS  IN  THE LAST "* SCAN" OR "* CHANGE"
               COMMAND.  IF THE SCAN VERB IS PREFIXED BY A -, THE SCAN WILL
               BE FOR RECORDS NOT CONTAINING THE <STRING>.
- 
- 
+
+
                * SCAN <M> <STRING>
                - ---- --- --------
- 
- 
+
+
                    AS  ABOVE,  EXCEPT  THAT  THE  SCAN  BEGINS AT SEQUENCE
               NUMBER <M>.
- 
- 
+
+
                * SCAN <M>, <N> <STRING>
                - ---- ---- --- --------
- 
- 
+
+
                    AS ABOVE, EXCEPT THAT THE SCANNING STOPS AFTER SEQUENCE
               NUMBER <N>.
- 
- 
+
+
                * SCAN <FILE-NAME> <STRING>
                - ---- ----------- --------
- 
- 
+
+
                    THE  FILE  <FILE-NAME>  IS SCANNED FOR <STRING>.  EVERY
               RECORD  IN  WHICH  <STRING>  OCCURS  IS  TYPED  ON  THE
               TELETYPEWRITER.
- 
- 
+
+
                * SCAN <FILE-NAME> <M> <STRING>
                - ---- ----------- --- --------
- 
- 
+
+
                    AS  ABOVE, EXCEPT THE SCAN BEGINS AT RECORD NUMBER <M>.
- 
- 
- 
- 
- 
- 
- 
+
+
+
+
+
+
+
                                                                 PAGE  37
- 
+
                * SCAN <FILE-NAME>  <M>, <N> <STRING>
                - ---- -----------  ---- --- --------
- 
- 
+
+
                    AS  ABOVE,  EXCEPT THAT THE SCAN STOPS AFTER THE <N>-TH
               RECORD.
- 
- 
+
+
                EXAMPLES:
- 
- 
+
+
                 :* SCAN LIBRARY/FILE "TABLE OF CONTENTS"@3~
                 WAIT...
                        1:% TABLE OF CONTENTS ... READDATA
@@ -1850,7 +1868,7 @@
                      274:% TABLE OF CONTNETS ... DATE
                      285:% TABLE OF CONTENTS ... DATE
                 :
- 
+
                     8700:* SCAN 1 .PRINTER. .LINE.~
                 WAIT...
                      100: FILE PRINTER 1 (2, 15) ;
@@ -1861,262 +1879,262 @@
                 WAIT...
                 EOF NO STRING
                     8700:
- 
- 
- 
+
+
+
                                                                 PAGE  38
- 
- 
- 
-     RECORD FORMATTING (EDIT)
-     ------ ---------- ------
- 
- 
-              RECORDS MAY BE FORMATTED BY THE FOLLOWING CONSTRUCTS:
- 
- 
+
+
+
+     RECORD FORMATING (EDIT)
+     ------ --------- ------
+
+
+              RECORDS MAY BE FORMATED BY THE FOLLOWING CONSTRUCTS:
+
+
                * EDIT <M>, <N>: <F>
                - ---- ---- ---- ---
- 
- 
+
+
                    EDITS  EACH  RECORD  FROM  SEQUENCE  NUMBER  <M> TO <N>
               ACCORDING TO THE FORMAT RECORD WITH SEQUENCE NUMBER <F>.
- 
- 
+
+
                    THE  RESULT  OF  THE  EDIT  IS THAT EACH RECORD BECOMES
               IDENTICAL WITH THE FORMAT RECORD EXCEPT WHERE THERE IS A "#"
               OR  "@" CHARACTER IN FORMAT RECORD.  EACH "@" IS REPLACED BY
               THE  NEXT CHARACTER OF THE INPUT RECORD.  EACH "#" SKIPS THE
               NEXT CHARACTER OF THE INPUT RECORD.
- 
- 
+
+
                * EDIT ECHO ON
                - ---- ---- --
- 
- 
+
+
                * EDIT ECHO OFF
                - ---- ---- ---
- 
- 
+
+
                * EDIT ECHO
                - ---- ----
- 
- 
+
+
                    THE  MODIFIED  RECORDS WILL BE TYPED ON THE TELETYPE IF
               THE  EDIT  ECHO  IS  ON.   (IT IS INITIALLY OFF.)  THE ABOVE
               COMMANDS  ARE  USED TO SET THE ECHO AND TO PRINT ITS CURRENT
               SETTING.   IT  SETTING  MAY  BE  REVERSED  FOR  A COMMAND BY
-              PREFIXING THE EDIT WITH A -.  (E.G.  *- EDIT 200,800:2)
- 
- 
+              PREFIXING THE EDIT WITH A -.  (E.G.  *- EDIT 200,800:2.)
+
+
                EXAMPLE:
- 
- 
+
+
                100:1234567890~
                200:ABCDEFGHIJK~
                300:  @@@...@@. THIS IS THE WAY THE LINE ENDS...@##@@@~
                400:* -EDIT 100, 200:300~
                100:  123...45. THIS IS THE WAY THE LINE ENDS...690
                200:  ABC...DE. THIS IS THE WAY THE LINE ENDS...FIJK
- 
- 
- 
- 
- 
- 
+
+
+
+
+
+
                                                                 PAGE  39
- 
- 
- 
+
+
+
      RESEQUENCING RECORD NUMBERS (RESEQ)
      ------------ ------ ------- -------
- 
- 
+
+
               FILE  SEQUENCE  NUMBERS  MAY  BE  MODIFIED  BY THE FOLLOWING
          CONSTRUCTS:
- 
- 
+
+
                * RESEQ
                - -----
- 
- 
+
+
                    RESEQUENCES  THE FILE BY THE CURRENT INCREMENT COUNTER.
- 
- 
+
+
                * RESEQ <I>
                - ----- ---
- 
- 
+
+
                    SETS THE INCREMENT COUNTER TO <I> AND RESEQUENCES.
- 
- 
+
+
                * RESEQ <M>, <N>
                - ----- ---- ---
- 
- 
+
+
                    RESEQUENCES  THE  SEQUENCE  NUMBERS <M> THRU <N> BY THE
               CURRENT INCREMENT COUNTER.  THE FIRST SEQUENCE NUMBER IS <M>.
- 
- 
+
+
                * RESEQ <M>, <N>, <K>
                - ----- ---- ---- ---
- 
- 
+
+
                    AS ABOVE, EXCEPT THAT THE FIRST SEQUENCE NUMBER IS <K>.
- 
- 
+
+
                * RESEQ <M>, <N>, <K>, <I>
                - ----- ---- ---- ---- ---
- 
- 
+
+
                    AS ABOVE, EXCEPT THE INCREMENT IS SET TO <I> FIRST.
- 
- 
+
+
                EXAMPLES:
- 
- 
+
+
                    895:* RESEQ~
                    323:* RESEQ 100~
                  32300:
- 
- 
- 
- 
- 
- 
+
+
+
+
+
+
                                                                 PAGE  40
- 
- 
- 
+
+
+
      DELETION OF RECORDS (DELETE)
      -------- -- ------- --------
- 
- 
+
+
               RECORDS  MAY  BE  DELETED  FROM  A  FILE  BY  THE  FOLLOWING
          CONSTRUCTS:
- 
- 
+
+
                * DELETE <M>
                - ------ ---
- 
- 
+
+
                    DELETES CARD IMAGE <M>.
- 
- 
+
+
                * DELETE <M>, <N>
                - ------ ---- ---
- 
- 
+
+
                    DELETES CARD IMAGES <M> THROUGH <N>.
- 
- 
+
+
                * DELETE
                - ------
- 
- 
+
+
                    DELETES THE CURRENT CARD.
- 
- 
+
+
                EXAMPLES:
- 
- 
+
+
                 3400:* DELETE 3300~
                 3300:
- 
+
                 2100:* DELETE 1500, + 3;* LIST 1400,2000~
                 1400:     BEGIN
                 1900:       GO TO ERROR ;
                 2000:     END ;
                 2100:
- 
+
                 2100:* 2000~
                 2000:     END ;
             00002000:*DELETE~
                 2000:
- 
- 
- 
- 
- 
+
+
+
+
+
                                                                 PAGE  41
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
+
+
+
+
+
+
+
+
+
+
+
                           OPERATIONAL COMMANDS
                           ----------- --------
- 
- 
- 
- 
+
+
+
+
                                                                 PAGE  42
- 
- 
- 
+
+
+
      SET THE INCREMENT COUNTER (INC)
      --- --- --------- ------- -----
- 
- 
+
+
               THE  INCREMENT  COUNTER MAY BE SET BY THE CONSTRUCT "* INC".
- 
- 
+
+
                * INC <N>
                - --- ---
- 
- 
+
+
                    THIS CONSTRUCT SETS THE INCREMENT COUNTER TO <N>.
- 
- 
+
+
                * INC
                - ---
- 
- 
+
+
                    THIS CONSTRUCT PRINTS THE CURRENT VALUE.
- 
- 
+
+
                EXAMPLES:
- 
- 
+
+
                   100:BEGIN~
                   200: INTEGER I, J, K ;~
                   300:* INC 3~
                   300: BOOLEAN B ;~
                   303: REAL X, Y, Z ;~
                   306:
- 
- 
+
+
                                                                 PAGE  43
- 
- 
- 
+
+
+
      NON-TELETYPEWRITER CHARACTERS (PERCENT)
      ------------------ ---------- ---------
- 
- 
+
+
               SPECIAL  CHARACTERS  ON  THE  B5500 BUT NOT AVAILABLE ON THE
          TELETYPEWRITER  KEYBOARD (INCLUDING THE QUESTION MARK "?") MAY BE
          INSERTED  INTO R/C MAINTAINED FILES BY THE "* PERCENT" CONSTRUCT.
- 
- 
+
+
                * PERCENT ON
                - ------- --
- 
- 
+
+
                * PERCENT OFF
                - ------- ---
- 
- 
+
+
                * PERCENT
                - -------
- 
- 
+
+
                    THE  "* PERCENT"  CONSTRUCTS  ALLOW A USER TO INPUT THE
               SPECIAL  RESERVED  CHARACTERS  (I.E.   LEFT-ARROW, NEQ, LSS,
               GEQ,  GTR,  LEQ, AND ?).  THE ABOVE COMMANDS ARE USED TO SET
@@ -2124,8 +2142,8 @@
               PERCENT  OPTION  IS  ON,  INPUT  FROM  THE TELETYPEWRITER IS
               SCANNED  FOR SPECIAL CHARACTER PAIRS.  IF A PAIR IS FOUND IT
               IS REPLACED BY THE SINGLE CHARACTER AS FOLLOWS:
- 
- 
+
+
               CHARACTER PAIR      INTERNAL CHARACTER
               --------------      ------------------
                      %-                    ~ (LEFT ARROW)
@@ -2136,24 +2154,24 @@
                      %]                    } (GEQ)
                      %%                    ? (QUESTION MARK)
                      %*                    * (STAR) (1ST CHR ONLY)
- 
- 
+
+
                    A  "%"  FOLLOWED  BY ANY OTHER CHARACTER REMAINS AS IS.
               WHEN  THE  PERCENT OPTION IS ON, THE TRANSLATION TAKES PLACE
               IMMEDIATELY.   HENCE ONLY ONE BACKSPACE (SHIFT 7) IS NEEDED.
- 
- 
+
+
                EXAMPLES:
- 
- 
+
+
                   100:* PERCENT OFF~
- 
- 
- 
- 
- 
+
+
+
+
+
                                                                 PAGE  44
- 
+
                   100:%% COMPILE ... %=  %(   %A~
                   200:* PERCENT ON~
                   200:%% COMPILE ... %=  %(   %A~
@@ -2161,359 +2179,359 @@
                   100:%% COMPILE ... %=  %(   %A
                   200:? COMPILE ... !  <   %A
                   300:
- 
- 
+
+
                    NOTE  THAT  ON THE TELETYPWRITER THE CHARACTERS "!" AND
               "<" WOULD HAVE BEEN TYPED AS A "$".
- 
- 
- 
- 
- 
+
+
+
+
+
                                                                 PAGE  45
- 
- 
- 
+
+
+
      R/C VERB RENAMING (REPLACE)
      --- ---- -------- ---------
- 
- 
+
+
               R/C  VERBS  MAY  BE  REPLACED  BY  OTHER  WORDS  THROUGH THE
          CONSTRUCT "* REPLACE".
- 
- 
+
+
                * REPLACE <A>:<B>
                - ------- -------
- 
- 
+
+
                    THE REPLACE VERB RENAMES THE VERB <A> WITH THE WORD <B>.
- 
- 
+
+
                EXAMPLES:
- 
- 
+
+
                   :* REPLACE LIST:TYPE~
                   :* REPLACE INLINE:IN~
                   :* REPLACE REPLACE:R~
                   :* R CHANGE:C~
                   :
- 
- 
- 
+
+
+
                                                                 PAGE  46
- 
- 
- 
+
+
+
      AUTOMATIC FIRST CHARACTER PLACEMENT (TAB)
      --------- ----- --------- --------- -----
- 
- 
+
+
               R/C  USERS  MAY  INITIALLY  (AUTOMATICALLY) PRE-POSITION THE
          PRINT BALL AT ANY COLUMN BY USE OF THE "* TAB" CONSTRUCT.
- 
- 
+
+
                * TAB <N>
                - --- ---
- 
- 
+
+
                    SETS  UP  AUTOMATIC  INDENTING TO POSITION <N>, WHERE 1
               LEQ <N> LEQ 54.
- 
- 
+
+
                * TAB +<N>
                - --- ----
- 
- 
+
+
                * TAB -<N>
                - --- ----
- 
- 
+
+
                    ADJUSTS THE TAB AMOUNT BY THE VALUE OF <N>.
- 
- 
+
+
                * TAB ON
                - --- --
- 
- 
+
+
                * TAB OFF
                - --- ---
- 
- 
-               *TAB
-               ----
- 
- 
+
+
+               * TAB
+               - ---
+
+
                    THE  TAB OPTION PERMITS THE USER (BY SETTING THE OPTION
               OFF) TO SURPRESS THE TAB SPACING ON THE TELETYPEWRITER.  THE
               AUTOMATIC  INDENTING  STILL  APPLIES TO THE RECORDS CREATED.
               THE LAST CONSTRUCT PRINTS BOTH THE SETTING OF THE OPTION AND
               THE TAB VALUE.
- 
- 
+
+
                EXAMPLE:
- 
- 
-                 4500:* TAB~
+
+
+                 4500:* TAB 5~
                  4500:    BEGIN~
- 
- 
- 
- 
- 
+
+
+
+
+
                                                                 PAGE  47
- 
+
                  4600:    * TAB+2~
                  4600:      K := K + DELTAK ;~
                  4700:      * TAB - 2;END ;~
                  4800:    * TAB 1~
                  4800:
- 
- 
- 
- 
- 
+
+
+
+
+
                                                                 PAGE  48
- 
- 
- 
+
+
+
      SETTING THE SAVE FACTOR (SAVE)
      ------- --- ---- ------ ------
- 
- 
+
+
               THE  SAVE  FACTOR OF A DISK FILE IS THE NUMBER OF DAYS AFTER
          ITS  LAST  ACCESS BEFORE IT WILL BE CONSIDERED EXPIRED.  THE SAVE
          FACTOR FOR A NEW USER IS SET AT 7 DAYS.  IT MAY BE CHANGED BY:
- 
- 
+
+
                * SAVE <N>
                - ---- ---
- 
- 
+
+
                    SETS THE SAVE FACTOR AT <N> DAYS.
- 
- 
+
+
                * SAVE
                - ----
- 
- 
+
+
                    PRINTS THE CURRENT VALUE OF THE SAVE FACTOR.
- 
- 
+
+
                EXAMPLE:
- 
- 
+
+
                 :* SAVE 10~
                 :
- 
- 
- 
- 
+
+
+
+
                                                                 PAGE  49
- 
- 
- 
+
+
+
      TABULATING (COLUMN)
      ---------- --------
- 
- 
+
+
                * COLUMN <OPTIONAL STRING>
                - ------ --------- -------
- 
- 
+
+
                * COLUMN ON <OPTIONAL STRING>
                - ------ -- --------- -------
- 
- 
+
+
                * COLUMN OFF <OPTIONAL STRING>
                - ------ --- --------- -------
- 
- 
+
+
                * COLUMN <STP1> <STP2> <STP3> <STP4> <OPTL STRING>
                - ------ ------ ------ ------ ------ ----- -------
- 
- 
+
+
                    THE  COLUMN VERB IS USED TO SET UP COLUMN POSITIONS AND
               INDICATE  WHAT CHARACTER IS THE COLUMN CHARACTER.  THE FIRST
               FORM  PRINTS  THE  CURRENT  SETTINGS.   THE SECOND AND THIRD
               FORMS  ARE  USED  TO  TURN THE OPTION ON OR OFF.  THE FOURTH
               FORM SETS UP FROM 1 TO 4 COLUMN POSITIONS.  ANY FORM MAY SET
               THE COLUMN CHARACTER.
- 
- 
+
+
                    WHEN  THE  OPTION  IS  ON, EACH OCCURENCE OF THE COLUMN
               CHARACTER IN AN INPUT RECORD CAUSES BLANKS TO BE INSERTED TO
               THE NEXT HIGHER COLUMN POSITION.
- 
- 
+
+
                EXAMPLE:
- 
- 
+
+
                   :COLUMN ON "#";* COLUMN 10 20 25;COLUMN~
-                  COLUMN ON # 10 20 25
+                  COLUMN  ON  # 10 20 25
                   :OPEN COLUMN/SHOW ALGOL NEW~
                      100:ABC#123#XYZ#IJK#789~
                      200:* LIST~
                      100:ABC      123       XYZ  IJK#789
                      200:123456789012345678901234567890~
                      300:
- 
- 
- 
- 
- 
- 
+
+
+
+
+
+
                                                                 PAGE  50
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
+
+
+
+
+
+
+
+
+
+
+
                            AUXILIARY COMMANDS
                            --------- --------
- 
- 
- 
- 
+
+
+
+
                                                                 PAGE  51
- 
- 
- 
+
+
+
      MESSAGES TO OTHERS (MAIL)
      -------- -- ------ ------
- 
- 
+
+
               MESSAGES  MAY  BE RECEIVED FROM, AND SENT TO, OTHER USERS OF
          R/C BY THE "* MAIL" VERB DESCRIBED BELOW.
- 
- 
+
+
                * MAIL
                - ----
- 
- 
+
+
                    THIS  LISTS  THE  MAIL SENT TO YOU, AND REMOVES IT FROM
               YOUR "MAIL-BOX".
- 
- 
+
+
                * MAIL TO <USERCODE>: MESSAGE
                - ---- -- ----------- -------
- 
- 
+
+
                    THIS ADDS YOUR MESSAGE TO THE <USERCODE>-S MAIL.
- 
- 
+
+
                EXAMPLES:
- 
- 
+
+
                  :* MAIL~
                  PLEASE SEE ME WHEN YOU GET A CHANCE-BALDWIN
                  THERE WILL NOT BE ANY REMOTE TIME 10/24/70-SYSTEM
-                 :* MAIL TO BALDWIN:MY OFFICE - 10AM- FRIDAY~
- 
- 
+                 :* MAIL TO BALDWIN:MY OFFICE- 10AM- FRIDAY~
+
+
                                                                 PAGE  52
- 
- 
- 
+
+
+
      HOW TO DETACH YOURSELF FROM R/C (END)
      --- -- ------ -------- ---- --- -----
- 
- 
+
+
               THREE  METHODS  ARE  AVAILABLE TO THE USER WHEN HE WISHES TO
          MAKE AN EXIT FROM R/C:
- 
- 
+
+
                * END
                - ---
- 
- 
+
+
                * END <X>
                - --- ---
- 
- 
+
+
                * END  DS
                - ---  --
- 
- 
+
+
                    THE FIRST CONSTRUCT DETACHES THE USER FROM R/C.
- 
- 
+
+
                    THE  SECOND  CONSTRUCT CAUSES R/C TO REMEMBER, FROM ONE
               RUN  TO  THE NEXT, THE VALUES OF THE OPTIONS AND THE EFFECTS
               OF  THE  "* REPLACE"  VERB.   THE "* END" CONSTRUCT DOES NOT
               GENERATE  THIS LASTING EFFECT.  <X> DENOTES ANY ALPHANUMERIC
               CHARACTER STRING.
- 
- 
+
+
                    THE  THIRD  CONSTRUCT  ALLOWS  A  USER  TO  END WITHOUT
               CLOSING THE OPEN FILE.  R/C REMEMBERS THE FILE STRUCTURE FOR
               THE  NEXT  TIME.  HOWEVER THE FILE SHOULD NOT BE ACCESSED BY
               ANY  OTHER  PROGRAM UNTIL IT IS CLOSED USING R/C.  THIS FORM
               CAN  BE  USED  WHEN THE FILE EDITING IS SPLIT OVER MORE THAN
               ONE RUNNING OF R/C.
- 
- 
+
+
                EXAMPLES:
- 
- 
+
+
                  :* END~
                  GOOD BYE
- 
+
                      634:* END X~
                  WAIT...
                  GOOD BYE
- 
+
                      892:* END  DS~
                  GOOD BYE
- 
- 
- 
- 
- 
- 
+
+
+
+
+
+
                                                                 PAGE  53
- 
- 
- 
-     LEARNING ABOUT R/C ON THE TELETYPEWRITER (TEACH)
-     -------- ----- --- -- --- -------------- -------
- 
- 
-              THE  TEACH VERB ALLOWS A USER AT THE TELETYPEWRITER TO LEARN
+
+
+
+     LEARNING ABOUT R/C ON THE TELETYPWRITER (TEACH)
+     -------- ----- --- -- --- ------------- -------
+
+
+              THE  TEACH  VERB ALLOWS A USER AT THE TELETYPWRITER TO LEARN
          ABOUT THE R/C VERBS AND SPECIFICALLY WHAT VERBS HE MAY USE.
- 
- 
+
+
                * TEACH
                - -----
- 
- 
+
+
                    THIS  LISTS  THE  VERBS  THAT YOU ARE PERMITTED TO USE.
               THE LIST REFLECTS THE USE OF REPLACE ON ANY OF THE VERBS.
- 
- 
+
+
                * TEACH <VERB>
                - ----- ------
- 
- 
+
+
                    THIS  LISTS  THE  SYNTAX  AND SEMANTICS OF THE RESERVED
               WORD <VERB>.
- 
- 
+
+
                EXAMPLES:
- 
- 
+
+
                  :* TEACH SAVE~
                   * SAVE $N$
                  SETS THE SAVE FACTOR AT $N$ DAYS.
                   * SAVE
                  PRINTS THE CURRENT VALUE OF THE SAVE FACTOR.
                  :
- 
+
                 121970:* TEACH~
               THE VALID REQUESTS ARE:
            EXECUTE  DITTO    COPY     IN       ZIP      C        EDIT
@@ -2523,46 +2541,46 @@
               FOR SYNTAX OF A VERB (E.G. TAB), INPUT:
                  * TEACH VERB. (E.G. * TEACH TAB)
                 121970:
- 
- 
+
+
                    NOTE  THAT  THE USE OF THE REPLACE VERB (FOR INLINE AND
               CHANGE) IS REFLECTED BY THE TEACH VERB.
- 
- 
- 
+
+
+
                                                                 PAGE  54
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
+
+
+
+
+
+
+
+
+
+
+
                                MACRO VERB
                                ----- ----
- 
- 
- 
- 
+
+
+
+
                                                                 PAGE  55
- 
- 
- 
+
+
+
      MACRO (EXECUTE)
      ----- ---------
- 
- 
-              THE EXECUTE VERB GIVES R/C A SIMPLE MACRO CAPABILITY.
- 
- 
+
+
+              THE  EXECUTE VERB GIVES R/C USERS A SIMPLE MACRO CAPABILITY.
+
+
                * EXECUTE <SOURCE> <OPTIONAL PARAMETER LIST>
                - ------- -------- --------- --------- -----
- 
- 
+
+
                    RECORDS  ARE  READ  FROM THE <SOURCE> AND TREATED AS IF
               THEY  CAME  FROM  THE  TELETYPE.   HENCE,  THEY  MAY CONTAIN
               COMMANDS.   THE  <OPTIONAL  PARAMETER  LIST>,  IF  PRESENT,
@@ -2574,58 +2592,58 @@
               THE  REPEAT FACTOR IS AN INTEGER FROM 0 TO 999 AND INDICATES
               THE  NUMBER  OF  TIMES TO PERFORM THE EXECUTE.  IF IT IS NOT
               SPECIFIED, IT IS ASSUMED TO BE 1.
- 
- 
+
+
                * EXECUTE ECHO ON
                - ------- ---- --
- 
- 
+
+
                * EXECUTE ECHO OFF
                - ------- ---- ---
- 
- 
+
+
                * EXECUTE ECHO
                - ------- ----
- 
- 
+
+
                    IF THE EXECUTE ECHO IS ON, EACH RECORD WILL BE TYPED ON
               THE  TELETYPE  BEFORE  IT IS EXECUTED.  IT IS INITIALLY OFF.
               IT  MAY BE REVERSED FOR ONE COMMAND BY PREFIXING THE COMMAND
               BY A -.
- 
- 
+
+
                * EXECUTE LIBRARY = <NAME>
                - ------- ------- - ------
- 
- 
+
+
                * EXECUTE LIBRARY
                - ------- -------
- 
- 
+
+
                    THE  EXECUTE  LIBRARY  FACILITY  ALLOWS  THE  USER  TO
- 
- 
- 
- 
- 
+
+
+
+
+
                                                                 PAGE  56
- 
+
               ABBREVIATE:
- 
+
                    * EXECUTE <FILE PREFIX>/<MACRO LIBRARY> (P1,P2,P3,P4)
- 
+
                WITH:
- 
+
                     * <FILE PREFIX> P1,P2,P3,P4
- 
- 
+
+
                    THE  <MACRO  LIBRARY>  IS  "MACRO"  AND  ANY OTHER NAME
-              DESIGNATED THRU THE
- 
- 
+              DESIGNATED THRU THE * EXECUTE LIBRARY = <NAME> COMMAND.
+
+
                EXAMPLES:
- 
- 
+
+
                  :* OPEN CREATE/MACRO DATA NEW~
                       100:%* OPEN #1/#2 #3 NEW~
                       200:* CLOSE~
@@ -2633,7 +2651,7 @@
                       100:%* DITTO #1,#2 MOVE~
                       200:*CLOSE~
                  :
- 
+
                     5700:* TEACH CC~
                        1:* SCAN + 1 "$$"@1
                        2:* DELETE -1
@@ -2645,139 +2663,139 @@
                     2200:$$ JOB
                     2900:$$ IBJOB
                     2840:
- 
- 
- 
- 
- 
+
+
+
+
+
                                                                     A- 1
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
+
+
+
+
+
+
+
+
+
+
+
                                APPENDIX A
                                -------- -
                             R/C SOURCE TAPE
                             --- ------ ----
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
+
+
+
+
+
+
+
+
+
+
               R/C RESIDES ON A SYSTEM DUMP TAPE CONTAINING THE FILES
- 
- 
+
+
                1. RCSY94/RON
                2. TEACHER/0000094
                3. XREF/JONES
- 
- 
+
+
                THE FILES SHOULD BE LOADED USING THE CONTROL DECK:
- 
- 
-           ? LOAD FROM RC RCSYS94/RON,TEACHER/0000094,XREF/JONES.
+
+
+           ? LOAD FROM RC RCSY94/RON,TEACHER/0000094,XREF/JONES.
            ? END.
- 
- 
+
+
               RCSY94/RON  IS  THE  SOURCE  FILE  FOR  THE PROGRAM R/C.  IT
          SHOULD BE COMPILED WITH:
- 
- 
+
+
                ? COMPILE R/C WITH ALGOL FOR LIBRARY.
                ? ALGOL FILE TAPE = RCSY94/RON SERIAL.
                ? STACK = 256.
                ? CORE = 2800. = 2500 + 100 | MAXUSERS.
                ? PRIORITY = 1.
                ? DATA
+               $ TAPE
                                                                99999999
                ? END.
- 
- 
- 
- 
- 
- 
- 
+
+
+
+
+
+
                                                                     A- 2
- 
+
+
               WHEN PATCHES ARE ISSUED THEY SHOULD BE PLACED AFTER THE "$
          TAPE" CARD AND R/C SHOULD BE RECOMPILED.
- 
- 
+
+
               THE  MAXIMUM NUMBER OF USERS HANDLED BY R/C IS DEFINED TO BE
          3  IN  RCSY94/RON.   TO INCREASE THE NUMBER, A PATCH CARD MUST BE
          ADDED.   AS  AN  EXAMPLE,  THE  FOLLOWING CARD SHOULD BE ADDED TO
          INCREASE THE MAXIMUM NUMBER OF USERS TO 5.
-            DEFINE MAXUSERS = 5#, MAXUSER =4# ;                 00002500
- 
- 
+            DEFINE MAXUSERS = 5#, MAXUSER =4# ;                  00002500
+
+
               THE  OUTPUT  BUFFERS  ARE  DEFINED  TO  BE  56 CHARACTERS IN
          RCSY94/RON.  THEY MAY BE SET AT 28 CHARACTERS USING THE FOLLOWING
          PATCH CARDS:
-            DEFINE CHRSPERBUFFER = 28#,    % OR 56              00002600
-            WORDSPERBUFFER = 5#,         % OR 8                 00002700
-            WRDSPERBUFFER = 4# ;         % OR 7                 00002800
- 
- 
+            DEFINE CHRSPERBUFFER = 28#,    % OR 56               00002600
+            WORDSPERBUFFER = 5#,         % OR 8                  00002700
+            WRDSPERBUFFER = 4# ;         % OR 7                  00002800
+
+
               TEACHER/0000094  IS  AN  AUXILIARY  FILE USED BY R/C.  IT IS
          ALSO  THE  USERS  REFERENCE  MANUAL.   THE  PROGRAM XREF/JONES IS
          PROVIDED FOR GENERATING THE REFERENCE MANUAL AND FOR UPDATING THE
          TEACHER  FILE.   (NOTE,  ONLY  THE  OBJECT CODE FOR XREF/JONES IS
          INCLUDED.  THE SOURCE CAN BE OBTAINED THROUGH THE CUBE LIBRARY ON
          REQUEST.)
- 
- 
+
+
               THE FOLLOWING DECK WILL PRODUCE A USERS REFERENCE MANUAL.
- 
- 
+
+
                ? EXECUTE XREF/JONES.
                ? FILE DISK = TEACHER/0000094.
                ? DATA CARD.
                $ DISK SIX DOCONLY DOCUMENT FINAL
                                                                99999999
                ? END.
- 
- 
+
+
               PATCHES TO R/C AND THE TEACHER FILE WILL BE ISSUED THRU CUBE.
-         RATHER THAN PATCH DECKS, NEW SYMBOL FILES WILL BE INCLUDED ON THE
-         CUBE  TAPE.   THE SEQUENCE NUMBERS WILL REMAIN THE SAME EXCEPT IN
-         THE PATCHED AREA.
- 
- 
- 
- 
+         RATHER  THAN  PATCH DECKS, NEW SYMBOLIC FILES WILL BE INCLUDED ON
+         THE  CUBE TAPE.  THE SEQUENCE NUMBERS WILL REMAIN THE SAME EXCEPT
+         IN THE PATCHED AREA.
+
+
+
                                                                     B- 1
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
+
+
+
+
+
+
+
+
+
+
+
                                APPENDIX B
                                -------- -
                            R / C USER-S GUIDE
                            - - - ------ -----
- 
- 
+
+
                                                                     B- 2
- 
+
  * CHANGE <STRING-1> TO <STRING-2>
  * CHANGE <SEQ NUMBER> <STRING-1> TO <STRING-2>
  * CHANGE <START SEQ NUMBER> <END SEQ NUMBER> <STRING-1> TO <STRING-2>
@@ -2791,7 +2809,7 @@
  * COLUMN <OPTIONAL STRING>
  * COLUMN ON <OPTIONAL STRING>
  * COLUMN OFF <OPTIONAL STRING>
- * COLUMN <STOP-1> <STOP-2> <STOP-3> <STOP-4> <OPTIONAL STRING>
+ * COLUMN <STOP-1> <STOP-2> <STOP-3> <STOP-4> <OPTIOANL STRING>
  * COMPILE <OBJECT FILE-NAME>
  * COMPILE <OBJECT FILE-NAME> <COMPILER>
  * COPY <FILE-NAME>
@@ -2831,13 +2849,13 @@
  * EXECUTE ECHO OFF
  * EXECUTE ECHO
  * EXECUTE LIBRARY = <NAME>
- 
- 
- 
- 
- 
+
+
+
+
+
                                                                     B- 3
- 
+
  * EXECUTE LIBRARY
  * INC <INCREMENT>
  * INC
@@ -2891,18 +2909,18 @@
  * QUICK <FILE-NAME>
  * QUICK <FILE-NAME> NO
  * QUICK <FILE-NAME> <START RECORD NUMBER>
- 
- 
- 
- 
- 
+
+
+
+
+
                                                                     B- 4
- 
+
  * QUICK <FILE-NAME> <START RECORD NUMBER> <END RECORD NUMBER>
  * QUICK <SEQ NUMBER>
  * QUICK <START SEQ NUMBER> <END SEQ NUMBER>
  * REMOVE <FILE-NAME>
- * REPLACE <OLD-VERB> : <NEW-VERB>
+ * REPLACE <OLD VERB> : <NEW VERB>
  * RESEQ
  * RESEQ <INCREMENT>
  * RESEQ <START SEQ NUMBER> <END SEQ NUMBER>
@@ -2934,7 +2952,7 @@
  *-SCAN <FILE-NAME>
  *-SCAN <FILE-NAME> <START RECORD NUMBER>
  *-SCAN <FILE-NAME> <START RECORD NUMBER> <END RECORD NUMBER>
- * TAB <COLUMN-NUMBER>
+ * TAB <COLUMN NUMBER>
  * TAB + <OFF-SET NUMBER>
  * TAB - <OFF-SET NUMBER>
  * TAB ON
@@ -2944,16 +2962,16 @@
  * TEACH <VERB>
  * ZIP
  * ZIP <SCRATCH FILE-NAME>
- 
- 
- 
- 
- 
- 
- 
- 
+
+
+
+
+
+
+
+
                               TABLE OF CONTENTS
- 
+
 INTRODUCTION. . . . . . . . . . . . . . . . . . . . . . . . . .  PAGE  1
 PROGRAM OPERATION AND RECORD SEQUENCING . . . . . . . . . . . .  PAGE  2
 PROGRAM EXECUTION . . . . . . . . . . . . . . . . . . . . . . .  PAGE  3
@@ -2983,7 +3001,7 @@ RECORD HANDLING VERBS . . . . . . . . . . . . . . . . . . . . . PAGE  25
      STRINGS. . . . . . . . . . . . . . . . . . . . . . . . . . PAGE  33
      CHANGING THE OCCURRENCE OF A STRING (CHANGE) . . . . . . . PAGE  34
      SCANNING FOR OCCURRENCE OF A STRING (SCAN) . . . . . . . . PAGE  36
-     RECORD FORMATTING (EDIT) . . . . . . . . . . . . . . . . . PAGE  38
+     RECORD FORMATING (EDIT). . . . . . . . . . . . . . . . . . PAGE  38
      RESEQUENCING RECORD NUMBERS (RESEQ). . . . . . . . . . . . PAGE  39
      DELETION OF RECORDS (DELETE) . . . . . . . . . . . . . . . PAGE  40
 OPERATIONAL COMMANDS. . . . . . . . . . . . . . . . . . . . . . PAGE  41
@@ -2996,10 +3014,18 @@ OPERATIONAL COMMANDS. . . . . . . . . . . . . . . . . . . . . . PAGE  41
 AUXILIARY COMMANDS. . . . . . . . . . . . . . . . . . . . . . . PAGE  50
      MESSAGES TO OTHERS (MAIL). . . . . . . . . . . . . . . . . PAGE  51
      HOW TO DETACH YOURSELF FROM R/C (END). . . . . . . . . . . PAGE  52
-     LEARNING ABOUT R/C ON THE TELETYPEWRITER (TEACH) . . . . . PAGE  53
+     LEARNING ABOUT R/C ON THE TELETYPWRITER (TEACH). . . . . . PAGE  53
 MACRO VERB. . . . . . . . . . . . . . . . . . . . . . . . . . . PAGE  54
      MACRO (EXECUTE). . . . . . . . . . . . . . . . . . . . . . PAGE  55
 APPENDIX A. . . . . . . . . . . . . . . . . . . . . . . . . . .     A- 1
 R/C SOURCE TAPE . . . . . . . . . . . . . . . . . . . . . . . .     A- 1
 APPENDIX B. . . . . . . . . . . . . . . . . . . . . . . . . . .     B- 1
 R / C USER-S GUIDE. . . . . . . . . . . . . . . . . . . . . . .     B- 1
+
+
+
+
+
+
+
+ LABEL  000000000LINE   00188158?EXECUTE XREF/JONES                                                      XREF   /JONES

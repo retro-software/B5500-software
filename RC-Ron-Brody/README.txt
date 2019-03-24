@@ -34,7 +34,10 @@ of the source was done by Paul Kimpel.
 
 The transcriptions have now been renamed and moved under the respective
 files extracted from the CUBEB13 tape so that they will appear in the
-versioned history of those files.
+versioned history of those files:
+
+    RCSY94.RON.alg_m to      CUBE-Library-13/Files/RCSY94.Z100006.alg
+    TEACHER.0000094.txt_m to CUBE-Library-13/Files/TEACHER-0000094.dat
 
 
 RC-Compile.card
@@ -89,4 +92,3 @@ __________
     text file.
 2018-05-26 Paul Kimpel
     Rename and move transcribed files under /CUBE-Library-13.
-
