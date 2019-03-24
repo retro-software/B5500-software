@@ -3,7 +3,7 @@
 ?ALGOL  FILE LINE = LISTING/SNOBOL PRINT BACK UP DISK
 ?ALGOL STACK=1000
 ?DATA CARD
-$ SEQXEQ 
+$ SEQXEQ
 $ TAPE LIST PRT SINGLE
 END.                                                                   99999999
 ?END
