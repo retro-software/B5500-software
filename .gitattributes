@@ -4,30 +4,30 @@
 # Explicitly declare text files you want to always be normalized and converted
 # to native line endings on checkout.
 *.*_m   text
-*.alg   text
-*.bas   text
+*.alg   text    linguist-language=Algol-60
+*.bas   text    linguist-language=BASIC
 *.bat   text
 *.card  text
 *.cmd   text
-*.cob   text
+*.cob   text    linguist-language=COBOL-60
 *.css   text
 *.dat   text
-*.for   text
-*.gtl   text
+*.for   text    linguist-language=FORTRAN-66
+*.gtl   text    linguist-language=GeorgiaTechLanguage
 *.html  text
 *.js    text
 *.lst   text
-*.mca   text
+*.mca   text    linguist-language=MCALGOL
 *.md    text
 *.pt    text
-*.sno   text
+*.sno   text    linguist-language=SNOBOL
 *.svg   text
 *.tape  text
 *.txt   text
-*.vbs   text
+*.vbs   text    linguist-language=VBScript
 *.wipl  text
-*.wsf   text
-*.xal   text
+*.wsf   text    linguist-language=WindowsScriptHost
+*.xal   text    linguist-language=XALGOL
 
 .gitignore
 .gitattributes
