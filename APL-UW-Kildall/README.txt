@@ -19,8 +19,7 @@ APL-IMAGE.alg_m
         Tech."
 
     A scan of that listing is available from:
-    http://bitsavers.trailing-edge.com/pdf/georgiaTech/APL-B5500-Listing
-    -19710111.pdf
+    http://bitsavers.org/pdf/georgiaTech/APL-B5500-Listing-19710111.pdf
 
     Transcription was performed jointly by Hans Pufal of Angouleme,
     France and Fausto Saporito of Naples, Italy during August-September
